@@ -22,9 +22,40 @@ Claude Code cloud sessions require a GitHub repo as their workspace, so the repo
 4. A **permissions allowlist** pre-approves the sync commands so unattended runs never stall on a prompt.
 5. A **weekly scheduled routine** re-verifies the whole pipeline and keeps the environment snapshot warm.
 
+The whole thing is here if you want to copy it: [github.com/czabriskie/obsidian-cloud-sync](https://github.com/czabriskie/obsidian-cloud-sync). The hook is four lines of JSON:
+
+```json
+{
+  "hooks": {
+    "SessionStart": [{
+      "matcher": "startup|resume",
+      "hooks": [{
+        "type": "command",
+        "command": "bash \"$CLAUDE_PROJECT_DIR\"/.claude/scripts/cloud-init.sh"
+      }]
+    }]
+  }
+}
+```
+
+and the script it runs is mostly a guard plus three commands:
+
+```bash
+# no-op unless we're in a cloud container, so this never fights the desktop app
+if [ "$CLAUDE_CODE_REMOTE" != "true" ]; then exit 0; fi
+
+ob login --email "$OBSIDIAN_EMAIL" --password "$OBSIDIAN_PASSWORD"
+ob sync-setup --vault "$OBSIDIAN_VAULT_NAME" --path "$VAULT_DIR" --password "$OBSIDIAN_VAULT_PASSWORD"
+ob sync --path "$VAULT_DIR"
+```
+
+Everything secret comes in as an environment variable set in the cloud environment config, so there's nothing sensitive in the repo itself. On the environment side you need three things: the variables above, a setup script that's just `npm install -g obsidian-headless`, and network access set to Full, since Obsidian's sync endpoints aren't on the default allowlist.
+
 ## MFA without turning MFA off
 
-The part I expected to be a dealbreaker wasn't. `ob login` takes an MFA code, and an MFA code is just a computation over a secret seed. I put the TOTP seed (the base32 string behind the authenticator QR code) in the environment config, and twenty lines of Node compute the current 6-digit code at login time. Inside that environment the seed sits next to the password, so MFA adds nothing there, but it still protects the account against a password leak anywhere else, which is kind of the whole point of MFA anyway.
+The part I expected to be a dealbreaker wasn't. `ob login` takes an MFA code, and an MFA code is just a computation over a secret seed. I put the TOTP seed (the base32 string behind the authenticator QR code) in the environment config, and twenty lines of Node compute the current 6-digit code at login time.
+
+I want to be careful about how I say this next part, because it's the one piece of this I'd tell people not to copy blindly. Claude's cloud environments don't have a secrets store yet, so the credentials and that seed sit in plaintext in the environment config. In my own personal environment that's a tradeoff I'm fine with. MFA still does the thing it mostly exists to do, which is protect the account if my password leaks somewhere else. But putting a TOTP seed right next to the password it's supposed to be protecting, somewhere other people can read both, defeats the whole point of a second factor. This is a personal vault in a personal environment. On anything shared or team owned, don't do it.
 
 ## The shakedown cruise
 
