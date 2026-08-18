@@ -1,0 +1,27 @@
+---
+import Base from '../../layouts/Base.astro';
+import ByteList from '../../components/ByteList.astro';
+import { numberedBytes, streamLabel, type Stream } from '../../lib/bytes';
+
+export function getStaticPaths() {
+  return [{ params: { stream: 'tech-bytes' } }, { params: { stream: 'life-bytes' } }];
+}
+
+const stream = Astro.params.stream as Stream;
+const items = await numberedBytes(stream);
+const label = streamLabel[stream];
+const blurb =
+  stream === 'tech-bytes'
+    ? 'Engineering notes: pipelines, agents, infrastructure, and whatever I had to figure out the hard way.'
+    : 'The non-engineering log: building a house, raising kids, and other projects without a CI pipeline.';
+---
+<Base title={`${label} — Cameron Zabriskie`} description={blurb}>
+  <section class={stream === 'tech-bytes' ? 'stream-tech' : 'stream-life'}>
+    <div class="stream-head">
+      <span class="tick" aria-hidden="true"></span>
+      <h1>{label}</h1>
+    </div>
+    <p class="lede" style="color: var(--muted); margin-bottom: 2rem;">{blurb}</p>
+    <ByteList stream={stream} items={items} />
+  </section>
+</Base>

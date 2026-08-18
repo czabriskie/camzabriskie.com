@@ -1,0 +1,78 @@
+---
+import Base from '../layouts/Base.astro';
+const skills = [
+  'Python', 'scikit-learn', 'Keras', 'pandas', 'NumPy', 'Flask', 'pytest',
+  'AWS', 'Lambda', 'ECS', 'S3', 'CDK', 'EventBridge', 'SQS/SNS',
+  'SQL', 'Snowflake', 'R', 'Docker', 'Linux', 'Git', 'CI/CD', 'Ray', 'TypeScript',
+];
+---
+<Base title="Resume — Cameron Zabriskie" description="Cameron Zabriskie — machine learning / product engineer. Resume.">
+  <div class="resume">
+    <h1>Cameron Zabriskie</h1>
+    <p class="lede" style="color: var(--muted);">
+      Machine learning / product engineer ·
+      <a href="mailto:cameron.zabriskie@gmail.com">cameron.zabriskie@gmail.com</a> ·
+      <a href="https://github.com/czabriskie">github.com/czabriskie</a>
+    </p>
+
+    <section>
+      <h2>Experience</h2>
+
+      <div class="role">
+        <h3>Product Engineer</h3>
+        <span class="when mono">May 2023 – present</span>
+      </div>
+      <p class="org">ZONTAL · Provo, UT</p>
+      <ul>
+        <li>Develop software for analyzing scientific instrument data, including mass spectrometry, PCR, and flow cytometry.</li>
+        <li>Work directly with customers and subject-matter experts to steer projects toward real customer impact.</li>
+        <li>Manage multiple development teams shipping new features and products, and the release and documentation process around them.</li>
+        <li>Drive development-process improvements that raise team velocity.</li>
+      </ul>
+
+      <div class="role">
+        <h3>ML / Data Engineer</h3>
+        <span class="when mono">Apr 2022 – May 2023</span>
+      </div>
+      <p class="org">Biolexis Therapeutics · American Fork, UT</p>
+      <ul>
+        <li>Built the CI/CD pipeline (JetBrains Space, Docker, AWS) deploying to Lambda, ECS Fargate, and S3.</li>
+        <li>Converted all manual AWS deployments to infrastructure-as-code with AWS CDK — identical environments at the click of a button.</li>
+        <li>Integrated Anyscale for large processing jobs, cutting runtimes from weeks to under a day.</li>
+        <li>Built APIs and ELT pipelines serving graph, relational, and NoSQL data to applications and users.</li>
+        <li>Supported small-molecule protein docking and molecular dynamics work (AutoDock, ICM, Gold, PyRosetta, OpenMM).</li>
+      </ul>
+
+      <div class="role">
+        <h3>Data Science Adjunct Professor</h3>
+        <span class="when mono">Aug 2020 – May 2022</span>
+      </div>
+      <p class="org">Brigham Young University · Provo, UT</p>
+      <ul>
+        <li>Developed and taught a course on deploying data-science applications: Git, Docker, virtual environments, scikit-learn, pytest, Flask, AWS Elastic Beanstalk.</li>
+        <li>Mentored students building data-science solutions with local businesses.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Education</h2>
+      <div class="role">
+        <h3>MS, Data Analytics</h3>
+        <span class="when mono">2018</span>
+      </div>
+      <p class="org">Utah State University</p>
+      <div class="role">
+        <h3>BS, Biological Engineering · Computer Science minor</h3>
+        <span class="when mono">2017</span>
+      </div>
+      <p class="org">Utah State University</p>
+    </section>
+
+    <section>
+      <h2>Skills</h2>
+      <ul class="skills">
+        {skills.map((s) => <li>{s}</li>)}
+      </ul>
+    </section>
+  </div>
+</Base>

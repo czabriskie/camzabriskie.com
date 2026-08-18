@@ -1,0 +1,23 @@
+---
+import { fmtDate, type Stream } from '../lib/bytes';
+interface Props {
+  stream: Stream;
+  items: { entry: any; n: number; bits: string }[];
+  limit?: number;
+}
+const { stream, items, limit } = Astro.props;
+const cls = stream === 'tech-bytes' ? 'tech' : 'life';
+const shown = [...items].reverse().slice(0, limit ?? items.length);
+---
+<ul class="bytes">
+  {shown.map(({ entry, bits }) => (
+    <li>
+      <div class="meta">
+        <span class={`byte-badge ${cls}`}><b>{bits}</b></span>
+        <span class="mono">{fmtDate(entry.data.date)}</span>
+      </div>
+      <a class="title" href={`/${stream}/${entry.id}/`}>{entry.data.title}</a>
+      <p class="desc">{entry.data.description}</p>
+    </li>
+  ))}
+</ul>

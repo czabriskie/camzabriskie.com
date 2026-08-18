@@ -1,0 +1,29 @@
+---
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { numberedBytes, streamLabel, fmtDate, type Stream } from '../../lib/bytes';
+
+export async function getStaticPaths() {
+  const paths = [];
+  for (const stream of ['tech-bytes', 'life-bytes'] as Stream[]) {
+    for (const item of await numberedBytes(stream)) {
+      paths.push({ params: { stream, slug: item.entry.id }, props: { item, stream } });
+    }
+  }
+  return paths;
+}
+
+const { item, stream } = Astro.props;
+const { Content } = await render(item.entry);
+const cls = stream === 'tech-bytes' ? 'tech' : 'life';
+---
+<Base title={`${item.entry.data.title} — Cameron Zabriskie`} description={item.entry.data.description}>
+  <article class="byte">
+    <h1>{item.entry.data.title}</h1>
+    <div class="meta">
+      <span class={`byte-badge ${cls}`}><b>{item.bits}</b></span>
+      <span class="mono">{streamLabel[stream]} · {fmtDate(item.entry.data.date)}</span>
+    </div>
+    <Content />
+  </article>
+</Base>

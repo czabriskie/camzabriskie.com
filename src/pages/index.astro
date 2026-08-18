@@ -1,0 +1,35 @@
+---
+import Base from '../layouts/Base.astro';
+import ByteList from '../components/ByteList.astro';
+import { numberedBytes } from '../lib/bytes';
+
+const tech = await numberedBytes('tech-bytes');
+const life = await numberedBytes('life-bytes');
+---
+<Base title="Cameron Zabriskie">
+  <section class="intro">
+    <h1>I'm Cameron. I build software and I write it down.</h1>
+    <p class="lede">
+      Product engineer at ZONTAL, working on scientific instrument data. I keep two small blogs
+      here: <a href="/tech-bytes/">Tech Bytes</a> for the engineering, <a href="/life-bytes/">Life
+      Bytes</a> for everything else. One byte at a time.
+    </p>
+  </section>
+
+  <div class="streams">
+    <section class="stream-tech">
+      <div class="stream-head">
+        <span class="tick" aria-hidden="true"></span>
+        <h2><a href="/tech-bytes/" style="text-decoration:none">Tech Bytes</a></h2>
+      </div>
+      <ByteList stream="tech-bytes" items={tech} limit={4} />
+    </section>
+    <section class="stream-life">
+      <div class="stream-head">
+        <span class="tick" aria-hidden="true"></span>
+        <h2><a href="/life-bytes/" style="text-decoration:none">Life Bytes</a></h2>
+      </div>
+      <ByteList stream="life-bytes" items={life} limit={4} />
+    </section>
+  </div>
+</Base>

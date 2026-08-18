@@ -1,0 +1,48 @@
+---
+import '../styles/global.css';
+interface Props {
+  title: string;
+  description?: string;
+}
+const { title, description = 'Cameron Zabriskie — product engineer. Tech Bytes and Life Bytes.' } = Astro.props;
+const path = Astro.url.pathname;
+const current = (p: string) => (path === p || (p !== '/' && path.startsWith(p)) ? 'page' : undefined);
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500&display=swap"
+    />
+  </head>
+  <body>
+    <header class="site">
+      <div class="wrap">
+        <a class="brand" href="/">cam<span class="dot-tech">z</span>abriskie<span class="dot-life">.</span>com</a>
+        <nav class="site-nav">
+          <a href="/" aria-current={current('/')}>Home</a>
+          <a href="/tech-bytes/" aria-current={current('/tech-bytes')}>Tech Bytes</a>
+          <a href="/life-bytes/" aria-current={current('/life-bytes')}>Life Bytes</a>
+          <a href="/resume/" aria-current={current('/resume')}>Resume</a>
+        </nav>
+      </div>
+    </header>
+    <main class="wrap">
+      <slot />
+    </main>
+    <footer class="site">
+      <div class="wrap">
+        <span>© {new Date().getFullYear()} Cameron Zabriskie</span>
+        <span class="mono">one byte at a time</span>
+      </div>
+    </footer>
+  </body>
+</html>

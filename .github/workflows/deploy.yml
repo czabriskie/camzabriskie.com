@@ -1,0 +1,45 @@
+name: Deploy (GitHub Pages)
+
+# Every push to main deploys — merged = live. Deliberately simpler than ClimbIQ's
+# tag-gated production deploy: a personal blog has no staging environment or database
+# boundary to protect (Decision 0001).
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Pages deployment needs exactly these three; nothing else.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deploy at a time; a newer push supersedes a queued (not running) older one.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

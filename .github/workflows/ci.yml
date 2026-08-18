@@ -1,0 +1,42 @@
+name: CI
+
+# Content-and-docs-only changes skip CI (pattern borrowed from ClimbIQ, scaled down:
+# here CI is one cheap build job, but the principle holds — a markdown post can't break
+# the build in ways `npm run build` before the PR didn't already catch, and the
+# enumerated list below can only waste a run if wrong, never skip a real validation).
+# NOTE if branch protection is ever added to main: a skipped workflow reports NO check
+# run at all — required-status-check setups need a path filter inside the job instead.
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'docs/**'
+      - '*.md'
+      - '.claude/**'
+  pull_request:
+    paths-ignore:
+      - 'docs/**'
+      - '*.md'
+      - '.claude/**'
+
+# Least privilege: build only needs to read the repo.
+permissions:
+  contents: read
+
+# A new push to a PR branch supersedes the previous push's still-running CI.
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
