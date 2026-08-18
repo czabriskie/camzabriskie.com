@@ -4,7 +4,7 @@ interface Props {
   title: string;
   description?: string;
 }
-const { title, description = 'Cam Zabriskie — product engineer. Tech Bytes and Life Bytes.' } = Astro.props;
+const { title, description = 'Cam Zabriskie — senior DevOps engineer. Tech Bytes and Life Bytes.' } = Astro.props;
 const path = Astro.url.pathname;
 const current = (p: string) => (path === p || (p !== '/' && path.startsWith(p)) ? 'page' : undefined);
 ---
