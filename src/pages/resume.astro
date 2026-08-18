@@ -1,7 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 const skills = [
-  'AWS', 'Kubernetes / EKS', 'Terraform', 'Helm', 'Karpenter', 'KEDA',
+  'AWS', 'Kubernetes / EKS', 'Terraform', 'Ansible', 'Helm', 'Karpenter', 'KEDA',
   'GitLab CI', 'Docker', 'Prometheus / Grafana', 'k6', 'Python', 'AWS CDK', 'Lambda',
   'ECS', 'SQL', 'Snowflake', 'scikit-learn', 'pandas', 'Flask', 'pytest', 'R', 'Git', 'Linux',
 ];
@@ -29,7 +29,7 @@ const skills = [
         <li>Established the organization's first SLIs/SLOs for platform applications, now the applications team's reliability baseline — profiled production services with custom instrumentation and k6 load tests, uncovered a confirmed memory leak and CPU-bound rendering bottlenecks, and proposed the prioritized fixes.</li>
         <li>Designed and prototyped Kubernetes autoscaling (Karpenter + KEDA) for ~15 first-party applications, moving them off fixed-replica node groups onto demand-driven infrastructure — including a Redis-backed session-count metric that combines with CPU signals to catch blind spots either signal misses alone, validated end-to-end with a synchronized Playwright + k6 harness.</li>
         <li>Found and quantified major AWS cost leaks: an audit across two regions showing 82% of load-balancer target groups (3,170 of 3,876) were orphaned, and a root-cause diagnosis of an Elastic IP leak from mismatched Lambda/SQS/NAT timeouts, with self-healing fixes designed for both.</li>
-        <li>Centralized environment deployment configuration in Git (Helm, GitLab CI) and coordinated the application-deployment workstream for a major platform upgrade across multiple enterprise customer environments, standardizing previously inconsistent per-customer deployments.</li>
+        <li>Centralized environment deployment configuration in Git (Helm, Ansible, GitLab CI) and coordinated the application-deployment workstream for a major platform upgrade across multiple enterprise customer environments, standardizing previously inconsistent per-customer deployments.</li>
       </ul>
 
       <div class="role">
