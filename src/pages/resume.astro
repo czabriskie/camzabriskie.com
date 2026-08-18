@@ -25,8 +25,7 @@ const skills = [
       </div>
       <p class="org">ZONTAL · Provo, UT</p>
       <ul>
-        <li>Migrated the company's public website from an external agency to self-hosted Cloudflare Pages with edge-native services — authored the ADR, designed the GitHub Actions CI/CD pipeline, hardened security (WAF, CSP, HSTS), and managed the DNS cutover.</li>
-        <li>Leading AWS's Foundational Technical Review to bring a product offering to the AWS Marketplace: CIS benchmarks, Well-Architected alignment, and architecture documentation.</li>
+        <li>Migrated the company's public website from an external agency to self-hosted Cloudflare Pages with edge-native services — authored the architecture design, designed the GitHub Actions CI/CD pipeline, hardened security (WAF, CSP, HSTS), and managed the DNS cutover.</li>
         <li>Established the organization's first SLIs/SLOs for platform applications — profiled production services with custom instrumentation and k6 load tests, uncovering a confirmed memory leak and CPU-bound rendering bottlenecks, and authored the platform ADR of prioritized fixes now adopted as the applications team's reliability baseline.</li>
         <li>Designed and prototyped Kubernetes autoscaling (Karpenter + KEDA) for ~15 first-party applications, moving them off fixed-replica node groups onto demand-driven infrastructure — including a Redis-backed session-count metric that combines with CPU signals to catch blind spots either signal misses alone, validated end-to-end with a synchronized Playwright + k6 harness.</li>
         <li>Found and quantified major AWS cost leaks: an audit across two regions showing 82% of load-balancer target groups (3,170 of 3,876) were orphaned, and a root-cause diagnosis of an Elastic IP leak from mismatched Lambda/SQS/NAT timeouts, with self-healing fixes designed for both.</li>
