@@ -17,7 +17,7 @@ const { item, stream } = Astro.props;
 const { Content } = await render(item.entry);
 const cls = stream === 'tech-bytes' ? 'tech' : 'life';
 ---
-<Base title={`${item.entry.data.title} — Cameron Zabriskie`} description={item.entry.data.description}>
+<Base title={`${item.entry.data.title} — Cam Zabriskie`} description={item.entry.data.description}>
   <article class="byte">
     <h1>{item.entry.data.title}</h1>
     <div class="meta">

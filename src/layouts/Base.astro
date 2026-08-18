@@ -4,7 +4,7 @@ interface Props {
   title: string;
   description?: string;
 }
-const { title, description = 'Cameron Zabriskie — product engineer. Tech Bytes and Life Bytes.' } = Astro.props;
+const { title, description = 'Cam Zabriskie — product engineer. Tech Bytes and Life Bytes.' } = Astro.props;
 const path = Astro.url.pathname;
 const current = (p: string) => (path === p || (p !== '/' && path.startsWith(p)) ? 'page' : undefined);
 ---
@@ -40,7 +40,7 @@ const current = (p: string) => (path === p || (p !== '/' && path.startsWith(p)) 
     </main>
     <footer class="site">
       <div class="wrap">
-        <span>© {new Date().getFullYear()} Cameron Zabriskie</span>
+        <span>© {new Date().getFullYear()} Cam Zabriskie</span>
         <span class="mono">one byte at a time</span>
       </div>
     </footer>
