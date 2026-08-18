@@ -20,17 +20,6 @@ const skills = [
       <h2>Experience</h2>
 
       <div class="role">
-        <h3>Adjunct Professor, Cloud Computing (IS 3600)</h3>
-        <span class="when mono">Aug 2025 – present</span>
-      </div>
-      <p class="org">Utah State University</p>
-      <ul>
-        <li>Designed and teach a semester-long cloud computing course covering IAM and security, Docker and ECR, EC2, Lambda with EventBridge and API Gateway, ECS/Fargate, EKS, CloudFormation and AWS CDK, RDS/Redshift/DynamoDB, SQS/SNS, and CloudWatch observability.</li>
-        <li>Built the curriculum, lecture videos, and hands-on assignments from scratch, with interview-style assessments aimed at making the material transfer directly to students' jobs.</li>
-        <li>Manage teaching assistants and run open office hours across the semester.</li>
-      </ul>
-
-      <div class="role">
         <h3>Senior DevOps Engineer</h3>
         <span class="when mono">2024 – present</span>
       </div>
@@ -41,6 +30,17 @@ const skills = [
         <li>Designed and prototyped Kubernetes autoscaling (Karpenter + KEDA) for ~15 first-party applications, moving them off fixed-replica node groups onto demand-driven infrastructure — including a Redis-backed session-count metric that combines with CPU signals to catch blind spots either signal misses alone, validated end-to-end with a synchronized Playwright + k6 harness.</li>
         <li>Found and quantified major AWS cost leaks: an audit across two regions showing 82% of load-balancer target groups (3,170 of 3,876) were orphaned, and a root-cause diagnosis of an Elastic IP leak from mismatched Lambda/SQS/NAT timeouts, with self-healing fixes designed for both.</li>
         <li>Centralized environment deployment configuration in Git (Helm, Ansible, GitLab CI) and coordinated the application-deployment workstream for a major platform upgrade across multiple enterprise customer environments, standardizing previously inconsistent per-customer deployments.</li>
+      </ul>
+
+      <div class="role">
+        <h3>Adjunct Professor, Cloud Computing (IS 3600)</h3>
+        <span class="when mono">Aug 2025 – present</span>
+      </div>
+      <p class="org">Utah State University</p>
+      <ul>
+        <li>Designed and teach a semester-long cloud computing course covering IAM and security, Docker and ECR, EC2, Lambda with EventBridge and API Gateway, ECS/Fargate, EKS, CloudFormation and AWS CDK, RDS/Redshift/DynamoDB, SQS/SNS, and CloudWatch observability.</li>
+        <li>Built the curriculum, lecture videos, and hands-on assignments from scratch, with interview-style assessments aimed at making the material transfer directly to students' jobs.</li>
+        <li>Manage teaching assistants and run open office hours across the semester.</li>
       </ul>
 
       <div class="role">
