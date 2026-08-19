@@ -35,6 +35,10 @@ the routine. It lists the public repos, subtracts every name already in
 the remainder as a markdown table plus a fenced JSON block. When nothing is unlisted it
 closes the issue instead, so a merged PR tidies up after itself.
 
+`src/lib/projects.ts` also carries a `declined` array, and the workflow subtracts those
+names as well, so a repo judged not worth listing stays judged instead of returning as a
+candidate every Monday.
+
 The routine now reads that issue over the repo-scoped issues endpoint, which is
 reachable with plain `curl` and needs no MCP tool and no token. An empty result means a
 quiet week: stop, no branch, no PR, no message.

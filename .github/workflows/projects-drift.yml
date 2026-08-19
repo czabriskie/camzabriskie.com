@@ -43,7 +43,15 @@ jobs:
             const listed = new Set(
               [...src.matchAll(/name:\s*'([^']+)'/g)].map((m) => m[1].toLowerCase()),
             );
-            core.info(`page lists ${listed.size} repos`);
+            // Repos already judged and declined. Without this every settled "no" comes
+            // back as a candidate every Monday.
+            const declinedBlock = src.match(/export const declined[^=]*=\s*\[([\s\S]*?)\]/);
+            const declined = new Set(
+              declinedBlock
+                ? [...declinedBlock[1].matchAll(/'([^']+)'/g)].map((m) => m[1].toLowerCase())
+                : [],
+            );
+            core.info(`page lists ${listed.size} repos, ${declined.size} declined`);
 
             // GITHUB_TOKEN is repo-scoped, so this returns public repos only. The private
             // filter below is belt and braces: a private repo must never reach the page.
@@ -54,7 +62,14 @@ jobs:
             });
 
             const candidates = repos
-              .filter((r) => !r.private && !r.fork && !r.archived && !listed.has(r.name.toLowerCase()))
+              .filter(
+                (r) =>
+                  !r.private &&
+                  !r.fork &&
+                  !r.archived &&
+                  !listed.has(r.name.toLowerCase()) &&
+                  !declined.has(r.name.toLowerCase()),
+              )
               .sort((a, b) => b.pushed_at.localeCompare(a.pushed_at))
               .map((r) => ({
                 name: r.name,
@@ -93,6 +108,7 @@ jobs:
               '',
               'Being listed here is not a verdict. The curation rule in `docs/Decisions/0003-projects-page.md`',
               'still applies: a repo earns a spot by doing something. Practice repos and one-line READMEs stay off.',
+              'To decline one for good, add its name to the `declined` array in `src/lib/projects.ts`.',
               '',
               '| repo | language | last push | description |',
               '| --- | --- | --- | --- |',
