@@ -18,7 +18,10 @@
 - `/resume/` — resume (email + GitHub only; no phone/address)
 
 Project entries live in `src/lib/projects.ts`, hand-written rather than pulled from the
-GitHub API (Decision 0003). Adding a project means adding it there.
+GitHub API (Decision 0003). Adding a project means adding it there. Drift against Cam's
+actual public repos is caught weekly by `.github/workflows/projects-drift.yml`, which
+files the unlisted ones as a `projects-drift` issue for the routine to draft from
+(Decision 0004).
 
 ## Content model
 

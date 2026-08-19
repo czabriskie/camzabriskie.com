@@ -83,3 +83,19 @@ export const teaching: Project[] = [
   { name: 'simple-glue-athena', stack: 'Glue · Athena', blurb: 'querying flight data sitting in S3 with SQL, from Python, into a DataFrame' },
   { name: 'lazy-loading', stack: 'Flask · DynamoDB', blurb: 'a DynamoDB app with a Redis cache you can switch off to watch the latency come back' },
 ];
+
+/**
+ * Public repos looked at and deliberately left off the page: practice repos, one-line
+ * READMEs, and anything a fuller example already covers. The weekly drift workflow
+ * subtracts these too, so a settled "no" stays settled instead of coming back every
+ * Monday. Adding a name here is how you decline a repo for good.
+ */
+export const declined: string[] = [
+  'Git-PR-Practice',
+  'docker-example-find-factors',
+  'redis-dynamo',
+  'partner-codeartifact-access',
+  'test-dag-ci',
+  'ray-docker',
+  'amplify-cognito-pkg',
+];
