@@ -172,8 +172,14 @@ article.byte th, article.byte td { border: 1px solid var(--line); padding: 0.4re
 }
 
 /* Projects */
-.projects .group { margin-bottom: 2.8rem; }
-.projects .group-note { color: var(--muted); font-size: 0.95rem; margin-bottom: 1.4rem; }
+.projects .group { margin-bottom: 3.2rem; padding-top: 1.7rem; border-top: 1px solid var(--line); }
+.projects .group h2 {
+  font-size: clamp(1.6rem, 4.5vw, 1.95rem);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  margin: 0 0 0.4rem;
+}
+.projects .group-note { color: var(--muted); font-size: 0.95rem; margin-bottom: 1.6rem; }
 ul.project-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 1.7rem; }
 ul.project-list .head { display: flex; align-items: baseline; gap: 0.7rem; flex-wrap: wrap; }
 ul.project-list h3 { margin: 0; font-size: 1.12rem; }
