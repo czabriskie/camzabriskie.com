@@ -14,7 +14,11 @@
 - `/` — intro + latest bytes from both streams
 - `/tech-bytes/`, `/life-bytes/` — stream indexes
 - `/tech-bytes/<slug>/`, `/life-bytes/<slug>/` — posts
+- `/projects/` — curated public GitHub projects, grouped as tools / experiments / teaching
 - `/resume/` — resume (email + GitHub only; no phone/address)
+
+Project entries live in `src/lib/projects.ts`, hand-written rather than pulled from the
+GitHub API (Decision 0003). Adding a project means adding it there.
 
 ## Content model
 

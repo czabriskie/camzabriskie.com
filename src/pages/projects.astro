@@ -1,0 +1,74 @@
+---
+import Base from '../layouts/Base.astro';
+import { tools, built, teaching, repoUrl } from '../lib/projects';
+
+const blurb =
+  'Public repositories: the tools I use, the things I built to find out whether they would work, and the examples I teach from.';
+---
+<Base title="Projects — Cam Zabriskie" description={blurb}>
+  <div class="projects stream-tech">
+    <div class="stream-head">
+      <span class="tick" aria-hidden="true"></span>
+      <h1>Projects</h1>
+    </div>
+    <p class="lede" style="color: var(--muted); margin-bottom: 2.5rem;">
+      The public ones worth pointing at, all on
+      <a href="https://github.com/czabriskie">github.com/czabriskie</a>. Some of it I use every day,
+      some of it existed to answer one question, and the rest is what I teach from.
+    </p>
+
+    <section class="group">
+      <h2>Tools I use</h2>
+      <p class="group-note">Built because I wanted the thing, and I still run all four of them.</p>
+      <ul class="project-list">
+        {tools.map((p) => (
+          <li>
+            <div class="head">
+              <h3><a href={repoUrl(p.name)}>{p.name}</a></h3>
+              <span class="chip mono">{p.stack}</span>
+              {p.live && <a class="live mono" href={p.live}>live →</a>}
+            </div>
+            <p>{p.blurb}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="group">
+      <h2>Things I built</h2>
+      <p class="group-note">
+        Some of these answered a question I had, some of them I just wanted to exist. None of them
+        are anyone's job.
+      </p>
+      <ul class="project-list">
+        {built.map((p) => (
+          <li>
+            <div class="head">
+              <h3><a href={repoUrl(p.name)}>{p.name}</a></h3>
+              <span class="chip mono">{p.stack}</span>
+              {p.live && <a class="live mono" href={p.live}>live →</a>}
+            </div>
+            <p>{p.blurb}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="group">
+      <h2>Teaching examples</h2>
+      <p class="group-note">
+        Course material for IS 3600, the cloud computing class I teach at Utah State. Each one is
+        deliberately the smallest thing that still demonstrates the idea, because students have to be
+        able to read all of it in one sitting.
+      </p>
+      <ul class="compact-list">
+        {teaching.map((p) => (
+          <li>
+            <a class="repo mono" href={repoUrl(p.name)}>{p.name}</a>
+            <span class="note">{p.blurb}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+  </div>
+</Base>
