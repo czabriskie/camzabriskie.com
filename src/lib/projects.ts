@@ -3,6 +3,8 @@ export type Project = {
   name: string;
   /** Primary language / stack, shown as a chip. */
   stack: string;
+  /** Live, running version, if there is one to click. */
+  live?: string;
   blurb: string;
 };
 
@@ -36,8 +38,8 @@ export const tools: Project[] = [
   },
 ];
 
-/** Built to find out whether something would work. */
-export const experiments: Project[] = [
+/** Things Cam built, finished or not, that are not tools he depends on. */
+export const built: Project[] = [
   {
     name: 'researcher',
     stack: 'Python · Terraform · React',
@@ -47,6 +49,7 @@ export const experiments: Project[] = [
   {
     name: 'nasa-eyes',
     stack: 'JavaScript',
+    live: 'https://czabriskie.github.io/nasa-eyes/',
     blurb:
       "A dependency-free site for browsing NASA's EPIC imagery, which is Earth photographed from a million miles out at the L1 point. Coverage is irregular, so the calendar grays out the days with no imagery before you go hunting for a date that was never captured. Day view animates a whole day of frames, range view is a filmstrip, compare view puts two dates side by side, and every view has a shareable URL.",
   },
