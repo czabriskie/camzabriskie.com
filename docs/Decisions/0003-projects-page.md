@@ -25,7 +25,15 @@ listed for completeness. Private repos never appear.
 ## Consequences
 
 - The page goes stale on its own. A new public repo shows up only when someone adds it
-  here, which is the tradeoff for having real descriptions instead of GitHub blurbs.
+  here, which is the tradeoff for having real descriptions instead of GitHub blurbs. A
+  weekly routine ("Projects page drift check", Mondays 8am MT) covers the drift: it diffs
+  the live public repos against `src/lib/projects.ts`, drafts blurbs for anything that
+  clears the curation bar, and opens a PR for Cam to read. It never merges, and a week
+  with nothing new produces no PR and no notification.
+- Enumerating the repos only works through the GitHub MCP `search_repositories` tool. The
+  session proxy answers 403 to `api.github.com/users/<user>/repos` and to github.com
+  profile pages, allowing only endpoints scoped to the session's own repositories;
+  `raw.githubusercontent.com` is reachable, which is how READMEs get read.
 - No build-time network call, no API token, no rate limit; the build stays offline and
   deterministic, consistent with Decision 0001.
 - Repo metadata that would be free from the API (stars, last push, language) is absent by
