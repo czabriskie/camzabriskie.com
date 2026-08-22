@@ -1,0 +1,22 @@
+---
+title: "AI makes quality worse, just not in the way I expected"
+description: "AI didn't make me write worse code, it removed the friction that used to push me toward fixing the real problem instead of patching around it."
+date: 2026-08-22
+draft: false
+---
+
+I've always believed people follow the path of least resistance when left to their own devices. There's an oddball here and there who fights that on principle, but most of us aren't built that way, myself included. I used to think AI was a threat to quality because it would write worse code than I would. That's not what's actually happening to me, and the real version of the problem is harder to see coming.
+
+Here's the situation. I ran across some code that needed updating to stay compatible with a new release of something it depends on. Looking through it, I found a pile of files that were all doing pretty much the same thing, obvious candidates to consolidate into one. Except they weren't quite the same thing. There were subtle differences in what each one output, and those differences mapped to different inputs, which meant somewhere along the way, the business logic itself had drifted apart across cases that probably should have stayed consistent.
+
+In the past, running into that would have annoyed me enough to do something about it. I'd get frustrated that I was expected to maintain fifty near-duplicate files, and that frustration would turn into motivation, I'd go find whoever owned the business logic and make the case that the outputs needed to be standardized, not just the code. The pain of working with bad structure was the thing that pushed me toward fixing the actual cause instead of the symptom. Hard to maintain code was a signal, and I used to act on the signal.
+
+Now I don't have to. I can write tests that pin down the current behavior so I've got a regression check, hand the fifty files to my AI buddy, let it work through the consolidation, run the tests, confirm the output hasn't changed, and I'm done. The code is more maintainable than it was, the tests pass, and by every measure I'd normally use to call a piece of work finished, it's finished.
+
+But the underlying problem, the fact that the business logic itself was never standardized in the first place, is completely untouched. It's still sitting there, just wrapped in tidier code now. And the path to actually fixing that hasn't gotten any easier, it still means going and finding stakeholders, explaining why the current behavior isn't right, and making the case for a change to how the business operates, not just how the code is written. That's slower, it's more political, and it doesn't have a clean regression test to tell you when you're done. AI didn't touch that path at all. It just made the other path so much shorter that I don't feel the pull toward the hard one anymore.
+
+That's the part I didn't expect. I assumed AI would be a quality risk because it might generate bad code, hallucinate an API, miss an edge case, whatever. Instead the risk is that it's really good at exactly the kind of work that used to be my motivation to go find the root cause. The friction wasn't a bug in how I worked before, it was doing something. It was the thing that made "just patch it" feel unacceptable enough that I'd go through the trouble of doing it right. Remove the friction and you don't just remove the annoyance, you remove the reason I ever bothered escalating in the first place.
+
+I don't think this is unique to the one codebase I was looking at. Any time the "correct" fix requires going through people, process, or a business decision, and the "good enough" fix is now something an AI can grind through in an afternoon while I check a test suite, the incentive tilts toward good enough. And good enough compounds. Fifty files patched into one is still progress, it's not nothing, but it also means the actual root problem is now further from anyone's attention than it was before, because the code no longer hurts enough to remind you it's there.
+
+What can I actually do about this? I don't have a clean answer. Part of me thinks the fix has to be procedural, something like deciding ahead of time that certain kinds of inconsistency get escalated regardless of how easy the code-level fix turns out to be, so the decision isn't made in the moment when the easy path is sitting right there. But I also know that sometimes I genuinely don't want to deal with the bureaucracy, and I don't think that instinct goes away just because I've named it. I'm still sitting with this one.
