@@ -5,7 +5,7 @@ date: 2026-08-22
 draft: false
 ---
 
-I read something this week about how to pick what to work on, and I've been chewing on it since, mostly because it put words to a few things I've felt but never really worked out for myself.
+I read [a piece on staffeng.com about how to pick what to work on](https://staffeng.com/guides/work-on-what-matters/) this week, and I've been chewing on it since, mostly because it put words to a few things I've felt but never really worked out for myself.
 
 The first one is the gap between being visible and actually being useful. There's a term for doing low-impact work that gets seen, and once I had the word for it I started noticing it everywhere, including in my own choices. Companies mix up visibility and impact so often that a lot of senior engineers end up spending most of their time on stuff that gets praised in a meeting but doesn't move much. I don't think that's always cynical or lazy, I think it's just easier to see the thing that got a shoutout than the thing that quietly kept a system running. But there does need to be a balance. Staying visible matters if you want to keep your job and grow in it, so I'm not saying ignore that side entirely. I just keep asking myself why it has to be a tradeoff at all, why the high-impact work and the visible work can't be the same work more often than they are.
 
