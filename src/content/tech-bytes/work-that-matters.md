@@ -1,0 +1,20 @@
+---
+title: Work that matters
+description: Some notes to myself on visibility versus impact, after reading a good piece on picking what to work on.
+date: 2026-08-22
+draft: false
+---
+
+I read something this week about how to pick what to work on, and I've been chewing on it since, mostly because it put words to a few things I've felt but never really worked out for myself.
+
+The first one is the gap between being visible and actually being useful. There's a term for doing low-impact work that gets seen, and once I had the word for it I started noticing it everywhere, including in my own choices. Companies mix up visibility and impact so often that a lot of senior engineers end up spending most of their time on stuff that gets praised in a meeting but doesn't move much. I don't think that's always cynical or lazy, I think it's just easier to see the thing that got a shoutout than the thing that quietly kept a system running. But there does need to be a balance. Staying visible matters if you want to keep your job and grow in it, so I'm not saying ignore that side entirely. I just keep asking myself why it has to be a tradeoff at all, why the high-impact work and the visible work can't be the same work more often than they are.
+
+Related to that is the question of what to swarm to. If something is genuinely a do-this-or-fail situation, everyone should be on it, that part's obvious. But if it's not existential, and leadership has just flagged it as the top priority, my instinct now is to be a little skeptical about jumping in, not because it doesn't matter, but because so many people are already there that it's hard to add anything anyone will notice. The more interesting move might be finding the problem that's real and impactful but doesn't have a crowd around it yet. That's harder to spot and probably takes more judgment to trust, but it's also a better way to show you can find important work on your own instead of just following where the attention already is.
+
+I also keep coming back to a harder question that I don't have an answer for: how do you actually identify the things that simply won't happen unless you're the one who does them. That category is supposedly the biggest opportunity you get, and it apparently gets narrower and deeper the further along you get in your career, which sounds right, but I don't have a reliable way to spot those things yet. I'm not going to pretend I've figured this out, I just think it's worth sitting with instead of rushing past.
+
+One thing I didn't expect to land on me as hard as it did is the point about tech debt. Companies are basically always balancing surviving right now against building toward the future, and if you're about to lose the current round, that's where your focus has to go, full stop. There's no point polishing the long-term state of something if it doesn't make it another month. Some amount of tech debt is just the price of trading a slower, more correct solution for a faster turnaround, and that's not automatically a bad trade, it's a trade. I think I've internalized "tech debt bad" as a reflex without always asking whether the debt was the right call given what actually needed to survive.
+
+The part that stuck with me most, though, is about legacy, and it's the one part of this that doesn't feel like a tradeoff at all. If you spend even a couple hours a week actually developing the people around you, that's probably what people remember long after the specs and the pull requests are gone. People matter more than the artifacts. And tied to that, if you're senior and you're not paying attention, it's easy to drift into doing easy, low-impact work just because it's comfortable, work that someone more junior could've done just as well. Taking that work away from a junior person for a small hit of personal accomplishment doesn't actually help either of you, it just means nobody did anything very impactful that day.
+
+None of this is a clean framework, it's more a handful of things I want to keep checking myself against.
