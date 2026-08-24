@@ -1,6 +1,8 @@
 # Experiment 0001: AI-drafted vs. self-written LinkedIn posts
 
-- **Status:** Proposed (awaiting Cam's sign-off; nothing below runs until he adopts it)
+- **Status:** Not adopted (2026-08-24). Cam chose to review and edit every draft himself
+  each week instead of running a formal test, which addresses the detection risk directly.
+  Kept as a record of the design and the baseline numbers.
 - **Date:** 2026-08-24
 - **Owner:** Cam, with the weekly drafting routine doing the mechanical parts
 
