@@ -12,7 +12,10 @@ comments (e.g. "Decision 0001") point to `docs/Decisions/`.
 ```
 docs/
 ├── Site.md          project goals, content model, page inventory
-└── Decisions/       ADR-style decision log — 000N-short-slug.md, zero-padded, incrementing
+├── Decisions/       ADR-style decision log — 000N-short-slug.md, zero-padded, incrementing
+└── Experiments/     protocols for content experiments — same numbering scheme; the
+                     protocol is public, but per-post data (e.g. which posts are
+                     AI-drafted) stays out of this public repo
 ```
 
 **Decisions/** rules: one file per consequential decision, written after the fact as a
