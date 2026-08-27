@@ -31,6 +31,15 @@ existing + 1 — `ls docs/Decisions/` first.
   fragments, no em dashes in post prose, endings trail off rather than summarize. The
   `byte-writer` agent has the full rules — new post drafts go through it.
 
+## LinkedIn scheduler
+
+LinkedIn posts are pushed and scheduled from this repo, not a third-party tool
+(Decision 0005). Draft posts arrive as PRs adding files to `linkedin/queue/`; merging
+schedules them, and `.github/workflows/linkedin-publish.yml` publishes due posts via
+LinkedIn's free consumer API, moving each to `linkedin/posted/` as the publish record.
+`linkedin/README.md` has the file format, setup, and token-renewal notes;
+`linkedin/VOICE.md` is the style source the weekly drafting routine reads.
+
 ## Writing code
 
 - Astro 5, static output, no client-side framework. Keep it that way unless a Decision
@@ -47,9 +56,11 @@ existing + 1 — `ls docs/Decisions/` first.
   pre-approved to squash-merge. Content-only PRs (posts, docs) skip CI by path filter;
   for those, a local `npm run build` before the PR is the gate.
 - **Exception, and it overrides the standing rule: never merge a PR that adds or edits a
-  blog post.** Writing published under Cam's name gets read by Cam before it goes live,
-  every time, no matter how green CI is. Open the PR, say what it is, and leave it. This
-  is what the weekly drafting routine does, and it applies to any agent or session.
+  blog post or a `linkedin/queue/` file.** Writing published under Cam's name gets read by
+  Cam before it goes live, every time, no matter how green CI is. Open the PR, say what it
+  is, and leave it. This is what the weekly drafting routine does, and it applies to any
+  agent or session. For queue files the merge itself is the schedule step (Decision 0005),
+  which makes this rule load-bearing twice over.
 - A push to `main` deploys to production (GitHub Pages). There is no staging site; that
   is a deliberate simplicity choice for a personal blog (Decision 0001). Preview locally
   with `npm run dev`.
