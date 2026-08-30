@@ -6,6 +6,10 @@ name: Deploy (GitHub Pages)
 on:
   push:
     branches: [main]
+    # The LinkedIn queue (Decision 0005) is repo state, not site content — a
+    # merged batch of drafts or a queue→posted move must not redeploy the site.
+    paths-ignore:
+      - 'linkedin/**'
   workflow_dispatch:
 
 # Pages deployment needs exactly these three; nothing else.

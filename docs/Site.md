@@ -35,6 +35,10 @@ Local: write markdown → `npm run build` → PR → merge → Pages deploys.
 Cloud: the `byte-writer` agent can draft posts in a cloud session (with vault context via
 the obsidian-cloud-sync setup) and open a PR for review.
 
+LinkedIn posts are scheduled from this repo too (Decision 0005): the weekly routine opens
+PRs against `linkedin/queue/`, merging schedules, and an Actions cron publishes via
+LinkedIn's free API. See `linkedin/README.md`.
+
 ## Deferred (revisit when wanted)
 
 - RSS feeds per stream (`@astrojs/rss`)

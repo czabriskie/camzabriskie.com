@@ -1,0 +1,82 @@
+name: LinkedIn publish
+
+# Self-hosted replacement for Postbeam (Decision 0005). Two schedules share one
+# workflow: a 15-minute tick that publishes any due post from linkedin/queue/
+# via LinkedIn's free consumer Share API, and a Monday token-health check that
+# fails loudly (= emails Cam) when the ~60-day access token nears expiry, since
+# renewal is a manual local run of scripts/linkedin-auth.mjs.
+#
+# Merging a queue file into main IS the approve-and-schedule step — the PR is
+# Cam's review gate, same rule as blog posts. A publish moves the file to
+# linkedin/posted/ and commits that move back to main; pushes made with the
+# default GITHUB_TOKEN deliberately trigger no other workflows, so a state move
+# never causes a Pages deploy or CI run.
+on:
+  schedule:
+    - cron: '*/15 * * * *' # publisher tick
+    - cron: '30 13 * * 1' # weekly token health check
+  workflow_dispatch:
+
+# contents:write is for committing the queue → posted move; the LinkedIn
+# credentials come in as secrets, not permissions.
+permissions:
+  contents: write
+
+# Never let two ticks overlap — an overlapped run is the one path to a
+# double-publish. A queued tick just runs next.
+concurrency:
+  group: linkedin-publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Publish due posts
+    if: github.event.schedule != '30 13 * * 1'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      # No npm ci: the script is dependency-free on purpose (see its header).
+      - run: node scripts/linkedin-publish.mjs
+        env:
+          LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
+          LINKEDIN_PERSON_URN: ${{ secrets.LINKEDIN_PERSON_URN }}
+      # Commit whatever DID publish even when a later post in the same run
+      # failed — the moved file is the double-publish guard, so it must land.
+      # Rebase-retry the push: main can move under us (a docs or post PR merging
+      # mid-tick), and a rejected push here would leave the published file back
+      # in queue/ for the next tick to publish AGAIN. The rebase can't conflict:
+      # this commit only adds/removes files under linkedin/.
+      - name: Commit queue → posted moves
+        if: always()
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add linkedin
+          git diff --cached --quiet && exit 0
+          git commit -m 'linkedin: record published post(s)'
+          for attempt in 1 2 3; do
+            git push && exit 0
+            sleep 5
+            git pull --rebase origin main
+          done
+          git push
+
+  token-health:
+    name: Token expiry check
+    if: github.event.schedule == '30 13 * * 1'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node scripts/linkedin-publish.mjs --check-token
+        env:
+          LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
+          LINKEDIN_CLIENT_ID: ${{ secrets.LINKEDIN_CLIENT_ID }}
+          LINKEDIN_CLIENT_SECRET: ${{ secrets.LINKEDIN_CLIENT_SECRET }}

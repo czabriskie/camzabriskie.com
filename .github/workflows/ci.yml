@@ -13,11 +13,13 @@ on:
       - 'docs/**'
       - '*.md'
       - '.claude/**'
+      - 'linkedin/**'
   pull_request:
     paths-ignore:
       - 'docs/**'
       - '*.md'
       - '.claude/**'
+      - 'linkedin/**'
 
 # Least privilege: build only needs to read the repo.
 permissions:
