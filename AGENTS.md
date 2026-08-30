@@ -40,6 +40,20 @@ LinkedIn's free consumer API, moving each to `linkedin/posted/` as the publish r
 `linkedin/README.md` has the file format, setup, and token-renewal notes;
 `linkedin/VOICE.md` is the style source the weekly drafting routine reads.
 
+## Article backlog
+
+- **Future article ideas live as GitHub issues on this repo, labeled `article`** — not in
+  chat transcripts, vault notes, or a scratch file. The moment a conversation or a piece
+  of work surfaces "this would make a good post," file the issue then and there: working
+  title, which stream it belongs to (Tech Bytes or Life Bytes), the angle in a sentence
+  or two, and links to the source material (a ClimbIQ research doc, a vault note, a PR).
+  An idea that only exists in a transcript is lost by next week.
+- If the idea is blocked on something happening first (an experiment that hasn't run,
+  numbers that don't exist yet), say so in the issue body so nobody drafts it prematurely.
+- When a post gets drafted (through `byte-writer`, per the voice rules above), reference
+  the issue from the PR and close the issue when the post merges. The issue list stays a
+  live backlog, not an archive.
+
 ## Writing code
 
 - Astro 5, static output, no client-side framework. Keep it that way unless a Decision

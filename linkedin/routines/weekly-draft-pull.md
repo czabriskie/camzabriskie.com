@@ -140,7 +140,7 @@ Same publication-grade privacy discipline as the blog and LinkedIn pipeline appl
 
 **Dedup:** list open issues on the repo first and skip anything that's already substantively tracked.
 
-**Format:** title = a short, specific topic name. Body = what's there so far, paraphrased (never a verbatim vault or journal quote, same rule as everywhere else), the open question if there is one, and a source pointer (Readwise article title, or 'journal, week of X' — never a vault path or filename). Label it `content-idea`.
+**Format:** follow the repo's own article-backlog convention (AGENTS.md → 'Article backlog'): title = a short working title; body = which stream it belongs to (Tech Bytes or Life Bytes), the angle in a sentence or two with what's there so far, paraphrased (never a verbatim vault or journal quote, same rule as everywhere else), the open question or blocker if there is one, and a source pointer (Readwise article title, or 'journal, week of X' — never a vault path or filename). Label it `article`.
 
 === CODE ISSUES: bugs / features / tech-debt on an actual app repo ===
 
