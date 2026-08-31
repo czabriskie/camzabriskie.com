@@ -3,7 +3,11 @@ title: "Tech Bytes: one less integration to maintain"
 publish_at: 2026-08-31T13:00:00Z
 sources:
   - my note on AWS's Agent Toolkit and MCP server, from "Get Started With the Agent Toolkit for AWS in the AWS CLI"
+posted_at: 2026-08-31T14:07:34.804Z
+post_urn: urn:li:share:7500192563841208323
+first_comment_status: none
 ---
+
 I've spent a chunk of the last few months writing my own MCP servers and custom skill files so the coding agents I use actually understand a particular service or workflow instead of guessing at it. It works, but it's one more thing that's mine to keep updated every time the underlying API changes or a new endpoint shows up.
 
 Then I read that AWS shipped an actual Agent Toolkit, a curated catalog of skills for its own services plus an MCP server a coding agent can just point at, maintained by the AWS service teams themselves instead of whoever happens to be using it. My first reaction was just relief, honestly. One less integration for me to maintain, kept current by the people who actually own the thing it's describing.
