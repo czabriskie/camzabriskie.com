@@ -64,12 +64,19 @@ the upload/assets API and can be added when actually wanted.
 Set the secrets before merging the first queue file — a due post with no
 credentials fails the tick until one or the other changes.
 
-## The two Routines
+## The Routines
 
-The weekly draft pull and the daily first-comment nudge are claude.ai Routines,
-and their prompts live (versioned) in `routines/`. Agents can't edit Routines a
-person created, so after changing a prompt file here, paste its contents into
-the matching Routine in the claude.ai Routines UI — and keep the two in sync.
+The claude.ai Routine prompts live (versioned) in `routines/`:
+
+- `weekly-draft-pull.md` — Mondays: LinkedIn drafts (queue PR), blog PRs,
+  Signal Log, plus weekly triage. Created by Cam, so agents can't edit the live
+  Routine: after changing the file, paste it into the Routine UI.
+- `first-comment-nudge.md` — daily: post-live check and first-comment nudge.
+  Also Cam-created, same paste rule.
+- `daily-triage.md` — Tue–Sun: fast lanes only (Todoist, `article` backlog
+  issues, code issues) over the last ~2 days of notes. Also created in the
+  Routines UI (agent-created triggers can't carry the Todoist/Readwise
+  connectors it needs), same paste rule; its header has the setup details.
 
 ## What Postbeam had that this doesn't
 
