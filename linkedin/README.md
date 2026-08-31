@@ -44,7 +44,12 @@ separated by blank lines. No URLs, no hashtags.
 
 `title` and `sources` are for the PR reviewer (provenance receipt); only
 `publish_at`, `first_comment`, `visibility` (optional, `PUBLIC` default or
-`CONNECTIONS`) and the body reach LinkedIn. Text-only for now: image posts need
+`CONNECTIONS`) and the body reach LinkedIn.
+
+`first_comment` convention (2026-08-31): a post with an associated blog post
+links the blog and only the blog; otherwise a post that references a source
+article links that article (real, confirmed URL — never guessed). It's only
+omitted when there is genuinely nothing to link. Text-only for now: image posts need
 the upload/assets API and can be added when actually wanted.
 
 ## One-time setup (and every ~60 days)
