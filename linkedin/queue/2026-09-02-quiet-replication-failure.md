@@ -1,7 +1,7 @@
 ---
 title: "Tech Bytes: the failure that costs you before you notice"
 publish_at: 2026-09-02T13:00:00Z
-first_comment: "The piece that got me thinking: https://aws.amazon.com/blogs/storage/detect-stalled-amazon-s3-live-replication-to-prevent-unexpected-storage-costs/"
+first_comment: "Here is a link to the full article: https://aws.amazon.com/blogs/storage/detect-stalled-amazon-s3-live-replication-to-prevent-unexpected-storage-costs/"
 sources:
   - my notes on stalled S3 replication, from "Detect Stalled Amazon S3 Live Replication to Prevent Unexpected Storage Costs"
 ---

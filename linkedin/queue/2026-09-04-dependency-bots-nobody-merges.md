@@ -1,7 +1,7 @@
 ---
 title: "Tech Bytes: the PR nobody was ever going to click merge on"
 publish_at: 2026-09-04T13:00:00Z
-first_comment: "The piece that got me thinking: https://aws.amazon.com/blogs/devops/build-your-own-continuous-modernization-pipeline-with-aws-transform-custom/"
+first_comment: "Here is a link to the full article: https://aws.amazon.com/blogs/devops/build-your-own-continuous-modernization-pipeline-with-aws-transform-custom/"
 sources:
   - my note on automated dependency PRs, from "Build Your Own Continuous Modernization Pipeline With AWS Transform Custom"
 ---
