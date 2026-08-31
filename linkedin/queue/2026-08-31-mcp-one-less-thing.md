@@ -1,6 +1,6 @@
 ---
 title: "Tech Bytes: one less integration to maintain"
-publish_at: 2026-09-04T13:00:00Z
+publish_at: 2026-08-31T13:00:00Z
 sources:
   - my note on AWS's Agent Toolkit and MCP server, from "Get Started With the Agent Toolkit for AWS in the AWS CLI"
 ---

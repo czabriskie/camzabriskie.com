@@ -1,6 +1,6 @@
 ---
 title: "Tech Bytes: the failure that costs you before you notice"
-publish_at: 2026-09-08T13:00:00Z
+publish_at: 2026-09-02T13:00:00Z
 sources:
   - my notes on stalled S3 replication, from "Detect Stalled Amazon S3 Live Replication to Prevent Unexpected Storage Costs"
 ---
