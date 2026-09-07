@@ -1,0 +1,17 @@
+---
+title: "Tech Bytes: AI was confident, sourced, and off by almost double"
+publish_at: 2026-09-18T13:00:00Z
+first_comment: "Wrote the longer version here: https://camzabriskie.com/tech-bytes/checking-the-math/"
+sources:
+  - my own note on dosing water preserver across 23 storage jugs
+---
+
+We were filling water jugs for emergency storage, 23 of them, and stored water needs a preserver added or it doesn't keep. The label says 8 drops per gallon, my jugs are 3.5 gallons, so 28 drops each. I was not going to count 28 drops 23 times, so I wanted a volume I could pull with a syringe instead.
+
+I asked AI first. It told me half a teaspoon per jug and linked a blog someone had written, which looked like a real source and matched what I'd have guessed. Then I did the arithmetic myself, mostly because converting units was about half of my engineering education and it takes two minutes. The bottle says 22 ml treats 55 gallons, so 0.4 ml per gallon, so 1.4 ml for a 3.5 gallon jug. A milliliter is 0.203 teaspoons, so 1.4 ml is 0.284 teaspoons, just over a quarter.
+
+Half a teaspoon is 2.46 ml. That's about 1.76 times the dose on the label, near enough to double, and both the blog and the AI repeating it landed in the same wrong place. What made me trust the number I got was a second check that agreed: the standard drop is a twentieth of a milliliter, so the label's 8 drops per gallon is also exactly 0.4 ml per gallon. Two independent paths, same answer.
+
+I'd seen a version of this recently in a completely different setting, where the same question asked three separate times came back three different ways, all with the same overall sentiment. That's the shape of it. These tools are very good at being approximately right, and approximately right is fine for a summary and useless for a dose.
+
+So when it has to be exactly right, I do the arithmetic myself and look for a second path to the same number. Not because the tool is useless, it got me to the right neighborhood fast, but because confident and sourced and wrong all fit together comfortably. Go by your own label if you ever do this, different products are different concentrations.
