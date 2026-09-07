@@ -1,0 +1,16 @@
+# Ownership gate for content this repo publishes but does not own.
+#
+# GitHub CODEOWNERS can only name users and teams, never a repository, so this
+# file cannot express "owned by czabriskie/bee-game" on its own. It exists to
+# force a review on paths whose *facts* are decided elsewhere; the prose in
+# AGENTS.md ("Content owned by other projects") is what records where each one
+# actually comes from, and every such page carries a banner naming its source.
+#
+# Practical effect: a PR touching these paths requests Cam's review, which is
+# the moment to ask "did the upstream project change, or is this drifting?"
+
+# Legal and store-facing pages published on behalf of other projects.
+/src/pages/rhythm-gardens/   @czabriskie
+
+# This file and the ownership rules it points at.
+/.github/CODEOWNERS          @czabriskie

@@ -87,6 +87,36 @@ LinkedIn's free consumer API, moving each to `linkedin/posted/` as the publish r
   no secrets, build passes. Not needed for content-only changes.
 - `docs-maintainer` — keeps `docs/` honest; new consequential choices get a Decision.
 
+## Content owned by other projects
+
+Some pages here are **published by this repo but owned by another one.** Their
+facts are decided in the upstream project, and changing them here without
+changing them there produces a document that quietly stops being true — which,
+for a privacy policy backing an app-store listing, is the failure that matters.
+
+| Path | Owned by | Source of truth | Changes when |
+|---|---|---|---|
+| `src/pages/rhythm-gardens/` | `czabriskie/bee-game` (private) | `docs/Store/Privacy policy.md`, and the Decisions behind it (0006 local-only telemetry, 0013 the shop, 0022 paid gardens) | the app's data behaviour changes — new storage, anything leaving the device, real-money purchases going live |
+
+Rules for anything in that table:
+
+- **Do not edit the content here to fix a fact.** Change it upstream, then
+  re-publish. An edit here is a fork of a legal document.
+- **Every such page carries a banner comment** naming the upstream repo, the
+  source file, and the date it was copied. If the banner is missing, the page
+  is not trustworthy — add it or find where the text came from.
+- **`.github/CODEOWNERS` gates these paths** so a PR touching them asks for a
+  review. CODEOWNERS cannot name a repository, only people, so it is a
+  tripwire, not a statement of ownership — this table is the statement.
+- **The URL is a promise.** Google Play requires a live, publicly reachable
+  privacy policy URL for as long as the app is listed; a 404 here is a
+  takedown risk over there. Do not rename or remove these paths, and if a
+  redirect is ever unavoidable, make sure the store listing is updated first.
+- This repo is public and the game's repo is private. That asymmetry is the
+  reason the policy is published here at all, and it means **nothing in these
+  pages may reveal anything about the private repo beyond what the document
+  itself needs to say.**
+
 ## Privacy
 
 - Resume shows email + GitHub only — never the phone number, street address, or family
