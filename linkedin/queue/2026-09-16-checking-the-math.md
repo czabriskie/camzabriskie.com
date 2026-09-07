@@ -1,7 +1,6 @@
 ---
 title: "Tech Bytes: AI was confident, sourced, and off by almost double"
 publish_at: 2026-09-16T13:00:00Z
-first_comment: "Wrote the longer version here: https://camzabriskie.com/tech-bytes/checking-the-math/"
 sources:
   - my own note on dosing water preserver across 23 storage jugs
 ---
