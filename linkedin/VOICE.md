@@ -16,8 +16,12 @@ wherever the two disagree.
 - Opens with a concept or source, then reframes it through personal experience.
   (For a journal-sourced post there is no article: the entry point is the
   concrete thing Cam actually did or built. Never invent a source.)
-- Uses casual asides mid-paragraph like "the way I think about it" or "the
-  thing is".
+- ~~Uses casual asides mid-paragraph like "the way I think about it" or "the
+  thing is".~~ **Struck 2026-09-07.** Cam rejected both of these by name: they are
+  now banned throat-clearing (see AGENTS.md → Content model, and the `byte-writer`
+  agent). Layer 2 wins over this snapshot wherever they disagree, and here they do.
+  Casual and conversational is still right; announcing the point before making it
+  is not.
 - Paragraphs run 3–5 sentences, building one idea per block.
 - No bullet points or numbered lists, always flowing prose.
 - Closes by circling back to the broader principle behind the personal anecdote.
