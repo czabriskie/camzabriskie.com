@@ -1,6 +1,6 @@
 ---
 title: "Tech Bytes: the app store goes obsolete before money does"
-publish_at: 2026-09-16T13:00:00Z
+publish_at: 2026-09-14T13:00:00Z
 first_comment: "Wrote the longer version here: https://camzabriskie.com/tech-bytes/what-actually-goes-obsolete/"
 sources:
   - my own note on building a game rather than shopping for one, from the czabriskie/bee-game repo

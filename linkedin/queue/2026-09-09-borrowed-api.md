@@ -1,6 +1,6 @@
 ---
 title: "Tech Bytes: the feature that needed nothing is the one that survived"
-publish_at: 2026-09-11T13:00:00Z
+publish_at: 2026-09-09T13:00:00Z
 first_comment: "Wrote the longer version here: https://camzabriskie.com/tech-bytes/borrowed-api/"
 sources:
   - my own notes on the Spotify Web API constraints, from the czabriskie/heads-up repo
