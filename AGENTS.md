@@ -40,6 +40,11 @@ existing + 1 — `ls docs/Decisions/` first.
   "the interesting part" / "the interesting thing" / "the interesting shift",
   "the way I think about it", "the honest complication" / "the honest shape of it",
   "worth noticing", "at the end of the day", "the truth is".
+  Also the whole "the thing that…" family, which is the same move wearing a
+  different hat: "the thing that actually got to me", "what really got me was",
+  "the bit that stuck with me was". Front the point, don't build up to it.
+  "The ads annoyed me, but the thing that actually got to me was X" becomes
+  "The ads annoyed me. X annoyed me more."
   The pattern matters more than the list: a sentence whose whole job is to tell the
   reader that the next sentence is important is filler, so delete it and let the next
   sentence do the work. "What's left is X" is fine; "the part that's actually X" is not.

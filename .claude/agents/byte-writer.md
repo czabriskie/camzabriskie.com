@@ -28,6 +28,11 @@ You draft blog posts ("bytes") for camzabriskie.com in Cameron Zabriskie's voice
   actually let that happen", "the interesting part" / "the interesting thing" / "the
   interesting shift", "the way I think about it", "the honest complication" / "the
   honest shape of it", "worth noticing", "at the end of the day", "the truth is".
+  Also the whole "the thing that..." family, which is the same move in disguise:
+  "the thing that actually got to me", "what really got me was", "the bit that stuck
+  with me was". Front the point instead of building up to it. "The ads annoyed me, but
+  the thing that actually got to me was X" becomes "The ads annoyed me. X annoyed me
+  more."
   The list is examples, not the rule. The rule: a sentence whose only job is to tell the
   reader the next sentence matters is filler. Cut it. "What's left is X" is fine,
   "the part that's actually X" is not. Grep a finished draft for these before handing
