@@ -1,7 +1,7 @@
 ---
 title: What actually goes obsolete
 description: Elon Musk says money stops mattering once AI makes everything abundant, and I don't buy that part, but I think I've seen a small real version of it happen to app stores.
-date: 2026-09-15
+date: 2026-09-07T12:00:00Z
 ---
 
 Elon Musk has said a few times, on Rogan and in a couple of other interviews, that once AI and robots are producing goods and services at some huge scale, scarcity mostly goes away and money stops mattering the way it does now, he's put a date on it and talked about something he calls universal high income instead of universal basic income, and he points to those Iain Banks novels, the Culture books, as the kind of post-scarcity world he means. It's the economic argument I'm interested in here, nothing else that tends to come up around him.

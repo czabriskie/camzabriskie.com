@@ -1,7 +1,7 @@
 ---
 title: "What let me build a game overnight"
 description: "The reason Claude could build a working kids' game in one night wasn't speed, it was that the project was shaped so it could check its own work."
-date: 2026-09-08
+date: 2026-09-07T09:00:00Z
 ---
 
 I got sick enough of kids' games loaded with video ads and paywalls that I decided to just build one myself, and with Claude doing the typing, I did it in one night, for my kid. I kept adding and fixing things while watching her play the next morning, but there was something decently playable waiting for her when she woke up. The part I actually want to talk about isn't the "one night" part, because that makes it sound like the AI just writes code fast. What actually let that happen is that the project was set up so the AI could check its own work without me standing over it or a phone in the loop, and I think that's the reusable part.

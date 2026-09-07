@@ -1,7 +1,7 @@
 ---
 title: The last mile is the store
 description: Writing the phone game was the fast part, and everything between a working build and a kid holding it turned out to be forms, an ID check, and a couple of permanent decisions.
-date: 2026-09-12
+date: 2026-09-07T11:00:00Z
 ---
 
 I've been writing about the rhythm game I built and what it took to get the AI to build it well, but none of that is the part that's actually eating my week right now. The code was done a while ago. What's left is everything between "the game works on my machine" and "a kid can hold a phone and play it," and that part hasn't gotten one bit faster.

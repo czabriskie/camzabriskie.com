@@ -1,7 +1,7 @@
 ---
 title: "Everything Spotify let me have"
 description: "Building a song-guessing party game on Spotify's API meant living with a running list of decisions Spotify made that I never got a vote on."
-date: 2026-09-10
+date: 2026-09-07T10:00:00Z
 ---
 
 The other game I built plays like Heads Up but with songs instead of words. You hold the phone on your forehead in landscape, a song from one of your own Spotify playlists plays out loud, everyone else can see the title and artist on the screen, and you guess before the timer runs out. Tilt the phone down for correct, up for pass. It works, and it's genuinely fun with a group, and none of that is really what I want to write about. What I keep coming back to is the list of things I don't control, because I built this thing on top of somebody else's API, and every one of those things is a decision Spotify made for reasons that are theirs, not mine.

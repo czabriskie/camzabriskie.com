@@ -1,6 +1,6 @@
 ---
 title: "Tech Bytes: the code was the fast part, the store is the slow part"
-publish_at: 2026-09-16T13:00:00Z
+publish_at: 2026-09-14T13:00:00Z
 first_comment: "Wrote the longer version here: https://camzabriskie.com/tech-bytes/last-mile-is-the-store/"
 sources:
   - my own notes on the Play submission kit, from the czabriskie/bee-game repo

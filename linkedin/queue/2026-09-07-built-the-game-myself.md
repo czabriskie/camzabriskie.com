@@ -1,6 +1,6 @@
 ---
 title: "Life Bytes: I stopped shopping for a kids' game and built one"
-publish_at: 2026-09-09T13:00:00Z
+publish_at: 2026-09-07T21:00:00Z
 first_comment: "Wrote the longer version here: https://camzabriskie.com/life-bytes/built-the-game-myself/"
 sources:
   - my own note on why I built the rhythm game, from the czabriskie/bee-game repo

@@ -1,6 +1,6 @@
 ---
 title: "Tech Bytes: the overnight build worked because of the test suite, not the model"
-publish_at: 2026-09-11T13:00:00Z
+publish_at: 2026-09-09T13:00:00Z
 first_comment: "Wrote the longer version here: https://camzabriskie.com/tech-bytes/game-in-a-night/"
 sources:
   - my own notes on the :core and :app module split, from the czabriskie/bee-game repo
