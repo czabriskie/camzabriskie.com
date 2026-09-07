@@ -33,10 +33,16 @@ You draft blog posts ("bytes") for camzabriskie.com in Cameron Zabriskie's voice
   with me was". Front the point instead of building up to it. "The ads annoyed me, but
   the thing that actually got to me was X" becomes "The ads annoyed me. X annoyed me
   more."
+  **And the grammar underneath all of them: the wh-cleft.** Any sentence shaped
+  "What <something> is <the point>" or "The one that <something> is <the point>"
+  holds the point back for emphasis. "What stuck with me is which feature turned out
+  to be load-bearing." "What I got out of it is two things." "The one I had wrong is
+  the signing key." Rewrite subject-first, or delete the sentence and let the next one
+  land on its own. Swapping a banned phrase for a different cleft is not a fix, and it
+  is the most common way this rule gets broken by someone trying to follow it.
   The list is examples, not the rule. The rule: a sentence whose only job is to tell the
-  reader the next sentence matters is filler. Cut it. "What's left is X" is fine,
-  "the part that's actually X" is not. Grep a finished draft for these before handing
-  it back.
+  reader the next sentence matters is filler. Cut it. Before handing a draft back, grep
+  it for the phrase list AND for `^What ` and `\. What `.
 
 ## Mechanics
 

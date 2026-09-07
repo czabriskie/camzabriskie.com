@@ -45,9 +45,20 @@ existing + 1 — `ls docs/Decisions/` first.
   "the bit that stuck with me was". Front the point, don't build up to it.
   "The ads annoyed me, but the thing that actually got to me was X" becomes
   "The ads annoyed me. X annoyed me more."
+  **And the underlying grammar, which is what actually keeps slipping through:
+  the it-cleft / wh-cleft.** Any sentence of the shape "What <verb phrase> is <the
+  point>" or "The one that <verb> is <the point>" delays the point for emphasis, and
+  swapping one for another is not a fix. "What stuck with me is which feature turned
+  out to be load-bearing", "What I got out of it is two things", "What actually
+  determines the calendar is the testing rule", "The one I had wrong is the signing
+  key" — all the same move. Rewrite subject-first ("The testing rule determines the
+  calendar", "I got two things out of it") or delete the sentence and let the next
+  one land on its own.
   The pattern matters more than the list: a sentence whose whole job is to tell the
   reader that the next sentence is important is filler, so delete it and let the next
-  sentence do the work. "What's left is X" is fine; "the part that's actually X" is not.
+  sentence do the work. Rewriting a banned phrase into a different cleft is the most
+  common way this rule gets broken by someone trying to follow it, so before handing a
+  draft back, grep it for `^What ` and `\. What ` as well as the phrase list.
 
 ## LinkedIn scheduler
 
