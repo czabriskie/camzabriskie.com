@@ -12,7 +12,7 @@ I got a playable version done in one night, and I mean that plainly, not as a hi
 
 It ended up being a rhythm game, a bee hopping flower to flower on the beat of a song while you tap along, and I picked that because she's been in a music class the last few weeks working on keeping a beat, so I figured I could make something that helped with that and was fun on its own, songs she already knows instead of some made-up thing.
 
-The part I keep coming back to is what I actually get out of doing it this way that I couldn't have bought. I know exactly what's in the thing she's playing, every song, every rule, because I wrote all of it. And I can point it at whatever she's actually working on at any given moment, right now that's rhythm, later it'll be something else, in a way no app store search is ever going to hand me.
+Doing it this way got me two things I couldn't have bought. I know exactly what's in the thing she's playing, every song, every rule, because I wrote all of it. And I can point it at whatever she's actually working on at any given moment, right now that's rhythm, later it'll be something else, in a way no app store search is ever going to hand me.
 
 For what it's worth on the other side of the thing I was originally annoyed about: there's no ads in it, no video to sit through, it doesn't even talk to a network at all. There is a small one-time payment planned for the later levels eventually, and even that comes with a rule I set for myself, that money never buys progress, a level you pay for still has to be earned the same way as any other. It's not built yet and it's just one payment instead of a whole system designed to wear you down, which was kind of the point of doing this in the first place.
 
