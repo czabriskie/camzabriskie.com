@@ -14,7 +14,7 @@ I did the math myself anyway. I have an engineering degree, and converting betwe
 
 Converting 1.4 mL to teaspoons, at 0.203 teaspoons per mL, gives 0.284 teaspoons, just over a quarter teaspoon. Half a teaspoon is 2.46 mL, about 1.76 times the actual dose, close enough to double that I'd call it double. In drops, the blog and the AI were pointing me at something like 49 drops a jug where the bottle says 28.
 
-Something similar happened separately. Three people asked AI the same question about the same problem and got three different answers back, though all three landed on the same overall sentiment. Fine for a summary. Not fine for a dose you're going to seal into a jug and maybe not open again for years.
+Something similar came up at work not long ago. Three of us ran the same analysis with AI and got three different answers back. All three landed on the same overall sentiment, which is what makes it easy to miss, because any one of us working alone would have finished up thinking we had the answer and been roughly right. Fine for a summary. Not fine for a dose you're going to seal into a jug and maybe not open again for years.
 
 What I actually do differently now isn't asking AI to double check its own math, or trusting it more because a source is attached. I do the arithmetic myself, and where I can, I look for a second path to the same number, the way the drops and the mL checked each other on that bottle. It took maybe two minutes longer than just going with the blog post, and it caught something that would have been very hard to notice was wrong until it already was.
 
