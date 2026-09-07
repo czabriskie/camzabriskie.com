@@ -3,6 +3,9 @@ title: "Life Bytes: I stopped shopping for a kids' game and built one"
 publish_at: 2026-09-07T21:00:00Z
 sources:
   - my own note on why I built the rhythm game, from the czabriskie/bee-game repo
+posted_at: 2026-09-07T21:12:36.716Z
+post_urn: urn:li:share:7502836241600679937
+first_comment_status: none
 ---
 
 My kid likes puzzle games, so I went looking for a few she'd enjoy, and every one I tried was the same shape underneath. Video ads every couple of minutes, or a level she could play perfectly and still not clear without watching something or paying for something. The ads annoyed me. Being good at the game not being enough annoyed me more, and it's a strange lesson to hand a kid through a toy.
