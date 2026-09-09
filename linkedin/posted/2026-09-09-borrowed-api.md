@@ -4,6 +4,9 @@ publish_at: 2026-09-09T13:00:00Z
 first_comment: "Spotify's own post announcing the API changes this one ran into: https://developer.spotify.com/blog/2024-11-27-changes-to-the-web-api"
 sources:
   - my own notes on the Spotify Web API constraints, from the czabriskie/heads-up repo
+posted_at: 2026-09-09T13:14:34.827Z
+post_urn: urn:li:share:7503440716497342467
+first_comment_status: posted
 ---
 
 A while back I built a party game that plays like Heads Up but with songs, you hold the phone on your forehead and a track from one of your own Spotify playlists plays out loud while everyone else watches you fail to name it. It works, and building it taught me less about Android than it did about what you sign up for when the best part of your thing lives behind somebody else's endpoint.
