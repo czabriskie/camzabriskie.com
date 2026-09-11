@@ -4,6 +4,9 @@ publish_at: 2026-09-11T13:00:00Z
 first_comment: "Wrote the longer version here: https://camzabriskie.com/tech-bytes/last-mile-is-the-store/"
 sources:
   - my own notes on the Play submission kit, from the czabriskie/bee-game repo
+posted_at: 2026-09-11T13:14:26.349Z
+post_urn: urn:li:share:7504165454857416705
+first_comment_status: posted
 ---
 
 The game I built for my kid has been done for a while. What's eating my week is everything between "it works" and "someone else can install it," and none of that got faster when AI started writing the code.
