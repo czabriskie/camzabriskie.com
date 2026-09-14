@@ -5,6 +5,9 @@ first_comment: "The Musk comments this is responding to: https://fortune.com/202
 sources:
   - my own note on building a game rather than shopping for one, from the czabriskie/bee-game repo
   - Musk's abundance comments (Rogan, October, and an interview with The Economist)
+posted_at: 2026-09-14T13:15:52.698Z
+post_urn: urn:li:share:7505252982729392128
+first_comment_status: posted
 ---
 
 Elon Musk has been making a version of this argument in a few places, including on Rogan: AI and robots produce so much that scarcity fades and money stops mattering, and his line is roughly that if food and housing and transport are that abundant, what exactly do you need money for. I don't buy the money part. As long as our social structures are arranged the way they are, money is doing a lot of jobs that abundance doesn't touch. But I think I've seen a small, real version of it in exactly one place, and it isn't the economy.
