@@ -3,6 +3,9 @@ title: "Tech Bytes: AI was confident, sourced, and off by almost double"
 publish_at: 2026-09-16T13:00:00Z
 sources:
   - my own note on dosing water preserver across 23 storage jugs
+posted_at: 2026-09-16T13:14:35.568Z
+post_urn: urn:li:share:7505977435214090243
+first_comment_status: none
 ---
 
 We were filling water jugs for emergency storage, 23 of them, and stored water needs a preserver added or it doesn't keep. The label says 8 drops per gallon, my jugs are 3.5 gallons, so 28 drops each. I was not going to count 28 drops 23 times, so I wanted a volume I could pull with a syringe instead.
