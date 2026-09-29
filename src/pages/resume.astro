@@ -1,19 +1,29 @@
 ---
 import Base from '../layouts/Base.astro';
 const skills = [
-  'AWS', 'Kubernetes / EKS', 'Terraform', 'Ansible', 'Helm', 'Karpenter', 'KEDA',
-  'GitLab CI', 'Docker', 'Prometheus / Grafana', 'k6', 'Python', 'AWS CDK', 'Lambda',
-  'ECS', 'SQL', 'Snowflake', 'scikit-learn', 'pandas', 'Flask', 'pytest', 'R', 'Git', 'Linux',
+  'Software architecture', 'AWS', 'Kubernetes', 'Distributed computing',
+  'Python', 'SQL', 'Machine learning', 'Statistics', 'Data engineering',
+  'Infrastructure as code', 'CI/CD', 'Observability & SLOs', 'Incident response',
+  'Cost optimization',
 ];
 ---
-<Base title="Resume — Cam Zabriskie" description="Cameron Zabriskie — senior DevOps engineer. Resume.">
+<Base title="Resume — Cam Zabriskie" description="Cameron Zabriskie — data scientist turned platform engineer. Resume.">
   <div class="resume">
     <h1>Cameron Zabriskie</h1>
     <p class="lede" style="color: var(--muted);">
-      Senior DevOps engineer ·
       <a href="mailto:cameron.zabriskie@gmail.com">cameron.zabriskie@gmail.com</a> ·
       <a href="https://www.linkedin.com/in/cameron-zabriskie">LinkedIn</a> ·
       <a href="https://github.com/czabriskie">github.com/czabriskie</a>
+    </p>
+
+    <p>
+      Data scientist turned platform engineer, with a career spent on both halves of the
+      problem: building the models that answer a business question (who is about to cancel,
+      which case is worth working) and building the production systems that keep those
+      answers arriving. Comfortable owning a problem from the analysis nobody has run yet
+      through to the infrastructure it runs on and what that infrastructure costs. Drawn to
+      the genuinely hard problems, the ones that start out ambiguous and need both halves to
+      get right.
     </p>
 
     <section>
@@ -21,15 +31,28 @@ const skills = [
 
       <div class="role">
         <h3>Senior DevOps Engineer</h3>
-        <span class="when mono">2024 – present</span>
+        <span class="when mono">Apr 2026 – present</span>
       </div>
       <p class="org">ZONTAL</p>
       <ul>
-        <li>Migrated the company's public website from an external agency to self-hosted Cloudflare Pages with edge-native services — authored the architecture design, designed the GitHub Actions CI/CD pipeline, hardened security (WAF, CSP, HSTS), and managed the DNS cutover.</li>
-        <li>Established the organization's first SLIs/SLOs for platform applications, now the applications team's reliability baseline — profiled production services with custom instrumentation and k6 load tests, uncovered a confirmed memory leak and CPU-bound rendering bottlenecks, and proposed the prioritized fixes.</li>
-        <li>Designed and prototyped Kubernetes autoscaling (Karpenter + KEDA) for ~15 first-party applications, moving them off fixed-replica node groups onto demand-driven infrastructure — including a Redis-backed session-count metric that combines with CPU signals to catch blind spots either signal misses alone, validated end-to-end with a synchronized Playwright + k6 harness.</li>
-        <li>Found and quantified major AWS cost leaks: an audit across two regions showing 82% of load-balancer target groups (3,170 of 3,876) were orphaned, and a root-cause diagnosis of an Elastic IP leak from mismatched Lambda/SQS/NAT timeouts, with self-healing fixes designed for both.</li>
-        <li>Centralized environment deployment configuration in Git (Helm, Ansible, GitLab CI) and coordinated the application-deployment workstream for a major platform upgrade across multiple enterprise customer environments, standardizing previously inconsistent per-customer deployments.</li>
+        <li>Designed the autoscaling for the product's ~15 interactive viewer applications, moving them off a fixed-size shared node group onto a dedicated Karpenter node pool. Chose a combined CPU-and-session scaling signal after load testing showed either alone missed real cases, and sized the pool with a degradation-ratio model validated at 2,500 seats.</li>
+        <li>Found and cleared cloud spend nobody was tracking: 3 TB of build artifacts deleted with automatic cleanup rules so it stops recurring, 82% of the account's load-balancer target groups identified as orphaned, and a runaway scheduler burning $37.89/day.</li>
+        <li>Set the company's first service level objectives for customer-facing software, covering how fast it loads, how responsive it stays, and how often errors are acceptable, then measured every service against them so leadership could see where the product stood and what it would take to close the gap.</li>
+        <li>Ran ~25 production incident investigations, each written up as symptom, root cause, and fix: cluster and authentication failures, automation that stranded whole environments, customer database outages, capacity shortfalls, and CI slowdowns across the engineering org.</li>
+        <li>Built and deployed the internal MCP server that lets AI coding agents work against the platform directly, a shared service the team registers with their editor, scoped to the host's IAM role and logging every call for an audit trail. Wrote the review gate that goes with it: tests and architecture review before anything ships.</li>
+      </ul>
+
+      <div class="role">
+        <h3>Senior Software Engineer</h3>
+        <span class="when mono">May 2023 – Apr 2026</span>
+      </div>
+      <p class="org">ZONTAL</p>
+      <ul>
+        <li>Built the pipeline behind what the company sells: parsers that map raw instrument output (mass spectrometry, NMR, PCR, flow cytometry) into a vendor-neutral schema instead of a format per instrument, the ingest that loads it into a document database, and the web applications scientists use to explore their results.</li>
+        <li>Moved the company's public website off an agency-hosted WordPress stack onto Cloudflare Pages and Workers we run ourselves, cutting hosting to about $47/month and ending a process where content changes waited up to three months on the agency. Marketing now drafts and stages content themselves, with engineering only security-reviewing the push to production.</li>
+        <li>Built the in-house replacement for a licensed third-party tool that converted documents (Word, Excel, PowerPoint, etc.) to PDF, removing the license cost and a dependency we couldn't change on our own schedule.</li>
+        <li>Partnered with sales on demos and proofs of concept: hosted a legacy vendor chromatography system on AWS so a prospect could watch their own software push data into our platform, and built web applications showing how their data would be handled, including parsing encoded instrument formats.</li>
+        <li>Gathered requirements directly from scientists at nine pharma and biotech customers and turned them into specs the team could build against. Ran scrum for multiple developer teams and mentored junior engineers into owning customer-facing work.</li>
       </ul>
 
       <div class="role">
@@ -44,25 +67,24 @@ const skills = [
       </ul>
 
       <div class="role">
-        <h3>Senior Software Engineer</h3>
-        <span class="when mono">May 2023 – 2024</span>
-      </div>
-      <p class="org">ZONTAL</p>
-      <ul>
-        <li>Developed parsers and viewer applications for scientific instrument data — mass spectrometry, chromatography, plate readers, flow cytometry, and qPCR — on a life-sciences data platform.</li>
-        <li>Worked directly with pharma and biotech customers and subject-matter experts to drive projects toward real customer impact.</li>
-        <li>Managed software releases and documentation, and drove development-process improvements that raised team velocity.</li>
-      </ul>
-
-      <div class="role">
-        <h3>ML / Data Engineer</h3>
+        <h3>Senior Data / Machine Learning Engineer</h3>
         <span class="when mono">Apr 2022 – May 2023</span>
       </div>
       <p class="org">Biolexis Therapeutics</p>
       <ul>
-        <li>Built the company's CI/CD pipeline (JetBrains Space, Docker, AWS) deploying to Lambda, ECS Fargate, and S3, and converted all manual AWS deployments to infrastructure-as-code with AWS CDK.</li>
-        <li>Integrated Anyscale for distributed processing jobs, cutting runtimes from weeks to under a day.</li>
-        <li>Built APIs and ELT pipelines serving graph, relational, and NoSQL data; supported small-molecule docking and molecular-dynamics applications (AutoDock, ICM, Gold, PyRosetta, OpenMM).</li>
+        <li>Took the company's heaviest computational work, the small-molecule protein docking and molecular dynamics simulations behind its drug discovery, from weeks down to under a day by moving it onto distributed compute (Ray on Anyscale), turning experiments that had been impractical to run into routine ones.</li>
+        <li>Built the ELT pipelines that pulled research data into graph, relational, and NoSQL stores, then put APIs in front of them (Lambda and API Gateway) so other teams and applications could pull what they needed instead of asking someone to extract it.</li>
+        <li>Replaced manually assembled AWS environments with infrastructure as code (AWS CDK), so a full environment came up in one step and matched the others instead of drifting, and automated the release path onto Lambda, Fargate, and S3.</li>
+      </ul>
+
+      <div class="role">
+        <h3>Data Science Adjunct Professor</h3>
+        <span class="when mono">Aug 2020 – Apr 2022</span>
+      </div>
+      <p class="org">Brigham Young University</p>
+      <ul>
+        <li>Built and taught a data science course spanning both halves of the work: the statistics (regression, time series, survival analysis) and the engineering to put a model somewhere a business can actually use it (Python, Linux, MySQL, Git, containers, testing, deploying to AWS).</li>
+        <li>Advised statistics and information-systems students analyzing real data for local businesses, where the problem arrived vague and the data arrived messy, and coached them to present findings to the client in terms the client could act on.</li>
       </ul>
 
       <div class="role">
@@ -71,19 +93,9 @@ const skills = [
       </div>
       <p class="org">Progrexion</p>
       <ul>
-        <li>Developed a survival-analysis model predicting subscription-cancellation hazard, guiding retention resources and quantifying turnover.</li>
-        <li>Built and deployed a gradient-boosting model (Heroku) prioritizing negative credit items per client for the credit-repair systems.</li>
-        <li>Built an HR data warehouse and near-real-time reporting system on MS SQL Server, SharePoint, and SSRS.</li>
-      </ul>
-
-      <div class="role">
-        <h3>Data Science Adjunct Professor</h3>
-        <span class="when mono">Aug 2020 – May 2022</span>
-      </div>
-      <p class="org">Brigham Young University</p>
-      <ul>
-        <li>Developed and taught a course on deploying data-science applications: Git, Docker, scikit-learn, pytest, Flask, AWS Elastic Beanstalk.</li>
-        <li>Mentored students building data-science solutions with local businesses.</li>
+        <li>Built the survival-analysis model behind subscription retention: rather than just flagging who might cancel, it predicted the hazard of cancellation over time, so retention got a ranked list with timing attached and the business got a defensible turnover number instead of an assumption.</li>
+        <li>Built the gradient-boosting model scoring how likely each negative item on a client's credit report was to be successfully removed, and put it in production to order every client's work queue by expected payoff, so effort went to the items that would actually change their report.</li>
+        <li>Ran the A/B tests that told the business what a change was actually worth before it rolled out company-wide, fielded the ad hoc analyses leadership asked for when a number moved and nobody knew why, and built the metric the company used to gauge employee performance.</li>
       </ul>
     </section>
 
