@@ -15,7 +15,7 @@ The names are a mess, which doesn't help. The HTTP specification calls a reverse
 
 ## Forward proxies
 
-A forward proxy sits between a group of clients and the internet. The clients are configured to send their requests to the proxy, and the proxy makes the request on their behalf [@mdn-proxies]. Companies use them to:
+A forward proxy sits between a group of clients and the internet. The clients are configured to send their requests to the proxy, and the proxy makes the request on their behalf [@rfc9110, @mdn-proxies]. Companies use them to:
 
 - **Control what's reachable.** Allow only approved destinations, like letting build servers reach package repositories and nothing else.
 - **See and log outbound traffic** in one place.
@@ -34,7 +34,7 @@ So for HTTPS, an ordinary forward proxy knows which host you connected to and ho
 
 ### Pointing tools at a proxy
 
-Most command-line tools and language runtimes read proxy settings from environment variables [@curl-proxy-env]:
+Most command-line tools and language runtimes read proxy settings from environment variables [@curl-proxy-env, @gitlab-no-proxy]:
 
 ```bash
 export http_proxy=http://proxy.corp.example.com:3128
@@ -48,7 +48,7 @@ Three things catch people:
 - **Case isn't consistent between tools.** curl only reads the lowercase `http_proxy`, on purpose: a web server sets the uppercase `HTTP_PROXY` variable from a request header that anyone can send, so trusting it would let a visitor reroute the server's own requests [@curl-proxy-env]. Other tools read the uppercase versions. Setting both is the safe habit.
 - **Support for CIDR ranges in `no_proxy` varies.** Some tools accept `10.0.0.0/8` and some only match hostnames and suffixes, so test the tools you actually use.
 
-Browsers usually use the operating system's proxy settings or a **PAC file** (a small script that picks a proxy per URL) instead [@mdn-proxies].
+Browsers usually use the operating system's proxy settings or a **PAC file** (a small script that picks a proxy per URL) instead [@chromium-network-settings, @mdn-proxies].
 
 ### Forward proxy vs NAT gateway
 
@@ -60,7 +60,7 @@ A **SOCKS** proxy is a forward proxy that works below HTTP: it relays any TCP co
 
 ## Reverse proxies
 
-A reverse proxy sits in front of one or more servers and answers for them. Clients connect to it as if it were the server, and it passes each request on to a backend and relays the response [@mdn-proxies]. Almost every production web service has at least one:
+A reverse proxy sits in front of one or more servers and answers for them. Clients connect to it as if it were the server, and it passes each request on to a backend and relays the response [@rfc9110, @mdn-proxies]. Almost every production web service has at least one:
 
 - **Terminating TLS,** so the backends don't each need certificates ([Load balancers and TLS termination](/primers/networking/load-balancers-and-tls/#terminating-tls)).
 - **Load balancing** across several backends.
