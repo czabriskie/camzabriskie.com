@@ -19,6 +19,7 @@
 - `/primers/`, `/primers/<topic>/`, `/primers/<topic>/<slug>/` — Primers:
   explainers grouped by topic, read in order, revised over time (Decision 0006). Topics
   are listed in `src/lib/primers.ts`.
+- `/primers/references/` — every source cited by any primer (Decision 0007).
 - `/projects/` — curated public GitHub projects, grouped as tools / experiments / teaching
 - `/resume/` — resume (email + GitHub only; no phone/address)
 

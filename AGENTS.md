@@ -89,6 +89,12 @@ of it: the post can stay vague about the job while the document carries the subs
   above is on the writer.
 - Same voice rules as posts (no em dashes, no throat-clearing, no clefts), but structure
   is welcome: headings, tables, diagrams. Same merge rule too: Cam reads it first.
+- **Cite sources** (Decision 0007). Define each source once in `src/data/references.mjs`
+  and cite it with `[@key]`; the build numbers citations IEEE-style per page and appends
+  a References section. Only cite what you actually read and checked supports the claim,
+  and set `accessed` to the date you checked it. Unknown keys fail the build. After
+  changing the citation plugin or formatter, `rm -rf .astro node_modules/.astro` before
+  building locally, or you'll see cached output.
 
 ## LinkedIn scheduler
 
