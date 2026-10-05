@@ -269,6 +269,19 @@ nav.note-nav .mono { color: var(--tech); font-weight: 400; }
 .bitgrid .dec { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 0.72rem; color: var(--muted); }
 .bitgrid-caption { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.6rem; }
 
+/* Encapsulation diagram (OSI primer): nested boxes, one per layer, outermost first */
+.encap { margin: 1.2rem 0 0.5rem; font-size: 0.9rem; line-height: 1.5; }
+.encap-layer { border: 1px solid var(--line); border-left: 3px solid var(--tech); border-radius: 8px; padding: 0.55rem 0.7rem 0.7rem; background: var(--surface); }
+.encap-layer .encap-layer { margin-top: 0.55rem; background: var(--paper); }
+.encap-layer .encap-layer .encap-layer { background: var(--surface); }
+.encap-layer .encap-layer .encap-layer .encap-layer { background: var(--paper); }
+.encap-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.15rem 0.8rem; }
+.encap-tag { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 0.72rem; letter-spacing: 0.04em; color: var(--tech); white-space: nowrap; }
+.encap-fields { color: var(--muted); }
+.encap-payload { margin-top: 0.55rem; padding: 0.55rem 0.7rem; border: 1px dashed var(--tech); border-radius: 6px; background: color-mix(in srgb, var(--tech) 8%, transparent); }
+.encap-payload .encap-tag { display: block; margin-bottom: 0.2rem; }
+@media (max-width: 30rem) { .encap-layer { padding: 0.45rem 0.5rem 0.55rem; } }
+
 /* CIDR calculator (src/scripts/cidr-calc.ts) */
 .cidr-calc { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 1rem 1.2rem; margin: 1.2rem 0 1.6rem; }
 .cidr-calc:empty { display: none; }
