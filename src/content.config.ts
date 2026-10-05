@@ -13,7 +13,7 @@ const byteSchema = z.object({
 const primerSchema = z.object({
   title: z.string(),
   description: z.string(),
-  order: z.number().int().positive(),
+  order: z.number().int().nonnegative(),
   updated: z.coerce.date(),
   draft: z.boolean().default(false),
 });
