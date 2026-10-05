@@ -104,7 +104,7 @@ The same idea works with other ways in:
     --parameters '{"host":["my-db.xxxxxxxxxxxx.us-east-1.rds.amazonaws.com"],"portNumber":["5432"],"localPortNumber":["5433"]}'
   ```
 
-- **An SSH bastion host** (a small instance whose only job is to be SSH'd into) does the same with `ssh -L 5433:<database host>:5432 user@bastion`, at the cost of keeping an SSH port open and managing keys.
+- **An SSH [bastion host](/primers/networking/proxies-and-bastions/#bastion-hosts)** (a small instance whose only job is to be SSH'd into) does the same with `ssh -L 5433:<database host>:5432 user@bastion`, at the cost of keeping an SSH port open and managing keys.
 
 | Option | Good for | Lasts |
 |---|---|---|
