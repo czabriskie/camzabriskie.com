@@ -85,7 +85,7 @@ Once a CDN is in front of your site, the origin should only take requests from t
 
 ### S3 origins: keep the bucket private
 
-The older way to host a static site on S3 was to turn on static website hosting, make the bucket public, and point CloudFront at the bucket's website endpoint. That leaves the bucket open to everyone, and S3 website endpoints don't support HTTPS anyway [@aws-s3-endpoints].
+The older way to host a static site on S3 was to turn on static website hosting, make the bucket public, and point CloudFront at the bucket's website endpoint. That leaves the bucket open to everyone [@aws-s3-website-permissions], and S3 website endpoints don't support HTTPS anyway [@aws-s3-endpoints].
 
 The current way is to use the bucket's regular endpoint as the origin and turn on **origin access control (OAC)**. CloudFront signs its requests to S3, the bucket policy only allows requests signed by your distribution, and the bucket stays completely private [@aws-cloudfront-s3-oac]. OAC doesn't work with website endpoints, which is one more reason to leave them behind. (Without the website endpoint, features like a default `index.html` in every folder have to be handled another way, often with a small CloudFront Function.)
 
@@ -111,7 +111,7 @@ curl -sI https://www.example.com/logo.png
 ```
 
 - `x-cache: Hit from cloudfront` or `Miss from cloudfront` says whether the edge had it [@aws-cloudfront-cache-tags-blog].
-- `age: 120` says how many seconds the copy has been sitting in a cache [@rfc9111].
+- `age: 120` says roughly how many seconds it's been since the origin generated or last revalidated this copy [@rfc9111].
 - `cache-control` shows what the origin asked for.
 
 Run it twice. A miss followed by a hit means caching is working. Two misses in a row usually means the cache key includes something that changes between requests, or the origin is telling the CDN not to cache.
