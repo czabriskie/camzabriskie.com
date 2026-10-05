@@ -345,3 +345,29 @@ ol.references a, ul.references a { word-break: break-word; }
 ul.references.all li { margin-bottom: 1.1rem; scroll-margin-top: 1rem; }
 ul.references .cited-in { display: block; color: var(--muted); margin-top: 0.2rem; }
 .references-all { color: var(--muted); font-size: 0.9rem; }
+
+/* Route table lookup (src/scripts/route-lookup.ts), sharing the calculator's box */
+.route-lookup { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 1rem 1.2rem; margin: 1.2rem 0 1.6rem; }
+.route-lookup:empty { display: none; }
+.route-lookup .controls { display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap; }
+.route-lookup label { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; }
+.route-lookup input.ip {
+  width: 9.5rem;
+  font: inherit;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 0.15rem 0.4rem;
+}
+.route-lookup .table-wrap { overflow-x: auto; margin-top: 0.9rem; }
+.route-lookup table { border-collapse: collapse; width: 100%; font-size: 0.93rem; }
+.route-lookup th, .route-lookup td { border: 1px solid var(--line); padding: 0.35rem 0.6rem; text-align: left; }
+.route-lookup tr.miss td { color: var(--muted); }
+.route-lookup tr.hit td:nth-child(3) { color: var(--ink); }
+.route-lookup tr.win td { background: color-mix(in srgb, var(--tech) 14%, transparent); }
+.route-lookup tr.win td:nth-child(3) { color: var(--tech); font-weight: 600; }
+.route-lookup code { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 0.88em; }
+.route-lookup .answer { margin: 0.8rem 0 0; }
+.route-lookup .answer b { color: var(--tech); }

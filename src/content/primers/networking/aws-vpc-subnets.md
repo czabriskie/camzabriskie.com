@@ -31,17 +31,80 @@ That leaves 2<sup>(32 − n)</sup> − 5 usable addresses ([AWS's subnet sizing 
 
 ## Route tables
 
-Every subnet is associated with one route table, a list of routes that decides where traffic leaving the subnet goes next. Each route is a destination range and a target:
+Every subnet is associated with one route table. Whenever something in the subnet sends a packet, the VPC takes the packet's destination address, looks it up in that route table, and the route table says where to send it next. A route table doesn't allow or block anything (that's the firewalls' job, further down). It only picks the next step.
 
-| Destination | Target | Meaning |
+### Destination and target
+
+Each route is one row with two columns:
+
+- **Destination** is a CIDR range, the set of addresses the row is about. Read it as "if the packet is going to an address in this range…"
+- **Target** is where to send the packet next: "…send it this way." It's usually a gateway or connection out of the VPC, or `local`, which means "it's inside this VPC, deliver it directly."
+
+So each route works like a signpost: *for addresses in `10.20.0.0/16`, go through the peering connection*. The target is the next step, not necessarily the final stop. A peering connection hands the packet to the other VPC, and that VPC's own route tables take it from there.
+
+Here's a route table for a subnet in a VPC that uses `10.0.0.0/16`, is peered with another VPC that uses `10.20.0.0/16`, and has an internet gateway:
+
+| Destination | Target | Read it as |
 |---|---|---|
-| `10.0.0.0/16` | `local` | traffic for anywhere in the VPC stays in the VPC |
-| `10.20.0.0/16` | a peering connection | traffic for another VPC goes over the peering link |
-| `0.0.0.0/0` | an internet gateway | everything else goes to the internet |
+| `10.0.0.0/16` | `local` | Going anywhere in this VPC? Deliver it inside the VPC. |
+| `10.20.0.0/16` | `pcx-…` (a peering connection) | Going to the other VPC's range? Send it over the peering connection. |
+| `0.0.0.0/0` | `igw-…` (an internet gateway) | Going anywhere else? Send it to the internet. |
 
-Every route table has the `local` route for the VPC's own range, which is why two subnets in the same VPC can reach each other without you adding anything (the firewalls below still have to allow it). When more than one route matches an address, the most specific one wins. AWS calls this longest prefix match: for `10.20.5.9`, the `/16` route beats `0.0.0.0/0` because 16 locked bits says more than 0 does. It's the same CIDR reading as everywhere else, just used to pick a path.
+`0.0.0.0/0` matches every IPv4 address there is, because a `/0` [locks none of the bits](/primers/networking/ip-addresses-and-cidr/#what-the-n-means). It's called the **default route**, the place traffic goes when nothing more specific applies.
 
-A subnet you don't explicitly associate with a route table uses the VPC's main route table, so changing the main one quietly changes every subnet still relying on it.
+### When more than one route matches
+
+Since `0.0.0.0/0` matches everything, almost every packet matches at least two routes: the default route and something more specific. The route table needs a rule for picking one, and the rule is that **the route with the longest prefix wins**, meaning the biggest number after the slash. AWS calls this longest prefix match.
+
+A bigger number after the slash means a [smaller, more specific range](/primers/networking/ip-addresses-and-cidr/#the-one-formula). `/0` is every address, `/16` is 65,536 of them, `/24` is 256, and `/32` is exactly one. So the rule amounts to this: the route that describes the destination most precisely wins.
+
+Sorting mail works the same way. Say there's one bin for anything going to the US, one for anything going to Utah, and one for anything going to Salt Lake City. A letter for Salt Lake City fits in all three bins, but it goes in the Salt Lake City one, because that's the most specific. A letter for Denver only fits the US bin, so that's where it goes. Routes are the same, with CIDR ranges in place of places, and `0.0.0.0/0` as the "anywhere" bin.
+
+Here's the table above deciding where `10.20.5.9` goes:
+
+| Route | Does `10.20.5.9` fall in it? | Prefix length |
+|---|---|---|
+| `10.0.0.0/16 → local` | No. This range only covers `10.0.x.x`. | |
+| `10.20.0.0/16 → pcx-…` | Yes | **16** |
+| `0.0.0.0/0 → igw-…` | Yes, every address does | 0 |
+
+Two routes match, and 16 is longer than 0, so the packet goes over the peering connection.
+
+The order of the rows doesn't matter, only how specific each route is. (Network ACLs work the other way, checking rules in number order, which is one of the reasons the two get mixed up.) This makes it easy to have a broad default and carve out exceptions. If the table also had `10.20.8.0/24 → tgw-…`, then `10.20.8.7` would go to the transit gateway (`/24` beats `/16`), while `10.20.5.9` would still go over the peering connection, because it isn't in `10.20.8.0/24`.
+
+### Following a packet
+
+Here are three packets leaving an instance at `10.0.1.25` in this subnet:
+
+| Packet going to | Routes it matches | Winner | What happens |
+|---|---|---|---|
+| `10.0.2.40`, a database in another subnet of the same VPC | `10.0.0.0/16` and `0.0.0.0/0` | `local` (`/16`) | Delivered directly inside the VPC |
+| `10.20.5.9`, a server in the peered VPC | `10.20.0.0/16` and `0.0.0.0/0` | `pcx-…` (`/16`) | Sent over the peering connection |
+| `203.0.113.50`, a server on the internet | only `0.0.0.0/0` | `igw-…` (`/0`) | Sent out through the internet gateway |
+
+Try any address against the same table:
+
+<div class="route-lookup" data-ip="10.20.5.9" data-routes='[["10.0.0.0/16","local","delivered inside this VPC"],["10.20.0.0/16","pcx-…","sent over the peering connection"],["10.20.8.0/24","tgw-…","sent to the transit gateway"],["0.0.0.0/0","igw-…","sent out through the internet gateway"]]'></div>
+
+(This version includes the `10.20.8.0/24` route from above, so `10.20.8.7` and `10.20.5.9` end up going different ways.)
+
+### Every subnet has its own
+
+- Every route table has the `local` route for the VPC's range, and it can't be deleted. That's why two subnets in the same VPC can reach each other without you adding anything, as long as the firewalls allow it.
+- A subnet you don't explicitly associate with a route table uses the VPC's **main route table**, so changing the main one quietly changes every subnet still relying on it.
+- A route table only decides where traffic **leaving** its subnet goes. When the database at `10.0.2.40` replies, the reply leaves the database's subnet, so the database subnet's route table decides where the reply goes. Inside one VPC the `local` route covers that. For traffic from outside the VPC, like a VPN or a peered VPC, the destination's subnet needs its own route back to wherever the request came from. A missing return route is behind a lot of "the request gets there but nothing comes back" problems, and it's step 2 of the [checklist below](#when-traffic-doesnt-get-through).
+
+### What the targets are
+
+| Target | Looks like | Sends traffic to |
+|---|---|---|
+| Local | `local` | Other addresses in the same VPC |
+| Internet gateway | `igw-…` | The public internet (the resource also needs a public IP) |
+| NAT gateway | `nat-…` | The internet, outbound only (see below) |
+| Peering connection | `pcx-…` | One other VPC |
+| Transit gateway | `tgw-…` | A hub connecting many VPCs and VPNs |
+| Virtual private gateway | `vgw-…` | A site-to-site VPN to an office or data center |
+| Gateway VPC endpoint | `vpce-…` | S3 or DynamoDB, without going out to the internet |
 
 ### Public and private subnets
 
