@@ -37,7 +37,6 @@ export const references = {
   rfc2246: rfc(2246, ['T. Dierks', 'C. Allen'], 'The TLS Protocol Version 1.0', 'Jan. 1999'),
   rfc2308: rfc(2308, ['M. Andrews'], 'Negative Caching of DNS Queries (DNS NCACHE)', 'Mar. 1998'),
   rfc3022: rfc(3022, ['P. Srisuresh', 'K. Egevang'], 'Traditional IP Network Address Translator (Traditional NAT)', 'Jan. 2001'),
-  rfc3439: rfc(3439, ['R. Bush', 'D. Meyer'], 'Some Internet Architectural Guidelines and Philosophy', 'Dec. 2002'),
   rfc3596: rfc(3596, ['S. Thomson', 'C. Huitema', 'V. Ksinant', 'M. Souissi'], 'DNS Extensions to Support IP Version 6', 'Oct. 2003'),
   rfc1122: rfc(1122, ['R. Braden, Ed.'], 'Requirements for Internet Hosts - Communication Layers', 'Oct. 1989'),
   rfc1928: rfc(1928, ['M. Leech', 'M. Ganis', 'Y. Lee', 'R. Kuris', 'D. Koblas', 'L. Jones'], 'SOCKS Protocol Version 5', 'Mar. 1996'),
@@ -51,6 +50,7 @@ export const references = {
   rfc5737: rfc(5737, ['J. Arkko', 'M. Cotton', 'L. Vegoda'], 'IPv4 Address Blocks Reserved for Documentation', 'Jan. 2010'),
   rfc6066: rfc(6066, ['D. Eastlake 3rd'], 'Transport Layer Security (TLS) Extensions: Extension Definitions', 'Jan. 2011'),
   rfc7239: rfc(7239, ['A. Petersson', 'M. Nilsson'], 'Forwarded HTTP Extension', 'Jun. 2014'),
+  rfc7766: rfc(7766, ['J. Dickinson', 'S. Dickinson', 'R. Bellis', 'A. Mankin', 'D. Wessels'], 'DNS Transport over TCP - Implementation Requirements', 'Mar. 2016'),
   rfc8200: rfc(8200, ['S. Deering', 'R. Hinden'], 'Internet Protocol, Version 6 (IPv6) Specification', 'Jul. 2017'),
   rfc8446: rfc(8446, ['E. Rescorla'], 'The Transport Layer Security (TLS) Protocol Version 1.3', 'Aug. 2018'),
   rfc8484: rfc(8484, ['P. Hoffman', 'P. McManus'], 'DNS Queries over HTTPS (DoH)', 'Oct. 2018'),
@@ -105,14 +105,19 @@ export const references = {
   'aws-vpc-nacls': aws('Control subnet traffic with network access control lists', VPC_GUIDE, 'https://docs.aws.amazon.com/vpc/latest/userguide/vpc-network-acls.html'),
   'aws-vpc-default-nacl': aws('Default network ACL for a VPC', VPC_GUIDE, 'https://docs.aws.amazon.com/vpc/latest/userguide/default-network-acl.html'),
   'aws-vpc-custom-nacl': aws('Custom network ACLs for your VPC', VPC_GUIDE, 'https://docs.aws.amazon.com/vpc/latest/userguide/custom-network-acl.html'),
+  'aws-vpc-subnet-route-tables': aws('Subnet route tables', VPC_GUIDE, 'https://docs.aws.amazon.com/vpc/latest/userguide/subnet-route-tables.html'),
+  'aws-vpc-create-nacl': aws('Create a network ACL for your VPC', VPC_GUIDE, 'https://docs.aws.amazon.com/vpc/latest/userguide/create-network-acl.html'),
   'aws-vpc-security-groups': aws('Control traffic to your AWS resources using security groups', VPC_GUIDE, 'https://docs.aws.amazon.com/vpc/latest/userguide/vpc-security-groups.html'),
   'aws-vpc-infrastructure-security': aws('Infrastructure security in Amazon VPC', VPC_GUIDE, 'https://docs.aws.amazon.com/vpc/latest/userguide/infrastructure-security.html'),
   'aws-vpc-quotas': aws('Amazon VPC quotas', VPC_GUIDE, 'https://docs.aws.amazon.com/vpc/latest/userguide/amazon-vpc-limits.html'),
   'aws-vpc-nat-gateways': aws('NAT gateways', VPC_GUIDE, 'https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html'),
+  'aws-vpc-nat-gateway-basics': aws('NAT gateway basics', VPC_GUIDE, 'https://docs.aws.amazon.com/vpc/latest/userguide/nat-gateway-basics.html'),
   'aws-vpc-regional-nat': aws('Regional NAT gateways for automatic multi-AZ expansion', VPC_GUIDE, 'https://docs.aws.amazon.com/vpc/latest/userguide/nat-gateways-regional.html'),
+  'aws-ec2-create-subnet': aws('CreateSubnet', 'Amazon EC2 API Reference', 'https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CreateSubnet.html'),
   'aws-vpc-faq': aws('Amazon VPC FAQs', undefined, 'https://aws.amazon.com/vpc/faqs/'),
   'aws-vpc-peering': aws('How VPC peering connections work', 'Amazon VPC Peering Guide', 'https://docs.aws.amazon.com/vpc/latest/peering/vpc-peering-basics.html'),
   'aws-tgw-vpc-attachments': aws('Amazon VPC attachments in AWS Transit Gateway', 'Amazon VPC Transit Gateways', 'https://docs.aws.amazon.com/vpc/latest/tgw/tgw-vpc-attachments.html'),
+  'aws-tgw-how-it-works': aws('How AWS Transit Gateway works', 'Amazon VPC Transit Gateways', 'https://docs.aws.amazon.com/vpc/latest/tgw/how-transit-gateways-work.html'),
   'aws-eks-vpc-cni': aws('Assign IPs to Pods with the Amazon VPC CNI', 'Amazon EKS User Guide', 'https://docs.aws.amazon.com/eks/latest/userguide/managing-vpc-cni.html'),
 
   'root-servers': { authors: 'Root Server Technical Operations Association', title: 'Root Servers', url: 'https://root-servers.org/', accessed: CHECKED },
@@ -121,6 +126,7 @@ export const references = {
   'aws-route53-concepts': aws('Amazon Route 53 concepts', 'Amazon Route 53 Developer Guide', 'https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/route-53-concepts.html'),
   'aws-route53-public-zones': aws('Considerations when working with public hosted zones', 'Amazon Route 53 Developer Guide', 'https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/hosted-zone-public-considerations.html'),
   'aws-route53-private-zones': aws('Working with private hosted zones', 'Amazon Route 53 Developer Guide', 'https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/hosted-zones-private.html'),
+  'aws-route53-resolver-forwarding': aws('Resolving DNS queries between VPCs and your network', 'Amazon Route 53 Developer Guide', 'https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resolver-overview-DSN-queries-to-vpc.html'),
   'aws-route53-routing-policies': aws('Choosing a routing policy', 'Amazon Route 53 Developer Guide', 'https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy.html'),
   'aws-route53-resolver': aws('What is Route 53 VPC Resolver?', 'Amazon Route 53 Developer Guide', 'https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resolver.html'),
 
@@ -142,6 +148,7 @@ export const references = {
   'aws-cloudfront-faq': aws('Amazon CloudFront FAQs', undefined, 'https://aws.amazon.com/cloudfront/faqs/'),
   'aws-cloudfront-alb-origin': aws('AWS WAF IPSet rules for ALB behind CloudFront', 'AWS re:Post Knowledge Center', 'https://repost.aws/knowledge-center/waf-ipset-rules-alb-cloudfront'),
   'aws-s3-endpoints': aws('Amazon Simple Storage Service endpoints and quotas', 'AWS General Reference', 'https://docs.aws.amazon.com/general/latest/gr/s3.html'),
+  'aws-s3-website-permissions': aws('Setting permissions for website access', 'Amazon S3 User Guide', 'https://docs.aws.amazon.com/AmazonS3/latest/userguide/WebsiteAccessPermissionsReqd.html'),
   'aws-shield': aws('AWS Shield', 'AWS WAF, AWS Firewall Manager, and AWS Shield Developer Guide', 'https://docs.aws.amazon.com/waf/latest/developerguide/shield-chapter.html'),
 
   // Load balancing and WAF
@@ -150,6 +157,7 @@ export const references = {
   'aws-gwlb-intro': aws('What is a Gateway Load Balancer?', 'Elastic Load Balancing User Guide for Gateway Load Balancers', 'https://docs.aws.amazon.com/elasticloadbalancing/latest/gateway/introduction.html'),
   'aws-alb-intro': aws('What is an Application Load Balancer?', 'Elastic Load Balancing User Guide for Application Load Balancers', 'https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html'),
   'aws-alb-target-groups': aws('Target groups for your Application Load Balancers', 'Elastic Load Balancing User Guide for Application Load Balancers', 'https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-target-groups.html'),
+  'aws-alb-header-modification': aws('HTTP header modification for your Application Load Balancer', 'Elastic Load Balancing User Guide for Application Load Balancers', 'https://docs.aws.amazon.com/elasticloadbalancing/latest/application/header-modification.html'),
   'aws-alb-mtls': aws('Mutual authentication with TLS in Application Load Balancer', 'Elastic Load Balancing User Guide for Application Load Balancers', 'https://docs.aws.amazon.com/elasticloadbalancing/latest/application/mutual-authentication.html'),
   'aws-waf-resources': aws('Resources that you can protect with AWS WAF', 'AWS WAF Developer Guide', 'https://docs.aws.amazon.com/waf/latest/developerguide/how-aws-waf-works-resources.html'),
 
@@ -167,11 +175,15 @@ export const references = {
   'aws-acm-dns-renewal': aws('Renewal for domains validated by DNS', 'AWS Certificate Manager User Guide', 'https://docs.aws.amazon.com/acm/latest/userguide/dns-renewal-validation.html'),
   'aws-acm-pricing': aws('AWS Certificate Manager Pricing', undefined, 'https://aws.amazon.com/certificate-manager/pricing/'),
   'aws-acm-faq': aws('AWS Certificate Manager FAQs', undefined, 'https://aws.amazon.com/certificate-manager/faqs/'),
+  'mozilla-root-store': { authors: 'Mozilla', title: 'Why Does Mozilla Maintain Our Own Root Certificate Store?', container: 'Mozilla Security Blog', date: 'Feb. 14, 2019', url: 'https://blog.mozilla.org/security/2019/02/14/why-does-mozilla-maintain-our-own-root-certificate-store/', accessed: CHECKED },
   'letsencrypt-challenges': { authors: "Let's Encrypt", title: 'Challenge Types', url: 'https://letsencrypt.org/docs/challenge-types/', accessed: CHECKED },
   'caddy-automatic-https': { authors: 'Caddy', title: 'Automatic HTTPS', container: 'Caddy Documentation', url: 'https://caddyserver.com/docs/automatic-https', accessed: CHECKED },
   'mdn-x-forwarded-for': { authors: 'MDN contributors', title: 'X-Forwarded-For header', container: 'MDN Web Docs', url: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/X-Forwarded-For', accessed: CHECKED },
   'mdn-proxies': { authors: 'MDN contributors', title: 'Proxy servers and tunneling', container: 'MDN Web Docs', url: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Proxy_servers_and_tunneling', accessed: CHECKED },
   'curl-proxy-env': { authors: 'D. Stenberg', title: 'Proxy environment variables', container: 'Everything curl', url: 'https://everything.curl.dev/usingcurl/proxies/env.html', accessed: CHECKED },
+  'mdn-x-forwarded-proto': { authors: 'MDN contributors', title: 'X-Forwarded-Proto header', container: 'MDN Web Docs', url: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/X-Forwarded-Proto', accessed: CHECKED },
+  'gitlab-no-proxy': { authors: 'S. Hu', title: 'We need to talk: Can we standardize NO_PROXY?', container: 'GitLab Blog', url: 'https://about.gitlab.com/blog/we-need-to-talk-no-proxy/', accessed: CHECKED },
+  'chromium-network-settings': { authors: 'The Chromium Projects', title: 'Network Settings', container: 'Chromium Design Documents', url: 'https://www.chromium.org/developers/design-documents/network-settings/', accessed: CHECKED },
   'python-requests-advanced': { authors: 'Python Software Foundation', title: 'Advanced Usage', container: 'Requests Documentation', url: 'https://requests.readthedocs.io/en/latest/user/advanced/', accessed: CHECKED },
   'python-ipaddress': { authors: 'Python Software Foundation', title: 'ipaddress: IPv4/IPv6 manipulation library', container: 'The Python Standard Library', url: 'https://docs.python.org/3/library/ipaddress.html', accessed: CHECKED },
   'node-cli': { authors: 'OpenJS Foundation', title: 'Command-line API', container: 'Node.js Documentation', url: 'https://nodejs.org/api/cli.html', accessed: CHECKED },
@@ -181,6 +193,7 @@ export const references = {
 
   // Reaching private resources
   'aws-s2s-vpn-what-is': aws('What is AWS Site-to-Site VPN?', 'AWS Site-to-Site VPN User Guide', 'https://docs.aws.amazon.com/vpn/latest/s2svpn/VPC_VPN.html'),
+  'aws-dx-encryption-in-transit': aws('Encryption in AWS Direct Connect', 'AWS Direct Connect User Guide', 'https://docs.aws.amazon.com/directconnect/latest/UserGuide/encryption-in-transit.html'),
   'aws-s2s-vpn-resilience': aws('Resilience in AWS Site-to-Site VPN', 'AWS Site-to-Site VPN User Guide', 'https://docs.aws.amazon.com/vpn/latest/s2svpn/disaster-recovery-resiliency.html'),
   'aws-dx-encryption': aws('Establish an AWS VPN using Direct Connect', 'AWS re:Post Knowledge Center', 'https://repost.aws/knowledge-center/create-vpn-direct-connect'),
   'aws-client-vpn-access': aws('Provide Client VPN users with access to AWS resources', 'AWS re:Post Knowledge Center', 'https://repost.aws/knowledge-center/client-vpn-give-users-resource-access'),
@@ -190,6 +203,7 @@ export const references = {
   'aws-ec2-instance-connect-endpoint': aws('Connect to your instances using a private IP address and EC2 Instance Connect Endpoint', 'Amazon EC2 User Guide', 'https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/connect-with-ec2-instance-connect-endpoint.html'),
   'openssh-ssh': { authors: 'OpenBSD', title: 'ssh(1)', container: 'OpenBSD manual pages', url: 'https://man.openbsd.org/ssh', accessed: CHECKED },
   'k8s-port-forward': { authors: 'The Kubernetes Authors', title: 'Use Port Forwarding to Access Applications in a Cluster', container: 'Kubernetes Documentation', url: 'https://kubernetes.io/docs/tasks/access-application-cluster/port-forward-access-application-cluster/', accessed: CHECKED },
+  'k8s-control-plane-comms': { authors: 'The Kubernetes Authors', title: 'Communication between Nodes and the Control Plane', container: 'Kubernetes Documentation', url: 'https://kubernetes.io/docs/concepts/architecture/control-plane-node-communication/', accessed: CHECKED },
   'socat-manual': { authors: 'G. Rieger', title: 'socat - Multipurpose relay', container: 'socat documentation', url: 'http://www.dest-unreach.org/socat/doc/socat.html', accessed: CHECKED },
 };
 

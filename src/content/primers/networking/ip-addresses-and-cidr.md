@@ -9,7 +9,7 @@ A CIDR range like `10.0.1.0/24` is a short way to write down a block of IP addre
 
 ## Bits and octets
 
-An IPv4 address is one 32-bit number, 32 switches that are each 0 or 1. Nobody wants to read 32 binary digits, so it gets written as four groups of 8 bits (octets), each converted to decimal, which is why every part of an address falls between 0 and 255 [@rfc791].
+An IPv4 address is one 32-bit number, 32 switches that are each 0 or 1. Nobody wants to read 32 binary digits, so it gets written as four groups of 8 bits (octets), each converted to decimal, which is why every part of an address falls between 0 and 255 [@rfc791, @rfc4632].
 
 `10.0.1.25` is really:
 
@@ -182,7 +182,7 @@ Cloud providers usually reserve a few more on top of these two. AWS reserves fiv
 
 ## Private ranges
 
-Three ranges are set aside for private networks and never get routed on the public internet [@rfc1918]:
+Three ranges are set aside for private networks and aren't supposed to be routed on the public internet [@rfc1918]:
 
 - `10.0.0.0/8`
 - `172.16.0.0/12` (that's `172.16.x.x` through `172.31.x.x`)
