@@ -62,7 +62,7 @@ TLS stands for Transport Layer Security, which makes it sound like it belongs at
 
 ## One request, down the stack and back up
 
-Here's what happens when a browser at `192.168.1.20` on a home network fetches `https://www.example.com`, which DNS has already turned into `203.0.113.10`.
+Here's what happens when a browser at `192.168.1.20` on a home network fetches `https://www.example.com`, which DNS has already turned into `203.0.113.10` ([How DNS resolution works](/primers/networking/dns-resolution/) covers that lookup step by step).
 
 **On the way down, each layer wraps the data from the layer above** in its own envelope, with its own addresses on the outside. This is called **encapsulation**:
 
