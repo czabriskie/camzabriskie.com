@@ -1,0 +1,29 @@
+---
+import Base from '../../layouts/Base.astro';
+import NoteList from '../../components/NoteList.astro';
+import { publishedTopics } from '../../lib/learning';
+
+const groups = await publishedTopics();
+const blurb =
+  "Explainers for things I've had to learn, written so someone else can learn them too. These get revised as I understand more, unlike the posts.";
+---
+<Base title="Learning Bytes — Cam Zabriskie" description={blurb}>
+  <div class="learning stream-tech">
+    <div class="stream-head">
+      <span class="tick" aria-hidden="true"></span>
+      <h1>Learning Bytes</h1>
+    </div>
+    <p class="lede" style="color: var(--muted); margin-bottom: 2.5rem;">{blurb}</p>
+
+    {groups.map(({ topic, notes }) => (
+      <section class="group">
+        <div class="group-head">
+          <h2><a href={`/learning/${topic.slug}/`}>{topic.title}</a></h2>
+          <span class="mono count">{notes.length} {notes.length === 1 ? 'note' : 'notes'}</span>
+        </div>
+        <p class="group-note">{topic.blurb}</p>
+        <NoteList notes={notes} />
+      </section>
+    ))}
+  </div>
+</Base>

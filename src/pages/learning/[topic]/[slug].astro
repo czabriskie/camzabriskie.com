@@ -1,0 +1,39 @@
+---
+import { render } from 'astro:content';
+import Base from '../../../layouts/Base.astro';
+import { publishedTopics, noteSlug, noteUrl, pos } from '../../../lib/learning';
+import { fmtDate } from '../../../lib/bytes';
+
+export async function getStaticPaths() {
+  const paths = [];
+  for (const { topic, notes } of await publishedTopics()) {
+    notes.forEach((note, i) => {
+      paths.push({
+        params: { topic: topic.slug, slug: noteSlug(note) },
+        props: { topic, note, i, total: notes.length, prev: notes[i - 1], next: notes[i + 1] },
+      });
+    });
+  }
+  return paths;
+}
+
+const { topic, note, i, total, prev, next } = Astro.props;
+const { Content } = await render(note);
+---
+<Base title={`${note.data.title} — ${topic.title} — Cam Zabriskie`} description={note.data.description}>
+  <article class="byte note stream-tech">
+    <p class="crumbs mono">
+      <a href="/learning/">Learning Bytes</a> › <a href={`/learning/${topic.slug}/`}>{topic.title}</a>
+    </p>
+    <h1>{note.data.title}</h1>
+    <div class="meta">
+      <span class="byte-badge"><b>{pos(i)}</b> / {pos(total - 1)}</span>
+      <span class="mono">updated {fmtDate(note.data.updated)}</span>
+    </div>
+    <Content />
+    <nav class="note-nav">
+      {prev ? <a href={noteUrl(prev)}><span class="mono">← {pos(i - 1)}</span>{prev.data.title}</a> : <span />}
+      {next && <a class="next" href={noteUrl(next)}><span class="mono">{pos(i + 1)} →</span>{next.data.title}</a>}
+    </nav>
+  </article>
+</Base>

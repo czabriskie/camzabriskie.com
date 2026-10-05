@@ -224,3 +224,45 @@ footer.site .wrap {
   header.site, footer.site { display: none; }
   body { background: white; color: black; }
 }
+
+/* Learning: notes grouped by topic, read in order */
+.learning .group { margin-bottom: 3.2rem; padding-top: 1.7rem; border-top: 1px solid var(--line); }
+.learning .group-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.learning .group-head h2 { font-size: clamp(1.6rem, 4.5vw, 1.95rem); font-weight: 700; letter-spacing: -0.015em; margin: 0 0 0.4rem; }
+.learning .group-head h2 a { text-decoration: none; }
+.learning .group-head .count { color: var(--muted); }
+.learning .group-note { color: var(--muted); font-size: 0.95rem; margin-bottom: 1.6rem; }
+.crumbs { color: var(--muted); margin: 0 0 0.6rem; }
+.crumbs a { text-decoration: none; }
+.crumbs a:hover { text-decoration: underline; }
+ol.notes { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 1.2rem; }
+ol.notes li { display: grid; grid-template-columns: 2.2rem 1fr; align-items: baseline; }
+ol.notes .pos { color: var(--tech); font-size: 0.85rem; }
+ol.notes .title { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 1.08rem; text-decoration: none; }
+ol.notes .title:hover { text-decoration: underline; }
+ol.notes .desc { color: var(--muted); font-size: 0.95rem; margin: 0.1rem 0 0; }
+nav.note-nav { display: flex; justify-content: space-between; gap: 1.5rem; margin-top: 3rem; padding-top: 1.2rem; border-top: 1px solid var(--line); }
+nav.note-nav a { display: flex; flex-direction: column; gap: 0.15rem; text-decoration: none; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; max-width: 48%; }
+nav.note-nav a:hover { text-decoration: underline; }
+nav.note-nav a.next { text-align: right; margin-left: auto; }
+nav.note-nav .mono { color: var(--tech); font-weight: 400; }
+
+/* Bit grid: an IPv4 address as 32 bits, prefix bits in teal, host bits left open */
+.bitgrid { display: flex; gap: 0.5rem; flex-wrap: wrap; margin: 1.2rem 0 0.4rem; }
+.bitgrid .octet { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; }
+.bitgrid .bits { display: flex; gap: 2px; }
+.bitgrid .bits span {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 0.8rem;
+  width: 1.15rem;
+  height: 1.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  border: 1px solid var(--line);
+  color: var(--muted);
+}
+.bitgrid .bits span.n { background: var(--tech); border-color: var(--tech); color: var(--paper); }
+.bitgrid .dec { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 0.72rem; color: var(--muted); }
+.bitgrid-caption { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.6rem; }
