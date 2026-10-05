@@ -19,6 +19,9 @@ IEEE-style numbered citations were the requested format.
   (`src/lib/remark-citations.mjs`, registered in `astro.config.mjs`) replaces each with a
   linked `[n]`, numbering sources per page in order of first citation as IEEE does, and
   appends a "References" section with the entries in IEEE format.
+- Each citation gets its own id, and each reference links back to where it was cited
+  (↩ for one use, ↩ a b c for several, Wikipedia-style), so readers can return to the
+  sentence they came from without relying on the browser's Back button.
 - `/primers/references/` lists every cited source once, sorted by author, with links
   back to the primers that cite it.
 - `scripts/check-primers.mjs` fails the build on a citation key that isn't defined.

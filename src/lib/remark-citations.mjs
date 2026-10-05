@@ -19,6 +19,13 @@ export default function remarkCitations() {
       if (!order.includes(key)) order.push(key);
       return order.indexOf(key) + 1;
     };
+    // uses[n] = how many times source n has been cited so far, so each citation gets its
+    // own id (cite-3-1, cite-3-2, ...) and the reference can link back to every one.
+    const uses = [];
+    const citeLink = (n) => {
+      uses[n] = (uses[n] ?? 0) + 1;
+      return `<a class="cite" id="cite-${n}-${uses[n]}" href="#ref-${n}">[${n}]</a>`;
+    };
 
     const walk = (node) => {
       if (!node.children || SKIP.has(node.type)) return;
@@ -34,7 +41,7 @@ export default function remarkCitations() {
           if (m.index > last) out.push({ type: 'text', value: child.value.slice(last, m.index) });
           const links = splitKeys(m[1])
             .map((k) => number(k))
-            .map((n) => `<a class="cite" href="#ref-${n}">[${n}]</a>`);
+            .map(citeLink);
           out.push({ type: 'html', value: `<span class="cites">${links.join(', ')}</span>` });
           last = m.index + m[0].length;
         }
@@ -45,13 +52,23 @@ export default function remarkCitations() {
     walk(tree);
 
     if (!order.length) return;
+    // Wikipedia-style links back to where a source was cited: one ↩ if it was cited once,
+    // or ↩ a b c when it was cited several times.
+    const backLinks = (n, count) => {
+      if (count === 1) return `<a class="ref-back" href="#cite-${n}-1" aria-label="Back to where [${n}] is cited">↩</a>`;
+      const letters = Array.from({ length: count }, (_, j) => {
+        const label = j < 26 ? String.fromCharCode(97 + j) : String(j + 1);
+        return `<a href="#cite-${n}-${j + 1}" aria-label="Back to citation ${j + 1} of ${count} for [${n}]">${label}</a>`;
+      });
+      return `<span class="ref-back">↩ ${letters.join(' ')}</span>`;
+    };
     tree.children.push(
       { type: 'heading', depth: 2, children: [{ type: 'text', value: 'References' }] },
       {
         type: 'html',
         value:
           '<ol class="references">' +
-          order.map((key, i) => `<li id="ref-${i + 1}"><span class="ref-n">[${i + 1}]</span> <span>${formatReference(references[key])}</span></li>`).join('') +
+          order.map((key, i) => `<li id="ref-${i + 1}"><span class="ref-n">[${i + 1}]</span> <span>${backLinks(i + 1, uses[i + 1])} ${formatReference(references[key])}</span></li>`).join('') +
           '</ol>' +
           '<p class="references-all">Every source cited across the primers is collected on <a href="/primers/references/">one page</a>.</p>',
       },
