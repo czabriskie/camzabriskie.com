@@ -25,7 +25,7 @@ Layers are numbered from the bottom up, starting with the physical signal:
 | 7 | **Application** | What the data means to the program | HTTP, DNS, SSH, SMTP | URLs, hostnames |
 | 6 | **Presentation** | How data is represented: encoding, compression, encryption | Character encodings, formats like JSON | |
 | 5 | **Session** | Setting up and keeping track of an ongoing conversation | Mostly folded into apps today | |
-| 4 | **Transport** | Getting data from a program on one machine to a program on another, reliably or not | TCP, UDP | Ports |
+| 4 | **Transport** | Getting data from a program on one machine to a program on another, reliably or not | TCP, UDP (and QUIC, on top of UDP) | Ports |
 | 3 | **Network** | Getting data across many networks, hop by hop | IP, ICMP | IP addresses |
 | 2 | **Data link** | Getting data to the next device on the same local network | Ethernet, Wi-Fi | MAC addresses |
 | 1 | **Physical** | Turning bits into signals on a wire, fiber, or radio | Cables, radio, fiber | |
@@ -48,6 +48,17 @@ The OSI model is a way of describing networking, not how the internet's protocol
 Layers 5 and 6 never really became separate pieces in practice. Applications and libraries do that work themselves. So in day-to-day use, the numbers people actually say are 1, 2, 3, 4, and 7, and the OSI numbering survives mostly as shared vocabulary. When a product says it works "at layer 7," it means it understands the application protocol, and "layer 4" means it only sees connections and ports.
 
 Real protocols don't always fit neatly anyway [@rfc3439]. TLS is the usual example: it sits on top of TCP and underneath HTTP, encrypting everything above it, so it's described as layer 6, layer 4.5, or "part of the application," depending on who you ask. The model is a map, and maps simplify.
+
+### TLS isn't the transport layer, despite its name
+
+TLS stands for Transport Layer Security, which makes it sound like it belongs at layer 4 or replaced something there. It didn't. TLS replaced **SSL**, an older encryption protocol (TLS 1.0 was built from SSL 3.0 [@rfc2246]), which is why people still say "SSL certificate" for what's now a TLS certificate. It never replaced **TCP**. TLS runs on top of TCP, and the transport layer is still TCP and UDP.
+
+**QUIC** blurs the line more. It's a newer transport protocol that runs on top of UDP and has TLS 1.3 built into it [@rfc9000, @rfc9001], and HTTP/3 uses it instead of TCP [@rfc9114]. So the two stacks for a web request look like this:
+
+| | Application | Encryption | Transport | Network |
+|---|---|---|---|---|
+| HTTP/1.1 and HTTP/2 | HTTP | TLS | TCP | IP |
+| HTTP/3 | HTTP/3 | TLS 1.3, inside QUIC | QUIC over UDP | IP |
 
 ## One request, down the stack and back up
 
