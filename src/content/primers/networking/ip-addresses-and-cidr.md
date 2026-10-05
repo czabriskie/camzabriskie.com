@@ -80,9 +80,55 @@ A range with prefix length `n` has `32 − n` free bits, and each free bit doubl
 
 ## Reading a range without binary
 
-Each extra bit past `/24` cuts a `/24` in half again, so `/25` blocks hold 128 addresses, `/26` hold 64, `/27` hold 32, and `/28` hold 16. Blocks always start on a multiple of their size, which means `/26` ranges inside a `/24` start at `.0`, `.64`, `.128`, and `.192`.
+Each extra bit past `/24` cuts a `/24` in half again, so `/25` blocks hold 128 addresses, `/26` hold 64, `/27` hold 32, and `/28` hold 16.
 
-To get the block size from the prefix, count how many bits are locked in the octet where the prefix ends, and divide 256 by 2 to that power. For `/26` that's 2 locked bits in the last octet, so 256 / 2<sup>2</sup> = 64. The same trick works one octet up: a `/20` locks 4 bits of the third octet, so blocks step by 16 there (`10.0.0.0/20`, `10.0.16.0/20`, `10.0.32.0/20`, and so on).
+### Where blocks can start
+
+Blocks always start on a multiple of their size. The free bits are the lowest bits of the address, and the first address in a block has all of them set to 0. A number whose bottom 6 bits are all 0 is always a multiple of 2<sup>6</sup> = 64, so every `/26` starts on a multiple of 64. Inside a `/24` that gives you exactly four of them, starting at `.0`, `.64`, `.128`, and `.192`.
+
+| Prefix | Block size | Blocks inside a `/24` start at |
+|---|---|---|
+| `/25` | 128 | `.0`, `.128` |
+| `/26` | 64 | `.0`, `.64`, `.128`, `.192` |
+| `/27` | 32 | `.0`, `.32`, `.64`, `.96`, `.128`, `.160`, `.192`, `.224` |
+| `/28` | 16 | `.0`, `.16`, `.32`, and so on up to `.240` |
+
+Splitting `10.0.1.0/24` into `/26`s gives you these four ranges, and they don't overlap or leave gaps:
+
+| Range | First address | Last address |
+|---|---|---|
+| `10.0.1.0/26` | `10.0.1.0` | `10.0.1.63` |
+| `10.0.1.64/26` | `10.0.1.64` | `10.0.1.127` |
+| `10.0.1.128/26` | `10.0.1.128` | `10.0.1.191` |
+| `10.0.1.192/26` | `10.0.1.192` | `10.0.1.255` |
+
+### Finding the range an address belongs to
+
+Given an address and a prefix, like `10.0.1.100/26`, you can find the whole range in four steps:
+
+1. **Find the octet where the prefix ends.** `/26` is past 24, so it ends in the 4th octet, with 26 − 24 = 2 bits locked in that octet. Every octet before it is locked completely and stays as it is.
+2. **Work out the block size in that octet.** It's 2 to the power of the free bits left in the octet: 8 − 2 = 6 free bits, so 2<sup>6</sup> = 64. (Same thing as 256 / 2<sup>locked bits</sup>.)
+3. **Round that octet down to a multiple of the block size.** 100 rounds down to 64. That's where the range starts.
+4. **Add the block size minus one to get the end.** 64 + 63 = 127. Any octets after this one run from 0 to 255.
+
+So `10.0.1.100` sits in `10.0.1.64/26`, which covers `10.0.1.64` to `10.0.1.127`.
+
+The same steps work when the prefix ends in an earlier octet. For `10.0.37.5/20`:
+
+1. `/20` ends in the 3rd octet, with 20 − 16 = 4 bits locked there. `10.0` stays as it is.
+2. 8 − 4 = 4 free bits in that octet, so the block size is 2<sup>4</sup> = 16.
+3. 37 rounds down to 32.
+4. 32 + 15 = 47, and the 4th octet runs the full 0 to 255.
+
+So the range is `10.0.32.0/20`, covering `10.0.32.0` to `10.0.47.255`, which is 16 × 256 = 4,096 addresses (matches 2<sup>12</sup>).
+
+### Checking whether an address is in a range
+
+This comes up constantly with firewall rules: a rule allows `10.0.1.64/26`, and you want to know whether `10.0.1.130` gets through. Find the range's first and last address using the steps above (`10.0.1.64` to `10.0.1.127`) and see if the address falls between them. 130 is past 127, so it doesn't. It's in the next block over, `10.0.1.128/26`.
+
+### When the address isn't on a boundary
+
+You'll sometimes see something like `10.0.1.50/26`. 50 isn't a multiple of 64, so that's not the start of a range. It's a single address inside `10.0.1.0/26`, written with the prefix of the network it belongs to. Most tools will either correct it to `10.0.1.0/26` for you or reject it, so when you're writing a range yourself, start it on the boundary.
 
 ## Network, broadcast, and usable addresses
 
