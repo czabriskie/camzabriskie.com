@@ -113,8 +113,8 @@ export const references = {
   // Reaching private resources
   'aws-s2s-vpn-what-is': aws('What is AWS Site-to-Site VPN?', 'AWS Site-to-Site VPN User Guide', 'https://docs.aws.amazon.com/vpn/latest/s2svpn/VPC_VPN.html'),
   'aws-s2s-vpn-resilience': aws('Resilience in AWS Site-to-Site VPN', 'AWS Site-to-Site VPN User Guide', 'https://docs.aws.amazon.com/vpn/latest/s2svpn/disaster-recovery-resiliency.html'),
-  'aws-dx-encryption': aws('How do I establish an encrypted connection over an AWS Direct Connect connection?', 'AWS re:Post Knowledge Center', 'https://repost.aws/knowledge-center/create-vpn-direct-connect'),
-  'aws-client-vpn-access': aws('How do I provide my Client VPN users with access to AWS resources?', 'AWS re:Post Knowledge Center', 'https://repost.aws/knowledge-center/client-vpn-give-users-resource-access'),
+  'aws-dx-encryption': aws('Establish an AWS VPN using Direct Connect', 'AWS re:Post Knowledge Center', 'https://repost.aws/knowledge-center/create-vpn-direct-connect'),
+  'aws-client-vpn-access': aws('Provide Client VPN users with access to AWS resources', 'AWS re:Post Knowledge Center', 'https://repost.aws/knowledge-center/client-vpn-give-users-resource-access'),
   'aws-client-vpn-auth-rules': aws('AWS Client VPN authorization rules', 'AWS Client VPN Administrator Guide', 'https://docs.aws.amazon.com/vpn/latest/clientvpn-admin/cvpn-working-rules.html'),
   'aws-ssm-session-manager': aws('AWS Systems Manager Session Manager', 'AWS Systems Manager User Guide', 'https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager.html'),
   'aws-ssm-start-session': aws('Start a session', 'AWS Systems Manager User Guide', 'https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-sessions-start.html'),
