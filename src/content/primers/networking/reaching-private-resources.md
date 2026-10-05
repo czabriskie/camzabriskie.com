@@ -17,8 +17,8 @@ These connect one network to another, so everything on one side can reach (whate
 
 A **peering connection** links two VPCs directly, and each side adds a route for the other's range pointing at the peering connection. It's simple, with two limits that shape bigger designs:
 
-- **No overlapping ranges.** Two VPCs whose CIDR blocks overlap can't be peered at all, which is why [giving every VPC its own range](/primers/networking/aws-vpc-subnets/#dont-overlap-with-networks-youll-connect-to) matters.
-- **Not transitive.** If A is peered with B and B with C, A still can't reach C through B. Connecting a lot of VPCs means a peering connection for every pair.
+- **No overlapping ranges.** Two VPCs whose CIDR blocks overlap can't be peered at all [@aws-vpc-peering], which is why [giving every VPC its own range](/primers/networking/aws-vpc-subnets/#dont-overlap-with-networks-youll-connect-to) matters.
+- **Not transitive.** If A is peered with B and B with C, A still can't reach C through B [@aws-vpc-peering]. Connecting a lot of VPCs means a peering connection for every pair.
 
 ### Transit Gateway
 
@@ -26,18 +26,18 @@ A **Transit Gateway** is a hub that VPCs, VPNs, and Direct Connect links all att
 
 Two details catch people out:
 
-- **A VPC attachment needs a subnet in each availability zone.** The Transit Gateway puts a network interface in that subnet, and resources in a zone with no attachment subnet can't reach the Transit Gateway at all.
-- **Return routes live in the VPC.** Each subnet with resources that should be reachable needs a route back to the far side's range pointing at the Transit Gateway. Without it, requests arrive and replies go nowhere.
+- **A VPC attachment needs a subnet in each availability zone.** The Transit Gateway puts a network interface in that subnet, and resources in a zone with no attachment subnet can't reach the Transit Gateway at all [@aws-tgw-vpc-attachments].
+- **Return routes live in the VPC.** Each subnet with resources that should be reachable needs a route back to the far side's range pointing at the Transit Gateway. Without it, requests arrive and replies go nowhere [@aws-tgw-vpc-attachments].
 
 ### Site-to-site VPN
 
-A **site-to-site VPN** is an encrypted tunnel between two whole networks, usually an office or data center and AWS. It uses **IPsec**, which encrypts the packets themselves, so any protocol can ride inside: HTTP, database connections, anything.
+A **site-to-site VPN** is an encrypted tunnel between two whole networks, usually an office or data center and AWS. It uses **IPsec** [@aws-s2s-vpn-what-is], which encrypts the packets themselves, so any protocol can ride inside: HTTP, database connections, anything.
 
-In AWS, the far end is described by a **customer gateway** (the office's VPN device), and the AWS end is a **virtual private gateway** on one VPC or a Transit Gateway. Each VPN connection comes with two tunnels that end in different availability zones, and the office device should have both up, because AWS takes one down from time to time for maintenance.
+In AWS, the far end is described by a **customer gateway** (the office's VPN device), and the AWS end is a **virtual private gateway** on one VPC or a Transit Gateway. Each VPN connection comes with two tunnels that end in different availability zones, and the office device should have both up, because AWS takes one down from time to time for maintenance [@aws-s2s-vpn-what-is, @aws-s2s-vpn-resilience].
 
 ### Direct Connect
 
-**Direct Connect** is a dedicated physical connection into AWS instead of a tunnel over the internet. It costs more and takes longer to set up, and in return you get more bandwidth and much steadier latency. It isn't encrypted by default. The traffic is private, but if it needs to be encrypted you add MACsec (on supported connections) or run a site-to-site VPN over the Direct Connect link. Large setups often use Direct Connect as the main path with a VPN as the backup.
+**Direct Connect** is a dedicated physical connection into AWS instead of a tunnel over the internet. It costs more and takes longer to set up, and in return you get more bandwidth and much steadier latency. It isn't encrypted by default. The traffic is private, but if it needs to be encrypted you add MACsec (on supported connections) or run a site-to-site VPN over the Direct Connect link [@aws-dx-encryption]. Large setups often use Direct Connect as the main path with a VPN as the backup.
 
 ## Connecting people: client VPN
 
@@ -45,7 +45,7 @@ A **client VPN** connects one person's laptop to a network instead of connecting
 
 Either way, the laptop gets an address from the VPN's own **client range**, like `10.250.0.0/22`, which can't overlap with the networks it connects to. The source address the destination sees depends on the VPN:
 
-- **AWS Client VPN translates the address.** Traffic leaves the VPN endpoint's network interface in the VPC with that interface's address as the source, not the laptop's client address. Inside that VPC no extra return route is needed, because the `local` route covers the endpoint's address. AWS Client VPN also has its own **authorization rules** (which client groups may reach which ranges) and its own route table, and both have to allow a destination before traffic even leaves the VPN.
+- **AWS Client VPN translates the address.** Traffic leaves the VPN endpoint's network interface in the VPC with that interface's address as the source, not the laptop's client address [@aws-client-vpn-access]. Inside that VPC no extra return route is needed, because the `local` route covers the endpoint's address. AWS Client VPN also has its own **authorization rules** (which client groups may reach which ranges) and its own route table, and both have to allow a destination before traffic even leaves the VPN [@aws-client-vpn-auth-rules, @aws-client-vpn-access].
 - **Many self-run VPNs pass the client address through.** The destination sees the laptop's address from the client range. Then every subnet the client needs to reach has to have a route back to the client range, and every security group has to allow the client range.
 
 That difference explains a lot of "I'm connected but can't reach anything." The right return route and security group rule depend on which address the destination actually sees.
@@ -85,9 +85,9 @@ Then the database client connects to `localhost` on port `5433`.
 
 The pieces:
 
-- **socat** (SOcket CAT) connects two streams of bytes. Here it listens on 5432 inside the pod and passes every byte to the database's 5432, and `fork` lets it handle more than one connection.
+- **socat** (SOcket CAT) connects two streams of bytes. Here it listens on 5432 inside the pod and passes every byte to the database's 5432, and `fork` lets it handle more than one connection [@socat-manual].
 - **The pod is inside the VPC,** so it can reach the database even though your laptop can't.
-- **`kubectl port-forward`** connects your local 5433 to the pod's 5432. The traffic travels through the encrypted connection to the Kubernetes API that `kubectl` already has, so the database never has to be exposed anywhere.
+- **`kubectl port-forward`** connects your local 5433 to the pod's 5432. The traffic travels through the encrypted connection to the Kubernetes API that `kubectl` already has, so the database never has to be exposed anywhere [@k8s-port-forward].
 - **Local port 5433** instead of 5432, so it doesn't clash with a Postgres you might have running locally.
 
 It only lasts as long as the terminal is open. Close it and the forward stops, and `--rm` deletes the pod once it exits. The database's security group still has to allow traffic from the pod, which usually means allowing the cluster nodes' security group.
@@ -96,7 +96,7 @@ It only lasts as long as the terminal is open. Close it and the forward stops, a
 
 The same idea works with other ways in:
 
-- **AWS Systems Manager Session Manager** can forward a local port through an EC2 instance to another host in the VPC, with no SSH keys and no inbound ports open on the instance:
+- **AWS Systems Manager Session Manager** can forward a local port through an EC2 instance to another host in the VPC, with no SSH keys and no inbound ports open on the instance [@aws-ssm-session-manager, @aws-ssm-start-session]:
 
   ```bash
   aws ssm start-session --target i-xxxxxxxxxxxxxxxxx \
