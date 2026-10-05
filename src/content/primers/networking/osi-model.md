@@ -85,7 +85,7 @@ That something is **ARP**, the Address Resolution Protocol [@rfc826]. It answers
 
 Here's what happens in step 5 above, before the laptop can send its first frame:
 
-1. **The laptop decides who's next.** `203.0.113.10` isn't in the laptop's own subnet, `192.168.1.0/24` ([what a subnet is](/primers/networking/ip-addresses-and-cidr/#subnets)), so the packet has to go through the **default gateway**, the home router at `192.168.1.1`. The laptop learned that address from the network's settings when it joined, usually handed out by DHCP [@rfc2131].
+1. **The laptop decides who's next.** `203.0.113.10` isn't in the laptop's own subnet, `192.168.1.0/24` ([what a subnet is](/primers/networking/ip-addresses-and-cidr/#subnets)), so the packet has to go through the **default gateway**, the home router at `192.168.1.1`. The laptop learned that address when it joined the network, from [DHCP](#dhcp-how-a-device-gets-its-settings).
 2. **It checks its ARP cache** for `192.168.1.1`. If it's there from a recent conversation, it's done.
 3. **If not, it broadcasts an ARP request** to every device on the local network: "Who has `192.168.1.1`? Tell `192.168.1.20`."
 4. **The router replies directly to the laptop:** "`192.168.1.1` is at `00:00:5e:00:53:01`."
@@ -97,6 +97,21 @@ A few things follow from how that works:
 - **ARP stops at the router.** Broadcasts don't cross routers, so each router along the path does its own ARP on its own network to find the next hop's MAC address.
 - **You can see the cache.** `arp -a` on macOS and Windows, or `ip neigh` on Linux, lists the IP-to-MAC pairs the machine currently knows.
 - **IPv6 doesn't use ARP.** It does the same job with Neighbor Discovery [@rfc4861].
+
+### DHCP: how a device gets its settings
+
+A device joining a network needs a few settings before it can do anything: its own IP address, the size of the subnet it's on, the default gateway's address, and which DNS servers to use. Typing those in by hand on every phone and laptop would be miserable, so almost every network hands them out automatically with **DHCP**, the Dynamic Host Configuration Protocol [@rfc2131]. On a home network the router is usually the DHCP server too.
+
+When the laptop joins, it has no address yet, so the exchange starts with a broadcast [@rfc2131]:
+
+1. **Discover.** The laptop broadcasts "is there a DHCP server out there?"
+2. **Offer.** The router offers an address (`192.168.1.20`) along with the other settings.
+3. **Request.** The laptop asks to use that offer. (This step exists because more than one server might have answered.)
+4. **Acknowledge.** The router confirms, and the laptop configures itself.
+
+The other settings travel as numbered DHCP **options**: one for the subnet mask, one for the default gateway (DHCP calls it the "router" option), one for the DNS servers, and so on [@rfc2132]. That's also how the laptop knows which [recursive resolver](/primers/networking/dns-resolution/#which-resolver-your-machine-uses) to ask.
+
+The address is a **lease**, not a permanent assignment. The laptop has to renew it before it runs out, and if it leaves the network the address eventually goes back into the pool. That's why a device's IP address on a home network can change from one day to the next, and why servers usually get a fixed address or a reservation instead.
 
 ## Where the things in the other primers sit
 
