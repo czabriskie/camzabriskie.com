@@ -97,6 +97,7 @@ export const references = {
     url: 'https://aws.amazon.com/blogs/aws/aws-certificate-manager-introduces-exportable-public-ssl-tls-certificates-to-use-anywhere/',
     accessed: CHECKED,
   },
+  'aws-acm-dns-renewal': aws('Renewal for domains validated by DNS', 'AWS Certificate Manager User Guide', 'https://docs.aws.amazon.com/acm/latest/userguide/dns-renewal-validation.html'),
   'aws-acm-pricing': aws('AWS Certificate Manager Pricing', undefined, 'https://aws.amazon.com/certificate-manager/pricing/'),
   'aws-acm-faq': aws('AWS Certificate Manager FAQs', undefined, 'https://aws.amazon.com/certificate-manager/faqs/'),
   'letsencrypt-challenges': { authors: "Let's Encrypt", title: 'Challenge Types', url: 'https://letsencrypt.org/docs/challenge-types/', accessed: CHECKED },
