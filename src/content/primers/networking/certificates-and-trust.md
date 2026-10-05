@@ -9,7 +9,7 @@ Every HTTPS connection depends on two lookups. DNS turns a name into an address,
 
 ## DNS names
 
-A few record types do most of the work:
+A few record types do most of the work. ([How DNS resolution works](/primers/networking/dns-resolution/) covers how a lookup actually finds them.)
 
 - An **A record** maps a name to an IPv4 address (`app.example.com → 203.0.113.10`). An **AAAA record** does the same for IPv6.
 - A **CNAME record** says one name is really another name: `app.example.com → my-lb-1234567890.us-east-1.elb.amazonaws.com`. The client follows the alias and looks up the real name [@rfc1034]. Load balancers get long generated names and addresses that can change, so you point a friendly name at them with a CNAME and never deal with their addresses directly.
