@@ -5,7 +5,7 @@ order: 1
 updated: 2026-10-05
 ---
 
-Almost everything else in a network (firewall rules, route tables, VPN tunnels) is a rule written against a range of IP addresses, so reading CIDR ranges quickly makes the rest a lot easier to follow. It's the place to start.
+A CIDR range like `10.0.1.0/24` is a short way to write down a block of IP addresses, in this case the 256 addresses from `10.0.1.0` to `10.0.1.255`. Firewall rules, route tables, and VPN configs are all written in ranges like this, so once you can look at one and tell how big it is and where it starts and ends, most of a network diagram becomes readable.
 
 ## Bits and octets
 
