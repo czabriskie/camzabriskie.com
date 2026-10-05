@@ -11,9 +11,9 @@ This builds on [IP addresses and CIDR](/primers/networking/ip-addresses-and-cidr
 
 ## The VPC and its subnets
 
-- A VPC gets an IPv4 CIDR block between `/16` (65,536 addresses) and `/28` (16). `10.0.0.0/16` is the common choice, and it's the largest a single block can be.
-- A subnet is a slice of the VPC's range ([what a subnet is](/primers/networking/ip-addresses-and-cidr/#subnets)), and it's where your resources actually get their addresses. Every instance, database, or load balancer is launched into a subnet and gets an address from that subnet's range. Subnets also have to be between `/16` and `/28`. They can't overlap each other, and each one lives in exactly one availability zone (roughly, one data center in the region).
-- You can't change a subnet's CIDR after creating it. If a subnet fills up, you make a new one. If the whole VPC fills up, you can add more CIDR blocks to it (up to five by default) and put new subnets in those.
+- A VPC gets an IPv4 CIDR block between `/16` (65,536 addresses) and `/28` (16). `10.0.0.0/16` is the common choice, and it's the largest a single block can be [@aws-vpc-cidr-blocks].
+- A subnet is a slice of the VPC's range ([what a subnet is](/primers/networking/ip-addresses-and-cidr/#subnets)), and it's where your resources actually get their addresses. Every instance, database, or load balancer is launched into a subnet and gets an address from that subnet's range. Subnets also have to be between `/16` and `/28`. They can't overlap each other, and each one lives in exactly one availability zone (roughly, one data center in the region) [@aws-vpc-subnets].
+- You can't change a subnet's CIDR after creating it. If a subnet fills up, you make a new one. If the whole VPC fills up, you can add more CIDR blocks to it (up to five by default) and put new subnets in those [@aws-vpc-cidr-blocks, @aws-vpc-quotas].
 
 ## The five reserved addresses
 
@@ -27,11 +27,11 @@ AWS takes five addresses out of every subnet, the first four and the last one, i
 | `10.0.1.3` | reserved by AWS for future use |
 | `10.0.1.255` | the broadcast address. VPCs don't support broadcast, but AWS reserves it anyway. |
 
-That leaves 2<sup>(32 − n)</sup> − 5 usable addresses ([AWS's subnet sizing docs](https://docs.aws.amazon.com/vpc/latest/userguide/subnet-sizing.html) have the full list): 251 in a `/24`, 59 in a `/26`, and only 11 in a `/28`, the smallest subnet AWS allows. The first address you can hand out is always the fifth one (`10.0.1.4` here).
+That leaves 2<sup>(32 − n)</sup> − 5 usable addresses [@aws-vpc-subnet-sizing]: 251 in a `/24`, 59 in a `/26`, and only 11 in a `/28`, the smallest subnet AWS allows. The first address you can hand out is always the fifth one (`10.0.1.4` here).
 
 ## Route tables
 
-Every subnet is associated with one route table. **The packet's source IP picks the route table, and its destination IP picks the row in it.** Whenever something in a subnet sends a packet, the VPC uses that subnet's route table, looks up the packet's destination address in it, and the matching row says where to send it next. A route table doesn't allow or block anything (that's the firewalls' job, further down). It only picks the next step.
+Every subnet is associated with one route table [@aws-vpc-route-tables]. **The packet's source IP picks the route table, and its destination IP picks the row in it.** Whenever something in a subnet sends a packet, the VPC uses that subnet's route table, looks up the packet's destination address in it, and the matching row says where to send it next. A route table doesn't allow or block anything (that's the firewalls' job, further down). It only picks the next step.
 
 ### Source picks the table, destination picks the row
 
@@ -65,7 +65,7 @@ Here's a route table for a subnet in a VPC that uses `10.0.0.0/16`, is peered wi
 
 ### When more than one route matches
 
-Since `0.0.0.0/0` matches everything, almost every packet matches at least two routes: the default route and something more specific. The route table needs a rule for picking one, and the rule is that **the route with the longest prefix wins**, meaning the biggest number after the slash. AWS calls this longest prefix match.
+Since `0.0.0.0/0` matches everything, almost every packet matches at least two routes: the default route and something more specific. The route table needs a rule for picking one, and the rule is that **the route with the longest prefix wins**, meaning the biggest number after the slash. AWS calls this longest prefix match [@aws-vpc-route-priority].
 
 A bigger number after the slash means a [smaller, more specific range](/primers/networking/ip-addresses-and-cidr/#the-one-formula). `/0` is every address, `/16` is 65,536 of them, `/24` is 256, and `/32` is exactly one. So the rule amounts to this: the route that describes the destination most precisely wins.
 
@@ -102,7 +102,7 @@ Try any destination address against the same table:
 ### Every subnet has its own
 
 - Every route table has the `local` route for the VPC's range, and it can't be deleted. That's why two subnets in the same VPC can reach each other without you adding anything, as long as the firewalls allow it.
-- A subnet you don't explicitly associate with a route table uses the VPC's **main route table**, so changing the main one quietly changes every subnet still relying on it.
+- A subnet you don't explicitly associate with a route table uses the VPC's **main route table**, so changing the main one quietly changes every subnet still relying on it [@aws-vpc-subnets].
 - A route table only decides where traffic **leaving** its subnet goes. When the database at `10.0.2.40` replies, the reply leaves the database's subnet, so the database subnet's route table decides where the reply goes. Inside one VPC the `local` route covers that. For traffic from outside the VPC, like a VPN or a peered VPC, the destination's subnet needs its own route back to wherever the request came from. A missing return route is behind a lot of "the request gets there but nothing comes back" problems, and it's step 2 of the [checklist below](#when-traffic-doesnt-get-through).
 
 ### What the targets are
@@ -119,16 +119,18 @@ These are the next hops a route can point at. Each one is a way out of the subne
 | Virtual private gateway | `vgw-…` | A site-to-site VPN to an office or data center |
 | Gateway VPC endpoint | `vpce-…` | S3 or DynamoDB, without going out to the internet |
 
+AWS's routing options page shows an example route for each [@aws-vpc-routing-options].
+
 ### Public and private subnets
 
-AWS has no "public" setting on a subnet. A subnet is public or private because of its route table:
+AWS has no "public" setting on a subnet. A subnet is public or private because of its route table [@aws-vpc-subnets]:
 
 - **Public subnet:** has a route to an internet gateway, usually `0.0.0.0/0 → igw-…`. A resource in it also needs a public IPv4 address (or an Elastic IP) to use that route. With only a private address, it can't reach the internet even from a public subnet.
-- **Private subnet:** no route to an internet gateway. To reach out (downloading packages, calling an outside API), it sends `0.0.0.0/0` to a **NAT gateway** that sits in a public subnet. The NAT gateway sends the traffic out from its own public address and passes the replies back, but nothing on the internet can start a connection into the private subnet through it.
+- **Private subnet:** no route to an internet gateway. To reach out (downloading packages, calling an outside API), it sends `0.0.0.0/0` to a **NAT gateway**. The NAT gateway sends the traffic out from its own public address and passes the replies back, but nothing on the internet can start a connection into the private subnet through it [@aws-vpc-nat-gateways].
 - **VPN-only subnet:** has a route to a VPN connection and none to the internet.
 - **Isolated subnet:** no routes outside the VPC at all, only `local`.
 
-NAT gateways live in one availability zone, so the usual setup is one per zone, with each zone's private subnets routing to the NAT gateway in the same zone. Then losing a zone only takes out that zone's internet access. NAT gateways also charge for every gigabyte that passes through them, which is why traffic to S3 usually gets its own more specific route to a gateway VPC endpoint instead of going through the NAT.
+NAT gateways come in two kinds. The standard kind, which AWS now calls a **zonal** NAT gateway, lives in one availability zone and sits in a public subnet, so the usual setup is one per zone, with each zone's private subnets routing to the NAT gateway in the same zone. Then losing a zone only takes out that zone's internet access. A **regional** NAT gateway is newer: one NAT gateway that spreads across availability zones on its own as your workloads appear in them, and doesn't need a public subnet at all [@aws-vpc-regional-nat]. Either way, NAT gateways charge for the data they process, which is why traffic to S3 usually gets its own more specific route to a gateway VPC endpoint instead of going through the NAT [@aws-vpc-routing-options].
 
 ## Security groups and network ACLs
 
@@ -136,20 +138,20 @@ A VPC has two layers of firewall, and they behave differently enough that mixing
 
 **Security groups** attach to a resource's network interface: an EC2 instance, a load balancer, a database, a Lambda function running in the VPC.
 
-- They're **stateful**. If a request is allowed in, the reply is allowed back out automatically, so you only write rules for whoever starts the connection.
+- They're **stateful**. If a request is allowed in, the reply is allowed back out automatically, so you only write rules for whoever starts the connection [@aws-vpc-security-groups].
 - They only have allow rules. Anything no rule allows is dropped.
 - A new security group allows nothing in and everything out.
 - A rule's source can be a CIDR range or another security group. "Allow port 5432 from the app servers' security group" keeps working as app servers come and go, with no addresses to keep up to date.
 
 **Network ACLs** attach to a subnet, and every subnet has exactly one. **NACL** is short for **network access control list** (people usually say it like "nackle"). An access control list, or ACL, is just what it sounds like: a list of rules, each one saying a kind of traffic (a protocol, a port range, and an address range) is allowed or denied, checked in order from the top. The term comes from older routers and firewalls, and the "network" in front distinguishes AWS's subnet-level version from other ACLs in AWS, like the ones on S3 buckets.
 
-- They're **stateless**. Every packet is checked on its own, so replies need their own rules.
-- Rules are numbered and checked from the lowest number up. The first match decides, and a final `*` rule denies anything nothing else matched.
+- They're **stateless**. Every packet is checked on its own, so replies need their own rules [@aws-vpc-nacls].
+- Rules are numbered and checked from the lowest number up. The first match decides, and a final `*` rule denies anything nothing else matched [@aws-vpc-custom-nacl].
 - Rules can deny as well as allow, which makes NACLs useful for blocking a specific range.
-- The VPC's default NACL allows everything in both directions, which is why many VPCs effectively run on security groups alone. A NACL you create yourself denies everything until you add rules.
+- The VPC's default NACL allows everything in both directions, which is why many VPCs effectively run on security groups alone. A NACL you create yourself denies everything until you add rules [@aws-vpc-default-nacl, @aws-vpc-custom-nacl].
 - They only check traffic entering or leaving the subnet, not traffic between two resources inside it.
 
-Because NACLs are stateless, the reply side catches people out. A reply goes back to whatever port the client picked for its end of the connection, called an ephemeral port, and different clients pick from different ranges. Linux usually uses 32768–61000, newer Windows uses 49152–65535, and NAT gateways, load balancers, and Lambda use 1024–65535. So a web server's subnet needs an inbound NACL rule for port 443 and an outbound rule for 1024–65535 (AWS's suggested catch-all) to let the replies out.
+Because NACLs are stateless, the reply side catches people out. A reply goes back to whatever port the client picked for its end of the connection, called an ephemeral port, and different clients pick from different ranges. Linux usually uses 32768–61000, newer Windows uses 49152–65535, and NAT gateways, load balancers, and Lambda use 1024–65535. So a web server's subnet needs an inbound NACL rule for port 443 and an outbound rule for 1024–65535 (AWS's suggested catch-all) to let the replies out [@aws-vpc-custom-nacl].
 
 | | Security group | Network ACL |
 |---|---|---|
@@ -159,17 +161,17 @@ Because NACLs are stateless, the reply side catches people out. A reply goes bac
 | Default | New groups: nothing in, everything out | Default NACL: everything allowed. New NACLs: everything denied. |
 | Typical use | The main firewall for each resource | A coarse fence around a whole subnet |
 
-Traffic coming into a subnet passes the NACL first and then the resource's security group, and it has to get through both. Neither one filters traffic to the VPC's own DNS server (the base address plus two) or the instance metadata service, so you can't block those with either.
+Traffic coming into a subnet passes the NACL first and then the resource's security group, and it has to get through both. Neither one filters traffic to the VPC's own DNS server (the base address plus two) or the instance metadata service, so you can't block those with either [@aws-vpc-nacls, @aws-vpc-security-groups].
 
 ### Which one to use
 
-Security groups, nearly always. AWS says so directly: "in most cases, security groups can meet your needs," and NACLs are there "if you want an additional layer of security" ([Subnet security](https://docs.aws.amazon.com/vpc/latest/userguide/configure-subnets.html#subnet-security), and the comparison in [Infrastructure security in Amazon VPC](https://docs.aws.amazon.com/vpc/latest/userguide/infrastructure-security.html)). Plenty of VPCs leave the default NACL, which allows everything, alone for good. In practice, NACLs get used for a few specific jobs a security group can't do:
+Security groups, nearly always. AWS says so directly: "in most cases, security groups can meet your needs," and NACLs are there "if you want an additional layer of security" [@aws-vpc-subnets]. AWS's comparison of the two says the same: you can secure instances with security groups alone and add NACLs as an extra layer [@aws-vpc-infrastructure-security]. Plenty of VPCs leave the default NACL, which allows everything, alone for good. In practice, NACLs get used for a few specific jobs a security group can't do:
 
 1. **Denying something.** Security groups can only allow. If one address range is causing trouble and everything else should still get in, that takes a NACL deny rule. (For web traffic, a [WAF](/primers/networking/load-balancers-and-tls/#wafs-only-work-on-http) is usually a better place to block, since it can see the requests.)
 2. **A rule for a whole subnet that no security group can override.** "The database subnets only accept traffic from the app subnets' range" is a good NACL. Even if someone attaches a wide-open security group to a database by mistake, the NACL still blocks everything else. It's a backstop, and it's often owned by a different team than the security groups are.
 3. **A requirement to separate subnets at the network level,** which some compliance frameworks ask for.
 
-NACLs make a poor main firewall. They're stateless, so you manage reply ports yourself. They only understand address ranges, so you can't say "from the app servers' security group." They allow only 20 inbound and 20 outbound rules by default, and 40 each at most, compared with 60 each per security group ([VPC quotas](https://docs.aws.amazon.com/vpc/latest/userguide/amazon-vpc-limits.html)). And they apply to everything in the subnet at once, so one mistake breaks every resource in it.
+NACLs make a poor main firewall. They're stateless, so you manage reply ports yourself. They only understand address ranges, so you can't say "from the app servers' security group." They allow only 20 inbound and 20 outbound rules by default, and 40 each at most, compared with 60 each per security group [@aws-vpc-quotas]. And they apply to everything in the subnet at once, so one mistake breaks every resource in it.
 
 An apartment building is a decent comparison. The security group is the lock on each apartment's door, set up for whoever lives there. The NACL is the guard at the building's front gate with one list for everybody, which is useful for keeping certain people out of the whole building and no good for deciding who gets into apartment 4B.
 
@@ -193,7 +195,7 @@ Most "can't connect" problems in a VPC come down to one of these, and the return
 
 ## Planning a layout
 
-A common pattern is a `/16` VPC with a public subnet and a private subnet in each of three availability zones. Public subnets hold the few things that face the internet, mostly load balancers and NAT gateways, so they can stay small. Private subnets hold everything else and should be much bigger:
+A common pattern is a `/16` VPC with a public subnet and a private subnet in each of three availability zones. Public subnets hold the few things that face the internet, mostly load balancers and zonal NAT gateways, so they can stay small. Private subnets hold everything else and should be much bigger:
 
 | Subnet | CIDR | Usable |
 |---|---|---|
@@ -206,11 +208,11 @@ A common pattern is a `/16` VPC with a public subnet and a private subnet in eac
 
 Each `/20` starts on a multiple of 16 in the third octet, which is the [boundary rule](/primers/networking/ip-addresses-and-cidr/#where-blocks-can-start) from the CIDR primer. `10.0.3.0` through `10.0.15.255` and everything from `10.0.64.0` up are left empty on purpose, so new subnets have room later without any renumbering.
 
-Private subnets need room because more things use VPC addresses than you'd expect. Every EC2 instance, load balancer node, database, and Lambda network interface takes at least one. On EKS with the default networking setup, every Kubernetes pod takes its own VPC address too, so a cluster can run through a `/24` surprisingly quickly.
+Private subnets need room because more things use VPC addresses than you'd expect. Every EC2 instance, load balancer node, database, and Lambda network interface takes at least one. On EKS with the default networking setup, every Kubernetes pod takes its own VPC address too [@aws-eks-vpc-cni], so a cluster can run through a `/24` surprisingly quickly.
 
 ## Don't overlap with networks you'll connect to
 
-If a VPC will ever be connected to another VPC (peering, a Transit Gateway) or to an office network over a VPN, their ranges can't overlap. A route table has no way to tell which `10.0.1.0/24` you mean. Giving every VPC `10.0.0.0/16` works fine until the day two of them need to talk, so give each VPC its own range from the start, like `10.0.0.0/16`, `10.1.0.0/16`, `10.2.0.0/16`, and so on.
+If a VPC will ever be connected to another VPC (peering, a Transit Gateway) or to an office network over a VPN, their ranges can't overlap. A route table has no way to tell which `10.0.1.0/24` you mean, and VPC peering refuses overlapping ranges outright [@aws-vpc-peering]. Giving every VPC `10.0.0.0/16` works fine until the day two of them need to talk, so give each VPC its own range from the start, like `10.0.0.0/16`, `10.1.0.0/16`, `10.2.0.0/16`, and so on.
 
-(The default VPC AWS creates in every region uses `172.31.0.0/16`, with a `/20` subnet in each availability zone. It's handy for experiments. Leave `172.31.0.0/16` out of the VPCs you plan yourself, so they never overlap with a default VPC you might want to connect to later.)
+(The default VPC AWS creates in every region uses `172.31.0.0/16`, with a `/20` subnet in each availability zone [@aws-vpc-faq]. It's handy for experiments. Leave `172.31.0.0/16` out of the VPCs you plan yourself, so they never overlap with a default VPC you might want to connect to later.)
 
