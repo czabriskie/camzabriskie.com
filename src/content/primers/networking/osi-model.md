@@ -55,7 +55,7 @@ Layers 5 and 6 never really became separate pieces in practice. Applications and
 
 ### TLS isn't the transport layer, despite its name
 
-Real protocols don't always fit the model neatly [@rfc3439], and TLS is the usual example. It sits on top of TCP and underneath HTTP, encrypting everything above it, so it gets described as layer 6, layer 4.5, or "part of the application," depending on who you ask. The model is a map, and maps simplify.
+Real protocols don't always fit the model neatly (the internet's own standards call strict layering "an imperfect model" [@rfc1122]), and TLS is the usual example. It sits on top of TCP and underneath HTTP, encrypting everything above it, so it gets described as layer 6, layer 4.5, or "part of the application," depending on who you ask. The model is a map, and maps simplify.
 
 Its name makes it more confusing. TLS stands for Transport Layer Security, which makes it sound like it belongs at layer 4 or replaced something there. It didn't. TLS replaced **SSL**, an older encryption protocol (TLS 1.0 was built from SSL 3.0 [@rfc2246]), which is why people still say "SSL certificate" for what's now a TLS certificate. It never replaced **TCP**. TLS runs on top of TCP, and the transport layer is still TCP and UDP.
 
@@ -111,7 +111,7 @@ Read the result from the outside in, and each layer's header only holds what tha
 
 A **hop** is one trip between two devices on the same local network, like the laptop to the home router, or one router to the next. At each router, only the bottom layers get unwrapped: the router strips off the layer 2 frame, reads the layer 3 destination address, looks it up in its route table to pick the next hop, and wraps the packet in a fresh layer 2 frame addressed to that next device. That's the same idea as a route table's [target being the next hop](/primers/networking/aws-vpc-subnets/#destination-and-target): the packet carries its final destination, and each router just picks the next step.
 
-So the layer 2 addresses change on every hop, and the layer 3 addresses stay the same, with one exception: the home router does **NAT** (network address translation). Private addresses like `192.168.1.20` can't be used on the internet, so as the packet leaves the home network, the router swaps the private source address for the home's one public address and remembers the swap so it can undo it on the reply [@rfc3022].
+So the layer 2 addresses change on every hop, and the layer 3 addresses stay the same, with one exception: the home router does **NAT** (network address translation). Private addresses like `192.168.1.20` can't be used on the internet, so as the packet leaves the home network, the router swaps the private source address (and usually the port) for the home's one public address and remembers the swap so it can undo it on the reply [@rfc3022].
 
 | Hop | Layer 2: from → to | Layer 3: from → to |
 |---|---|---|
@@ -171,7 +171,7 @@ The address is a **lease**, not a permanent assignment. The laptop has to renew 
 | Site-to-site VPN (IPsec) | 3 | Whole packets, which it encrypts |
 | AWS Gateway Load Balancer | 3 | Packets [@aws-gwlb-intro] |
 | [Network Load Balancer](/primers/networking/load-balancers-and-tls/#nlbs-and-albs) | 4 | Connections and ports [@aws-nlb-intro] |
-| [Application Load Balancer](/primers/networking/load-balancers-and-tls/#nlbs-and-albs), WAF, CDN | 7 | Full HTTP requests: paths, headers, cookies [@aws-alb-intro] |
+| [Application Load Balancer](/primers/networking/load-balancers-and-tls/#nlbs-and-albs) [@aws-alb-intro], WAF, CDN | 7 | Full HTTP requests: paths, headers, cookies |
 | [DNS](/primers/networking/dns-resolution/) | 7 | An application protocol, carried over UDP or TCP port 53 |
 
 The higher a device works, the more of the [envelope](#down-the-stack-encapsulation) it opens, so the more it can see and the smarter its decisions can be. It also has to understand the protocol, which is why a layer 7 load balancer can route by URL path but only for HTTP, and a layer 4 one can carry anything but can't look inside.
