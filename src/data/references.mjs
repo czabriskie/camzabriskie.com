@@ -141,7 +141,9 @@ export function formatReference(ref) {
   if (ref.note) after.push(esc(ref.note));
   if (ref.date) after.push(esc(ref.date));
   // IEEE puts the comma (or the period, when nothing follows) inside the quotes.
-  let out = `${esc(fmtAuthors(ref.authors))}, “${esc(ref.title)}${after.length ? ',' : '.'}”`;
+  // A title ending in its own "?" or "!" takes no extra punctuation.
+  const punct = /[?!]$/.test(ref.title) ? '' : after.length ? ',' : '.';
+  let out = `${esc(fmtAuthors(ref.authors))}, “${esc(ref.title)}${punct}”`;
   if (after.length) out += ` ${after.join(', ')}.`;
   if (ref.accessed) out += ` Accessed: ${fmtAccessed(ref.accessed)}.`;
   out += ` [Online]. Available: <a href="${esc(ref.url)}">${esc(ref.url)}</a>`;
