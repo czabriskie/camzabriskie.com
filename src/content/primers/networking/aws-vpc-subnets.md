@@ -33,11 +33,22 @@ That leaves 2<sup>(32 − n)</sup> − 5 usable addresses ([AWS's subnet sizing 
 
 Every subnet is associated with one route table. Whenever something in the subnet sends a packet, the VPC takes the packet's destination address, looks it up in that route table, and the route table says where to send it next. A route table doesn't allow or block anything (that's the firewalls' job, further down). It only picks the next step.
 
+### Source picks the table, destination picks the row
+
+Every packet carries two addresses: its **source**, where it came from, and its **destination**, where it's going. When an instance at `10.0.1.25` sends something to a server at `10.20.5.9`, the source is `10.0.1.25` and the destination is `10.20.5.9`, and both stay written on the packet the whole way.
+
+The route table uses them for two different jobs:
+
+1. **The source decides which route table gets used.** The packet is leaving `10.0.1.25`, so it's the route table of `10.0.1.25`'s subnet. The source address never appears inside the table. It's already settled by which table you're looking at.
+2. **The destination decides which row applies.** The VPC compares `10.20.5.9` against each row's Destination column and uses the row that matches (the most specific one, if several do).
+
+So a route table never asks "where did this come from?" It only asks "where is this going, and which way out gets it closer?"
+
 ### Destination and target
 
 Each route is one row with two columns, and AWS's names for them are confusing, because in everyday English "destination" and "target" mean the same thing. In a route table they don't:
 
-- **Destination** is where the packet is ultimately going. Every packet has the final address written on it, and the destination column is a range of those addresses, a CIDR block. Read it as "if the packet is headed for an address in this range…"
+- **Destination** is a range of addresses the packet might be going to, a CIDR block, and it's compared against the packet's destination address (not its source). Read it as "if the packet is headed for an address in this range…"
 - **Target** is the **next hop**: which way to send the packet next, not where it ends up. Read it as "…hand it to this." It's usually a gateway or connection out of the VPC, or `local`, which means "it's somewhere inside this VPC, deliver it directly." Most networking equipment outside AWS calls this column "next hop" or "gateway," which describes it much better.
 
 Driving directions work the same way. If you're going to Salt Lake City, that's your destination, and the sign that says "Salt Lake City: take I-15 North" doesn't take you there. It tells you which road to get on next. When you reach the next junction, another sign tells you the next road. A route table is a set of those signs for one subnet: *for addresses in this range, take this way out*. The packet keeps its real destination the whole time, and each place it passes through looks it up in its own route table to pick the next hop. A peering connection hands the packet to the other VPC, and that VPC's route tables take it from there.
@@ -60,9 +71,9 @@ A bigger number after the slash means a [smaller, more specific range](/primers/
 
 Sorting mail works the same way. Say there's one bin for anything going to the US, one for anything going to Utah, and one for anything going to Salt Lake City. A letter for Salt Lake City fits in all three bins, but it goes in the Salt Lake City one, because that's the most specific. A letter for Denver only fits the US bin, so that's where it goes. Routes are the same, with CIDR ranges in place of places, and `0.0.0.0/0` as the "anywhere" bin.
 
-Here's the table above deciding where `10.20.5.9` goes:
+Here's the table above deciding where a packet headed for `10.20.5.9` goes:
 
-| Route | Does `10.20.5.9` fall in it? | Prefix length |
+| Route | Is `10.20.5.9` in its Destination range? | Prefix length |
 |---|---|---|
 | `10.0.0.0/16 → local` | No. This range only covers `10.0.x.x`. | |
 | `10.20.0.0/16 → pcx-…` | Yes | **16** |
@@ -74,7 +85,7 @@ The order of the rows doesn't matter, only how specific each route is. (Network 
 
 ### Following a packet
 
-Here are three packets leaving an instance at `10.0.1.25` in this subnet:
+Here are three packets leaving an instance at `10.0.1.25` (the source, which is why this subnet's route table is the one used), each headed for a different destination:
 
 | Packet going to | Routes it matches | Winner | What happens |
 |---|---|---|---|
@@ -82,7 +93,7 @@ Here are three packets leaving an instance at `10.0.1.25` in this subnet:
 | `10.20.5.9`, a server in the peered VPC | `10.20.0.0/16` and `0.0.0.0/0` | `pcx-…` (`/16`) | Sent over the peering connection |
 | `203.0.113.50`, a server on the internet | only `0.0.0.0/0` | `igw-…` (`/0`) | Sent out through the internet gateway |
 
-Try any address against the same table:
+Try any destination address against the same table:
 
 <div class="route-lookup" data-ip="10.20.5.9" data-routes='[["10.0.0.0/16","local","delivered inside this VPC"],["10.20.0.0/16","pcx-…","sent over the peering connection"],["10.20.8.0/24","tgw-…","sent to the transit gateway"],["0.0.0.0/0","igw-…","sent out through the internet gateway"]]'></div>
 

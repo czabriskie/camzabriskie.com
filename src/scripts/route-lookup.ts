@@ -26,7 +26,7 @@ for (const root of document.querySelectorAll<HTMLElement>('.route-lookup')) {
   const uid = Math.random().toString(36).slice(2, 8);
   root.innerHTML = `
     <div class="controls">
-      <label for="dest-${uid}">Destination address</label>
+      <label for="dest-${uid}">Packet headed for</label>
       <input id="dest-${uid}" class="ip" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" />
     </div>
     <div class="table-wrap"><table>
