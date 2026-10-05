@@ -152,7 +152,25 @@ So when you see an address that isn't on a boundary in a range, work out what wa
 
 ## Network, broadcast, and usable addresses
 
-The first address in a subnet identifies the network and the last one is the broadcast address, so neither can be given to a host. AWS reserves three more on top of that (the second through fourth addresses, for the router, DNS, and future use), which leaves 251 usable addresses in a `/24` subnet instead of 256.
+Two addresses in every subnet are special, and you can spot them from the bits:
+
+- **The first address has every free bit set to 0.** It's the network address, the name of the subnet itself. In `10.0.1.0/24` that's `10.0.1.0`, and it's what shows up in route tables and firewall rules.
+- **The last address has every free bit set to 1.** It's the broadcast address. A packet sent there goes to every machine on the subnet at once, which is how things like DHCP (a new machine asking "can anyone give me an address?") reach everyone without knowing who's there. In `10.0.1.0/24` that's `10.0.1.255`.
+
+Neither one can be given to a machine, so a normal subnet has 2<sup>(32 − n)</sup> − 2 usable addresses:
+
+| Prefix | Addresses | Usable | Notes |
+|---|---|---|---|
+| `/24` | 256 | 254 | `.1` to `.254` |
+| `/26` | 64 | 62 | |
+| `/28` | 16 | 14 | |
+| `/30` | 4 | 2 | the classic size for a link between two routers |
+| `/31` | 2 | 2 | a special case for two-router links, where neither special address is needed ([RFC 3021](https://www.rfc-editor.org/rfc/rfc3021)) |
+| `/32` | 1 | 1 | a single address, not really a subnet |
+
+Since the two special addresses come out of every subnet, splitting a range into more subnets costs you addresses. One `/24` has 254 usable addresses, but split into four `/26`s it has 4 × 62 = 248.
+
+Cloud providers usually reserve a few more on top of these two. AWS takes three more, which the last section covers.
 
 ## Private ranges
 
@@ -163,3 +181,51 @@ Three ranges are set aside for private networks and never get routed on the publ
 - `192.168.0.0/16`
 
 If you see one of these on a diagram, it's traffic inside a cloud network or an office network. A single public address that a firewall allows in usually shows up as a `/32`.
+
+## Subnets in an AWS VPC
+
+Most of the subnets I deal with live in AWS, inside a VPC (Virtual Private Cloud), which is your own private network in an AWS region. AWS adds a few rules on top of everything above. A subnet can't be resized once it exists, so most of these rules matter when you're planning, not later.
+
+### The VPC and its subnets
+
+- A VPC gets an IPv4 CIDR block between `/16` (65,536 addresses) and `/28` (16). `10.0.0.0/16` is the common choice, and it's the largest a single block can be.
+- Subnets are smaller blocks carved out of the VPC's range, also between `/16` and `/28`. They can't overlap each other, and each one lives in exactly one availability zone (roughly, one data center in the region).
+- You can't change a subnet's CIDR after creating it. If a subnet fills up, you make a new one. If the whole VPC fills up, you can add more CIDR blocks to it (up to five by default) and put new subnets in those.
+
+### The five reserved addresses
+
+AWS takes five addresses out of every subnet instead of two. In `10.0.1.0/24`:
+
+| Address | Reserved for |
+|---|---|
+| `10.0.1.0` | the network address |
+| `10.0.1.1` | the VPC router, which is the subnet's gateway to everything else |
+| `10.0.1.2` | DNS (the DNS server itself sits at the VPC's base address plus two, so `10.0.0.2` in a `10.0.0.0/16` VPC) |
+| `10.0.1.3` | reserved by AWS for future use |
+| `10.0.1.255` | the broadcast address. VPCs don't support broadcast, but AWS reserves it anyway. |
+
+That leaves 2<sup>(32 − n)</sup> − 5 usable addresses: 251 in a `/24`, 59 in a `/26`, and only 11 in a `/28`, the smallest subnet AWS allows. The first address you can hand out is always the fifth one (`10.0.1.4` here).
+
+### Planning a layout
+
+A common pattern is a `/16` VPC with a public subnet and a private subnet in each of three availability zones. Public subnets hold the few things that face the internet, mostly load balancers and NAT gateways, so they can stay small. Private subnets hold everything else and should be much bigger:
+
+| Subnet | CIDR | Usable |
+|---|---|---|
+| public, zone a | `10.0.0.0/24` | 251 |
+| public, zone b | `10.0.1.0/24` | 251 |
+| public, zone c | `10.0.2.0/24` | 251 |
+| private, zone a | `10.0.16.0/20` | 4,091 |
+| private, zone b | `10.0.32.0/20` | 4,091 |
+| private, zone c | `10.0.48.0/20` | 4,091 |
+
+Each `/20` starts on a multiple of 16 in the third octet, which is the boundary rule from earlier. `10.0.3.0` through `10.0.15.255` and everything from `10.0.64.0` up are left empty on purpose, so new subnets have room later without any renumbering.
+
+Private subnets need room because more things use VPC addresses than you'd expect. Every EC2 instance, load balancer node, database, and Lambda network interface takes at least one. On EKS with the default networking setup, every Kubernetes pod takes its own VPC address too, so a cluster can run through a `/24` surprisingly quickly.
+
+### Don't overlap with networks you'll connect to
+
+If a VPC will ever be connected to another VPC (peering, a Transit Gateway) or to an office network over a VPN, their ranges can't overlap. A route table has no way to tell which `10.0.1.0/24` you mean. Giving every VPC `10.0.0.0/16` works fine until the day two of them need to talk, so give each VPC its own range from the start, like `10.0.0.0/16`, `10.1.0.0/16`, `10.2.0.0/16`, and so on.
+
+(The default VPC AWS creates in every region uses `172.31.0.0/16`, with a `/20` subnet in each availability zone. It's handy for experiments. Leave `172.31.0.0/16` out of the VPCs you plan yourself, so they never overlap with a default VPC you might want to connect to later.)
+
