@@ -78,7 +78,7 @@ To use an ACM certificate somewhere ACM can't attach it, like a reverse proxy on
 
 ## Trusting a private CA
 
-Companies often run their own internal CA for internal services, and corporate networks sometimes inspect TLS traffic with a proxy that re-signs every certificate with a company CA. Either way, clients only trust those certificates if the company's root certificate is in their trust store, and different tools have different trust stores:
+Companies often run their own internal CA for internal services, and corporate networks sometimes inspect TLS traffic with a [proxy](/primers/networking/proxies-and-bastions/#forward-proxies) that re-signs every certificate with a company CA. Either way, clients only trust those certificates if the company's root certificate is in their trust store, and different tools have different trust stores:
 
 | Client | Where it looks | How to add a CA |
 |---|---|---|
