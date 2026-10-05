@@ -147,7 +147,7 @@ You'll sometimes see something like `10.0.1.50/26`. 50 isn't a multiple of 64, s
 **In a range, it's a mistake.** Subnets, route tables, and firewall rules describe a block of addresses, and a block has to start on its boundary. Tools disagree on what to do when it doesn't:
 
 - **Some reject it.** Python's `ipaddress` module refuses `ip_network("10.0.1.50/26")` with a "has host bits set" error. Linux won't add a route for it either ("Invalid prefix for given prefix length").
-- **Some correct it without telling you.** They clear the free bits and store `10.0.1.0/26`.
+- **Some correct it without telling you.** They clear the free bits and store `10.0.1.0/26`. AWS does this when you create a subnet through its API: ask for `10.0.1.50/26` and the subnet you get is `10.0.1.0/26`.
 
 Quiet correction can make a firewall rule much wider than intended. Say someone meant to allow just the one server at `10.0.1.50` and typed `/26` out of habit. The firewall stores `10.0.1.0/26`, and now 64 addresses are allowed instead of one, and the rule still looks almost right when you read it back.
 
@@ -178,7 +178,7 @@ Neither one can be given to a machine, so a normal subnet has 2<sup>(32 − n)</
 
 Since the two special addresses come out of every subnet, splitting a range into more subnets costs you addresses. One `/24` has 254 usable addresses, but split into four `/26`s it has 4 × 62 = 248.
 
-Cloud providers usually reserve a few more on top of these two. AWS takes three more, which [Subnets in an AWS VPC](/primers/networking/aws-vpc-subnets/) covers along with how to lay subnets out.
+Cloud providers usually reserve a few more on top of these two. AWS reserves five in total: the network and broadcast addresses, plus the three right after the network address (`.1`, `.2`, and `.3` in a `/24`). [Subnets in an AWS VPC](/primers/networking/aws-vpc-subnets/) covers what each one is for and how to lay subnets out.
 
 ## Private ranges
 

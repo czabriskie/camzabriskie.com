@@ -17,7 +17,7 @@ This builds on [IP addresses and CIDR](/primers/networking/ip-addresses-and-cidr
 
 ## The five reserved addresses
 
-AWS takes five addresses out of every subnet instead of the usual two ([network and broadcast](/primers/networking/ip-addresses-and-cidr/#network-broadcast-and-usable-addresses)). In `10.0.1.0/24`:
+AWS takes five addresses out of every subnet, the first four and the last one, instead of the usual two ([network and broadcast](/primers/networking/ip-addresses-and-cidr/#network-broadcast-and-usable-addresses)). In `10.0.1.0/24`:
 
 | Address | Reserved for |
 |---|---|
@@ -27,7 +27,7 @@ AWS takes five addresses out of every subnet instead of the usual two ([network 
 | `10.0.1.3` | reserved by AWS for future use |
 | `10.0.1.255` | the broadcast address. VPCs don't support broadcast, but AWS reserves it anyway. |
 
-That leaves 2<sup>(32 − n)</sup> − 5 usable addresses: 251 in a `/24`, 59 in a `/26`, and only 11 in a `/28`, the smallest subnet AWS allows. The first address you can hand out is always the fifth one (`10.0.1.4` here).
+That leaves 2<sup>(32 − n)</sup> − 5 usable addresses ([AWS's subnet sizing docs](https://docs.aws.amazon.com/vpc/latest/userguide/subnet-sizing.html) have the full list): 251 in a `/24`, 59 in a `/26`, and only 11 in a `/28`, the smallest subnet AWS allows. The first address you can hand out is always the fifth one (`10.0.1.4` here).
 
 ## Planning a layout
 
