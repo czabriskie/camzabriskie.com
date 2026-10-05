@@ -26,7 +26,7 @@ A **Transit Gateway** is a hub that VPCs, VPNs, and Direct Connect links all att
 
 Two details catch people out:
 
-- **A VPC attachment needs a subnet in each availability zone.** The Transit Gateway puts a network interface in that subnet, and resources in a zone with no attachment subnet can't reach the Transit Gateway at all [@aws-tgw-vpc-attachments].
+- **A VPC attachment needs a subnet in each availability zone.** The Transit Gateway puts a network interface in that subnet, and resources in a zone with no attachment subnet can't reach the Transit Gateway at all [@aws-tgw-how-it-works, @aws-tgw-vpc-attachments].
 - **Return routes live in the VPC.** Each subnet with resources that should be reachable needs a route back to the far side's range pointing at the Transit Gateway. Without it, requests arrive and replies go nowhere [@aws-tgw-vpc-attachments].
 
 ### Site-to-site VPN
@@ -37,7 +37,7 @@ In AWS, the far end is described by a **customer gateway** (the office's VPN dev
 
 ### Direct Connect
 
-**Direct Connect** is a dedicated physical connection into AWS instead of a tunnel over the internet. It costs more and takes longer to set up, and in return you get more bandwidth and much steadier latency. It isn't encrypted by default. The traffic is private, but if it needs to be encrypted you add MACsec (on supported connections) or run a site-to-site VPN over the Direct Connect link [@aws-dx-encryption]. Large setups often use Direct Connect as the main path with a VPN as the backup.
+**Direct Connect** is a dedicated physical connection into AWS instead of a tunnel over the internet. It costs more and takes longer to set up, and in return you get more bandwidth and much steadier latency. It isn't encrypted by default. The traffic is private, but if it needs to be encrypted you add MACsec (on supported connections) or run a site-to-site VPN over the Direct Connect link [@aws-dx-encryption-in-transit]. Large setups often use Direct Connect as the main path with a VPN as the backup.
 
 ## Connecting people: client VPN
 
@@ -87,7 +87,7 @@ The pieces:
 
 - **socat** (SOcket CAT) connects two streams of bytes. Here it listens on 5432 inside the pod and passes every byte to the database's 5432, and `fork` lets it handle more than one connection [@socat-manual].
 - **The pod is inside the VPC,** so it can reach the database even though your laptop can't.
-- **`kubectl port-forward`** connects your local 5433 to the pod's 5432. The traffic travels through the encrypted connection to the Kubernetes API that `kubectl` already has, so the database never has to be exposed anywhere [@k8s-port-forward].
+- **`kubectl port-forward`** connects your local 5433 to the pod's 5432. The traffic travels through the encrypted connection to the Kubernetes API that `kubectl` already has, so the database never has to be exposed anywhere [@k8s-port-forward, @k8s-control-plane-comms].
 - **Local port 5433** instead of 5432, so it doesn't clash with a Postgres you might have running locally.
 
 It only lasts as long as the terminal is open. Close it and the forward stops, and `--rm` deletes the pod once it exits. The database's security group still has to allow traffic from the pod, which usually means allowing the cluster nodes' security group.
