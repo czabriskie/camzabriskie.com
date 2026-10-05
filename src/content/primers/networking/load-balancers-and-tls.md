@@ -11,7 +11,7 @@ This builds on [AWS VPCs, subnets, and routing](/primers/networking/aws-vpc-subn
 
 ## Layer 4 and layer 7
 
-Networking gets described in layers (the OSI model). Two of them matter here:
+Networking gets described in layers (the [OSI model](/primers/networking/osi-model/), which has its own primer). Two of them matter here:
 
 - **Layer 4** is TCP and UDP: a connection between two addresses and ports, with no idea what's inside it.
 - **Layer 7** is the application protocol riding on top, like HTTP. At this layer you can see URLs, hostnames, headers, and cookies.
