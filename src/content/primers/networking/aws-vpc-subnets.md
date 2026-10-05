@@ -12,7 +12,7 @@ This builds on [IP addresses and CIDR](/primers/networking/ip-addresses-and-cidr
 ## The VPC and its subnets
 
 - A VPC gets an IPv4 CIDR block between `/16` (65,536 addresses) and `/28` (16). `10.0.0.0/16` is the common choice, and it's the largest a single block can be.
-- Subnets are smaller blocks carved out of the VPC's range, also between `/16` and `/28`. They can't overlap each other, and each one lives in exactly one availability zone (roughly, one data center in the region).
+- A subnet is a slice of the VPC's range ([what a subnet is](/primers/networking/ip-addresses-and-cidr/#subnets)), and it's where your resources actually get their addresses. Every instance, database, or load balancer is launched into a subnet and gets an address from that subnet's range. Subnets also have to be between `/16` and `/28`. They can't overlap each other, and each one lives in exactly one availability zone (roughly, one data center in the region).
 - You can't change a subnet's CIDR after creating it. If a subnet fills up, you make a new one. If the whole VPC fills up, you can add more CIDR blocks to it (up to five by default) and put new subnets in those.
 
 ## The five reserved addresses

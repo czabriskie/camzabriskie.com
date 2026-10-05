@@ -61,6 +61,14 @@ In `10.0.1.0/24`, the first 24 bits are locked to `10.0.1` and the last 8 are fr
 
 So a bigger number after the slash means more bits locked, which means a smaller range. It works kind of like a zoom level.
 
+## Subnets
+
+A subnet (short for subnetwork) is a CIDR range used as one network, a group of addresses whose machines can reach each other directly. A machine on `10.0.1.0/24` sends traffic for anything from `10.0.1.0` to `10.0.1.255` straight to it. Traffic for any address outside that range goes to a router, which passes it along toward whichever subnet it belongs to.
+
+A bigger range gets split into subnets to keep things organized and separate: one subnet for web servers and another for databases, or one per office floor, each with its own routing and firewall rules. `10.0.0.0/16` could be split into 256 `/24` subnets, for example, or into a few big ones and a lot of small ones. Most of the rest of this page is about working out where those pieces start and end.
+
+You'll also see a subnet's prefix written as a **subnet mask**, the older way of writing the same thing. It's the 32 bits with every locked bit set to 1 and every free bit set to 0, written out in decimal like an address. So `255.255.255.0` is 24 ones followed by 8 zeros, which is `/24`, and `255.255.255.192` (`192` is `11000000`) is `/26`. Older tools and a lot of router configs still use masks, but they mean exactly the same thing as the prefix.
+
 ## The one formula
 
 A range with prefix length `n` has `32 − n` free bits, and each free bit doubles the count, so:
