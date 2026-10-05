@@ -22,9 +22,9 @@ Something working at layer 4 can forward any kind of traffic, because it never l
 
 AWS has a load balancer for each.
 
-A **Network Load Balancer (NLB)** works at layer 4. With a TCP listener it forwards connections without looking inside them, which makes it the one to use for anything that isn't HTTP: databases, message brokers, SSH, anything with its own protocol. It can also terminate TLS with a TLS listener (more on that below), but it still doesn't understand HTTP [@aws-nlb-listeners].
+A **Network Load Balancer (NLB)** works at layer 4. With a TCP listener it forwards connections without looking inside them, which makes it the one to use for anything that isn't HTTP: databases, message brokers, SSH, anything with its own protocol. It can also terminate TLS with a TLS listener (more on that below), but it still doesn't understand HTTP [@aws-nlb-intro, @aws-nlb-listeners].
 
-An **Application Load Balancer (ALB)** works at layer 7. It understands HTTP and HTTPS (including HTTP/2 and gRPC [@aws-alb-target-groups]), so it can route `/api/*` to one set of servers and `/admin/*` to another, send different hostnames to different apps, add headers, and redirect HTTP to HTTPS [@aws-alb-intro].
+An **Application Load Balancer (ALB)** works at layer 7. It understands HTTP and HTTPS (including HTTP/2 and gRPC [@aws-alb-target-groups]), so it can route `/api/*` to one set of servers and `/admin/*` to another, send different hostnames to different apps, add headers, and redirect HTTP to HTTPS [@aws-alb-intro, @aws-alb-header-modification].
 
 | | NLB | ALB |
 |---|---|---|
@@ -41,7 +41,7 @@ Each load balancer is its own entry point, with its own DNS name, its own securi
 
 ## Terminating TLS
 
-TLS is the encryption in HTTPS (and in plenty of other protocols) [@rfc8446]. **Terminating** TLS means being the end of the encrypted connection: holding the certificate and private key, decrypting what comes in, and handing the plain request to whatever's behind it. Where that happens matters, because whatever terminates TLS is the only thing that can see inside the traffic.
+TLS is the encryption in HTTPS (and in plenty of other protocols) [@rfc8446, @rfc9110]. **Terminating** TLS means being the end of the encrypted connection: holding the certificate and private key, decrypting what comes in, and handing the plain request to whatever's behind it. Where that happens matters, because whatever terminates TLS is the only thing that can see inside the traffic.
 
 There are three common places:
 
@@ -100,6 +100,6 @@ Getting the certificate onto the box is the harder part, and it's covered in [Ce
 
 Putting a proxy in front of an app can break the app in a confusing way. The browser or client asks for `app.example.com`, and the proxy forwards that hostname to the app in the `Host` header. Some apps check the `Host` header against an allowlist to defend against an attack called DNS rebinding, and an app bound to `127.0.0.1` may default that allowlist to just `localhost`. Every proxied request then gets rejected, often with `421 Misdirected Request` [@rfc9110] or "Invalid Host header", even though the certificate and proxy are fine.
 
-The fix is to add the real hostname to the app's allowlist, not to turn the check off. Proxies also add headers like `X-Forwarded-For` (the client's real address) [@mdn-x-forwarded-for] and `X-Forwarded-Proto` (whether the original request was HTTPS), which apps behind a proxy often need to read to log and redirect correctly.
+The fix is to add the real hostname to the app's allowlist, not to turn the check off. Proxies also add headers like `X-Forwarded-For` (the client's real address) [@mdn-x-forwarded-for] and `X-Forwarded-Proto` (whether the original request was HTTPS) [@mdn-x-forwarded-proto], which apps behind a proxy often need to read to log and redirect correctly.
 
 The proxy doesn't change who can reach the service. The security group still decides that. It only changes how the connection is secured.
