@@ -36,6 +36,7 @@ export const references = {
   rfc2132: rfc(2132, ['S. Alexander', 'R. Droms'], 'DHCP Options and BOOTP Vendor Extensions', 'Mar. 1997'),
   rfc2246: rfc(2246, ['T. Dierks', 'C. Allen'], 'The TLS Protocol Version 1.0', 'Jan. 1999'),
   rfc2308: rfc(2308, ['M. Andrews'], 'Negative Caching of DNS Queries (DNS NCACHE)', 'Mar. 1998'),
+  rfc3022: rfc(3022, ['P. Srisuresh', 'K. Egevang'], 'Traditional IP Network Address Translator (Traditional NAT)', 'Jan. 2001'),
   rfc3439: rfc(3439, ['R. Bush', 'D. Meyer'], 'Some Internet Architectural Guidelines and Philosophy', 'Dec. 2002'),
   rfc3596: rfc(3596, ['S. Thomson', 'C. Huitema', 'V. Ksinant', 'M. Souissi'], 'DNS Extensions to Support IP Version 6', 'Oct. 2003'),
   rfc1122: rfc(1122, ['R. Braden, Ed.'], 'Requirements for Internet Hosts - Communication Layers', 'Oct. 1989'),
@@ -64,6 +65,12 @@ export const references = {
   rfc9111: rfc(9111, ['R. Fielding, Ed.', 'M. Nottingham, Ed.', 'J. Reschke, Ed.'], 'HTTP Caching', 'Jun. 2022'),
 
   // Other standards and announcements
+  'iana-ports': {
+    authors: 'Internet Assigned Numbers Authority',
+    title: 'Service Name and Transport Protocol Port Number Registry',
+    url: 'https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml',
+    accessed: CHECKED,
+  },
   'itu-x200': {
     authors: 'ITU-T',
     title: 'Information technology - Open Systems Interconnection - Basic Reference Model: The basic model',
