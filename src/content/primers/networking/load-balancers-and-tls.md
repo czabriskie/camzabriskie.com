@@ -1,5 +1,5 @@
 ---
-title: Load balancers and where TLS ends
+title: Load balancers and TLS termination
 description: Layer 4 vs. layer 7, NLBs vs. ALBs, what it means to terminate TLS, and how to put HTTPS in front of a single server without a load balancer at all.
 order: 3
 updated: 2026-10-05
