@@ -32,6 +32,7 @@ export const references = {
   rfc826: rfc(826, ['D. Plummer'], 'An Ethernet Address Resolution Protocol: Or Converting Network Protocol Addresses to 48.bit Ethernet Address for Transmission on Ethernet Hardware', 'Nov. 1982'),
   rfc1034: rfc(1034, ['P. Mockapetris'], 'Domain names - concepts and facilities', 'Nov. 1987'),
   rfc1035: rfc(1035, ['P. Mockapetris'], 'Domain names - implementation and specification', 'Nov. 1987'),
+  rfc2131: rfc(2131, ['R. Droms'], 'Dynamic Host Configuration Protocol', 'Mar. 1997'),
   rfc2246: rfc(2246, ['T. Dierks', 'C. Allen'], 'The TLS Protocol Version 1.0', 'Jan. 1999'),
   rfc2308: rfc(2308, ['M. Andrews'], 'Negative Caching of DNS Queries (DNS NCACHE)', 'Mar. 1998'),
   rfc3439: rfc(3439, ['R. Bush', 'D. Meyer'], 'Some Internet Architectural Guidelines and Philosophy', 'Dec. 2002'),
@@ -42,6 +43,7 @@ export const references = {
   rfc3021: rfc(3021, ['A. Retana', 'R. White', 'V. Fuller', 'D. McPherson'], 'Using 31-Bit Prefixes on IPv4 Point-to-Point Links', 'Dec. 2000'),
   rfc3849: rfc(3849, ['G. Huston', 'A. Lord', 'P. Smith'], 'IPv6 Address Prefix Reserved for Documentation', 'Jul. 2004'),
   rfc4291: rfc(4291, ['R. Hinden', 'S. Deering'], 'IP Version 6 Addressing Architecture', 'Feb. 2006'),
+  rfc4861: rfc(4861, ['T. Narten', 'E. Nordmark', 'W. Simpson', 'H. Soliman'], 'Neighbor Discovery for IP version 6 (IPv6)', 'Sep. 2007'),
   rfc4632: rfc(4632, ['V. Fuller', 'T. Li'], 'Classless Inter-domain Routing (CIDR): The Internet Address Assignment and Aggregation Plan', 'Aug. 2006'),
   rfc5280: rfc(5280, ['D. Cooper', 'S. Santesson', 'S. Farrell', 'S. Boeyen', 'R. Housley', 'W. Polk'], 'Internet X.509 Public Key Infrastructure Certificate and Certificate Revocation List (CRL) Profile', 'May 2008'),
   rfc5737: rfc(5737, ['J. Arkko', 'M. Cotton', 'L. Vegoda'], 'IPv4 Address Blocks Reserved for Documentation', 'Jan. 2010'),
@@ -56,6 +58,7 @@ export const references = {
   rfc9001: rfc(9001, ['M. Thomson, Ed.', 'S. Turner, Ed.'], 'Using TLS to Secure QUIC', 'May 2021'),
   rfc9110: rfc(9110, ['R. Fielding, Ed.', 'M. Nottingham, Ed.', 'J. Reschke, Ed.'], 'HTTP Semantics', 'Jun. 2022'),
   rfc9114: rfc(9114, ['M. Bishop, Ed.'], 'HTTP/3', 'Jun. 2022'),
+  rfc9542: rfc(9542, ['D. Eastlake 3rd', 'J. Abley', 'Y. Li'], 'IANA Considerations and IETF Protocol and Documentation Usage for IEEE 802 Parameters', 'Apr. 2024'),
   rfc9293: rfc(9293, ['W. Eddy, Ed.'], 'Transmission Control Protocol (TCP)', 'Aug. 2022'),
   rfc9111: rfc(9111, ['R. Fielding, Ed.', 'M. Nottingham, Ed.', 'J. Reschke, Ed.'], 'HTTP Caching', 'Jun. 2022'),
 
