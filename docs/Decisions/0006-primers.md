@@ -57,5 +57,9 @@ Mechanics:
   denylist of customer names in this public repo would itself leak them, so that part
   stays a review rule: notes are writing under Cam's name and follow the same
   never-merge-without-Cam-reading rule as posts.
+- Primer pages build a table of contents from their `##`/`###` headings, and each heading
+  gets a `#` link (added by `src/scripts/heading-anchors.ts`) so readers can share a link to
+  one section. Those anchors are slugs of the heading text, so renaming a heading breaks
+  links people have already shared to it. Rename only when the old wording was wrong.
 - Re-ordering notes is a frontmatter edit, and positions shift with it; URLs are slugs
   and don't change.

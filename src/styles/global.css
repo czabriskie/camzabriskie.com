@@ -294,3 +294,24 @@ nav.note-nav .mono { color: var(--tech); font-weight: 400; }
 .cidr-calc .steps li { margin-bottom: 0.3rem; }
 .cidr-calc .steps b { color: var(--tech); font-weight: 600; }
 .cidr-calc code { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 0.88em; }
+
+/* Primer table of contents and section links */
+.toc { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 0.8rem 1.2rem; margin: 0 0 2.2rem; }
+.toc summary { cursor: pointer; color: var(--muted); }
+.toc ol { margin: 0.6rem 0 0.2rem; padding-left: 1.3rem; }
+.toc ol ol { margin: 0.15rem 0 0.35rem; padding-left: 1.1rem; list-style: none; font-size: 0.93rem; }
+.toc li { margin-bottom: 0.15rem; }
+.toc li::marker { color: var(--tech); font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 0.8rem; }
+.toc a { text-decoration: none; }
+.toc a:hover { text-decoration: underline; }
+article.note :is(h2, h3) { scroll-margin-top: 1rem; }
+article.note .anchor {
+  margin-left: 0.4rem;
+  color: var(--tech);
+  text-decoration: none;
+  font-weight: 400;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+article.note :is(h2, h3):hover .anchor, article.note .anchor:focus-visible { opacity: 1; }
+@media (hover: none) { article.note .anchor { opacity: 0.5; } }

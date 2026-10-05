@@ -18,7 +18,15 @@ export async function getStaticPaths() {
 }
 
 const { topic, note, i, total, prev, next } = Astro.props;
-const { Content } = await render(note);
+const { Content, headings } = await render(note);
+
+// Table of contents from the primer's own headings: h2s, with their h3s nested under them.
+type Entry = { slug: string; text: string; children: { slug: string; text: string }[] };
+const toc: Entry[] = [];
+for (const h of headings) {
+  if (h.depth === 2) toc.push({ slug: h.slug, text: h.text, children: [] });
+  else if (h.depth === 3 && toc.length) toc[toc.length - 1].children.push({ slug: h.slug, text: h.text });
+}
 ---
 <Base title={`${note.data.title} — ${topic.title} — Cam Zabriskie`} description={note.data.description}>
   <article class="byte note stream-tech">
@@ -30,6 +38,23 @@ const { Content } = await render(note);
       <span class="byte-badge"><b>{pos(i)}</b> / {pos(total - 1)}</span>
       <span class="mono">updated {fmtDate(note.data.updated)}</span>
     </div>
+    {toc.length >= 3 && (
+      <details class="toc" open>
+        <summary class="mono">On this page</summary>
+        <ol>
+          {toc.map((h) => (
+            <li>
+              <a href={`#${h.slug}`}>{h.text}</a>
+              {h.children.length > 0 && (
+                <ol>
+                  {h.children.map((c) => <li><a href={`#${c.slug}`}>{c.text}</a></li>)}
+                </ol>
+              )}
+            </li>
+          ))}
+        </ol>
+      </details>
+    )}
     <Content />
     <nav class="note-nav">
       {prev ? <a href={noteUrl(prev)}><span class="mono">← {pos(i - 1)}</span>{prev.data.title}</a> : <span />}
@@ -40,4 +65,5 @@ const { Content } = await render(note);
 
 <script>
   import '../../../scripts/cidr-calc';
+  import '../../../scripts/heading-anchors';
 </script>
