@@ -30,7 +30,7 @@ for (const root of document.querySelectorAll<HTMLElement>('.route-lookup')) {
       <input id="dest-${uid}" class="ip" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" />
     </div>
     <div class="table-wrap"><table>
-      <thead><tr><th>Destination</th><th>Target</th><th>Matches?</th><th>Prefix</th></tr></thead>
+      <thead><tr><th>Destination</th><th>Target (next hop)</th><th>Matches?</th><th>Prefix</th></tr></thead>
       <tbody></tbody>
     </table></div>
     <p class="answer" aria-live="polite"></p>`;

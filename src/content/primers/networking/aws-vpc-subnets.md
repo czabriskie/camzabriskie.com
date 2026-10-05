@@ -35,20 +35,20 @@ Every subnet is associated with one route table. Whenever something in the subne
 
 ### Destination and target
 
-Each route is one row with two columns:
+Each route is one row with two columns, and AWS's names for them are confusing, because in everyday English "destination" and "target" mean the same thing. In a route table they don't:
 
-- **Destination** is a CIDR range, the set of addresses the row is about. Read it as "if the packet is going to an address in this range…"
-- **Target** is where to send the packet next: "…send it this way." It's usually a gateway or connection out of the VPC, or `local`, which means "it's inside this VPC, deliver it directly."
+- **Destination** is where the packet is ultimately going. Every packet has the final address written on it, and the destination column is a range of those addresses, a CIDR block. Read it as "if the packet is headed for an address in this range…"
+- **Target** is the **next hop**: which way to send the packet next, not where it ends up. Read it as "…hand it to this." It's usually a gateway or connection out of the VPC, or `local`, which means "it's somewhere inside this VPC, deliver it directly." Most networking equipment outside AWS calls this column "next hop" or "gateway," which describes it much better.
 
-So each route works like a signpost: *for addresses in `10.20.0.0/16`, go through the peering connection*. The target is the next step, not necessarily the final stop. A peering connection hands the packet to the other VPC, and that VPC's own route tables take it from there.
+Driving directions work the same way. If you're going to Salt Lake City, that's your destination, and the sign that says "Salt Lake City: take I-15 North" doesn't take you there. It tells you which road to get on next. When you reach the next junction, another sign tells you the next road. A route table is a set of those signs for one subnet: *for addresses in this range, take this way out*. The packet keeps its real destination the whole time, and each place it passes through looks it up in its own route table to pick the next hop. A peering connection hands the packet to the other VPC, and that VPC's route tables take it from there.
 
 Here's a route table for a subnet in a VPC that uses `10.0.0.0/16`, is peered with another VPC that uses `10.20.0.0/16`, and has an internet gateway:
 
-| Destination | Target | Read it as |
+| Destination (where it's headed) | Target (next hop) | Read it as |
 |---|---|---|
-| `10.0.0.0/16` | `local` | Going anywhere in this VPC? Deliver it inside the VPC. |
-| `10.20.0.0/16` | `pcx-…` (a peering connection) | Going to the other VPC's range? Send it over the peering connection. |
-| `0.0.0.0/0` | `igw-…` (an internet gateway) | Going anywhere else? Send it to the internet. |
+| `10.0.0.0/16` | `local` | Headed anywhere in this VPC? Deliver it inside the VPC. |
+| `10.20.0.0/16` | `pcx-…` (a peering connection) | Headed for the other VPC's range? Hand it to the peering connection. |
+| `0.0.0.0/0` | `igw-…` (an internet gateway) | Headed anywhere else? Hand it to the internet gateway. |
 
 `0.0.0.0/0` matches every IPv4 address there is, because a `/0` [locks none of the bits](/primers/networking/ip-addresses-and-cidr/#what-the-n-means). It's called the **default route**, the place traffic goes when nothing more specific applies.
 
@@ -95,6 +95,8 @@ Try any address against the same table:
 - A route table only decides where traffic **leaving** its subnet goes. When the database at `10.0.2.40` replies, the reply leaves the database's subnet, so the database subnet's route table decides where the reply goes. Inside one VPC the `local` route covers that. For traffic from outside the VPC, like a VPN or a peered VPC, the destination's subnet needs its own route back to wherever the request came from. A missing return route is behind a lot of "the request gets there but nothing comes back" problems, and it's step 2 of the [checklist below](#when-traffic-doesnt-get-through).
 
 ### What the targets are
+
+These are the next hops a route can point at. Each one is a way out of the subnet, and the ID prefix tells you which kind it is when you're reading a route table in the console.
 
 | Target | Looks like | Sends traffic to |
 |---|---|---|
