@@ -9,7 +9,7 @@ A CIDR range like `10.0.1.0/24` is a short way to write down a block of IP addre
 
 ## Bits and octets
 
-An IPv4 address is one 32-bit number, 32 switches that are each 0 or 1. Nobody wants to read 32 binary digits, so it gets written as four groups of 8 bits (octets), each converted to decimal, which is why every part of an address falls between 0 and 255.
+An IPv4 address is one 32-bit number, 32 switches that are each 0 or 1. Nobody wants to read 32 binary digits, so it gets written as four groups of 8 bits (octets), each converted to decimal, which is why every part of an address falls between 0 and 255 [@rfc791].
 
 `10.0.1.25` is really:
 
@@ -20,22 +20,22 @@ An IPv4 address is one 32-bit number, 32 switches that are each 0 or 1. Nobody w
 
 ## IPv4 and IPv6
 
-Everything so far has been IPv4, the version that's been around since 1981. 32 bits only gives you about 4.3 billion addresses, which is fewer than the number of devices online now, and the pool of unassigned IPv4 addresses ran out in 2011. It keeps working mostly because of private ranges (more on those below) and NAT, which lets a lot of machines share one public address.
+Everything so far has been IPv4, the version that's been around since 1981 [@rfc791]. 32 bits only gives you about 4.3 billion addresses, which is fewer than the number of devices online now, and the pool of unassigned IPv4 addresses ran out in 2011 [@nro-ipv4-depleted]. It keeps working mostly because of private ranges (more on those below) and NAT, which lets a lot of machines share one public address.
 
-IPv6 is the replacement. Its addresses are 128 bits instead of 32, which works out to about 3.4 × 10<sup>38</sup> addresses, so running out isn't a real concern. 128 bits is a lot to write down, so IPv6 addresses are written as eight groups of four hex digits separated by colons, with two shortcuts: leading zeros in a group can be dropped, and one run of all-zero groups can be replaced with `::`. These are the same address:
+IPv6 is the replacement. Its addresses are 128 bits instead of 32 [@rfc8200], which works out to about 3.4 × 10<sup>38</sup> addresses, so running out isn't a real concern. 128 bits is a lot to write down, so IPv6 addresses are written as eight groups of four hex digits separated by colons, with two shortcuts: leading zeros in a group can be dropped, and one run of all-zero groups can be replaced with `::`. These are the same address [@rfc4291]:
 
 ```
 2001:0db8:0000:0000:0000:0000:0000:0001
 2001:db8::1
 ```
 
-(`2001:db8::/32` is the IPv6 range set aside for documentation, the same idea as the `192.0.2.0/24` and `203.0.113.0/24` examples on this page.)
+(`2001:db8::/32` is the IPv6 range set aside for documentation, the same idea as the `192.0.2.0/24` and `203.0.113.0/24` examples on this page [@rfc3849, @rfc5737].)
 
 The CIDR notation in the rest of this page works the same way for IPv6, just counting out of 128 bits instead of 32, and a typical IPv6 subnet is a `/64`. Most cloud networks still run on IPv4, often with IPv6 added alongside it (called dual-stack), so the examples here stick with IPv4.
 
 ## What the /n means
 
-CIDR notation (`a.b.c.d/n`) is an address, a slash, and a prefix length. The prefix length says how many of the 32 bits, counting from the left, are locked in place. Those locked bits are the network part. The bits left over are the host part, and they can be anything, which is what makes it a range instead of one address.
+CIDR notation (`a.b.c.d/n`) is an address, a slash, and a prefix length [@rfc4632]. The prefix length says how many of the 32 bits, counting from the left, are locked in place. Those locked bits are the network part. The bits left over are the host part, and they can be anything, which is what makes it a range instead of one address.
 
 In `10.0.1.0/24`, the first 24 bits are locked to `10.0.1` and the last 8 are free, so every address from `10.0.1.0` to `10.0.1.255` is in the range:
 
@@ -146,8 +146,8 @@ You'll sometimes see something like `10.0.1.50/26`. 50 isn't a multiple of 64, s
 
 **In a range, it's a mistake.** Subnets, route tables, and firewall rules describe a block of addresses, and a block has to start on its boundary. Tools disagree on what to do when it doesn't:
 
-- **Some reject it.** Python's `ipaddress` module refuses `ip_network("10.0.1.50/26")` with a "has host bits set" error. Linux won't add a route for it either ("Invalid prefix for given prefix length").
-- **Some correct it without telling you.** They clear the free bits and store `10.0.1.0/26`. AWS does this when you create a subnet through its API: ask for `10.0.1.50/26` and the subnet you get is `10.0.1.0/26`.
+- **Some reject it.** Python's `ipaddress` module refuses `ip_network("10.0.1.50/26")` with a "has host bits set" error [@python-ipaddress]. Linux won't add a route for it either ("Invalid prefix for given prefix length").
+- **Some correct it without telling you.** They clear the free bits and store `10.0.1.0/26`. AWS does this when you create a subnet through its API: ask for `10.0.1.50/26` and the subnet you get is `10.0.1.0/26` [@aws-vpc-subnet-sizing].
 
 Quiet correction can make a firewall rule much wider than intended. Say someone meant to allow just the one server at `10.0.1.50` and typed `/26` out of habit. The firewall stores `10.0.1.0/26`, and now 64 addresses are allowed instead of one, and the rule still looks almost right when you read it back.
 
@@ -173,16 +173,16 @@ Neither one can be given to a machine, so a normal subnet has 2<sup>(32 − n)</
 | `/26` | 64 | 62 | |
 | `/28` | 16 | 14 | |
 | `/30` | 4 | 2 | the classic size for a link between two routers |
-| `/31` | 2 | 2 | a special case for two-router links, where neither special address is needed ([RFC 3021](https://www.rfc-editor.org/rfc/rfc3021)) |
+| `/31` | 2 | 2 | a special case for two-router links, where neither special address is needed [@rfc3021] |
 | `/32` | 1 | 1 | a single address, not really a subnet |
 
 Since the two special addresses come out of every subnet, splitting a range into more subnets costs you addresses. One `/24` has 254 usable addresses, but split into four `/26`s it has 4 × 62 = 248.
 
-Cloud providers usually reserve a few more on top of these two. AWS reserves five in total: the network and broadcast addresses, plus the three right after the network address (`.1`, `.2`, and `.3` in a `/24`). [Subnets in an AWS VPC](/primers/networking/aws-vpc-subnets/) covers what each one is for and how to lay subnets out.
+Cloud providers usually reserve a few more on top of these two. AWS reserves five in total: the network and broadcast addresses, plus the three right after the network address (`.1`, `.2`, and `.3` in a `/24`) [@aws-vpc-subnet-sizing]. [Subnets in an AWS VPC](/primers/networking/aws-vpc-subnets/) covers what each one is for and how to lay subnets out.
 
 ## Private ranges
 
-Three ranges are set aside for private networks and never get routed on the public internet ([RFC 1918](https://www.rfc-editor.org/rfc/rfc1918)):
+Three ranges are set aside for private networks and never get routed on the public internet [@rfc1918]:
 
 - `10.0.0.0/8`
 - `172.16.0.0/12` (that's `172.16.x.x` through `172.31.x.x`)
