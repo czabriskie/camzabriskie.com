@@ -30,7 +30,7 @@ body {
   line-height: 1.7;
 }
 
-.wrap { max-width: 44rem; margin: 0 auto; padding: 0 1.25rem; }
+.wrap { max-width: 48rem; margin: 0 auto; padding: 0 1.25rem; }
 
 h1, h2, h3, .display {
   font-family: 'Bricolage Grotesque', 'Avenir Next', 'Helvetica Neue', sans-serif;
@@ -247,15 +247,17 @@ nav.note-nav a:hover { text-decoration: underline; }
 nav.note-nav a.next { text-align: right; margin-left: auto; }
 nav.note-nav .mono { color: var(--tech); font-weight: 400; }
 
-/* Bit grid: an IPv4 address as 32 bits, prefix bits in teal, host bits left open */
-.bitgrid { display: flex; gap: 0.5rem; flex-wrap: wrap; margin: 1.2rem 0 0.4rem; }
-.bitgrid .octet { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; }
-.bitgrid .bits { display: flex; gap: 2px; }
+/* Bit grid: an IPv4 address as 32 bits, prefix bits in teal, host bits left open.
+   Cells stretch so all four octets fill the text column on one row; two rows on phones. */
+.bitgrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; margin: 1.2rem 0 0.4rem; }
+@media (max-width: 30rem) { .bitgrid { grid-template-columns: repeat(2, 1fr); } }
+.bitgrid .octet { display: flex; flex-direction: column; align-items: stretch; gap: 0.25rem; text-align: center; }
+.bitgrid .bits { display: grid; grid-template-columns: repeat(8, 1fr); gap: 2px; }
 .bitgrid .bits span {
   font-family: 'IBM Plex Mono', ui-monospace, monospace;
   font-size: 0.8rem;
-  width: 1.15rem;
-  height: 1.6rem;
+  min-width: 0;
+  height: 1.7rem;
   display: flex;
   align-items: center;
   justify-content: center;
