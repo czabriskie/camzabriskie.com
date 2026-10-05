@@ -33,6 +33,7 @@ export const references = {
   rfc1034: rfc(1034, ['P. Mockapetris'], 'Domain names - concepts and facilities', 'Nov. 1987'),
   rfc1035: rfc(1035, ['P. Mockapetris'], 'Domain names - implementation and specification', 'Nov. 1987'),
   rfc2131: rfc(2131, ['R. Droms'], 'Dynamic Host Configuration Protocol', 'Mar. 1997'),
+  rfc2132: rfc(2132, ['S. Alexander', 'R. Droms'], 'DHCP Options and BOOTP Vendor Extensions', 'Mar. 1997'),
   rfc2246: rfc(2246, ['T. Dierks', 'C. Allen'], 'The TLS Protocol Version 1.0', 'Jan. 1999'),
   rfc2308: rfc(2308, ['M. Andrews'], 'Negative Caching of DNS Queries (DNS NCACHE)', 'Mar. 1998'),
   rfc3439: rfc(3439, ['R. Bush', 'D. Meyer'], 'Some Internet Architectural Guidelines and Philosophy', 'Dec. 2002'),
