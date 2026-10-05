@@ -3,18 +3,19 @@ import Base from '../../layouts/Base.astro';
 import { getCollection } from 'astro:content';
 import { references, formatReference } from '../../data/references.mjs';
 import { noteUrl, type Note } from '../../lib/primers';
+import { findCitations } from '../../lib/citation-keys.mjs';
 
 // Every source cited by any published primer, with links back to the primers citing it.
 const notes = (await getCollection('primers', (n) => !n.data.draft)).sort((a, b) => a.id.localeCompare(b.id));
 const citedBy = new Map<string, Note[]>();
 for (const note of notes) {
-  const keys = new Set([...(note.body ?? '').matchAll(/@([\w-]+)/g)].map((m) => m[1]).filter((k) => k in references));
+  const keys = new Set(findCitations(note.body ?? '').cites.map((c) => c.key).filter((k) => k in references));
   for (const key of keys) citedBy.set(key, [...(citedBy.get(key) ?? []), note]);
 }
 const sortKey = (key: string) => {
   const r = (references as Record<string, any>)[key];
   // Organizations sort by name, people by the first author's surname.
-  const who = typeof r.authors === 'string' ? r.authors : r.authors[0].replace(/,? Ed\.$/, '').split(' ').pop();
+  const who = typeof r.authors === 'string' ? r.authors : r.authors[0].replace(/,? Ed\.$/, '').replace(/,? (Jr\.|Sr\.|\d+(st|nd|rd|th))$/, '').split(' ').pop();
   return `${who} ${r.title}`.toLowerCase();
 };
 const keys = [...citedBy.keys()].sort((a, b) => sortKey(a).localeCompare(sortKey(b)));

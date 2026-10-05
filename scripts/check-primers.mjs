@@ -8,6 +8,7 @@
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { references } from '../src/data/references.mjs';
+import { findCitations } from '../src/lib/citation-keys.mjs';
 
 const ROOT = 'src/content/primers';
 
@@ -40,12 +41,15 @@ const files = (dir) =>
 const problems = [];
 const badCites = [];
 for (const file of files(ROOT)) {
-  readFileSync(file, 'utf8').split('\n').forEach((line, i) => {
-    for (const [, keys] of line.matchAll(/\[@([\w-]+(?:\s*,\s*@[\w-]+)*)\]/g)) {
-      for (const key of keys.split(',').map((k) => k.trim().replace(/^@/, ''))) {
-        if (!(key in references)) badCites.push(`${file}:${i + 1}  [@${key}]`);
-      }
-    }
+  const text = readFileSync(file, 'utf8');
+  const lineOf = (index) => text.slice(0, index).split('\n').length;
+  const { cites, leftovers } = findCitations(text);
+  for (const { key, index } of cites) {
+    if (!(key in references)) badCites.push(`${file}:${lineOf(index)}  unknown source [@${key}]`);
+  }
+  for (const index of leftovers) badCites.push(`${file}:${lineOf(index)}  malformed citation "${text.slice(index, index + 30).split('\n')[0]}"`);
+
+  text.split('\n').forEach((line, i) => {
     for (const [ip] of line.matchAll(/(?<![\d.])(?:\d{1,3}\.){3}\d{1,3}(?![\d.])/g)) {
       if (ip.split('.').some((o) => Number(o) > 255)) continue;
       if (!ALLOWED.some((r) => inRange(ip, r))) problems.push(`${file}:${i + 1}  ${ip}`);
@@ -60,7 +64,7 @@ if (problems.length) {
 }
 
 if (badCites.length) {
-  console.error('Primers cite sources that are not defined in src/data/references.mjs:');
+  console.error('Citation problems (define sources in src/data/references.mjs, cite as [@key] or [@key1, @key2]):');
   for (const c of badCites) console.error('  ' + c);
   process.exit(1);
 }

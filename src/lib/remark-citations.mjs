@@ -6,12 +6,13 @@
 // going, so this throw is only a second line of defense).
 
 import { references, formatReference } from '../data/references.mjs';
-
-const CITE = /\[@([\w-]+(?:\s*,\s*@[\w-]+)*)\]/g;
+import { CITE, splitKeys } from './citation-keys.mjs';
 const SKIP = new Set(['code', 'inlineCode', 'html', 'link']);
 
 export default function remarkCitations() {
   return (tree, file) => {
+    // Primers only. Blog posts can contain "[@someone]" as ordinary text.
+    if (!String(file.path ?? file.history?.[0] ?? '').includes('/content/primers/')) return;
     const order = [];
     const number = (key) => {
       if (!references[key]) throw new Error(`Unknown citation [@${key}] in ${file.path}. Add it to src/data/references.mjs.`);
@@ -31,9 +32,8 @@ export default function remarkCitations() {
         let last = 0;
         for (const m of child.value.matchAll(CITE)) {
           if (m.index > last) out.push({ type: 'text', value: child.value.slice(last, m.index) });
-          const links = m[1]
-            .split(',')
-            .map((k) => number(k.trim().replace(/^@/, '')))
+          const links = splitKeys(m[1])
+            .map((k) => number(k))
             .map((n) => `<a class="cite" href="#ref-${n}">[${n}]</a>`);
           out.push({ type: 'html', value: `<span class="cites">${links.join(', ')}</span>` });
           last = m.index + m[0].length;
