@@ -23,7 +23,7 @@ AWS takes five addresses out of every subnet, the first four and the last one, i
 |---|---|
 | `10.0.1.0` | the network address |
 | `10.0.1.1` | the VPC router, which is the subnet's gateway to everything else |
-| `10.0.1.2` | DNS (the DNS server itself sits at the VPC's base address plus two, so `10.0.0.2` in a `10.0.0.0/16` VPC) |
+| `10.0.1.2` | DNS (the DNS server itself sits at the VPC's base address plus two, so `10.0.0.2` in a `10.0.0.0/16` VPC; see [where Route 53 fits](/primers/networking/dns-resolution/#where-route-53-fits)) |
 | `10.0.1.3` | reserved by AWS for future use |
 | `10.0.1.255` | the broadcast address. VPCs don't support broadcast, but AWS reserves it anyway. |
 
