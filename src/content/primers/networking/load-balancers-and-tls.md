@@ -79,7 +79,7 @@ Zero trust is the idea that being on the right network shouldn't be enough to ge
 
 Sometimes all you need is HTTPS in front of one small internal service. Some clients refuse to connect to anything over plain HTTP unless it's `localhost`, so an internal tool listening on `http://…:8000` can get rejected even though it's only reachable over a VPN.
 
-A load balancer works, but for one instance with nothing to balance it's a recurring cost and another resource to manage. A **reverse proxy** on the server itself does the same job:
+A load balancer works, but for one instance with nothing to balance it's a recurring cost and another resource to manage. A **reverse proxy** on the server itself does the same job ([Proxies, reverse proxies, and bastion hosts](/primers/networking/proxies-and-bastions/#reverse-proxies) covers them in general):
 
 1. The app keeps running unchanged, but listens only on `127.0.0.1:8000`, so nothing off the machine can reach it directly.
 2. A reverse proxy listens on port 443 with the certificate, terminates TLS, and forwards each request to `localhost:8000`.
