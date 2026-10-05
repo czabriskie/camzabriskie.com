@@ -31,7 +31,7 @@ That leaves 2<sup>(32 − n)</sup> − 5 usable addresses ([AWS's subnet sizing 
 
 ## Route tables
 
-Every subnet is associated with one route table. Whenever something in the subnet sends a packet, the VPC takes the packet's destination address, looks it up in that route table, and the route table says where to send it next. A route table doesn't allow or block anything (that's the firewalls' job, further down). It only picks the next step.
+Every subnet is associated with one route table. **The packet's source IP picks the route table, and its destination IP picks the row in it.** Whenever something in a subnet sends a packet, the VPC uses that subnet's route table, looks up the packet's destination address in it, and the matching row says where to send it next. A route table doesn't allow or block anything (that's the firewalls' job, further down). It only picks the next step.
 
 ### Source picks the table, destination picks the row
 
@@ -39,8 +39,8 @@ Every packet carries two addresses: its **source**, where it came from, and its 
 
 The route table uses them for two different jobs:
 
-1. **The source decides which route table gets used.** The packet is leaving `10.0.1.25`, so it's the route table of `10.0.1.25`'s subnet. The source address never appears inside the table. It's already settled by which table you're looking at.
-2. **The destination decides which row applies.** The VPC compares `10.20.5.9` against each row's Destination column and uses the row that matches (the most specific one, if several do).
+1. **The source IP picks the route table.** `10.0.1.25` belongs to one subnet, so the packet uses that subnet's route table. (Strictly, AWS uses the route table of the subnet the packet leaves from. For an instance sending its own traffic, that's the subnet its source IP is in, so it comes to the same thing.) The source address never appears inside the table. It's already settled by which table you're looking at.
+2. **The destination IP picks the row.** The VPC compares `10.20.5.9` against each row's Destination column and uses the row that matches (the most specific one, if several do).
 
 So a route table never asks "where did this come from?" It only asks "where is this going, and which way out gets it closer?"
 
