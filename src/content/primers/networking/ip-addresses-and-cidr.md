@@ -178,7 +178,7 @@ Neither one can be given to a machine, so a normal subnet has 2<sup>(32 − n)</
 
 Since the two special addresses come out of every subnet, splitting a range into more subnets costs you addresses. One `/24` has 254 usable addresses, but split into four `/26`s it has 4 × 62 = 248.
 
-Cloud providers usually reserve a few more on top of these two. AWS reserves five in total: the network and broadcast addresses, plus the three right after the network address (`.1`, `.2`, and `.3` in a `/24`) [@aws-vpc-subnet-sizing]. [Subnets in an AWS VPC](/primers/networking/aws-vpc-subnets/) covers what each one is for and how to lay subnets out.
+Cloud providers usually reserve a few more on top of these two. AWS reserves five in total: the network and broadcast addresses, plus the three right after the network address (`.1`, `.2`, and `.3` in a `/24`) [@aws-vpc-subnet-sizing]. [AWS VPCs, subnets, and routing](/primers/networking/aws-vpc-subnets/) covers what each one is for and how to lay subnets out.
 
 ## Private ranges
 
