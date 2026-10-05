@@ -39,6 +39,11 @@ Mechanics:
   sorted by `order` within a topic and shown as a two-digit position (`02 / 05`), not a
   byte number, and show the last-updated date instead of a publish date.
 - Styled with the teal accent; no new hue.
+- Primers can carry small interactive pieces (first one: the CIDR calculator in
+  `src/scripts/cidr-calc.ts`). These are the site's first client-side JavaScript, so the
+  rules are: plain TypeScript, no framework or dependency, loaded only on primer pages,
+  and progressive enhancement. Markdown holds an empty placeholder `div`, the script
+  fills it in, and the page still reads fine without JavaScript.
 - **Material and understanding only.** No employer or customer names, hostnames, real
   addresses, network layouts, configs, project decisions, or internal links. Examples
   use RFC 1918 private ranges, RFC 5737 documentation ranges, and `example.com`.

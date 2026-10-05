@@ -67,6 +67,8 @@ A range with prefix length `n` has `32 − n` free bits, and each free bit doubl
 
 **addresses in the range = 2<sup>(32 − n)</sup>**
 
+<div class="cidr-calc" data-ip="10.0.1.0" data-n="24"></div>
+
 | Prefix | Free bits | Addresses | Example |
 |---|---|---|---|
 | `/32` | 0 | 1 | `203.0.113.4/32`, a single host, which is how a firewall rule allows exactly one IP |
