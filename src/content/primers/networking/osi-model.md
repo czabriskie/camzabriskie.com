@@ -70,12 +70,33 @@ Here's what happens when a browser at `192.168.1.20` on a home network fetches `
 2. **TLS** encrypts that request so nothing below it can read it [@rfc8446].
 3. **Layer 4:** TCP puts the encrypted data in a segment addressed from a random high port on the laptop (an [ephemeral port](/primers/networking/aws-vpc-subnets/#security-groups-and-network-acls), say `51544`) to port `443` on the server. TCP keeps track of what's been received and resends anything that gets lost [@rfc9293].
 4. **Layer 3:** IP puts the segment in a packet addressed from `192.168.1.20` to `203.0.113.10` [@rfc791]. These are the addresses from [IP addresses and CIDR](/primers/networking/ip-addresses-and-cidr/).
-5. **Layer 2:** Wi-Fi puts the packet in a frame addressed to the **home router's** MAC address, not the server's. Layer 2 only ever reaches the next device on the local network. (The laptop finds the router's MAC address from its IP address with ARP [@rfc826].)
+5. **Layer 2:** Wi-Fi puts the packet in a frame addressed to the **home router's** MAC address, not the server's. Layer 2 only ever reaches the next device on the local network. The laptop looks up the router's MAC address with **ARP**, explained [just below](#arp-from-an-ip-address-to-a-mac-address).
 6. **Layer 1:** the frame goes out as radio signals.
 
 **At each router along the way, only the bottom layers get unwrapped.** The router strips off the layer 2 frame, reads the layer 3 destination address, looks it up in its route table to pick the next hop, and wraps the packet in a fresh layer 2 frame addressed to that next device. So the MAC addresses change at every hop, while the IP addresses stay the same the whole way. That's the same idea as a route table's [target being the next hop](/primers/networking/aws-vpc-subnets/#destination-and-target): the packet carries its final destination, and each router just picks the next step. (One exception: when the packet leaves a home or private network, a NAT device swaps the private source address for a public one, and swaps it back on replies.)
 
 **At the server, it goes back up:** layer 2 checks the frame was for it, layer 3 checks the packet was for its address, layer 4 hands the data to whatever program is listening on port 443, TLS decrypts it, and the web server reads the HTTP request. The response goes through the same process in reverse.
+
+### ARP: from an IP address to a MAC address
+
+A **MAC address** is the hardware address of a network interface: a 48-bit number written as six pairs of hex digits, like `00:00:5e:00:53:01` (that one is from a range set aside for documentation [@rfc9542]). Layer 2 frames are addressed by MAC address, layer 3 packets by IP address, and something has to connect the two.
+
+That something is **ARP**, the Address Resolution Protocol [@rfc826]. It answers one question on the local network: "which MAC address has this IP address?" It's the same kind of job [DNS](/primers/networking/dns-resolution/) does one layer up, where DNS turns a name into an IP address and ARP turns an IP address into a MAC address.
+
+Here's what happens in step 5 above, before the laptop can send its first frame:
+
+1. **The laptop decides who's next.** `203.0.113.10` isn't in the laptop's own subnet, `192.168.1.0/24` ([what a subnet is](/primers/networking/ip-addresses-and-cidr/#subnets)), so the packet has to go through the **default gateway**, the home router at `192.168.1.1`. The laptop learned that address from the network's settings when it joined, usually handed out by DHCP [@rfc2131].
+2. **It checks its ARP cache** for `192.168.1.1`. If it's there from a recent conversation, it's done.
+3. **If not, it broadcasts an ARP request** to every device on the local network: "Who has `192.168.1.1`? Tell `192.168.1.20`."
+4. **The router replies directly to the laptop:** "`192.168.1.1` is at `00:00:5e:00:53:01`."
+5. **The laptop caches the answer** and addresses the frame to that MAC address.
+
+A few things follow from how that works:
+
+- **The laptop never ARPs for the server.** It only needs the MAC address of the next device, and the server isn't on its network. If the destination were in the same subnet (a printer at `192.168.1.40`, say), the laptop would ARP for the printer directly and skip the router.
+- **ARP stops at the router.** Broadcasts don't cross routers, so each router along the path does its own ARP on its own network to find the next hop's MAC address.
+- **You can see the cache.** `arp -a` on macOS and Windows, or `ip neigh` on Linux, lists the IP-to-MAC pairs the machine currently knows.
+- **IPv6 doesn't use ARP.** It does the same job with Neighbor Discovery [@rfc4861].
 
 ## Where the things in the other primers sit
 
