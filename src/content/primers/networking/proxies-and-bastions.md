@@ -62,7 +62,7 @@ A **SOCKS** proxy is a forward proxy that works below HTTP: it relays any TCP co
 
 A reverse proxy sits in front of one or more servers and answers for them. Clients connect to it as if it were the server, and it passes each request on to a backend and relays the response [@mdn-proxies]. Almost every production web service has at least one:
 
-- **Terminating TLS,** so the backends don't each need certificates ([Load balancers and where TLS ends](/primers/networking/load-balancers-and-tls/#terminating-tls)).
+- **Terminating TLS,** so the backends don't each need certificates ([Load balancers and TLS termination](/primers/networking/load-balancers-and-tls/#terminating-tls)).
 - **Load balancing** across several backends.
 - **Routing** by hostname or path, so `/api/*` and `/admin/*` can go to different services behind one address.
 - **Caching and compression.**
