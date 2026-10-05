@@ -86,7 +86,7 @@ dig +trace www.example.com                # walk root → TLD → authoritative 
 
 To go the other way, from an address to a name, use `dig -x` (plain `dig 203.0.113.10` treats the address as a name and won't find anything). Reverse lookups use **PTR** records under a special domain, with the address written backwards: `203.0.113.10` is looked up as `10.113.0.203.in-addr.arpa` [@rfc1035]. It's a quick way to see who runs a resolver or server, when the owner has set one up.
 
-You can also watch the raw traffic. DNS normally uses UDP port 53 (falling back to TCP for large answers) [@rfc1035], so on macOS:
+You can also watch the raw traffic. DNS normally uses UDP port 53 (falling back to TCP for large answers) [@rfc1035, @rfc7766], so on macOS:
 
 ```bash
 # clear the local cache so the next lookup goes out on the wire
@@ -126,7 +126,7 @@ Route 53 is AWS's DNS service, and it does a few separate jobs that are easy to 
 
 A **private hosted zone** holds records that only answer inside the VPCs you associate with it, like `db.internal.example.com` pointing at a private address. A query from outside those VPCs doesn't see the private zone at all and gets looked up on the public internet instead [@aws-route53-private-zones]. So a laptop on a VPN can reach a private address but still fail to resolve its name, unless its DNS queries go to a resolver that can see the private zone.
 
-The VPC resolver can bridge that gap in both directions: networks outside AWS can forward queries to it, and it can forward queries for chosen domains out to resolvers on another network. When forwarding rules overlap, the most specific domain wins [@aws-route53-resolver], the same idea as [longest prefix match](/primers/networking/aws-vpc-subnets/#when-more-than-one-route-matches) in route tables.
+The VPC resolver can bridge that gap in both directions: networks outside AWS can forward queries to it, and it can forward queries for chosen domains out to resolvers on another network. When forwarding rules overlap, the most specific domain wins [@aws-route53-resolver-forwarding], the same idea as [longest prefix match](/primers/networking/aws-vpc-subnets/#when-more-than-one-route-matches) in route tables.
 
 ### Routing policies
 
