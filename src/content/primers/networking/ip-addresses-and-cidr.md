@@ -122,6 +122,10 @@ The same steps work when the prefix ends in an earlier octet. For `10.0.37.5/20`
 
 So the range is `10.0.32.0/20`, covering `10.0.32.0` to `10.0.47.255`, which is 16 × 256 = 4,096 addresses (matches 2<sup>12</sup>).
 
+Type in any address and prefix to check your work against the steps:
+
+<div class="cidr-calc" data-address data-ip="10.0.1.100" data-n="26"></div>
+
 ### Checking whether an address is in a range
 
 This comes up constantly with firewall rules: a rule allows `10.0.1.64/26`, and you want to know whether `10.0.1.130` gets through. Find the range's first and last address using the steps above (`10.0.1.64` to `10.0.1.127`) and see if the address falls between them. 130 is past 127, so it doesn't. It's in the next block over, `10.0.1.128/26`.
