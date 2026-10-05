@@ -28,6 +28,9 @@ export const references = {
   // RFCs
   rfc791: rfc(791, ['J. Postel'], 'Internet Protocol', 'Sep. 1981'),
   rfc1034: rfc(1034, ['P. Mockapetris'], 'Domain names - concepts and facilities', 'Nov. 1987'),
+  rfc1035: rfc(1035, ['P. Mockapetris'], 'Domain names - implementation and specification', 'Nov. 1987'),
+  rfc2308: rfc(2308, ['M. Andrews'], 'Negative Caching of DNS Queries (DNS NCACHE)', 'Mar. 1998'),
+  rfc3596: rfc(3596, ['S. Thomson', 'C. Huitema', 'V. Ksinant', 'M. Souissi'], 'DNS Extensions to Support IP Version 6', 'Oct. 2003'),
   rfc1918: rfc(1918, ['Y. Rekhter', 'B. Moskowitz', 'D. Karrenberg', 'G. J. de Groot', 'E. Lear'], 'Address Allocation for Private Internets', 'Feb. 1996'),
   rfc3021: rfc(3021, ['A. Retana', 'R. White', 'V. Fuller', 'D. McPherson'], 'Using 31-Bit Prefixes on IPv4 Point-to-Point Links', 'Dec. 2000'),
   rfc3849: rfc(3849, ['G. Huston', 'A. Lord', 'P. Smith'], 'IPv6 Address Prefix Reserved for Documentation', 'Jul. 2004'),
@@ -38,6 +41,7 @@ export const references = {
   rfc6066: rfc(6066, ['D. Eastlake 3rd'], 'Transport Layer Security (TLS) Extensions: Extension Definitions', 'Jan. 2011'),
   rfc8200: rfc(8200, ['S. Deering', 'R. Hinden'], 'Internet Protocol, Version 6 (IPv6) Specification', 'Jul. 2017'),
   rfc8446: rfc(8446, ['E. Rescorla'], 'The Transport Layer Security (TLS) Protocol Version 1.3', 'Aug. 2018'),
+  rfc8484: rfc(8484, ['P. Hoffman', 'P. McManus'], 'DNS Queries over HTTPS (DoH)', 'Oct. 2018'),
   rfc8555: rfc(8555, ['R. Barnes', 'J. Hoffman-Andrews', 'D. McCarney', 'J. Kasten'], 'Automatic Certificate Management Environment (ACME)', 'Mar. 2019'),
   rfc8659: rfc(8659, ['P. Hallam-Baker', 'R. Stradling', 'J. Hoffman-Andrews'], 'DNS Certification Authority Authorization (CAA) Resource Record', 'Nov. 2019'),
   rfc9110: rfc(9110, ['R. Fielding, Ed.', 'M. Nottingham, Ed.', 'J. Reschke, Ed.'], 'HTTP Semantics', 'Jun. 2022'),
@@ -78,6 +82,28 @@ export const references = {
   'aws-vpc-peering': aws('How VPC peering connections work', 'Amazon VPC Peering Guide', 'https://docs.aws.amazon.com/vpc/latest/peering/vpc-peering-basics.html'),
   'aws-tgw-vpc-attachments': aws('Amazon VPC attachments in AWS Transit Gateway', 'Amazon VPC Transit Gateways', 'https://docs.aws.amazon.com/vpc/latest/tgw/tgw-vpc-attachments.html'),
   'aws-eks-vpc-cni': aws('Assign IPs to Pods with the Amazon VPC CNI', 'Amazon EKS User Guide', 'https://docs.aws.amazon.com/eks/latest/userguide/managing-vpc-cni.html'),
+
+  'root-servers': { authors: 'Root Server Technical Operations Association', title: 'Root Servers', url: 'https://root-servers.org/', accessed: CHECKED },
+
+  // DNS and Route 53
+  'aws-route53-concepts': aws('Amazon Route 53 concepts', 'Amazon Route 53 Developer Guide', 'https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/route-53-concepts.html'),
+  'aws-route53-public-zones': aws('Considerations when working with public hosted zones', 'Amazon Route 53 Developer Guide', 'https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/hosted-zone-public-considerations.html'),
+  'aws-route53-private-zones': aws('Working with private hosted zones', 'Amazon Route 53 Developer Guide', 'https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/hosted-zones-private.html'),
+  'aws-route53-routing-policies': aws('Choosing a routing policy', 'Amazon Route 53 Developer Guide', 'https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy.html'),
+  'aws-route53-resolver': aws('What is Route 53 VPC Resolver?', 'Amazon Route 53 Developer Guide', 'https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resolver.html'),
+
+  // CDNs and CloudFront
+  'aws-cloudfront-intro': aws('What is Amazon CloudFront?', 'Amazon CloudFront Developer Guide', 'https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html'),
+  'aws-cloudfront-cache-key': aws('Understand the cache key', 'Amazon CloudFront Developer Guide', 'https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/understanding-the-cache-key.html'),
+  'aws-cloudfront-expiration': aws('Manage how long content stays in the cache (expiration)', 'Amazon CloudFront Developer Guide', 'https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Expiration.html'),
+  'aws-cloudfront-invalidation': aws('Invalidate files to remove content', 'Amazon CloudFront Developer Guide', 'https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Invalidation.html'),
+  'aws-cloudfront-s3-oac': aws('Restrict access to an Amazon S3 origin', 'Amazon CloudFront Developer Guide', 'https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-restricting-access-to-s3.html'),
+  'aws-cloudfront-vpc-origins': aws('Restrict access with VPC origins', 'Amazon CloudFront Developer Guide', 'https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-vpc-origins.html'),
+  'aws-cloudfront-cert-requirements': aws('Requirements for using SSL/TLS certificates with CloudFront', 'Amazon CloudFront Developer Guide', 'https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/cnames-and-https-requirements.html'),
+  'aws-cloudfront-faq': aws('Amazon CloudFront FAQs', undefined, 'https://aws.amazon.com/cloudfront/faqs/'),
+  'aws-cloudfront-alb-origin': aws('AWS WAF IPSet rules for ALB behind CloudFront', 'AWS re:Post Knowledge Center', 'https://repost.aws/knowledge-center/waf-ipset-rules-alb-cloudfront'),
+  'aws-s3-endpoints': aws('Amazon Simple Storage Service endpoints and quotas', 'AWS General Reference', 'https://docs.aws.amazon.com/general/latest/gr/s3.html'),
+  'aws-shield': aws('AWS Shield', 'AWS WAF, AWS Firewall Manager, and AWS Shield Developer Guide', 'https://docs.aws.amazon.com/waf/latest/developerguide/shield-chapter.html'),
 
   // Load balancing and WAF
   'aws-nlb-listeners': aws('Listeners for your Network Load Balancers', 'Elastic Load Balancing User Guide for Network Load Balancers', 'https://docs.aws.amazon.com/elasticloadbalancing/latest/network/load-balancer-listeners.html'),
