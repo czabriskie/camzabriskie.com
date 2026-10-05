@@ -1,0 +1,18 @@
+---
+import { noteUrl, pos, type Note } from '../lib/primers';
+interface Props {
+  notes: Note[];
+}
+const { notes } = Astro.props;
+---
+<ol class="notes">
+  {notes.map((note, i) => (
+    <li>
+      <span class="pos mono">{pos(i)}</span>
+      <div>
+        <a class="title" href={noteUrl(note)}>{note.data.title}</a>
+        <p class="desc">{note.data.description}</p>
+      </div>
+    </li>
+  ))}
+</ol>

@@ -60,6 +60,36 @@ existing + 1 — `ls docs/Decisions/` first.
   common way this rule gets broken by someone trying to follow it, so before handing a
   draft back, grep it for `^What ` and `\. What ` as well as the phrase list.
 
+## Primers
+
+**Primers vs. Tech Bytes.** A Tech Byte is a post: something Cam did, built,
+broke, or changed his mind about, dated, told in first person, and never revised after
+publishing because it records a moment. A primer is a document: it explains one
+concept to someone who doesn't know it yet, is read in an order that builds, uses
+headings/tables/diagrams freely, and gets revised whenever understanding improves (so it
+shows "updated", not a publish date). Test: if you'd send someone the link in six months
+to explain the idea, it's a primer; if quietly editing it later would feel wrong,
+it's a Tech Byte. One experience can produce both, and then the post links to the
+document instead of explaining the concept inline. That split is also how work stays out
+of it: the post can stay vague about the job while the document carries the substance.
+
+- Primers live in `src/content/primers/<topic>/<slug>.md` (Decision 0006);
+  frontmatter `title`, `description`, `order` (reading order in the topic), `updated`,
+  optional `draft`. New topics also need an entry in `src/lib/primers.ts`.
+- **Strictly the material and Cam's understanding of it. Nothing from work.** Source
+  notes usually come from real projects (often his work vault), so scrub before
+  writing: no employer or customer names or abbreviations, hostnames, certificate
+  names, real IPs or CIDRs, network layouts, vendor stacks tied to a specific customer,
+  project options/decisions, ticket or Confluence links, diagram filenames, or "on this
+  project we…" framing. Re-teach the concept with generic examples instead.
+- Example addresses come only from RFC 1918 (`10/8`, `172.16/12`, `192.168/16`) or RFC
+  5737 (`192.0.2.0/24`, `198.51.100.0/24`, `203.0.113.0/24`), IPv6 examples from RFC
+  3849 (`2001:db8::/32`), and hostnames from `example.com`. `scripts/check-primers.mjs`
+  fails the build on other IPv4 addresses; it can't catch IPv6 or names, so the scrub
+  above is on the writer.
+- Same voice rules as posts (no em dashes, no throat-clearing, no clefts), but structure
+  is welcome: headings, tables, diagrams. Same merge rule too: Cam reads it first.
+
 ## LinkedIn scheduler
 
 LinkedIn posts are pushed and scheduled from this repo, not a third-party tool
@@ -99,9 +129,9 @@ LinkedIn's free consumer API, moving each to `linkedin/posted/` as the publish r
   pre-approved to squash-merge. Content-only PRs (posts, docs) skip CI by path filter;
   for those, a local `npm run build` before the PR is the gate.
 - **Exception, and it overrides the standing rule: never merge a PR that adds or edits a
-  blog post or a `linkedin/queue/` file.** Writing published under Cam's name gets read by
-  Cam before it goes live, every time, no matter how green CI is. Open the PR, say what it
-  is, and leave it. This is what the weekly drafting routine does, and it applies to any
+  blog post, a primer, or a `linkedin/queue/` file.** Writing published under
+  Cam's name gets read by Cam before it goes live, every time, no matter how green CI
+  is. Open the PR, say what it is, and leave it. This is what the weekly drafting routine does, and it applies to any
   agent or session. For queue files the merge itself is the schedule step (Decision 0005),
   which makes this rule load-bearing twice over.
 - A push to `main` deploys to production (GitHub Pages). There is no staging site; that

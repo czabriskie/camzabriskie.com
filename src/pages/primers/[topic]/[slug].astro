@@ -1,0 +1,69 @@
+---
+import { render } from 'astro:content';
+import Base from '../../../layouts/Base.astro';
+import { publishedTopics, noteSlug, noteUrl, pos } from '../../../lib/primers';
+import { fmtDate } from '../../../lib/bytes';
+
+export async function getStaticPaths() {
+  const paths = [];
+  for (const { topic, notes } of await publishedTopics()) {
+    notes.forEach((note, i) => {
+      paths.push({
+        params: { topic: topic.slug, slug: noteSlug(note) },
+        props: { topic, note, i, total: notes.length, prev: notes[i - 1], next: notes[i + 1] },
+      });
+    });
+  }
+  return paths;
+}
+
+const { topic, note, i, total, prev, next } = Astro.props;
+const { Content, headings } = await render(note);
+
+// Table of contents from the primer's own headings: h2s, with their h3s nested under them.
+type Entry = { slug: string; text: string; children: { slug: string; text: string }[] };
+const toc: Entry[] = [];
+for (const h of headings) {
+  if (h.depth === 2) toc.push({ slug: h.slug, text: h.text, children: [] });
+  else if (h.depth === 3 && toc.length) toc[toc.length - 1].children.push({ slug: h.slug, text: h.text });
+}
+---
+<Base title={`${note.data.title} — ${topic.title} — Cam Zabriskie`} description={note.data.description}>
+  <article class="byte note stream-tech">
+    <p class="crumbs mono">
+      <a href="/primers/">Primers</a> › <a href={`/primers/${topic.slug}/`}>{topic.title}</a>
+    </p>
+    <h1>{note.data.title}</h1>
+    <div class="meta">
+      <span class="byte-badge"><b>{pos(i)}</b> / {pos(total - 1)}</span>
+      <span class="mono">updated {fmtDate(note.data.updated)}</span>
+    </div>
+    {toc.length >= 3 && (
+      <details class="toc" open>
+        <summary class="mono">On this page</summary>
+        <ol>
+          {toc.map((h) => (
+            <li>
+              <a href={`#${h.slug}`}>{h.text}</a>
+              {h.children.length > 0 && (
+                <ol>
+                  {h.children.map((c) => <li><a href={`#${c.slug}`}>{c.text}</a></li>)}
+                </ol>
+              )}
+            </li>
+          ))}
+        </ol>
+      </details>
+    )}
+    <Content />
+    <nav class="note-nav">
+      {prev ? <a href={noteUrl(prev)}><span class="mono">← {pos(i - 1)}</span>{prev.data.title}</a> : <span />}
+      {next && <a class="next" href={noteUrl(next)}><span class="mono">{pos(i + 1)} →</span>{next.data.title}</a>}
+    </nav>
+  </article>
+</Base>
+
+<script>
+  import '../../../scripts/cidr-calc';
+  import '../../../scripts/heading-anchors';
+</script>

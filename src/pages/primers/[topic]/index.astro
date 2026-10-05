@@ -1,0 +1,22 @@
+---
+import Base from '../../../layouts/Base.astro';
+import NoteList from '../../../components/NoteList.astro';
+import { publishedTopics } from '../../../lib/primers';
+
+export async function getStaticPaths() {
+  return (await publishedTopics()).map(({ topic, notes }) => ({ params: { topic: topic.slug }, props: { topic, notes } }));
+}
+
+const { topic, notes } = Astro.props;
+---
+<Base title={`${topic.title} — Primers — Cam Zabriskie`} description={topic.blurb}>
+  <div class="primers stream-tech">
+    <p class="crumbs mono"><a href="/primers/">Primers</a></p>
+    <div class="stream-head">
+      <span class="tick" aria-hidden="true"></span>
+      <h1>{topic.title}</h1>
+    </div>
+    <p class="lede" style="color: var(--muted); margin-bottom: 2rem;">{topic.blurb}</p>
+    <NoteList notes={notes} />
+  </div>
+</Base>

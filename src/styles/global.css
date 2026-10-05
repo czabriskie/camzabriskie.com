@@ -30,7 +30,7 @@ body {
   line-height: 1.7;
 }
 
-.wrap { max-width: 44rem; margin: 0 auto; padding: 0 1.25rem; }
+.wrap { max-width: 48rem; margin: 0 auto; padding: 0 1.25rem; }
 
 h1, h2, h3, .display {
   font-family: 'Bricolage Grotesque', 'Avenir Next', 'Helvetica Neue', sans-serif;
@@ -224,3 +224,94 @@ footer.site .wrap {
   header.site, footer.site { display: none; }
   body { background: white; color: black; }
 }
+
+/* Primers: notes grouped by topic, read in order */
+.primers .group { margin-bottom: 3.2rem; padding-top: 1.7rem; border-top: 1px solid var(--line); }
+.primers .group-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.primers .group-head h2 { font-size: clamp(1.6rem, 4.5vw, 1.95rem); font-weight: 700; letter-spacing: -0.015em; margin: 0 0 0.4rem; }
+.primers .group-head h2 a { text-decoration: none; }
+.primers .group-head .count { color: var(--muted); }
+.primers .group-note { color: var(--muted); font-size: 0.95rem; margin-bottom: 1.6rem; }
+.crumbs { color: var(--muted); margin: 0 0 0.6rem; }
+.crumbs a { text-decoration: none; }
+.crumbs a:hover { text-decoration: underline; }
+ol.notes { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 1.2rem; }
+ol.notes li { display: grid; grid-template-columns: 2.2rem 1fr; align-items: baseline; }
+ol.notes .pos { color: var(--tech); font-size: 0.85rem; }
+ol.notes .title { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 1.08rem; text-decoration: none; }
+ol.notes .title:hover { text-decoration: underline; }
+ol.notes .desc { color: var(--muted); font-size: 0.95rem; margin: 0.1rem 0 0; }
+nav.note-nav { display: flex; justify-content: space-between; gap: 1.5rem; margin-top: 3rem; padding-top: 1.2rem; border-top: 1px solid var(--line); }
+nav.note-nav a { display: flex; flex-direction: column; gap: 0.15rem; text-decoration: none; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; max-width: 48%; }
+nav.note-nav a:hover { text-decoration: underline; }
+nav.note-nav a.next { text-align: right; margin-left: auto; }
+nav.note-nav .mono { color: var(--tech); font-weight: 400; }
+
+/* Bit grid: an IPv4 address as 32 bits, prefix bits in teal, host bits left open.
+   Cells stretch so all four octets fill the text column on one row; two rows on phones. */
+.bitgrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; margin: 1.2rem 0 0.4rem; }
+@media (max-width: 30rem) { .bitgrid { grid-template-columns: repeat(2, 1fr); } }
+.bitgrid .octet { display: flex; flex-direction: column; align-items: stretch; gap: 0.25rem; text-align: center; }
+.bitgrid .bits { display: grid; grid-template-columns: repeat(8, 1fr); gap: 2px; }
+.bitgrid .bits span {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 0.8rem;
+  min-width: 0;
+  height: 1.7rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  border: 1px solid var(--line);
+  color: var(--muted);
+}
+.bitgrid .bits span.n { background: var(--tech); border-color: var(--tech); color: var(--paper); }
+.bitgrid .dec { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 0.72rem; color: var(--muted); }
+.bitgrid-caption { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.6rem; }
+
+/* CIDR calculator (src/scripts/cidr-calc.ts) */
+.cidr-calc { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 1rem 1.2rem; margin: 1.2rem 0 1.6rem; }
+.cidr-calc:empty { display: none; }
+.cidr-calc .controls { display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap; }
+.cidr-calc label { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; }
+.cidr-calc input[type=number], .cidr-calc input.ip {
+  width: 4.2rem;
+  font: inherit;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 0.15rem 0.4rem;
+}
+.cidr-calc input.ip { width: 9.5rem; }
+.cidr-calc input[type=range] { flex: 1; min-width: 8rem; accent-color: var(--tech); }
+.cidr-calc .bitgrid { margin-top: 1rem; }
+.cidr-calc .answer { margin: 0.8rem 0 0.2rem; font-size: 1.1rem; }
+.cidr-calc .answer b { font-family: 'Bricolage Grotesque', sans-serif; color: var(--tech); }
+.cidr-calc .range { color: var(--muted); margin: 0; white-space: pre-wrap; }
+.cidr-calc .steps { margin: 0.9rem 0 0; padding: 0.8rem 0 0 1.3rem; border-top: 1px solid var(--line); font-size: 0.95rem; }
+.cidr-calc .steps li { margin-bottom: 0.3rem; }
+.cidr-calc .steps b { color: var(--tech); font-weight: 600; }
+.cidr-calc code { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 0.88em; }
+
+/* Primer table of contents and section links */
+.toc { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 0.8rem 1.2rem; margin: 0 0 2.2rem; }
+.toc summary { cursor: pointer; color: var(--muted); }
+.toc ol { margin: 0.6rem 0 0.2rem; padding-left: 1.3rem; }
+.toc ol ol { margin: 0.15rem 0 0.35rem; padding-left: 1.1rem; list-style: none; font-size: 0.93rem; }
+.toc li { margin-bottom: 0.15rem; }
+.toc li::marker { color: var(--tech); font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 0.8rem; }
+.toc a { text-decoration: none; }
+.toc a:hover { text-decoration: underline; }
+article.note :is(h2, h3) { scroll-margin-top: 1rem; }
+article.note .anchor {
+  margin-left: 0.4rem;
+  color: var(--tech);
+  text-decoration: none;
+  font-weight: 400;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+article.note :is(h2, h3):hover .anchor, article.note .anchor:focus-visible { opacity: 1; }
+@media (hover: none) { article.note .anchor { opacity: 0.5; } }
