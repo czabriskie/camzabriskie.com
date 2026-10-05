@@ -161,6 +161,26 @@ Because NACLs are stateless, the reply side catches people out. A reply goes bac
 
 Traffic coming into a subnet passes the NACL first and then the resource's security group, and it has to get through both. Neither one filters traffic to the VPC's own DNS server (the base address plus two) or the instance metadata service, so you can't block those with either.
 
+### Which one to use
+
+Security groups, nearly always. AWS's own guidance is that security groups cover most needs, and plenty of VPCs leave the default NACL (which allows everything) alone for good. A NACL is for a few specific jobs a security group can't do:
+
+1. **Denying something.** Security groups can only allow. If one address range is causing trouble and everything else should still get in, that takes a NACL deny rule. (For web traffic, a [WAF](/primers/networking/load-balancers-and-tls/#wafs-only-work-on-http) is usually a better place to block, since it can see the requests.)
+2. **A rule for a whole subnet that no security group can override.** "The database subnets only accept traffic from the app subnets' range" is a good NACL. Even if someone attaches a wide-open security group to a database by mistake, the NACL still blocks everything else. It's a backstop, and it's often owned by a different team than the security groups are.
+3. **A requirement to separate subnets at the network level,** which some compliance frameworks ask for.
+
+NACLs make a poor main firewall. They're stateless, so you manage reply ports yourself. They only understand address ranges, so you can't say "from the app servers' security group." They allow only a small number of rules. And they apply to everything in the subnet at once, so one mistake breaks every resource in it.
+
+An apartment building is a decent comparison. The security group is the lock on each apartment's door, set up for whoever lives there. The NACL is the guard at the building's front gate with one list for everybody, which is useful for keeping certain people out of the whole building and no good for deciding who gets into apartment 4B.
+
+| Situation | Use |
+|---|---|
+| App servers need to reach the database on port 5432 | Security group on the database, allowing the app servers' security group |
+| People on the VPN need SSH to some instances | Security group, allowing the VPN's range on port 22 |
+| One address range keeps hammering a public service | NACL deny rule on that subnet (or a WAF rule, for web traffic) |
+| Database subnets should only ever hear from the app subnets | NACL on the database subnets, as a backstop under the security groups |
+| Database subnets should never reach the internet | The route table: no route to an internet gateway or NAT gateway. If there's no way out, no firewall rule is needed. |
+
 ### When traffic doesn't get through
 
 Most "can't connect" problems in a VPC come down to one of these, and the return path is the one that gets missed:
