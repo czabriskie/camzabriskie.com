@@ -12,8 +12,8 @@ This builds on [IP addresses and CIDR](/primers/networking/ip-addresses-and-cidr
 ## The VPC and its subnets
 
 - A VPC gets an IPv4 CIDR block between `/16` (65,536 addresses) and `/28` (16). `10.0.0.0/16` is the common choice, and it's the largest a single block can be [@aws-vpc-cidr-blocks].
-- A subnet is a slice of the VPC's range ([what a subnet is](/primers/networking/ip-addresses-and-cidr/#subnets)), and it's where your resources actually get their addresses. Every instance, database, or load balancer is launched into a subnet and gets an address from that subnet's range. Subnets also have to be between `/16` and `/28`. They can't overlap each other, and each one lives in exactly one availability zone (roughly, one data center in the region) [@aws-vpc-subnets].
-- You can't change a subnet's CIDR after creating it. If a subnet fills up, you make a new one. If the whole VPC fills up, you can add more CIDR blocks to it (up to five by default) and put new subnets in those [@aws-vpc-cidr-blocks, @aws-vpc-quotas].
+- A subnet is a slice of the VPC's range ([what a subnet is](/primers/networking/ip-addresses-and-cidr/#subnets)), and it's where your resources actually get their addresses. Every instance, database, or load balancer is launched into a subnet and gets an address from that subnet's range. Subnets also have to be between `/16` and `/28` [@aws-vpc-subnet-sizing]. They can't overlap each other, and each one lives in exactly one availability zone (roughly, one data center in the region) [@aws-vpc-subnets].
+- You can't change a subnet's CIDR after creating it [@aws-ec2-create-subnet]. If a subnet fills up, you make a new one. If the whole VPC fills up, you can add more CIDR blocks to it (up to five by default) and put new subnets in those [@aws-vpc-cidr-blocks, @aws-vpc-quotas].
 
 ## The five reserved addresses
 
@@ -31,7 +31,7 @@ That leaves 2<sup>(32 − n)</sup> − 5 usable addresses [@aws-vpc-subnet-sizin
 
 ## Route tables
 
-Every subnet is associated with one route table [@aws-vpc-route-tables]. **The packet's source IP picks the route table, and its destination IP picks the row in it.** Whenever something in a subnet sends a packet, the VPC uses that subnet's route table, looks up the packet's destination address in it, and the matching row says where to send it next. A route table doesn't allow or block anything (that's the firewalls' job, further down). It only picks the next step.
+Every subnet is associated with one route table [@aws-vpc-subnet-route-tables]. **The packet's source IP picks the route table, and its destination IP picks the row in it.** Whenever something in a subnet sends a packet, the VPC uses that subnet's route table, looks up the packet's destination address in it, and the matching row says where to send it next. A route table doesn't allow or block anything (that's the firewalls' job, further down). It only picks the next step.
 
 ### Source picks the table, destination picks the row
 
@@ -130,7 +130,7 @@ AWS has no "public" setting on a subnet. A subnet is public or private because o
 - **VPN-only subnet:** has a route to a VPN connection and none to the internet.
 - **Isolated subnet:** no routes outside the VPC at all, only `local`.
 
-NAT gateways come in two kinds. The standard kind, which AWS now calls a **zonal** NAT gateway, lives in one availability zone and sits in a public subnet, so the usual setup is one per zone, with each zone's private subnets routing to the NAT gateway in the same zone. Then losing a zone only takes out that zone's internet access. A **regional** NAT gateway is newer: one NAT gateway that spreads across availability zones on its own as your workloads appear in them, and doesn't need a public subnet at all [@aws-vpc-regional-nat]. Either way, NAT gateways charge for the data they process, which is why traffic to S3 usually gets its own more specific route to a gateway VPC endpoint instead of going through the NAT [@aws-vpc-routing-options].
+NAT gateways come in two kinds. The standard kind, which AWS now calls a **zonal** NAT gateway, lives in one availability zone and sits in a public subnet, so the usual setup is one per zone, with each zone's private subnets routing to the NAT gateway in the same zone. Then losing a zone only takes out that zone's internet access [@aws-vpc-nat-gateway-basics]. A **regional** NAT gateway is newer: one NAT gateway that spreads across availability zones on its own as your workloads appear in them, and doesn't need a public subnet at all [@aws-vpc-regional-nat]. Either way, NAT gateways charge for the data they process, which is why traffic to S3 usually gets its own more specific route to a gateway VPC endpoint instead of going through the NAT [@aws-vpc-routing-options].
 
 ## Security groups and network ACLs
 
@@ -148,7 +148,7 @@ A VPC has two layers of firewall, and they behave differently enough that mixing
 - They're **stateless**. Every packet is checked on its own, so replies need their own rules [@aws-vpc-nacls].
 - Rules are numbered and checked from the lowest number up. The first match decides, and a final `*` rule denies anything nothing else matched [@aws-vpc-custom-nacl].
 - Rules can deny as well as allow, which makes NACLs useful for blocking a specific range.
-- The VPC's default NACL allows everything in both directions, which is why many VPCs effectively run on security groups alone. A NACL you create yourself denies everything until you add rules [@aws-vpc-default-nacl, @aws-vpc-custom-nacl].
+- The VPC's default NACL allows everything in both directions, which is why many VPCs effectively run on security groups alone. A NACL you create yourself denies everything until you add rules [@aws-vpc-default-nacl, @aws-vpc-create-nacl].
 - They only check traffic entering or leaving the subnet, not traffic between two resources inside it.
 
 Because NACLs are stateless, the reply side catches people out. A reply goes back to whatever port the client picked for its end of the connection, called an ephemeral port, and different clients pick from different ranges. Linux usually uses 32768–61000, newer Windows uses 49152–65535, and NAT gateways, load balancers, and Lambda use 1024–65535. So a web server's subnet needs an inbound NACL rule for port 443 and an outbound rule for 1024–65535 (AWS's suggested catch-all) to let the replies out [@aws-vpc-custom-nacl].
@@ -161,7 +161,7 @@ Because NACLs are stateless, the reply side catches people out. A reply goes bac
 | Default | New groups: nothing in, everything out | Default NACL: everything allowed. New NACLs: everything denied. |
 | Typical use | The main firewall for each resource | A coarse fence around a whole subnet |
 
-Traffic coming into a subnet passes the NACL first and then the resource's security group, and it has to get through both. Neither one filters traffic to the VPC's own DNS server (the base address plus two) or the instance metadata service, so you can't block those with either [@aws-vpc-nacls, @aws-vpc-security-groups].
+Traffic coming into a subnet passes the NACL first and then the resource's security group, and it has to get through both [@aws-vpc-infrastructure-security]. Neither one filters traffic to the VPC's own DNS server (the base address plus two) or the instance metadata service, so you can't block those with either [@aws-vpc-nacls, @aws-vpc-security-groups].
 
 ### Which one to use
 
