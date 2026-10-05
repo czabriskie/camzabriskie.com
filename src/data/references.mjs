@@ -32,6 +32,7 @@ export const references = {
   rfc826: rfc(826, ['D. Plummer'], 'An Ethernet Address Resolution Protocol: Or Converting Network Protocol Addresses to 48.bit Ethernet Address for Transmission on Ethernet Hardware', 'Nov. 1982'),
   rfc1034: rfc(1034, ['P. Mockapetris'], 'Domain names - concepts and facilities', 'Nov. 1987'),
   rfc1035: rfc(1035, ['P. Mockapetris'], 'Domain names - implementation and specification', 'Nov. 1987'),
+  rfc2246: rfc(2246, ['T. Dierks', 'C. Allen'], 'The TLS Protocol Version 1.0', 'Jan. 1999'),
   rfc2308: rfc(2308, ['M. Andrews'], 'Negative Caching of DNS Queries (DNS NCACHE)', 'Mar. 1998'),
   rfc3439: rfc(3439, ['R. Bush', 'D. Meyer'], 'Some Internet Architectural Guidelines and Philosophy', 'Dec. 2002'),
   rfc3596: rfc(3596, ['S. Thomson', 'C. Huitema', 'V. Ksinant', 'M. Souissi'], 'DNS Extensions to Support IP Version 6', 'Oct. 2003'),
@@ -51,7 +52,10 @@ export const references = {
   rfc8484: rfc(8484, ['P. Hoffman', 'P. McManus'], 'DNS Queries over HTTPS (DoH)', 'Oct. 2018'),
   rfc8555: rfc(8555, ['R. Barnes', 'J. Hoffman-Andrews', 'D. McCarney', 'J. Kasten'], 'Automatic Certificate Management Environment (ACME)', 'Mar. 2019'),
   rfc8659: rfc(8659, ['P. Hallam-Baker', 'R. Stradling', 'J. Hoffman-Andrews'], 'DNS Certification Authority Authorization (CAA) Resource Record', 'Nov. 2019'),
+  rfc9000: rfc(9000, ['J. Iyengar, Ed.', 'M. Thomson, Ed.'], 'QUIC: A UDP-Based Multiplexed and Secure Transport', 'May 2021'),
+  rfc9001: rfc(9001, ['M. Thomson, Ed.', 'S. Turner, Ed.'], 'Using TLS to Secure QUIC', 'May 2021'),
   rfc9110: rfc(9110, ['R. Fielding, Ed.', 'M. Nottingham, Ed.', 'J. Reschke, Ed.'], 'HTTP Semantics', 'Jun. 2022'),
+  rfc9114: rfc(9114, ['M. Bishop, Ed.'], 'HTTP/3', 'Jun. 2022'),
   rfc9293: rfc(9293, ['W. Eddy, Ed.'], 'Transmission Control Protocol (TCP)', 'Aug. 2022'),
   rfc9111: rfc(9111, ['R. Fielding, Ed.', 'M. Nottingham, Ed.', 'J. Reschke, Ed.'], 'HTTP Caching', 'Jun. 2022'),
 
