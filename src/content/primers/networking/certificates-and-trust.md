@@ -34,7 +34,7 @@ A **wildcard** like `*.example.com` covers any single name in that position, so 
 
 CAs don't sign server certificates with their most valuable key. The chain usually has three links:
 
-- A **root certificate**, which is built into operating systems, browsers, and language runtimes. That built-in list is the **trust store** [@rfc5280].
+- A **root certificate**, which is built into operating systems, browsers, and language runtimes. That built-in list is the **trust store** [@rfc5280, @mozilla-root-store].
 - One or more **intermediate certificates**, signed by the root.
 - The **leaf certificate**, the server's own, signed by an intermediate.
 
@@ -66,7 +66,7 @@ CAs are required to check it before issuing [@rfc8659]. If the domain's CAA reco
 
 ### AWS Certificate Manager
 
-**ACM** is AWS's certificate service. Its public certificates are free to use with AWS's own services (load balancers, CloudFront, API Gateway), they're validated through DNS, and ACM renews them automatically for as long as they're in use. You never see the private key, which is the point [@aws-acm-faq, @aws-acm-dns-renewal]: ACM attaches the certificate to the load balancer and handles everything itself.
+**ACM** is AWS's certificate service. Its public certificates are free to use with AWS's own services (load balancers, CloudFront, API Gateway), they're validated through DNS, and ACM renews them automatically for as long as they're in use [@aws-acm-faq, @aws-acm-dns-renewal]. You never see the private key, which is the point [@aws-acm-exportable-blog]: ACM attaches the certificate to the load balancer and handles everything itself.
 
 ACM checks CAA records too. If a domain has one, it has to list `amazon.com`, `amazontrust.com`, `awstrust.com`, or `amazonaws.com` [@aws-acm-caa].
 
@@ -114,7 +114,7 @@ keytool -list -keystore ~/truststore.p12 -storetype PKCS12 -storepass changeit
 
 (`changeit` is the traditional default Java truststore password, not a secret [@java-keytool]. Use your own if it matters.)
 
-Then point the Java client at it. A JDBC driver usually takes this as connection properties. The Trino driver, for example, wants `SSL=true`, `SSLTrustStorePath`, `SSLTrustStorePassword`, and `SSLTrustStoreType=PKCS12` [@trino-jdbc]. A Java app in general takes `-Djavax.net.ssl.trustStore=…` and `-Djavax.net.ssl.trustStorePassword=…`.
+Then point the Java client at it. A JDBC driver usually takes this as connection properties. The Trino driver, for example, wants `SSL=true`, `SSLTrustStorePath`, `SSLTrustStorePassword`, and, if the file isn't the JVM's default keystore type, `SSLTrustStoreType=PKCS12` [@trino-jdbc]. A Java app in general takes `-Djavax.net.ssl.trustStore=…` and `-Djavax.net.ssl.trustStorePassword=…`.
 
 ## Reading the errors
 
