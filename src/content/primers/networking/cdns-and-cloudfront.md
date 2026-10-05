@@ -7,7 +7,7 @@ updated: 2026-10-05
 
 A content delivery network (CDN) keeps copies of your content on servers spread around the world and answers each request from one close to the person asking. Pages load faster because the content travels a shorter distance, your own servers handle a fraction of the traffic, and a big spike lands on the CDN instead of on you. Amazon CloudFront is AWS's CDN, and it's the usual way to put HTTPS and a custom domain in front of an S3 bucket or a load balancer.
 
-This builds on [How DNS resolution works](/primers/networking/dns-resolution/) and [Load balancers and where TLS ends](/primers/networking/load-balancers-and-tls/).
+This builds on [How DNS resolution works](/primers/networking/dns-resolution/) and [Load balancers and TLS termination](/primers/networking/load-balancers-and-tls/).
 
 ## The pieces
 
