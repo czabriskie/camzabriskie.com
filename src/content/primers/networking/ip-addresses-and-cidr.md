@@ -18,6 +18,21 @@ An IPv4 address is one 32-bit number, 32 switches that are each 0 or 1. Nobody w
    10          0           1         25
 ```
 
+## IPv4 and IPv6
+
+Everything so far has been IPv4, the version that's been around since 1981. 32 bits only gives you about 4.3 billion addresses, which is fewer than the number of devices online now, and the pool of unassigned IPv4 addresses ran out in 2011. It keeps working mostly because of private ranges (more on those below) and NAT, which lets a lot of machines share one public address.
+
+IPv6 is the replacement. Its addresses are 128 bits instead of 32, which works out to about 3.4 × 10<sup>38</sup> addresses, so running out isn't a real concern. 128 bits is a lot to write down, so IPv6 addresses are written as eight groups of four hex digits separated by colons, with two shortcuts: leading zeros in a group can be dropped, and one run of all-zero groups can be replaced with `::`. These are the same address:
+
+```
+2001:0db8:0000:0000:0000:0000:0000:0001
+2001:db8::1
+```
+
+(`2001:db8::/32` is the IPv6 range set aside for documentation, the same idea as the `192.0.2.0/24` and `203.0.113.0/24` examples on this page.)
+
+The CIDR notation in the rest of this page works the same way for IPv6, just counting out of 128 bits instead of 32, and a typical IPv6 subnet is a `/64`. Most cloud networks still run on IPv4, often with IPv6 added alongside it (called dual-stack), so the examples here stick with IPv4.
+
 ## What the /n means
 
 CIDR notation (`a.b.c.d/n`) is an address, a slash, and a prefix length. The prefix length says how many of the 32 bits, counting from the left, are locked in place. Those locked bits are the network part. The bits left over are the host part, and they can be anything, which is what makes it a range instead of one address.

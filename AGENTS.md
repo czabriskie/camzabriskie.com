@@ -83,9 +83,10 @@ of it: the post can stay vague about the job while the document carries the subs
   project options/decisions, ticket or Confluence links, diagram filenames, or "on this
   project we…" framing. Re-teach the concept with generic examples instead.
 - Example addresses come only from RFC 1918 (`10/8`, `172.16/12`, `192.168/16`) or RFC
-  5737 (`192.0.2.0/24`, `198.51.100.0/24`, `203.0.113.0/24`), and hostnames from
-  `example.com`. `scripts/check-primers.mjs` fails the build on other IPv4 addresses;
-  it can't catch names, so the scrub above is on the writer.
+  5737 (`192.0.2.0/24`, `198.51.100.0/24`, `203.0.113.0/24`), IPv6 examples from RFC
+  3849 (`2001:db8::/32`), and hostnames from `example.com`. `scripts/check-primers.mjs`
+  fails the build on other IPv4 addresses; it can't catch IPv6 or names, so the scrub
+  above is on the writer.
 - Same voice rules as posts (no em dashes, no throat-clearing, no clefts), but structure
   is welcome: headings, tables, diagrams. Same merge rule too: Cam reads it first.
 
