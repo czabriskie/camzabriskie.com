@@ -132,7 +132,23 @@ This comes up constantly with firewall rules: a rule allows `10.0.1.64/26`, and 
 
 ### When the address isn't on a boundary
 
-You'll sometimes see something like `10.0.1.50/26`. 50 isn't a multiple of 64, so that's not the start of a range. It's a single address inside `10.0.1.0/26`, written with the prefix of the network it belongs to. Most tools will either correct it to `10.0.1.0/26` for you or reject it, so when you're writing a range yourself, start it on the boundary.
+You'll sometimes see something like `10.0.1.50/26`. 50 isn't a multiple of 64, so `10.0.1.50` can't be the start of a `/26`. The notation can still be correct, though. It depends on what it's describing.
+
+**On a machine, it's normal.** Run `ip addr` on a Linux server and you'll see lines like `inet 10.0.1.50/26`. That reads as "this machine's address is `10.0.1.50`, and the subnet it's on is a `/26`." The machine uses the prefix to work out which other addresses are on its own subnet, so it can talk to them directly. Anything else goes to the router. Using the steps above, `10.0.1.50/26` belongs to `10.0.1.0/26`, so the machine treats `10.0.1.0` through `10.0.1.63` as local and sends everything else, `10.0.1.64` included, to the router. People sometimes call this interface notation: one address, plus the size of the network around it.
+
+**In a range, it's a mistake.** Subnets, route tables, and firewall rules describe a block of addresses, and a block has to start on its boundary. Tools disagree on what to do when it doesn't:
+
+- **Some reject it.** Python's `ipaddress` module refuses `ip_network("10.0.1.50/26")` with a "has host bits set" error. Linux won't add a route for it either ("Invalid prefix for given prefix length").
+- **Some correct it without telling you.** They clear the free bits and store `10.0.1.0/26`.
+
+Quiet correction can make a firewall rule much wider than intended. Say someone meant to allow just the one server at `10.0.1.50` and typed `/26` out of habit. The firewall stores `10.0.1.0/26`, and now 64 addresses are allowed instead of one, and the rule still looks almost right when you read it back.
+
+So when you see an address that isn't on a boundary in a range, work out what was meant:
+
+- **One machine:** use `/32`, as in `10.0.1.50/32`.
+- **The whole subnet that machine is on:** round down with the steps above, which gives `10.0.1.0/26`.
+
+(The calculator above shows it too: type `10.0.1.50` with `/26` and it shows `10.0.1.0/26`.)
 
 ## Network, broadcast, and usable addresses
 
