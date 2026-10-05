@@ -141,7 +141,7 @@ A VPC has two layers of firewall, and they behave differently enough that mixing
 - A new security group allows nothing in and everything out.
 - A rule's source can be a CIDR range or another security group. "Allow port 5432 from the app servers' security group" keeps working as app servers come and go, with no addresses to keep up to date.
 
-**Network ACLs** (NACLs) attach to a subnet, and every subnet has exactly one. ACL stands for **access control list**, which is just what it sounds like: a list of rules, each one saying a kind of traffic (a protocol, a port range, and an address range) is allowed or denied, checked in order from the top. The term comes from older routers and firewalls, and "network" ACL distinguishes AWS's subnet-level version from other ACLs in AWS, like the ones on S3 buckets.
+**Network ACLs** attach to a subnet, and every subnet has exactly one. **NACL** is short for **network access control list** (people usually say it like "nackle"). An access control list, or ACL, is just what it sounds like: a list of rules, each one saying a kind of traffic (a protocol, a port range, and an address range) is allowed or denied, checked in order from the top. The term comes from older routers and firewalls, and the "network" in front distinguishes AWS's subnet-level version from other ACLs in AWS, like the ones on S3 buckets.
 
 - They're **stateless**. Every packet is checked on its own, so replies need their own rules.
 - Rules are numbered and checked from the lowest number up. The first match decides, and a final `*` rule denies anything nothing else matched.
