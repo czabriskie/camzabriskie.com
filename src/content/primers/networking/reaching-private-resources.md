@@ -60,7 +60,7 @@ Work through the path in order, from the laptop to the resource and back:
 4. **A route back.** Every subnet the destination lives in has a route for the source range (the client range or the VPN's own range, depending on the VPN) pointing back the way it came. This one is easy to miss, especially when an environment has more subnets than the ones you checked.
 5. **The NACLs, both ways.** Including ephemeral ports on the way back.
 6. **The security group on the destination.** It allows the source the destination actually sees, on the right port.
-7. **The name resolves to the private address.** If the hostname only resolves inside the VPC (a private DNS zone), the laptop needs to use the VPC's DNS over the VPN, or it'll resolve the name somewhere else or not at all.
+7. **The name resolves to the private address.** If the hostname only resolves inside the VPC (a [private hosted zone](/primers/networking/dns-resolution/#private-hosted-zones)), the laptop needs to use the VPC's DNS over the VPN, or it'll resolve the name somewhere else or not at all.
 8. **Something is listening.** On that address and port, not just on `localhost`.
 
 ## One port, for now: port forwarding
