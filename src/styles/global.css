@@ -225,13 +225,13 @@ footer.site .wrap {
   body { background: white; color: black; }
 }
 
-/* Learning: notes grouped by topic, read in order */
-.learning .group { margin-bottom: 3.2rem; padding-top: 1.7rem; border-top: 1px solid var(--line); }
-.learning .group-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
-.learning .group-head h2 { font-size: clamp(1.6rem, 4.5vw, 1.95rem); font-weight: 700; letter-spacing: -0.015em; margin: 0 0 0.4rem; }
-.learning .group-head h2 a { text-decoration: none; }
-.learning .group-head .count { color: var(--muted); }
-.learning .group-note { color: var(--muted); font-size: 0.95rem; margin-bottom: 1.6rem; }
+/* Primers: notes grouped by topic, read in order */
+.primers .group { margin-bottom: 3.2rem; padding-top: 1.7rem; border-top: 1px solid var(--line); }
+.primers .group-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.primers .group-head h2 { font-size: clamp(1.6rem, 4.5vw, 1.95rem); font-weight: 700; letter-spacing: -0.015em; margin: 0 0 0.4rem; }
+.primers .group-head h2 a { text-decoration: none; }
+.primers .group-head .count { color: var(--muted); }
+.primers .group-note { color: var(--muted); font-size: 0.95rem; margin-bottom: 1.6rem; }
 .crumbs { color: var(--muted); margin: 0 0 0.6rem; }
 .crumbs a { text-decoration: none; }
 .crumbs a:hover { text-decoration: underline; }

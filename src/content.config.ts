@@ -8,9 +8,9 @@ const byteSchema = z.object({
   draft: z.boolean().default(false),
 });
 
-// Learning notes: grouped by topic folder (learning/<topic>/<slug>.md), read in `order`,
+// Primers: grouped by topic folder (primers/<topic>/<slug>.md), read in `order`,
 // and revised over time, so they carry `updated` rather than a publish date (Decision 0006).
-const learningSchema = z.object({
+const primerSchema = z.object({
   title: z.string(),
   description: z.string(),
   order: z.number().int().positive(),
@@ -27,8 +27,8 @@ export const collections = {
     loader: glob({ pattern: '**/*.md', base: './src/content/life-bytes' }),
     schema: byteSchema,
   }),
-  learning: defineCollection({
-    loader: glob({ pattern: '**/*.md', base: './src/content/learning' }),
-    schema: learningSchema,
+  primers: defineCollection({
+    loader: glob({ pattern: '**/*.md', base: './src/content/primers' }),
+    schema: primerSchema,
   }),
 };

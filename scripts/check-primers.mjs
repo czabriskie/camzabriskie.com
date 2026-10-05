@@ -1,11 +1,11 @@
-// Fails the build if a learning note contains an IPv4 address that could be someone's
+// Fails the build if a primer contains an IPv4 address that could be someone's
 // real network (Decision 0006). Notes stick to the private ranges (RFC 1918) and the
 // ranges reserved for documentation (RFC 5737), so anything else is almost certainly a
 // copy-paste from a real environment.
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
-const ROOT = 'src/content/learning';
+const ROOT = 'src/content/primers';
 
 // [first address, prefix length]
 const ALLOWED = [
@@ -44,7 +44,7 @@ for (const file of files(ROOT)) {
 }
 
 if (problems.length) {
-  console.error('Learning notes may only use private (RFC 1918) or documentation (RFC 5737) addresses:');
+  console.error('Primers may only use private (RFC 1918) or documentation (RFC 5737) addresses:');
   for (const p of problems) console.error('  ' + p);
   process.exit(1);
 }

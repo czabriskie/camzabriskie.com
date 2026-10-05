@@ -7,7 +7,7 @@
 2. Two distinct blog streams, continuing the site's original identity: **Tech Bytes**
    (engineering) and **Life Bytes** (everything else).
 3. A public, print-friendly resume.
-4. Learning Bytes: explainer documents for what Cam is studying, kept separate from the
+4. Primers: explainer documents for things Cam has learned, kept separate from the
    posts (Decision 0006 draws the line).
 5. Near-zero maintenance: static output, no database, no analytics, deploys on push.
 
@@ -16,9 +16,9 @@
 - `/` — intro + latest bytes from both streams
 - `/tech-bytes/`, `/life-bytes/` — stream indexes
 - `/tech-bytes/<slug>/`, `/life-bytes/<slug>/` — posts
-- `/learning/`, `/learning/<topic>/`, `/learning/<topic>/<slug>/` — Learning Bytes:
+- `/primers/`, `/primers/<topic>/`, `/primers/<topic>/<slug>/` — Primers:
   explainers grouped by topic, read in order, revised over time (Decision 0006). Topics
-  are listed in `src/lib/learning.ts`.
+  are listed in `src/lib/primers.ts`.
 - `/projects/` — curated public GitHub projects, grouped as tools / experiments / teaching
 - `/resume/` — resume (email + GitHub only; no phone/address)
 
@@ -34,7 +34,7 @@ See `AGENTS.md` → "Content model". Short version: markdown files in
 `src/content/<stream>/`, frontmatter `title`/`description`/`date`/`draft`, filename is
 the slug, byte numbers assigned chronologically at build time.
 
-Learning Bytes live in `src/content/learning/<topic>/` with frontmatter
+Primers live in `src/content/primers/<topic>/` with frontmatter
 `title`/`description`/`order`/`updated`/`draft`. They hold the material and Cam's
 understanding of it, never anything specific to an employer or customer; the build
 rejects real-looking public IP addresses in them.

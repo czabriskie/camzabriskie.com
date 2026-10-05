@@ -1,7 +1,7 @@
 ---
 import { render } from 'astro:content';
 import Base from '../../../layouts/Base.astro';
-import { publishedTopics, noteSlug, noteUrl, pos } from '../../../lib/learning';
+import { publishedTopics, noteSlug, noteUrl, pos } from '../../../lib/primers';
 import { fmtDate } from '../../../lib/bytes';
 
 export async function getStaticPaths() {
@@ -23,7 +23,7 @@ const { Content } = await render(note);
 <Base title={`${note.data.title} — ${topic.title} — Cam Zabriskie`} description={note.data.description}>
   <article class="byte note stream-tech">
     <p class="crumbs mono">
-      <a href="/learning/">Learning Bytes</a> › <a href={`/learning/${topic.slug}/`}>{topic.title}</a>
+      <a href="/primers/">Primers</a> › <a href={`/primers/${topic.slug}/`}>{topic.title}</a>
     </p>
     <h1>{note.data.title}</h1>
     <div class="meta">

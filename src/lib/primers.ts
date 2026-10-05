@@ -1,10 +1,10 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 
-export type Note = CollectionEntry<'learning'>;
+export type Note = CollectionEntry<'primers'>;
 
 /**
- * Topics, in the order they appear on /learning/. A topic's notes live in
- * src/content/learning/<slug>/. Adding a topic means adding it here and making the folder.
+ * Topics, in the order they appear on /primers/. A topic's notes live in
+ * src/content/primers/<slug>/. Adding a topic means adding it here and making the folder.
  */
 export const topics = [
   {
@@ -18,13 +18,13 @@ export type Topic = (typeof topics)[number];
 
 const topicOf = (note: Note) => note.id.split('/')[0];
 export const noteSlug = (note: Note) => note.id.split('/').slice(1).join('/');
-export const noteUrl = (note: Note) => `/learning/${note.id}/`;
+export const noteUrl = (note: Note) => `/primers/${note.id}/`;
 /** Position within its topic, as two digits: note 2 = "02". */
 export const pos = (i: number) => String(i + 1).padStart(2, '0');
 
 /** Published notes for a topic, in reading order. */
 export async function topicNotes(topic: string) {
-  return (await getCollection('learning', (n) => !n.data.draft && topicOf(n) === topic)).sort(
+  return (await getCollection('primers', (n) => !n.data.draft && topicOf(n) === topic)).sort(
     (a, b) => a.data.order - b.data.order,
   );
 }

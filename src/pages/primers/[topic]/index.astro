@@ -1,7 +1,7 @@
 ---
 import Base from '../../../layouts/Base.astro';
 import NoteList from '../../../components/NoteList.astro';
-import { publishedTopics } from '../../../lib/learning';
+import { publishedTopics } from '../../../lib/primers';
 
 export async function getStaticPaths() {
   return (await publishedTopics()).map(({ topic, notes }) => ({ params: { topic: topic.slug }, props: { topic, notes } }));
@@ -9,9 +9,9 @@ export async function getStaticPaths() {
 
 const { topic, notes } = Astro.props;
 ---
-<Base title={`${topic.title} — Learning Bytes — Cam Zabriskie`} description={topic.blurb}>
-  <div class="learning stream-tech">
-    <p class="crumbs mono"><a href="/learning/">Learning Bytes</a></p>
+<Base title={`${topic.title} — Primers — Cam Zabriskie`} description={topic.blurb}>
+  <div class="primers stream-tech">
+    <p class="crumbs mono"><a href="/primers/">Primers</a></p>
     <div class="stream-head">
       <span class="tick" aria-hidden="true"></span>
       <h1>{topic.title}</h1>
