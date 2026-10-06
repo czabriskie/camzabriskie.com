@@ -13,7 +13,7 @@ A few record types do most of the work. ([How DNS resolution works](/primers/net
 
 - An **A record** maps a name to an IPv4 address (`app.example.com → 203.0.113.10`). An **AAAA record** does the same for IPv6.
 - A **CNAME record** says one name is really another name: `app.example.com → my-lb-1234567890.us-east-1.elb.amazonaws.com`. The client follows the alias and looks up the real name [@rfc1034]. Load balancers get long generated names and addresses that can change, so you point a friendly name at them with a CNAME and never deal with their addresses directly.
-- A CNAME isn't allowed at the root of a domain (the zone apex, `example.com` itself). In Route 53, AWS's DNS service, an **alias record** fills that gap. It works like a CNAME to an AWS resource, but it's allowed at the apex [@aws-route53-alias].
+- You can put a CNAME on `www.example.com`, but not on the **bare domain**: `example.com` with nothing in front (DNS people call it the zone apex). The bare domain always has other records that a CNAME isn't allowed to sit next to, which [How DNS resolution works](/primers/networking/dns-resolution/#addresses-and-aliases) explains. In Route 53, AWS's DNS service, an **alias record** fills that gap. It works like a CNAME to an AWS resource, like a load balancer, but it's allowed on the bare domain [@aws-route53-alias].
 - A **TXT record** holds arbitrary text, and it's how you prove to outside services (certificate authorities included) that you control a domain.
 
 ## What a certificate proves
