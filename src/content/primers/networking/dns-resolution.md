@@ -1,7 +1,7 @@
 ---
 title: How DNS resolution works
 description: What actually happens between typing a name and connecting to an address, who answers each question along the way, why changes take time to show up, and where Route 53 fits.
-order: 6
+order: 7
 updated: 2026-10-05
 ---
 
