@@ -199,6 +199,18 @@ export const references = {
   'trino-jdbc': { authors: 'Trino Software Foundation', title: 'JDBC driver', container: 'Trino Documentation', url: 'https://trino.io/docs/current/client/jdbc.html', accessed: CHECKED },
   'openssl-s-client': { authors: 'OpenSSL Project', title: 'openssl-s_client', container: 'OpenSSL Documentation', url: 'https://docs.openssl.org/master/man1/openssl-s_client/', accessed: CHECKED },
 
+  // Command-line tools on Windows and macOS (PowerShell tabs, Decision 0008)
+  'ms-curl-windows': { authors: 'Microsoft', title: 'curl on Windows', container: 'Microsoft Learn', date: 'May 19, 2026', url: 'https://learn.microsoft.com/en-us/windows/curl/', accessed: '2026-10-06' },
+  'ms-resolve-dnsname': { authors: 'Microsoft', title: 'Resolve-DnsName', container: 'Windows PowerShell DnsClient Module Reference', url: 'https://learn.microsoft.com/en-us/powershell/module/dnsclient/resolve-dnsname', accessed: '2026-10-06' },
+  'ms-clear-dnsclientcache': { authors: 'Microsoft', title: 'Clear-DnsClientCache', container: 'Windows PowerShell DnsClient Module Reference', url: 'https://learn.microsoft.com/en-us/powershell/module/dnsclient/clear-dnsclientcache', accessed: '2026-10-06' },
+  'ms-pktmon-syntax': { authors: 'Microsoft', title: 'Pktmon command formatting', container: 'Microsoft Learn: Windows Server', url: 'https://learn.microsoft.com/en-us/windows-server/networking/technologies/pktmon/pktmon-syntax', accessed: '2026-10-06' },
+  'ms-pktmon-start': { authors: 'Microsoft', title: 'pktmon start', container: 'Microsoft Learn: Windows Commands', url: 'https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/pktmon-start', accessed: '2026-10-06' },
+  'ms-openssh-overview': { authors: 'Microsoft', title: 'OpenSSH for Windows overview', container: 'Microsoft Learn: Windows Server', url: 'https://learn.microsoft.com/en-us/windows-server/administration/openssh/openssh-overview', accessed: '2026-10-06' },
+  'ms-about-env-vars': { authors: 'Microsoft', title: 'about_Environment_Variables', container: 'PowerShell 7.5 Documentation', url: 'https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_environment_variables', accessed: '2026-10-06' },
+  'git-for-windows-release-notes': { authors: 'Git for Windows', title: 'Git for Windows Release Notes', container: 'git-for-windows/build-extra', date: 'Oct. 5, 2026', url: 'https://github.com/git-for-windows/build-extra/blob/main/ReleaseNotes.md', accessed: '2026-10-06' },
+  'apple-dns-cache': { authors: 'Apple', title: 'Reset the DNS cache in OS X', container: 'Apple Support', url: 'https://support.apple.com/en-us/101481', accessed: '2026-10-06' },
+  'systemd-resolvectl': { authors: 'systemd project', title: 'resolvectl', container: 'systemd manual pages', url: 'https://www.freedesktop.org/software/systemd/man/latest/resolvectl.html', accessed: '2026-10-06' },
+
   // Reaching private resources
   'aws-s2s-vpn-what-is': aws('What is AWS Site-to-Site VPN?', 'AWS Site-to-Site VPN User Guide', 'https://docs.aws.amazon.com/vpn/latest/s2svpn/VPC_VPN.html'),
   'aws-dx-encryption-in-transit': aws('Encryption in AWS Direct Connect', 'AWS Direct Connect User Guide', 'https://docs.aws.amazon.com/directconnect/latest/UserGuide/encryption-in-transit.html'),
