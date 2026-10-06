@@ -33,11 +33,67 @@ An **Application Load Balancer (ALB)** works at layer 7. It understands HTTP and
 | Good for | Non-HTTP protocols, very high throughput, fixed IP addresses | Web apps and APIs, routing by path or hostname |
 | Works with a WAF | No | Yes |
 
-### Listeners and target groups
+## How a load balancer works
 
-Both kinds are set up the same way. A **listener** waits on a port (say 443) and has rules for what to do with what arrives. The rules forward to a **target group**, the set of instances, IP addresses, or containers doing the actual work (an ALB can also send to Lambda functions). The load balancer health-checks each target and stops sending traffic to any that fail [@aws-alb-intro].
+Both kinds are built the same way. A load balancer is a set of **listeners**, and each listener decides where the traffic arriving on it should go. Following one connection through:
 
-Each load balancer is its own entry point, with its own DNS name, its own security group, and its own list of who's allowed to reach it. Every one you add is another set of rules to keep track of, which adds up quickly when each non-HTTP service gets an NLB of its own.
+1. **A listener accepts it.** A listener is a protocol and a port, like HTTPS on 443 or TCP on 5432 [@aws-alb-listener-rules, @aws-nlb-listeners]. A load balancer can have several, one per port it answers on.
+2. **The listener's rules pick a target group.** Every listener has a **default action**, usually "forward to this target group," and can have **rules** on top that send some traffic elsewhere.
+3. **A target group is the pool of places traffic can go:** instances, IP addresses, or containers (an ALB can also send to Lambda functions). The load balancer health-checks every target in it and stops sending traffic to any that fail [@aws-alb-intro].
+4. **The load balancer picks one healthy target** from that group and sends the traffic there.
+
+### Rules: how much each one can see
+
+Rules can only look at what the load balancer reads, which is where the layer 4 / layer 7 difference really shows up.
+
+**ALB rules look inside the request.** A rule can match on the hostname, the path, any HTTP header, the method, the query string, or the client's address range [@aws-alb-rule-conditions]. Rules are checked in priority order, lowest number first, and the first one that matches decides. Anything nothing matches falls through to the default rule [@aws-alb-listener-rules]. A matching rule can forward to one or more target groups, redirect (say, HTTP to HTTPS), return a fixed response, or require users to log in through an identity provider first [@aws-alb-rule-actions].
+
+| Rule | Condition | Action |
+|---|---|---|
+| 1 | host is `api.example.com` | forward to the `api` target group |
+| 2 | path is `/admin/*` | forward to the `admin` target group |
+| 3 | path is `/old-docs/*` | redirect to `/docs/` |
+| default | (anything else) | forward to the `web` target group |
+
+**NLB rules can only see the connection.** An NLB never reads what's inside the traffic, so it can't route by hostname or path. It does have listener rules, but they can only send IPv4 and IPv6 connections to different target groups, or split connections across several target groups by weight, which is handy for moving traffic over to a new version gradually [@aws-nlb-listeners].
+
+### Picking a target
+
+Once a rule has picked a target group, the load balancer still has to pick one target in it:
+
+- **An ALB picks per request,** round robin by default. A target group can switch to "least outstanding requests" (send it to whoever is least busy) or weighted random instead [@aws-alb-target-group-attributes].
+- **An NLB picks per connection,** using a hash of the connection's protocol, addresses, and ports, so every packet in one connection lands on the same target [@aws-elb-how-it-works].
+
+### Sticky sessions
+
+Picking a fresh target for every request assumes any target can answer any request. That's true when the app keeps its state somewhere shared (a database, a cache), and not true when a server keeps something like a login session in its own memory. If the next request lands on a different server, that server has never heard of the user.
+
+**Sticky sessions** (also called session affinity) fix that by sending all of a user's requests to the same target. On an ALB they work with cookies, so the client has to accept cookies, and they're turned on per target group [@aws-alb-target-group-attributes]:
+
+- **Duration-based stickiness.** The ALB picks a target for the first request as usual, then sets its own encrypted cookie, `AWSALB`, recording which target it picked. Later requests carry the cookie, and the ALB sends them to the same target for as long as you configure.
+- **Application-based stickiness.** If the app already sets its own session cookie, the ALB can follow that instead, so the stickiness lasts exactly as long as the app's session does.
+
+When a sticky target goes away (it fails its health check or is deregistered), the ALB picks a new target for that user and updates the cookie [@aws-alb-target-group-attributes]. The user's in-memory session on the old server is gone, though, which is the main argument against relying on stickiness: it hides state on individual servers, it can pile users onto one target while new ones sit idle, and every deploy or scale-in logs some people out. Keeping session state somewhere shared, so any target can serve any request, is usually the better fix. Stickiness is a reasonable stopgap for an app that can't do that yet.
+
+A few details that matter in practice [@aws-alb-target-group-attributes]:
+
+- The ALB also sets a second cookie, `AWSALBCORS`, with `SameSite=None; Secure`, because some browsers need that for stickiness to survive cross-origin requests. Clients get both.
+- WebSocket connections are sticky on their own: whichever target accepts the upgrade keeps the connection, and the cookie isn't used after that.
+- With several layers of ALBs, only application-based stickiness works on more than one layer, because the duration-based cookie always has the same name.
+- NLBs have a simpler version based on the client's IP address. Everyone behind the same NAT device shares one address, so they can all end up on the same target. It isn't available on TLS or QUIC listeners [@aws-nlb-target-group-attributes].
+
+### Not one server
+
+It's easy to picture a load balancer as one machine, but AWS runs a load balancer **node** in each availability zone you enable, and the load balancer's DNS name returns those nodes' addresses [@aws-elb-how-it-works]. An NLB's node in each zone gets a static IP address, and an internet-facing NLB can use your own Elastic IP for it [@aws-nlb-intro]. An ALB's addresses aren't fixed, so you always point DNS at the ALB's name rather than at an address.
+
+### Proxy vs pass-through
+
+The two also differ in what the targets see:
+
+- **An ALB is a reverse proxy.** It ends the client's connection and opens a new one to the target, so the target sees the ALB's address and gets the client's real address in the `X-Forwarded-For` header (more on that [below](#the-host-header-problem)).
+- **An NLB passes connections through,** and can keep the client's original address as the source the target sees. That's always on for UDP and QUIC and optional for TCP and TLS [@aws-nlb-target-group-attributes].
+
+Each load balancer is also its own entry point, with its own DNS name, its own security group, and its own list of who's allowed to reach it. Every one you add is another set of rules to keep track of, which adds up quickly when each non-HTTP service gets an NLB of its own.
 
 ## Terminating TLS
 
