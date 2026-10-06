@@ -84,7 +84,7 @@ In normal TLS only the server proves who it is. In **mutual TLS (mTLS)** the ser
 
 ## Watching it happen
 
-`curl -v` prints the result of the handshake. Here's this site, on a Mac, trimmed to the TLS lines:
+`curl -v` prints the result of the handshake (on Windows, type `curl.exe -v`, since in Windows PowerShell 5.1 plain `curl` is an alias for a different command [@ms-curl-windows]). Here's this site, on a Mac, trimmed to the TLS lines:
 
 ```
 * ALPN: curl offers h2,http/1.1
