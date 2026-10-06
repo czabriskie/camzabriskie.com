@@ -1,7 +1,7 @@
 ---
 title: Proxies, reverse proxies, and bastion hosts
 description: Three kinds of machine in the middle, told apart by whose side they're on, with what each one does, what a connection through each looks like, and the settings and headers that trip people up.
-order: 8
+order: 9
 updated: 2026-10-05
 ---
 
