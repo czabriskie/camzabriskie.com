@@ -77,7 +77,7 @@ There are two separate TLS connections, one on each side of the edge, which is [
 - **Viewer to edge.** For a custom domain like `www.example.com`, the certificate has to cover that name, and if it comes from ACM it has to be requested in the `us-east-1` region, whichever region the rest of your site is in [@aws-cloudfront-cert-requirements].
 - **Edge to origin.** A load balancer origin can use a certificate from any region [@aws-cloudfront-cert-requirements].
 
-Then the domain itself points at the distribution, usually with a Route 53 alias record, since a CNAME isn't allowed at the root of a domain ([Certificates and trust](/primers/networking/certificates-and-trust/#dns-names) has the details).
+Then the domain itself points at the distribution, usually with a Route 53 alias record, since a CNAME isn't allowed at the root of a domain ([Certificates and Trust](/primers/networking/certificates-and-trust/#dns-names) has the details).
 
 ## Keeping people from going around the CDN
 
