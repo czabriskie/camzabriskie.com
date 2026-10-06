@@ -134,7 +134,9 @@ There are over a hundred registered record types [@iana-dns-rr-types], but most 
 | **HTTPS** / **SVCB** | Where and how to connect to a service: alternative names, ports, and supported protocols like HTTP/3 [@rfc9460] | Newer. Lets a browser learn about HTTP/3 before its first connection. |
 | **Alias** (Route 53) | Another AWS resource, like a load balancer or CloudFront distribution | Not a real DNS type. Route 53 answers with the target's own A or AAAA records [@aws-route53-alias]. |
 
-**Why there's no CNAME at the root of a domain.** A name that has a CNAME can't have any other records [@rfc2181]. The root of a zone (`example.com` itself) always has an SOA record and NS records, because those are what make it a zone [@rfc1034], so a CNAME there would break the rule. That's the gap Route 53's alias records fill, and the HTTPS record type is the standard way to do the same thing for web traffic [@rfc9460].
+**Why there's no CNAME on the bare domain.** You can put a CNAME on `www.example.com`, but not on `example.com` itself, the bare domain with nothing in front (DNS people call it the root or apex of the zone). Two rules collide there. A name that has a CNAME can't have any other records, because a CNAME means "this name is really that other name" and nothing else [@rfc2181]. And the bare domain always has other records: an SOA record and NS records, because those are what make it a zone [@rfc1034], and usually MX and TXT records too.
+
+It matters as soon as you want `example.com` itself to point at an Application Load Balancer. An ALB's IP addresses aren't fixed, so an A record is a bad fit, and a CNAME to the ALB's name isn't allowed. Route 53's alias records fill that gap: you point the bare domain at the ALB, and Route 53 looks up its current addresses and answers with those, so to everyone else it looks like an ordinary A record [@aws-route53-alias]. Other DNS providers offer the same thing under names like ALIAS, ANAME, or CNAME flattening, and the newer HTTPS record type is the standard way to do it for web traffic [@rfc9460].
 
 ### Running the zone
 
