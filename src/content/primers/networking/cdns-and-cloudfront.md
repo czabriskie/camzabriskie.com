@@ -1,7 +1,7 @@
 ---
 title: CDNs and CloudFront
 description: How a content delivery network serves copies of your site from near your users, how long those copies last, what makes two requests "the same," and how to keep people from going around it to your origin.
-order: 7
+order: 8
 updated: 2026-10-05
 ---
 
