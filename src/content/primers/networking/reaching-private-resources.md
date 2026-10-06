@@ -1,7 +1,7 @@
 ---
 title: Reaching private resources
 description: The ways into a private network, from connecting whole networks with VPNs and Transit Gateway to forwarding one port for an afternoon, and what to check when you're connected but still can't reach anything.
-order: 5
+order: 6
 updated: 2026-10-05
 ---
 
