@@ -210,7 +210,6 @@ export const references = {
   'python-ipaddress': { authors: 'Python Software Foundation', title: 'ipaddress: IPv4/IPv6 manipulation library', container: 'The Python Standard Library', url: 'https://docs.python.org/3/library/ipaddress.html', accessed: CHECKED },
   'node-cli': { authors: 'OpenJS Foundation', title: 'Command-line API', container: 'Node.js Documentation', url: 'https://nodejs.org/api/cli.html', accessed: CHECKED },
   'java-keytool': { authors: 'Oracle', title: 'The keytool Command', container: 'Java SE 21 Tool Specifications', url: 'https://docs.oracle.com/en/java/javase/21/docs/specs/man/keytool.html', accessed: CHECKED },
-  'trino-jdbc': { authors: 'Trino Software Foundation', title: 'JDBC driver', container: 'Trino Documentation', url: 'https://trino.io/docs/current/client/jdbc.html', accessed: CHECKED },
   'openssl-verify-errors': { authors: 'OpenSSL Project', title: 'X509_STORE_CTX_get_error', container: 'OpenSSL Documentation', url: 'https://docs.openssl.org/master/man3/X509_STORE_CTX_get_error/', accessed: '2026-10-06' },
   'openssl-s-client': { authors: 'OpenSSL Project', title: 'openssl-s_client', container: 'OpenSSL Documentation', url: 'https://docs.openssl.org/master/man1/openssl-s_client/', accessed: CHECKED },
 

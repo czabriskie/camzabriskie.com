@@ -371,7 +371,23 @@ keytool -list -keystore "$HOME\truststore.p12" -storetype PKCS12 -storepass chan
 
 (`changeit` is the traditional default Java truststore password, not a secret [@java-keytool]. Use your own if it matters. And yes, `keytool` calls the file a `-keystore` even when you're using it as a truststore, which doesn't help with the confusion.)
 
-Then point the Java client at it. A JDBC driver usually takes this as connection properties. The Trino driver, for example, wants `SSL=true`, `SSLTrustStorePath`, `SSLTrustStorePassword`, and, if the file isn't the JVM's default keystore type, `SSLTrustStoreType=PKCS12` [@trino-jdbc]. A Java app in general takes `-Djavax.net.ssl.trustStore=…` and `-Djavax.net.ssl.trustStorePassword=…`.
+Then point Java at it. The standard way is three system properties, set with `-D` when starting the program, for the truststore's path, its password, and its type [@oracle-jsse]:
+
+```bash tab="macOS / Linux"
+java -Djavax.net.ssl.trustStore=$HOME/truststore.p12 \
+  -Djavax.net.ssl.trustStorePassword=changeit \
+  -Djavax.net.ssl.trustStoreType=PKCS12 \
+  -jar app.jar
+```
+
+```powershell tab="Windows (PowerShell)"
+java "-Djavax.net.ssl.trustStore=$HOME\truststore.p12" `
+  "-Djavax.net.ssl.trustStorePassword=changeit" `
+  "-Djavax.net.ssl.trustStoreType=PKCS12" `
+  -jar app.jar
+```
+
+PowerShell needs the quotes. Without them it splits each `-D` argument at the first dot, and Java gets `-Djavax` and `.net.ssl…` as two separate arguments. Some libraries, database drivers especially, have their own settings for a truststore path and password instead, so check the documentation for the one you're using.
 
 ## Reading the errors
 
@@ -387,8 +403,14 @@ Then point the Java client at it. A JDBC driver usually takes this as connection
 
 To see what a server is actually sending, `openssl` will show you the whole chain:
 
-```bash
-openssl s_client -connect app.example.com:443 -servername app.example.com -showcerts
+```bash tab="macOS / Linux"
+openssl s_client -connect app.example.com:443 -servername app.example.com -showcerts </dev/null
 ```
+
+```powershell tab="Windows (PowerShell)"
+$null | openssl s_client -connect app.example.com:443 -servername app.example.com -showcerts
+```
+
+The `</dev/null` (or `$null |` in PowerShell) gives `openssl` nothing to send, so it prints the certificates and closes the connection instead of waiting for you to type.
 
 The `-servername` flag sends **SNI**, the hostname you want, so a server hosting several sites returns the right certificate [@openssl-s-client] ([more on SNI](/primers/networking/load-balancers-and-tls/#sni-many-certificates-on-one-address)). Saving one of those certificates to a file and running `openssl x509 -in cert.pem -noout -text` shows its names, issuer, and expiry date.
