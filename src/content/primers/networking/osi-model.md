@@ -186,7 +186,7 @@ When something can't connect, working through the same order as the timeline kee
 | Name | Does the name resolve, to the right address? | `dig <name>` ([watching DNS](/primers/networking/dns-resolution/#watching-it-happen)) |
 | 3 | Can packets reach the other address? | `ping`, `traceroute`, the [route tables](/primers/networking/aws-vpc-subnets/#when-traffic-doesnt-get-through) |
 | 4 | Is anything listening on the port, and does the firewall allow it? | `nc -vz <host> <port>`, security groups, NACLs |
-| TLS | Does the certificate check out? | `openssl s_client` ([Certificates and trust](/primers/networking/certificates-and-trust/#reading-the-errors)) |
+| TLS | Does the certificate check out? | `openssl s_client` ([Certificates and Trust](/primers/networking/certificates-and-trust/#reading-the-errors)) |
 | 7 | Does the application answer correctly? | `curl -v`, the HTTP status code, the app's logs |
 
 Two catches:
