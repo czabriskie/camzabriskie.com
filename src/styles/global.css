@@ -457,3 +457,35 @@ ul.references .cited-in { display: block; color: var(--muted); margin-top: 0.2re
 .route-lookup code { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 0.88em; }
 .route-lookup .answer { margin: 0.8rem 0 0; }
 .route-lookup .answer b { color: var(--tech); }
+
+/* TLS handshake message diagram (src/scripts/tls-handshake.ts) */
+.tls-walk { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 1rem 1.1rem; margin: 1.2rem 0 1.8rem; font-size: 0.92rem; }
+.tls-walk:empty { display: none; }
+.tw-controls { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.6rem; margin-bottom: 0.8rem; }
+.tw-modes, .tw-buttons { display: flex; gap: 0.4rem; }
+.tw-controls button { font: inherit; font-size: 0.88rem; color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: 4px; padding: 0.2rem 0.6rem; cursor: pointer; }
+.tw-controls button:disabled { opacity: 0.45; cursor: default; }
+.tw-mode[aria-pressed="true"] { border-color: var(--tech); color: var(--tech); font-weight: 600; }
+.tw-stage { position: relative; border-left: 2px solid var(--line); border-right: 2px solid var(--line); padding: 0 0.6rem; }
+.tw-ends { display: flex; justify-content: space-between; align-items: baseline; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; padding: 0.2rem 0 0.5rem; border-bottom: 1px dashed var(--line); margin-bottom: 0.4rem; }
+.tw-rtt { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 0.75rem; font-weight: 400; color: var(--tech); }
+.tw-msgs { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.45rem; }
+.tw-msg { display: flex; flex-direction: column; gap: 0.1rem; max-width: 82%; transition: opacity 0.35s, transform 0.35s; }
+.tw-right { align-self: flex-start; text-align: left; }
+.tw-left { align-self: flex-end; text-align: right; }
+.tw-future { opacity: 0; transform: translateX(var(--tw-from, 0)); pointer-events: none; height: 0; overflow: hidden; }
+.tw-right.tw-future { --tw-from: -1.5rem; }
+.tw-left.tw-future { --tw-from: 1.5rem; }
+.tw-past { opacity: 0.6; }
+.tw-line { position: relative; display: inline-block; padding: 0.15rem 0.5rem; border-bottom: 2px solid var(--muted); }
+.tw-right .tw-line::after { content: "▶"; position: absolute; right: -0.55rem; bottom: -0.5rem; font-size: 0.6rem; color: var(--muted); }
+.tw-left .tw-line::after { content: "◀"; position: absolute; left: -0.55rem; bottom: -0.5rem; font-size: 0.6rem; color: var(--muted); }
+.tw-enc .tw-line { border-bottom-color: var(--tech); }
+.tw-enc .tw-line::after { color: var(--tech); }
+.tw-current .tw-line { background: color-mix(in srgb, var(--tech) 14%, transparent); border-radius: 4px 4px 0 0; }
+.tw-name { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 0.82rem; font-weight: 500; }
+.tw-lock { font-size: 0.75rem; }
+.tw-carries { font-size: 0.8rem; color: var(--muted); }
+.tw-explain { border-top: 1px solid var(--line); margin-top: 0.8rem; padding-top: 0.6rem; min-height: 3.2rem; }
+@media (max-width: 30rem) { .tw-msg { max-width: 92%; } }
+@media (prefers-reduced-motion: reduce) { .tw-msg { transition: none; } }

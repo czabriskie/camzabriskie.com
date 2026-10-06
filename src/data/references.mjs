@@ -67,6 +67,13 @@ export const references = {
   rfc9542: rfc(9542, ['D. Eastlake 3rd', 'J. Abley', 'Y. Li'], 'IANA Considerations and IETF Protocol and Documentation Usage for IEEE 802 Parameters', 'Apr. 2024'),
   rfc9293: rfc(9293, ['W. Eddy, Ed.'], 'Transmission Control Protocol (TCP)', 'Aug. 2022'),
   rfc9111: rfc(9111, ['R. Fielding, Ed.', 'M. Nottingham, Ed.', 'J. Reschke, Ed.'], 'HTTP Caching', 'Jun. 2022'),
+  rfc9846: rfc(9846, ['E. Rescorla'], 'The Transport Layer Security (TLS) Protocol Version 1.3', 'Jul. 2026'),
+  rfc5246: rfc(5246, ['T. Dierks', 'E. Rescorla'], 'The Transport Layer Security (TLS) Protocol Version 1.2', 'Aug. 2008'),
+  rfc7301: rfc(7301, ['S. Friedl', 'A. Popov', 'A. Langley', 'E. Stephan'], 'Transport Layer Security (TLS) Application-Layer Protocol Negotiation Extension', 'Jul. 2014'),
+  rfc7748: rfc(7748, ['A. Langley', 'M. Hamburg', 'S. Turner'], 'Elliptic Curves for Security', 'Jan. 2016'),
+  rfc8996: rfc(8996, ['K. Moriarty', 'S. Farrell'], 'Deprecating TLS 1.0 and TLS 1.1', 'Mar. 2021'),
+  rfc9849: rfc(9849, ['E. Rescorla', 'K. Oku', 'N. Sullivan', 'C. A. Wood'], 'TLS Encrypted Client Hello', 'Mar. 2026'),
+  'wireshark-tls': { authors: 'Wireshark Foundation', title: 'TLS', container: 'Wireshark Wiki', url: 'https://wiki.wireshark.org/TLS', accessed: '2026-10-06' },
 
   // Other standards and announcements
   'iana-ports': {
