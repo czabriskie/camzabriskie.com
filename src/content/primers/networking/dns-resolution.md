@@ -2,7 +2,7 @@
 title: How DNS resolution works
 description: What actually happens between typing a name and connecting to an address, who answers each question along the way, why changes take time to show up, and where Route 53 fits.
 order: 7
-updated: 2026-10-05
+updated: 2026-10-06
 ---
 
 Every connection starts with a lookup. Before a browser can talk to `www.example.com`, something has to turn that name into an address like `203.0.113.10`, and DNS (the Domain Name System) is how that happens [@rfc1034]. It's usually invisible, and it's behind a surprising number of "it works on my machine" problems.
@@ -74,24 +74,29 @@ That configuration can include more than one resolver, and some only apply to ce
 
 ## Watching it happen
 
-`dig` shows a single lookup in detail, including the TTL on each record:
+`dig` shows a single lookup in detail, including the TTL on each record. On Windows, `Resolve-DnsName` does the same job [@ms-resolve-dnsname]:
 
-```bash
+```bash tab="macOS / Linux"
 dig www.example.com
-dig www.example.com @<resolver address>   # ask a specific resolver
+dig www.example.com @192.0.2.53           # ask a specific resolver (put its address here)
 dig +trace www.example.com                # walk root → TLD → authoritative yourself
 ```
 
-`dig +trace` skips your recursive resolver and makes each query itself, so you can see every referral from the walkthrough above.
+```powershell tab="Windows (PowerShell)"
+Resolve-DnsName www.example.com
+Resolve-DnsName www.example.com -Server 192.0.2.53   # ask a specific resolver (put its address here)
+```
 
-To go the other way, from an address to a name, use `dig -x` (plain `dig 203.0.113.10` treats the address as a name and won't find anything). Reverse lookups use **PTR** records under a special domain, with the address written backwards: `203.0.113.10` is looked up as `10.113.0.203.in-addr.arpa` [@rfc1035]. It's a quick way to see who runs a resolver or server, when the owner has set one up.
+`dig +trace` skips your recursive resolver and makes each query itself, so you can see every referral from the walkthrough above. `Resolve-DnsName` has no equivalent.
 
-You can also watch the raw traffic. DNS normally uses UDP port 53 (falling back to TCP for large answers) [@rfc1035, @rfc7766], so on macOS:
+To go the other way, from an address to a name, use `dig -x` (plain `dig 203.0.113.10` treats the address as a name and won't find anything). Reverse lookups use **PTR** records under a special domain, with the address written backwards: `203.0.113.10` is looked up as `10.113.0.203.in-addr.arpa` [@rfc1035]. In PowerShell, ask for the PTR record by that backwards name: `Resolve-DnsName 10.113.0.203.in-addr.arpa -Type PTR` [@ms-resolve-dnsname]. It's a quick way to see who runs a resolver or server, when the owner has set one up.
 
-```bash
+You can also watch the raw traffic. DNS normally uses UDP port 53 (falling back to TCP for large answers) [@rfc1035, @rfc7766], so clear the local cache, watch port 53, and make a request:
+
+```bash tab="macOS / Linux"
 # clear the local cache so the next lookup goes out on the wire
-sudo dscacheutil -flushcache
-sudo killall -HUP mDNSResponder
+sudo killall -HUP mDNSResponder      # macOS
+sudo resolvectl flush-caches         # Linux with systemd-resolved
 
 # watch DNS traffic
 sudo tcpdump -i any udp port 53
@@ -99,6 +104,24 @@ sudo tcpdump -i any udp port 53
 # in another terminal
 curl -sI https://www.example.com
 ```
+
+```powershell tab="Windows (PowerShell)"
+# in a PowerShell window opened as administrator
+# clear the local cache so the next lookup goes out on the wire
+Clear-DnsClientCache
+
+# watch DNS traffic (Ctrl+C stops it)
+pktmon filter add -p 53
+pktmon start -c -m real-time
+
+# in another window
+curl.exe -sI https://www.example.com
+
+# afterwards, remove the filter
+pktmon filter remove
+```
+
+The cache commands come from each system's own documentation [@apple-dns-cache, @systemd-resolvectl, @ms-clear-dnsclientcache]. On Windows, `pktmon` is the built-in packet capture tool [@ms-pktmon-syntax, @ms-pktmon-start], and `curl.exe` is spelled out because in Windows PowerShell 5.1 plain `curl` is an alias for a different command [@ms-curl-windows].
 
 The first request shows the queries going out. Repeat it and there's little or nothing, because the answer is cached. If you see nothing even the first time, your browser or system may be using **DNS over HTTPS**, which sends lookups inside ordinary encrypted HTTPS traffic on port 443 [@rfc8484], so a filter on port 53 never sees them.
 
