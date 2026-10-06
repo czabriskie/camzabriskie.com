@@ -7,7 +7,7 @@ updated: 2026-10-06
 
 When you open `https://app.example.com`, your browser needs answers to two questions before it sends anything: is this really `app.example.com`, and not someone sitting in the middle pretending to be it? And can anyone else read what we're about to say to each other? A **TLS certificate** answers the first question, and the same exchange sets up the encryption that answers the second.
 
-That exchange is the **TLS handshake**: the first few messages of every HTTPS connection, before any page is sent, where the server shows its certificate and the two sides agree on encryption keys [@rfc8446]. This primer is about the certificate part: what it is, why browsers believe it, how you get one, and what to do when something refuses to trust yours.
+That exchange is the **TLS handshake**: the first few messages of every HTTPS connection, before any page is sent, where the server shows its certificate and the two sides agree on encryption keys [@rfc8446]. [The TLS handshake](/primers/networking/tls-handshake/) walks through that exchange message by message. This primer is about the certificate part: what it is, why browsers believe it, how you get one, and what to do when something refuses to trust yours.
 
 ## Keys and signatures
 
@@ -114,7 +114,7 @@ When the server shows its certificate during the handshake, the client checks fo
 1. **The name matches.** The hostname the client asked for is one of the certificate's SANs [@rfc9525].
 2. **It's in date.** An expired certificate is rejected even if nothing else changed.
 3. **It chains to a trusted root.** Each signature checks out with the public key of the certificate above it, up to a root in the trust store [@rfc5280].
-4. **The server holds the private key.** Certificates are public, so anyone can send a copy of yours. During the handshake the server also signs the conversation with the certificate's private key, which an impostor can't do [@rfc8446].
+4. **The server holds the private key.** Certificates are public, so anyone can send a copy of yours. During the handshake the server also signs the conversation with the certificate's private key (the [CertificateVerify](/primers/networking/tls-handshake/#the-tls-13-handshake-message-by-message) message), which an impostor can't do [@rfc8446].
 
 ### Watching a browser check a certificate
 
