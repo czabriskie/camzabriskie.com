@@ -7,7 +7,7 @@ updated: 2026-10-05
 
 Every connection starts with a lookup. Before a browser can talk to `www.example.com`, something has to turn that name into an address like `203.0.113.10`, and DNS (the Domain Name System) is how that happens [@rfc1034]. It's usually invisible, and it's behind a surprising number of "it works on my machine" problems.
 
-[Certificates and trust](/primers/networking/certificates-and-trust/#dns-names) covers the record types you'll set up most often (A, AAAA, CNAME, alias, TXT). This primer is about the lookup itself.
+[Certificates and Trust](/primers/networking/certificates-and-trust/#dns-names) covers the record types you'll set up most often (A, AAAA, CNAME, alias, TXT). This primer is about the lookup itself.
 
 ## Reading a domain name
 
