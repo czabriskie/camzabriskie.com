@@ -86,6 +86,8 @@ export const references = {
   'cabf-baseline-requirements': {
     authors: 'CA/Browser Forum',
     title: 'Baseline Requirements for the Issuance and Management of Publicly-Trusted TLS Server Certificates',
+    note: 'Version 2.3.1',
+    date: 'Oct. 4, 2026',
     url: 'https://cabforum.org/working-groups/server/baseline-requirements/requirements/',
     accessed: '2026-10-06',
   },
@@ -194,7 +196,7 @@ export const references = {
   'aws-acm-dns-renewal': aws('Renewal for domains validated by DNS', 'AWS Certificate Manager User Guide', 'https://docs.aws.amazon.com/acm/latest/userguide/dns-renewal-validation.html'),
   'aws-acm-pricing': aws('AWS Certificate Manager Pricing', undefined, 'https://aws.amazon.com/certificate-manager/pricing/'),
   'aws-acm-faq': aws('AWS Certificate Manager FAQs', undefined, 'https://aws.amazon.com/certificate-manager/faqs/'),
-  'mozilla-root-store': { authors: 'Mozilla', title: 'Why Does Mozilla Maintain Our Own Root Certificate Store?', container: 'Mozilla Security Blog', date: 'Feb. 14, 2019', url: 'https://blog.mozilla.org/security/2019/02/14/why-does-mozilla-maintain-our-own-root-certificate-store/', accessed: CHECKED },
+  'mozilla-root-store': { authors: ['W. Thayer'], title: 'Why Does Mozilla Maintain Our Own Root Certificate Store?', container: 'Mozilla Security Blog', date: 'Feb. 14, 2019', url: 'https://blog.mozilla.org/security/2019/02/14/why-does-mozilla-maintain-our-own-root-certificate-store/', accessed: CHECKED },
   'letsencrypt-chains': { authors: "Let's Encrypt", title: 'Chains of Trust', url: 'https://letsencrypt.org/certificates/', accessed: '2026-10-06' },
   'chrome-ct-policy': { authors: 'The Chromium Projects', title: 'Chrome Certificate Transparency Policy', url: 'https://googlechrome.github.io/CertificateTransparency/ct_policy.html', accessed: '2026-10-06' },
   'oracle-jsse': { authors: 'Oracle', title: 'Java Secure Socket Extension (JSSE) Reference Guide', container: 'Java SE 21 Security Developer Guide', url: 'https://docs.oracle.com/en/java/javase/21/security/java-secure-socket-extension-jsse-reference-guide.html', accessed: '2026-10-06' },
@@ -206,7 +208,7 @@ export const references = {
   'mdn-x-forwarded-proto': { authors: 'MDN contributors', title: 'X-Forwarded-Proto header', container: 'MDN Web Docs', url: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/X-Forwarded-Proto', accessed: CHECKED },
   'gitlab-no-proxy': { authors: 'S. Hu', title: 'We need to talk: Can we standardize NO_PROXY?', container: 'GitLab Blog', url: 'https://about.gitlab.com/blog/we-need-to-talk-no-proxy/', accessed: CHECKED },
   'chromium-network-settings': { authors: 'The Chromium Projects', title: 'Network Settings', container: 'Chromium Design Documents', url: 'https://www.chromium.org/developers/design-documents/network-settings/', accessed: CHECKED },
-  'python-requests-advanced': { authors: 'Python Software Foundation', title: 'Advanced Usage', container: 'Requests Documentation', url: 'https://requests.readthedocs.io/en/latest/user/advanced/', accessed: CHECKED },
+  'python-requests-advanced': { authors: 'K. Reitz and contributors', title: 'Advanced Usage', container: 'Requests Documentation', url: 'https://requests.readthedocs.io/en/latest/user/advanced/', accessed: CHECKED },
   'python-ipaddress': { authors: 'Python Software Foundation', title: 'ipaddress: IPv4/IPv6 manipulation library', container: 'The Python Standard Library', url: 'https://docs.python.org/3/library/ipaddress.html', accessed: CHECKED },
   'node-cli': { authors: 'OpenJS Foundation', title: 'Command-line API', container: 'Node.js Documentation', url: 'https://nodejs.org/api/cli.html', accessed: CHECKED },
   'java-keytool': { authors: 'Oracle', title: 'The keytool Command', container: 'Java SE 21 Tool Specifications', url: 'https://docs.oracle.com/en/java/javase/21/docs/specs/man/keytool.html', accessed: CHECKED },
@@ -224,7 +226,7 @@ export const references = {
   'git-for-windows-release-notes': { authors: 'Git for Windows', title: 'Git for Windows Release Notes', container: 'git-for-windows/build-extra', date: 'Oct. 5, 2026', url: 'https://github.com/git-for-windows/build-extra/blob/main/ReleaseNotes.md', accessed: '2026-10-06' },
   'apple-dns-cache': { authors: 'Apple', title: 'Reset the DNS cache in OS X', container: 'Apple Support', url: 'https://support.apple.com/en-us/101481', accessed: '2026-10-06' },
   'systemd-resolvectl': { authors: 'systemd project', title: 'resolvectl', container: 'systemd manual pages', url: 'https://www.freedesktop.org/software/systemd/man/latest/resolvectl.html', accessed: '2026-10-06' },
-  'ms-new-selfsignedcertificate': { authors: 'Microsoft', title: 'New-SelfSignedCertificate', container: 'Windows PowerShell PKI Module Reference', url: 'https://learn.microsoft.com/en-us/powershell/module/pki/new-selfsignedcertificate', accessed: '2026-10-06' },
+  'ms-new-selfsignedcertificate': { authors: 'Microsoft', title: 'New-SelfSignedCertificate', container: 'Windows PowerShell PKIClient Module Reference', url: 'https://learn.microsoft.com/en-us/powershell/module/pki/new-selfsignedcertificate', accessed: '2026-10-06' },
 
   // Reaching private resources
   'aws-s2s-vpn-what-is': aws('What is AWS Site-to-Site VPN?', 'AWS Site-to-Site VPN User Guide', 'https://docs.aws.amazon.com/vpn/latest/s2svpn/VPC_VPN.html'),

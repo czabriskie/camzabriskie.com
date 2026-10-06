@@ -7,7 +7,7 @@ updated: 2026-10-06
 
 When you open `https://app.example.com`, your browser needs answers to two questions before it sends anything: is this really `app.example.com`, and not someone sitting in the middle pretending to be it? And can anyone else read what we're about to say to each other? A **TLS certificate** answers the first question, and the same exchange sets up the encryption that answers the second.
 
-That exchange is the **TLS handshake**: the first few messages of every HTTPS connection, before any page is sent, where the server shows its certificate and the two sides agree on encryption keys [@rfc8446]. [The TLS handshake](/primers/networking/tls-handshake/) walks through that exchange message by message. This primer is about the certificate part: what it is, why browsers believe it, how you get one, and what to do when something refuses to trust yours.
+That exchange is the **TLS handshake**: the first few messages of every HTTPS connection, before any page is sent, where the server shows its certificate and the two sides agree on encryption keys [@rfc9846]. [The TLS handshake](/primers/networking/tls-handshake/) walks through that exchange message by message. This primer is about the certificate part: what it is, why browsers believe it, how you get one, and what to do when something refuses to trust yours.
 
 ## Keys and signatures
 
@@ -61,7 +61,7 @@ A **wildcard** like `*.example.com` covers any single name in that position, so 
 
 Anyone can make a key pair and write a certificate claiming to be `google.com`. A certificate is only as believable as whoever signed it. A **certificate authority (CA)** is an organization whose job is to check that you really control a domain before signing a certificate for it. Let's Encrypt, DigiCert, Sectigo, and Amazon (through AWS Certificate Manager) are all CAs.
 
-Your browser believes a CA's signatures because the CA's **root certificate** came preinstalled on your device. The built-in list of root certificates your device trusts is its **trust store**. Operating systems, browsers, and some language runtimes each keep one, and the companies behind them decide which CAs get in [@mozilla-root-store]. How CAs check that you control a domain is covered under [Getting a certificate](#getting-a-certificate).
+Your browser believes a CA's signatures because the CA's **root certificate** came preinstalled on your device. The built-in list of root certificates your device trusts is its **trust store**. Operating systems and browsers each keep one, and the companies behind them decide which CAs get in [@mozilla-root-store]. Some programming languages bring their own too, which matters when [trusting a private CA](#trusting-a-private-ca). How CAs check that you control a domain is covered under [Getting a certificate](#getting-a-certificate).
 
 ## The chain of trust
 
@@ -139,22 +139,22 @@ When the server shows its certificate during the handshake, the client checks fo
 1. **The name matches.** The hostname the client asked for is one of the certificate's SANs [@rfc9525].
 2. **It's in date.** An expired certificate is rejected even if nothing else changed.
 3. **It chains to a trusted root.** Each signature checks out with the public key of the certificate above it, up to a root in the trust store [@rfc5280].
-4. **The server holds the private key.** Certificates are public, so anyone can send a copy of yours. During the handshake the server also signs the conversation with the certificate's private key (the [CertificateVerify](/primers/networking/tls-handshake/#the-tls-13-handshake-message-by-message) message), which an impostor can't do [@rfc8446].
+4. **The server holds the private key.** Certificates are public, so anyone can send a copy of yours. During the handshake the server also signs the conversation with the certificate's private key (the [CertificateVerify](/primers/networking/tls-handshake/#the-tls-13-handshake-message-by-message) message), which an impostor can't do [@rfc9846].
 
 ### Watching a browser check a certificate
 
-Step through what a browser does with the certificates a server sends, or pick a scenario to see where each kind of problem gets caught. Real clients don't always run the checks in this order, but every one of them has to pass. The error messages are the ones OpenSSL reports [@openssl-verify-errors], and a copied certificate without its key gets the handshake aborted with a `decrypt_error` alert [@rfc8446].
+Step through what a browser does with the certificates a server sends, or pick a scenario to see where each kind of problem gets caught. Real clients don't always run the checks in this order, but every one of them has to pass. The error messages are the ones OpenSSL reports [@openssl-verify-errors], with the browser's or Java's wording in parentheses where it's different, and a copied certificate without its key gets the handshake aborted with a `decrypt_error` alert [@rfc9846].
 
 <div class="cert-walk"></div>
 
 ## Getting a certificate
 
-Before a public CA issues a certificate, it checks that you control the domain. The automated way is the **ACME** protocol, which Let's Encrypt made popular and tools like Caddy and certbot speak. ACME gives you a few ways to prove control [@rfc8555, @letsencrypt-challenges]:
+Before a public CA issues a certificate, it checks that you control the domain. The automated way is the **ACME** protocol, which Let's Encrypt made popular and tools like Caddy and certbot speak. ACME gives you a few ways to prove control [@rfc8555, @rfc8737, @letsencrypt-challenges]:
 
 | Challenge | How you prove control | Needs |
 |---|---|---|
 | **HTTP-01** | Serve a token the CA gives you at `http://<your domain>/.well-known/acme-challenge/…` | The server reachable from the internet on port 80 |
-| **DNS-01** | Create a TXT record (a DNS record that just holds text) at `_acme-challenge.<your domain>` with the token | API access to your DNS, but no inbound access to the server at all |
+| **DNS-01** | Create a TXT record (a DNS record that just holds text) at `_acme-challenge.<your domain>` with a value derived from the token | API access to your DNS, but no inbound access to the server at all |
 | **TLS-ALPN-01** | Answer a special TLS handshake on port 443 | The server reachable from the internet on port 443 |
 
 HTTP-01 is the simplest, but it can't work for a server that's only reachable over a VPN, because the CA has to reach it from the public internet. DNS-01 works for completely private servers, since the CA only ever looks at public DNS, and it's also the only challenge that can issue wildcard certificates [@letsencrypt-challenges]. ([How DNS resolution works](/primers/networking/dns-resolution/#record-types) covers TXT and the other record types.)
@@ -173,7 +173,7 @@ Let's Encrypt's certificates are already well under that (this site's lasts 90 d
 
 ### Every certificate is public: Certificate Transparency
 
-Every publicly trusted certificate gets recorded in public, append-only **Certificate Transparency** logs that anyone can search [@rfc9162]. Chrome won't accept a public certificate that hasn't been logged [@chrome-ct-policy]. Two things follow from that:
+Public CAs record the certificates they issue in public, append-only **Certificate Transparency** logs that anyone can search [@rfc9162]. Chrome won't accept a public certificate that hasn't been logged [@chrome-ct-policy], so in practice every publicly trusted certificate ends up in them. Two things follow from that:
 
 - **You can see every certificate ever issued for your domain,** with search tools like crt.sh, which is how domain owners spot a certificate they didn't ask for.
 - **Every name on a public certificate is public too.** Putting an internal hostname like `db-primary.internal.example.com` on a certificate from a public CA publishes that name to the world. Internal names usually belong on certificates from a private CA instead.
@@ -188,19 +188,21 @@ example.com.  CAA  0 issue "letsencrypt.org"
 
 Left to right, that's the domain, the record type, a flags field (`0` is the normal value), the tag `issue`, meaning "this CA may issue certificates for this domain," and the CA, named by its own domain. A domain that uses more than one CA lists each in its own `issue` record, and the `issuewild` tag does the same just for wildcard certificates [@rfc8659].
 
-CAs are required to check it before issuing [@rfc8659]. If the domain's CAA record only lists Amazon's CAs, for example, Let's Encrypt will refuse with a CAA error no matter how the challenge is set up, and retrying won't help. The only ways around it are changing the CAA record (a policy decision for the whole domain) or using a CA that's on the list. If a domain has no CAA record, any CA can issue.
+CAs are required to check it before issuing [@rfc8659, @cabf-baseline-requirements]. If the domain's CAA record only lists Amazon's CAs, for example, Let's Encrypt will refuse with a CAA error no matter how the challenge is set up, and retrying won't help. The only ways around it are changing the CAA record (a policy decision for the whole domain) or using a CA that's on the list. If a domain has no CAA record, any CA can issue.
 
 ### AWS Certificate Manager
 
-**ACM** is AWS's certificate service. Its public certificates are free to use with AWS's own services (load balancers, CloudFront, API Gateway), they're validated through DNS, and ACM renews them automatically for as long as they're in use [@aws-acm-faq, @aws-acm-dns-renewal]. You never see the private key, which is the point [@aws-acm-exportable-blog]: ACM attaches the certificate to the load balancer and handles everything itself.
+**ACM** is AWS's certificate service. Its public certificates are free to use with AWS's own services (load balancers, CloudFront, API Gateway). They can be validated through DNS, and ACM renews a DNS-validated certificate automatically as long as it's in use and the validation record stays in place [@aws-acm-faq, @aws-acm-dns-renewal]. ACM keeps the private key itself [@aws-acm-faq]: you never see it, and ACM attaches the certificate to the load balancer for you.
 
 ACM checks CAA records too. If a domain has one, it has to list `amazon.com`, `amazontrust.com`, `awstrust.com`, or `amazonaws.com` [@aws-acm-caa].
 
-To use an ACM certificate somewhere ACM can't attach it, like a reverse proxy on an EC2 instance, you need an **exportable** certificate:
+To use an ACM certificate somewhere ACM can't attach it, like a reverse proxy on an EC2 instance, there are two options. The first is an **exportable** certificate:
 
 - Export has to be turned on when the certificate is requested. It can't be added later, and older certificates can't be exported [@aws-acm-exportable-blog].
 - Exportable certificates cost a fee per name when they're issued and again at each renewal, unlike the free non-exportable ones [@aws-acm-pricing].
 - ACM renews the certificate on its side, but the copy you exported to a server doesn't update itself [@aws-acm-exportable]. Something has to re-export it and reload the server on a schedule, and that job is the first thing to check if HTTPS stops working months later.
+
+The second is ACM's **ACME** support: an ACME client such as certbot runs on the server and requests and renews certificates from ACM itself, the same way it would with Let's Encrypt. Those certificates last at most 45 days and are also charged per name [@aws-acm-acme, @aws-acm-pricing].
 
 ## Self-signed certificates and your own CA
 
@@ -214,7 +216,7 @@ There are three ways to get a certificate for a server, and they differ in who h
 | **Your own CA** | Your own root, through the same kind of chain a public CA uses | Your root, installed once | Internal services, several machines, a team |
 | **Self-signed** | The certificate itself | That exact certificate, installed wherever it's used | One machine, quick local testing |
 
-Public CAs aren't allowed to issue certificates for names that don't exist in public DNS, like `db.internal` or `server01`, or for private addresses like `10.0.1.5` [@cabf-baseline-requirements]. Internal-only names are where your own CA or a self-signed certificate come in.
+Public CAs aren't allowed to issue certificates for names that don't end in a real public top-level domain, like `db.internal` or `server01`, or for private addresses like `10.0.1.5` [@cabf-baseline-requirements]. Internal-only names are where your own CA or a self-signed certificate come in.
 
 ### When to use which
 
@@ -322,7 +324,7 @@ Companies often run their own internal CA for internal services, and corporate n
 |---|---|---|
 | Browsers, most system tools | The operating system's store | Install it in the OS keychain or certificate store |
 | `curl` | The system store, usually | `--cacert bundle.pem` |
-| Python (`requests`) | Its own bundle (`certifi`), not the OS store | `REQUESTS_CA_BUNDLE=/path/bundle.pem` [@python-requests-advanced] |
+| Python (`requests`) | Its own bundle (`certifi`), not the OS store | `REQUESTS_CA_BUNDLE=/path/bundle.pem`, which replaces its list, so the bundle needs the public CAs too [@python-requests-advanced] |
 | Node.js | Its own built-in list | `NODE_EXTRA_CA_CERTS=/path/bundle.pem` [@node-cli] |
 | Java (and JDBC drivers) | A Java truststore file (JKS or PKCS12) | Import into a truststore with `keytool` |
 
@@ -369,7 +371,7 @@ foreach ($cert in $certs) {
 keytool -list -keystore "$HOME\truststore.p12" -storetype PKCS12 -storepass changeit
 ```
 
-(`changeit` is the traditional default Java truststore password, not a secret [@java-keytool]. Use your own if it matters. And yes, `keytool` calls the file a `-keystore` even when you're using it as a truststore, which doesn't help with the confusion.)
+(`changeit` is the starting password of the truststore that ships with Java, `cacerts`, so it's the usual choice for these files and not a secret [@java-keytool]. Use your own if it matters. And yes, `keytool` calls the file a `-keystore` even when you're using it as a truststore, which doesn't help with the confusion.)
 
 Then point Java at it. The standard way is three system properties, set with `-D` when starting the program, for the truststore's path, its password, and its type [@oracle-jsse]:
 
