@@ -2,7 +2,7 @@
 title: Proxies, reverse proxies, and bastion hosts
 description: Three kinds of machine in the middle, told apart by whose side they're on, with what each one does, what a connection through each looks like, and the settings and headers that trip people up.
 order: 9
-updated: 2026-10-05
+updated: 2026-10-06
 ---
 
 A proxy, a reverse proxy, and a bastion host all sit in the middle of a connection. Each one takes a connection from one side and makes a new connection on the other side for it. They differ by **whose side they're on**:
@@ -36,16 +36,24 @@ So for HTTPS, an ordinary forward proxy knows which host you connected to and ho
 
 Most command-line tools and language runtimes read proxy settings from environment variables [@curl-proxy-env, @gitlab-no-proxy]:
 
-```bash
+```bash tab="macOS / Linux"
 export http_proxy=http://proxy.corp.example.com:3128
 export https_proxy=http://proxy.corp.example.com:3128
 export no_proxy=localhost,127.0.0.1,.corp.example.com,10.0.0.0/8,169.254.169.254
 ```
 
+```powershell tab="Windows (PowerShell)"
+$env:http_proxy = "http://proxy.corp.example.com:3128"
+$env:https_proxy = "http://proxy.corp.example.com:3128"
+$env:no_proxy = "localhost,127.0.0.1,.corp.example.com,10.0.0.0/8,169.254.169.254"
+```
+
+Either way the settings only last for that terminal session and the programs started from it [@ms-about-env-vars].
+
 Three things catch people:
 
 - **`no_proxy` matters as much as the proxy itself.** Anything internal should skip the proxy: internal hostnames, private address ranges, and on AWS the instance metadata address `169.254.169.254`. Otherwise requests to internal services go out to the proxy, which can't reach them.
-- **Case isn't consistent between tools.** curl only reads the lowercase `http_proxy`, on purpose: a web server sets the uppercase `HTTP_PROXY` variable from a request header that anyone can send, so trusting it would let a visitor reroute the server's own requests [@curl-proxy-env]. Other tools read the uppercase versions. Setting both is the safe habit.
+- **Case isn't consistent between tools.** curl only reads the lowercase `http_proxy`, on purpose: a web server sets the uppercase `HTTP_PROXY` variable from a request header that anyone can send, so trusting it would let a visitor reroute the server's own requests [@curl-proxy-env]. Other tools read the uppercase versions. Setting both is the safe habit. On Windows, setting one sets both, because environment variable names aren't case-sensitive there [@ms-about-env-vars].
 - **Support for CIDR ranges in `no_proxy` varies.** Some tools accept `10.0.0.0/8` and some only match hostnames and suffixes, so test the tools you actually use.
 
 Browsers usually use the operating system's proxy settings or a **PAC file** (a small script that picks a proxy per URL) instead [@chromium-network-settings, @mdn-proxies].
@@ -118,7 +126,7 @@ ssh -J admin@bastion.example.com admin@10.0.2.11
 2. **Through that connection, it opens a second connection to `10.0.2.11:22`.**
 3. **It authenticates to the private instance end to end,** with the bastion just relaying bytes.
 
-`-J` is a shortcut for SSH's `ProxyJump` setting [@openssh-ssh], which can live in `~/.ssh/config` so a plain `ssh private-box` does the jump automatically. The keys stay on your laptop, which is better than the older habit of copying private keys onto the bastion and hopping from there.
+`-J` is a shortcut for SSH's `ProxyJump` setting [@openssh-ssh], which can live in `~/.ssh/config` so a plain `ssh private-box` does the jump automatically. The keys stay on your laptop, which is better than the older habit of copying private keys onto the bastion and hopping from there. Windows offers the same OpenSSH client as an optional feature [@ms-openssh-overview], so once it's installed these commands are the same in PowerShell.
 
 The same bastion can forward ports for tools that aren't SSH, which is the pattern in [Reaching private resources](/primers/networking/reaching-private-resources/#through-session-manager-or-ssh):
 
