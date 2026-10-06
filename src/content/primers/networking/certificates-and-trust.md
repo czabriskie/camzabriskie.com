@@ -1,5 +1,5 @@
 ---
-title: Certificates and trust
+title: Certificates and Trust
 description: How a hostname reaches a server, what a TLS certificate actually proves, how you get one, and what to do when a client refuses to trust it.
 order: 4
 updated: 2026-10-05
