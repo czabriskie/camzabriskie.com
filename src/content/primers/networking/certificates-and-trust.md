@@ -218,7 +218,7 @@ So a site can work in a browser and fail from Python or Java on the same laptop,
 
 ### PEM files and bundles
 
-Certificates usually travel as **PEM** files: the certificate's binary data written out in base64 (a way of turning binary data into plain letters and digits), between `-----BEGIN CERTIFICATE-----` and `-----END CERTIFICATE-----` lines. A **CA bundle** is just several PEM certificates pasted one after another in one file. Most tools take a bundle directly. Java doesn't.
+Certificates usually travel as **PEM** files. PEM is a format, not a count: each certificate is its binary data written out in base64 (a way of turning binary data into plain letters and digits) between a `-----BEGIN CERTIFICATE-----` and an `-----END CERTIFICATE-----` line, and one file can hold one of those blocks or many. A **CA bundle** is a PEM file holding several CA certificates one after another, such as a company's root and its intermediates, so that one file can be handed to a tool as everything it should trust. Most tools take a bundle directly. Java doesn't.
 
 ### Building a Java truststore from a bundle
 
