@@ -33,12 +33,21 @@ A certificate is a small file that says, in effect, "this public key belongs to 
 | **Public key** | RSA, 2048 bits | The site's public key. The matching private key stays on the server. |
 | **Signature** | Made with Let's Encrypt YR1's private key | The issuer vouching for everything above. |
 
-You can look at any site's certificate the same way:
+You can look at any site's certificate the same way. Type a site into the box and the command fills itself in:
 
-```bash
+<div class="cmd-builder" data-default="camzabriskie.com" data-label="Site"></div>
+
+```bash tab="macOS / Linux"
 openssl s_client -connect camzabriskie.com:443 -servername camzabriskie.com </dev/null 2>/dev/null \
   | openssl x509 -noout -subject -issuer -dates -ext subjectAltName
 ```
+
+```powershell tab="Windows (PowerShell)"
+$null | openssl s_client -connect camzabriskie.com:443 -servername camzabriskie.com 2>$null |
+  openssl x509 -noout -subject -issuer -dates -ext subjectAltName
+```
+
+Windows doesn't include OpenSSL, but Git for Windows comes with it [@git-for-windows-release-notes], so if you have Git installed the macOS / Linux version works in Git Bash.
 
 Two of those fields carry the whole chain of trust below: the **subject** says who a certificate is about, and the **issuer** says who signed it.
 
@@ -197,9 +206,9 @@ Certificates usually travel as **PEM** files: the certificate's binary data writ
 
 Java keeps two kinds of file that are easy to mix up. A **keystore** holds your own private key and certificate, the credentials Java sends when it has to prove who *it* is. A **truststore** holds the CA certificates Java believes, the ones it uses to decide whether to trust the *other* side [@oracle-jsse]. Trusting a private CA means adding its root to the truststore.
 
-`keytool` imports one certificate at a time, each under its own name (alias), so for a bundle, split it first and import each piece:
+`keytool` imports one certificate at a time, each under its own name (alias), so for a bundle, split it first and import each piece. Both versions name them `company-cert1`, `company-cert2`, and so on:
 
-```bash
+```bash tab="macOS / Linux"
 mkdir -p /tmp/certs && cd /tmp/certs
 # split the bundle into cert1.pem, cert2.pem, ...
 awk 'BEGIN{n=0} /BEGIN CERTIFICATE/{n++} {print > ("cert" n ".pem")}' ~/company-ca-bundle.pem
@@ -211,6 +220,23 @@ for f in cert*.pem; do
 done
 
 keytool -list -keystore ~/truststore.p12 -storetype PKCS12 -storepass changeit
+```
+
+```powershell tab="Windows (PowerShell)"
+New-Item -ItemType Directory -Force "$env:TEMP\certs" | Out-Null
+Set-Location "$env:TEMP\certs"
+# split the bundle into cert1.pem, cert2.pem, ... and import each one
+$bundle = Get-Content -Raw "$HOME\company-ca-bundle.pem"
+$certs = [regex]::Matches($bundle, '-----BEGIN CERTIFICATE-----[\s\S]+?-----END CERTIFICATE-----')
+$n = 0
+foreach ($cert in $certs) {
+  $n++
+  Set-Content -Path "cert$n.pem" -Value $cert.Value
+  keytool -importcert -noprompt -alias "company-cert$n" -file "cert$n.pem" `
+    -keystore "$HOME\truststore.p12" -storetype PKCS12 -storepass changeit
+}
+
+keytool -list -keystore "$HOME\truststore.p12" -storetype PKCS12 -storepass changeit
 ```
 
 (`changeit` is the traditional default Java truststore password, not a secret [@java-keytool]. Use your own if it matters. And yes, `keytool` calls the file a `-keystore` even when you're using it as a truststore, which doesn't help with the confusion.)
