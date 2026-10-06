@@ -126,7 +126,7 @@ Here's the chain `camzabriskie.com` sent when this primer was written, from `ope
 
 That's one more link than the textbook three, and it's a common real-world wrinkle called **cross-signing**. ISRG Root YR is a newer Let's Encrypt root, and new roots take years to reach every device's trust store. So the older, widely trusted ISRG Root X1 has signed a certificate for Root YR, and the server sends that along. A device that already trusts Root YR can stop there. One that only knows X1 follows the chain one step further. Let's Encrypt lists this exact chain as its default [@letsencrypt-chains].
 
-You can see the same chain in a browser: click the icon to the left of the address, open the connection or certificate details, and the certificate viewer shows it as a small tree, root at the top.
+You can see the same chain in a browser by clicking the icon to the left of the address and opening the certificate details. Chrome and Safari draw it as a small tree with the root at the top. Firefox opens a page with one tab per certificate instead, starting with the site's certificate, then the intermediate, then the root.
 
 ### When the server leaves out the intermediate
 
