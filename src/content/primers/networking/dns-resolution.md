@@ -7,7 +7,7 @@ updated: 2026-10-05
 
 Every connection starts with a lookup. Before a browser can talk to `www.example.com`, something has to turn that name into an address like `203.0.113.10`, and DNS (the Domain Name System) is how that happens [@rfc1034]. It's usually invisible, and it's behind a surprising number of "it works on my machine" problems.
 
-[Certificates and Trust](/primers/networking/certificates-and-trust/#dns-names) covers the record types you'll set up most often (A, AAAA, CNAME, alias, TXT). This primer is about the lookup itself.
+[Certificates and Trust](/primers/networking/certificates-and-trust/#dns-names) covers the record types you'll set up most often (A, AAAA, CNAME, alias, TXT). This primer is about the lookup itself, with [every record type you're likely to meet](#record-types) further down.
 
 ## Reading a domain name
 
@@ -102,17 +102,92 @@ curl -sI https://www.example.com
 
 The first request shows the queries going out. Repeat it and there's little or nothing, because the answer is cached. If you see nothing even the first time, your browser or system may be using **DNS over HTTPS**, which sends lookups inside ordinary encrypted HTTPS traffic on port 443 [@rfc8484], so a filter on port 53 never sees them.
 
-## A few more record types
+## Record types
 
-These show up as soon as you look at a whole zone instead of one record:
+Every record has a name, a type, a TTL, and a value. Here's a small zone for `example.com` with most of the types you'll come across, in the format DNS servers use for zone files:
 
-| Record | What it holds |
+```
+example.com.              3600  SOA    ns1.example.com. admin.example.com. 2026100601 7200 900 1209600 300
+example.com.              3600  NS     ns1.example.com.
+example.com.              3600  NS     ns2.example.net.
+example.com.               300  A      203.0.113.10
+example.com.               300  AAAA   2001:db8::10
+www.example.com.           300  CNAME  example.com.
+example.com.              3600  MX     10 mail1.example.com.
+example.com.              3600  MX     20 mail2.example.com.
+example.com.              3600  TXT    "v=spf1 include:_spf.mail.example.net -all"
+_dmarc.example.com.       3600  TXT    "v=DMARC1; p=reject"
+example.com.              3600  CAA    0 issue "letsencrypt.org"
+_sip._tcp.example.com.    3600  SRV    10 50 5060 sip1.example.com.
+10.113.0.203.in-addr.arpa. 3600 PTR    example.com.
+```
+
+There are over a hundred registered record types [@iana-dns-rr-types], but most are obsolete or experimental. These are the ones that matter in practice, grouped by what they're for.
+
+### Addresses and aliases
+
+| Type | Holds | Notes |
+|---|---|---|
+| **A** | An IPv4 address [@rfc1035] | The most common record there is. |
+| **AAAA** | An IPv6 address [@rfc3596] | The IPv6 counterpart to A. A name can have both. |
+| **CNAME** | Another name: "this name is really that one" [@rfc1035] | The resolver follows it and looks up the target instead. |
+| **HTTPS** / **SVCB** | Where and how to connect to a service: alternative names, ports, and supported protocols like HTTP/3 [@rfc9460] | Newer. Lets a browser learn about HTTP/3 before its first connection. |
+| **Alias** (Route 53) | Another AWS resource, like a load balancer or CloudFront distribution | Not a real DNS type. Route 53 answers with the target's own A or AAAA records [@aws-route53-alias]. |
+
+**Why there's no CNAME at the root of a domain.** A name that has a CNAME can't have any other records [@rfc2181]. The root of a zone (`example.com` itself) always has an SOA record and NS records, because those are what make it a zone [@rfc1034], so a CNAME there would break the rule. That's the gap Route 53's alias records fill, and the HTTPS record type is the standard way to do the same thing for web traffic [@rfc9460].
+
+### Running the zone
+
+| Type | Holds | Notes |
+|---|---|---|
+| **NS** | The name servers responsible for a domain [@rfc1035] | The TLD's [referrals](#following-one-lookup) point at these, and they're what you set at your registrar. |
+| **SOA** | "Start of authority": housekeeping for the zone [@rfc1035] | The primary name server, an admin contact, a serial number that goes up with each change, timers for secondary servers, and how long to cache "doesn't exist" answers [@rfc2308]. |
+
+### Reverse lookups
+
+| Type | Holds | Notes |
+|---|---|---|
+| **PTR** | A name, for an address [@rfc1035] | Lives under `in-addr.arpa` (IPv4) with the address backwards. Set by whoever owns the address block, usually your ISP or cloud provider, not by you. |
+
+### Email
+
+Email leans on DNS more than anything else, mostly through TXT records with special formats:
+
+| Type | Holds | Notes |
+|---|---|---|
+| **MX** | The mail servers that accept email for the domain, each with a preference number [@rfc1035] | Lower numbers are tried first, so `10` before `20`. |
+| **TXT**: SPF | Which servers are allowed to send email as the domain [@rfc7208] | Published as a TXT record starting `v=spf1`. There used to be a dedicated SPF record type, but it's been removed from the standard [@rfc7208]. |
+| **TXT**: DKIM | The public key that checks the signature on outgoing email [@rfc6376] | Lives at `<selector>._domainkey.example.com`. |
+| **TXT**: DMARC | What receivers should do with email that fails SPF or DKIM, and where to send reports [@rfc9989] | Lives at `_dmarc.example.com`. |
+
+### Services and security
+
+| Type | Holds | Notes |
+|---|---|---|
+| **TXT** (general) | Arbitrary text [@rfc1035] | Also how outside services check you control a domain, like the `_acme-challenge` record in [Certificates and Trust](/primers/networking/certificates-and-trust/#getting-a-certificate). |
+| **SRV** | The host and port for a service, with priority and weight [@rfc2782] | Named `_service._protocol.example.com`. Used by protocols like SIP and XMPP and some directory services. |
+| **CAA** | Which certificate authorities may issue certificates for the domain [@rfc8659] | Covered in [Certificates and Trust](/primers/networking/certificates-and-trust/#caa-records-can-block-a-ca-entirely). |
+
+### DNSSEC
+
+Plain DNS has no way to prove an answer is genuine. **DNSSEC** adds signatures so a resolver can check that an answer really came from the zone's owner and wasn't changed on the way [@rfc4033]. It adds its own record types [@rfc4034]:
+
+| Type | Holds |
 |---|---|
-| **NS** | Which name servers are authoritative for a domain. These are what the TLD's referral points to. |
-| **SOA** | Start of authority: housekeeping for the zone, including how long to cache "doesn't exist" answers. |
-| **AAAA** | An IPv6 address, the counterpart to A [@rfc3596]. |
-| **PTR** | A name for an address, used for reverse lookups. |
-| **MX** | Which servers accept email for the domain. |
+| **DNSKEY** | The zone's public signing keys. |
+| **RRSIG** | A signature over a set of records. |
+| **DS** | A fingerprint of a child zone's key, published in the **parent** zone. This is how trust chains down from the root, through the TLD, to your domain. |
+| **NSEC** (and NSEC3) | Signed proof that a name or type doesn't exist, so "no such name" can't be forged either. |
+
+### Less common
+
+| Type | Holds |
+|---|---|
+| **NAPTR** | Rewrite rules for turning one kind of identifier into another, mostly used in telephony [@rfc3403]. |
+| **SSHFP** | The fingerprint of a server's SSH key, so an SSH client can check it against DNS instead of asking you [@rfc4255]. |
+| **TLSA** | A pin for a server's TLS certificate or CA, published in DNS (DANE). Only meaningful with DNSSEC [@rfc6698]. |
+
+Route 53 supports 17 types: A, AAAA, CAA, CNAME, DS, HTTPS, MX, NAPTR, NS, PTR, SOA, SPF, SRV, SSHFP, SVCB, TLSA, and TXT, plus its own alias records [@aws-route53-record-types].
 
 ## Where Route 53 fits
 
