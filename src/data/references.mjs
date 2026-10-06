@@ -53,7 +53,9 @@ export const references = {
   rfc7766: rfc(7766, ['J. Dickinson', 'S. Dickinson', 'R. Bellis', 'A. Mankin', 'D. Wessels'], 'DNS Transport over TCP - Implementation Requirements', 'Mar. 2016'),
   rfc8200: rfc(8200, ['S. Deering', 'R. Hinden'], 'Internet Protocol, Version 6 (IPv6) Specification', 'Jul. 2017'),
   rfc8446: rfc(8446, ['E. Rescorla'], 'The Transport Layer Security (TLS) Protocol Version 1.3', 'Aug. 2018'),
+  rfc9846: rfc(9846, ['E. Rescorla'], 'The Transport Layer Security (TLS) Protocol Version 1.3', 'Jul. 2026'),
   rfc8484: rfc(8484, ['P. Hoffman', 'P. McManus'], 'DNS Queries over HTTPS (DoH)', 'Oct. 2018'),
+  rfc8737: rfc(8737, ['R.B. Shoemaker'], 'Automated Certificate Management Environment (ACME) TLS Application-Layer Protocol Negotiation (ALPN) Challenge Extension', 'Feb. 2020'),
   rfc8555: rfc(8555, ['R. Barnes', 'J. Hoffman-Andrews', 'D. McCarney', 'J. Kasten'], 'Automatic Certificate Management Environment (ACME)', 'Mar. 2019'),
   rfc8659: rfc(8659, ['P. Hallam-Baker', 'R. Stradling', 'J. Hoffman-Andrews'], 'DNS Certification Authority Authorization (CAA) Resource Record', 'Nov. 2019'),
   rfc9000: rfc(9000, ['J. Iyengar, Ed.', 'M. Thomson, Ed.'], 'QUIC: A UDP-Based Multiplexed and Secure Transport', 'May 2021'),
@@ -172,6 +174,7 @@ export const references = {
   // Certificates and DNS
   'aws-route53-alias': aws('Choosing between alias and non-alias records', 'Amazon Route 53 Developer Guide', 'https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resource-record-sets-choosing-alias-non-alias.html'),
   'aws-acm-caa': aws('Certification Authority Authorization (CAA) problems', 'AWS Certificate Manager User Guide', 'https://docs.aws.amazon.com/acm/latest/userguide/troubleshooting-caa.html'),
+  'aws-acm-acme': { ...aws('ACME certificate automation', 'AWS Certificate Manager User Guide', 'https://docs.aws.amazon.com/acm/latest/userguide/acm-acme.html'), accessed: '2026-10-06' },
   'aws-acm-exportable': aws('AWS Certificate Manager exportable public certificates', 'AWS Certificate Manager User Guide', 'https://docs.aws.amazon.com/acm/latest/userguide/acm-exportable-certificates.html'),
   'aws-acm-exportable-blog': {
     authors: AWS,
