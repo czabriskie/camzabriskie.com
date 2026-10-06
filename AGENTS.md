@@ -95,6 +95,13 @@ of it: the post can stay vague about the job while the document carries the subs
   and set `accessed` to the date you checked it. Unknown keys fail the build. After
   changing the citation plugin or formatter, `rm -rf .astro node_modules/.astro` before
   building locally, or you'll see cached output.
+- **Commands get a PowerShell tab where they differ** (Decision 0008). Write the
+  macOS/Linux version and the Windows version as consecutive fenced blocks with
+  `tab="macOS / Linux"` and `tab="Windows (PowerShell)"` in the meta; the build groups
+  them into tabs. Commands that are identical everywhere stay a single block. Test
+  PowerShell where you can (pwsh 7 runs on macOS) and cite Microsoft's docs for
+  Windows-only cmdlets. A `<div class="cmd-builder" data-default="example.com"
+  data-label="Site"></div>` before a block lets readers fill in their own value.
 
 ## LinkedIn scheduler
 

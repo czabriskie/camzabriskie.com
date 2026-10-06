@@ -282,6 +282,32 @@ nav.note-nav .mono { color: var(--tech); font-weight: 400; }
 .encap-payload .encap-tag { display: block; margin-bottom: 0.2rem; }
 @media (max-width: 30rem) { .encap-layer { padding: 0.45rem 0.5rem 0.55rem; } }
 
+/* Code tabs, copy buttons, and command builders (Decision 0008, src/scripts/code-tabs.ts).
+   Without JS every tab panel shows under its own label. */
+.code-tabs { margin: 1.2rem 0; }
+.code-tab-label { margin: 0.8rem 0 -0.6rem; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 0.75rem; color: var(--muted); }
+.code-tabs-ready .code-tab-label { display: none; }
+.code-tab-bar { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+.code-tabs-ready pre { margin-top: 0; border-top-left-radius: 0; }
+.code-tab-button { font: 0.75rem 'IBM Plex Mono', ui-monospace, monospace; color: var(--muted); background: transparent; border: 1px solid var(--line); border-bottom: none; border-radius: 6px 6px 0 0; padding: 0.3rem 0.7rem; cursor: pointer; }
+.code-tab-button[aria-selected="true"] { color: var(--tech); background: var(--surface); border-color: var(--tech); }
+.code-tab-button:focus-visible { outline: 2px solid var(--tech); outline-offset: 1px; }
+.code-copy-wrap { position: relative; }
+/* Shiki gives every pre a dark inline background in both themes, so the button is styled
+   for dark rather than from the palette tokens. */
+.code-copy { position: absolute; top: 0.45rem; right: 0.45rem; font: 0.7rem 'IBM Plex Mono', ui-monospace, monospace; color: #c9d1d9; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 5px; padding: 0.2rem 0.5rem; cursor: pointer; opacity: 0.75; }
+.code-copy:hover, .code-copy:focus-visible { opacity: 1; }
+.code-copy-wrap pre { padding-right: 4.5rem; }
+@media (hover: none) { .code-copy { padding: 0.45rem 0.75rem; opacity: 1; } .code-copy-wrap pre { padding-right: 5.5rem; } }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.cmd-builder:empty { display: none; }
+.cmd-builder { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 0.7rem; margin: 1.2rem 0 -0.4rem; font-size: 0.9rem; }
+.cmd-builder label { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 0.8rem; color: var(--muted); }
+.cmd-builder input { font: max(16px, 0.9rem) 'IBM Plex Mono', ui-monospace, monospace; color: inherit; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 0.3rem 0.5rem; min-width: 0; flex: 1 1 12rem; max-width: 22rem; }
+.cmd-builder input:focus-visible { outline: 2px solid var(--tech); outline-offset: 1px; }
+.cmd-builder-note { color: var(--muted); font-size: 0.8rem; }
+.cmd-var { text-decoration: underline dotted; text-underline-offset: 3px; }
+
 /* CIDR calculator (src/scripts/cidr-calc.ts) */
 .cidr-calc { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 1rem 1.2rem; margin: 1.2rem 0 1.6rem; }
 .cidr-calc:empty { display: none; }
