@@ -174,7 +174,7 @@ app.example.com {
 }
 ```
 
-Getting the certificate onto the box is the harder part, and it's covered in [Certificates and trust](/primers/networking/certificates-and-trust/).
+Getting the certificate onto the box is the harder part, and it's covered in [Certificates and Trust](/primers/networking/certificates-and-trust/).
 
 ### The Host header problem
 
