@@ -202,6 +202,118 @@ To use an ACM certificate somewhere ACM can't attach it, like a reverse proxy on
 - Exportable certificates cost a fee per name when they're issued and again at each renewal, unlike the free non-exportable ones [@aws-acm-pricing].
 - ACM renews the certificate on its side, but the copy you exported to a server doesn't update itself [@aws-acm-exportable]. Something has to re-export it and reload the server on a schedule, and that job is the first thing to check if HTTPS stops working months later.
 
+## Self-signed certificates and your own CA
+
+A **self-signed certificate** is one whose issuer is its own subject: it's signed with its own private key instead of a CA's. Every root certificate is self-signed, including the public ones in your trust store, so being self-signed isn't a problem by itself. The trouble starts when a *website's* certificate is self-signed, because then there's no chain to check. Nothing vouches for it, and a client can only trust it by having that exact certificate in its trust store.
+
+There are three ways to get a certificate for a server, and they differ in who has to trust what:
+
+| | Who signs the server's certificate | What each client needs | Good for |
+|---|---|---|---|
+| **A public CA** (Let's Encrypt, ACM) | A CA already in every trust store | Nothing | Anything with a public domain name |
+| **Your own CA** | Your own root, through the same kind of chain a public CA uses | Your root, installed once | Internal services, several machines, a team |
+| **Self-signed** | The certificate itself | That exact certificate, installed wherever it's used | One machine, quick local testing |
+
+Public CAs aren't allowed to issue certificates for names that don't exist in public DNS, like `db.internal` or `server01`, or for private addresses like `10.0.1.5` [@cabf-baseline-requirements]. Internal-only names are where your own CA or a self-signed certificate come in.
+
+### When to use which
+
+- **A public CA** for anything with a real domain name, which can include internal services if their names live under a domain you own, since [DNS-01](#getting-a-certificate) works for servers the CA can't reach. It's free with Let's Encrypt, and nobody has to install anything.
+- **Your own CA** once more than one machine or person is involved. Clients trust the root once, every certificate it signs works after that, and replacing a server's certificate doesn't mean touching every client. In exchange, you have to guard the root's private key, because anyone who has it can make a certificate for any name, and your clients will believe it.
+- **Self-signed** for a quick test on your own machine, where you're the only client. Don't make it work by clicking through the browser warning or turning checking off (`curl -k`, `verify=False` in Python), because that accepts *any* certificate, including an attacker's. Trust that specific certificate instead, by adding it to the trust store or pointing the client at it (`curl --cacert localhost.crt`).
+
+### Making a self-signed certificate
+
+One command makes a private key and a certificate signed with it:
+
+```bash tab="macOS / Linux"
+openssl req -x509 -newkey rsa:2048 -nodes -days 30 \
+  -keyout localhost.key -out localhost.crt \
+  -subj "/CN=localhost" \
+  -addext "subjectAltName=DNS:localhost,IP:127.0.0.1"
+```
+
+```powershell tab="Windows (PowerShell)"
+openssl req -x509 -newkey rsa:2048 -nodes -days 30 `
+  -keyout localhost.key -out localhost.crt `
+  -subj "/CN=localhost" `
+  -addext "subjectAltName=DNS:localhost,IP:127.0.0.1"
+```
+
+`-x509` makes a finished certificate instead of a request for a CA, `-nodes` leaves the private key unencrypted on disk, and `-addext` puts the names in the SANs, the list clients actually check. A name that's only in the subject (`CN`) isn't enough. The result is two files: `localhost.crt`, which is safe to hand out, and `localhost.key`, which isn't.
+
+On Windows, `New-SelfSignedCertificate` makes one without OpenSSL, though it puts the certificate in the Windows certificate store rather than in files [@ms-new-selfsignedcertificate].
+
+### Making your own CA
+
+Three steps: make the CA, make a key and a request for the server, then have the CA sign the request. The request is a **certificate signing request (CSR)**, which holds the server's public key and the name it wants, and it's the same thing you'd send to a public CA.
+
+```bash tab="macOS / Linux"
+# 1. the CA: a private key and a self-signed root certificate, marked as a CA
+cat > ca.cnf <<'EOF'
+[req]
+distinguished_name = dn
+x509_extensions = ca_ext
+prompt = no
+
+[dn]
+CN = Example Dev Root CA
+
+[ca_ext]
+basicConstraints = critical, CA:TRUE
+keyUsage = critical, keyCertSign, cRLSign
+subjectKeyIdentifier = hash
+EOF
+openssl req -x509 -newkey rsa:2048 -nodes -days 365 -config ca.cnf \
+  -keyout ca.key -out ca.crt
+
+# 2. the server: a private key and a certificate signing request
+openssl req -newkey rsa:2048 -nodes \
+  -keyout app.key -out app.csr -subj "/CN=app.example.com"
+
+# 3. the CA signs the request, adding the name the server answers to
+printf 'subjectAltName=DNS:app.example.com\n' > app.ext
+openssl x509 -req -in app.csr -CA ca.crt -CAkey ca.key -CAcreateserial \
+  -days 30 -extfile app.ext -out app.crt
+
+openssl verify -CAfile ca.crt app.crt
+```
+
+```powershell tab="Windows (PowerShell)"
+# 1. the CA: a private key and a self-signed root certificate, marked as a CA
+@'
+[req]
+distinguished_name = dn
+x509_extensions = ca_ext
+prompt = no
+
+[dn]
+CN = Example Dev Root CA
+
+[ca_ext]
+basicConstraints = critical, CA:TRUE
+keyUsage = critical, keyCertSign, cRLSign
+subjectKeyIdentifier = hash
+'@ | Set-Content ca.cnf
+openssl req -x509 -newkey rsa:2048 -nodes -days 365 -config ca.cnf `
+  -keyout ca.key -out ca.crt
+
+# 2. the server: a private key and a certificate signing request
+openssl req -newkey rsa:2048 -nodes `
+  -keyout app.key -out app.csr -subj "/CN=app.example.com"
+
+# 3. the CA signs the request, adding the name the server answers to
+Set-Content app.ext 'subjectAltName=DNS:app.example.com'
+openssl x509 -req -in app.csr -CA ca.crt -CAkey ca.key -CAcreateserial `
+  -days 30 -extfile app.ext -out app.crt
+
+openssl verify -CAfile ca.crt app.crt
+```
+
+The `ca.cnf` file marks the root as a CA (`CA:TRUE`) that's allowed to sign certificates (`keyCertSign`) [@rfc5280]. Some versions of OpenSSL add that on their own, but the LibreSSL that macOS ships as `openssl` doesn't, and a root without it can fail to verify in stricter clients, so it's spelled out here. The last command should print `app.crt: OK`.
+
+The server gets `app.crt` and `app.key`. Clients get `ca.crt`, installed the way the next section describes. `ca.key` goes nowhere: it can sign a certificate for any name, so it belongs offline, or at least somewhere much safer than the server.
+
 ## Trusting a private CA
 
 Companies often run their own internal CA for internal services, and corporate networks sometimes inspect TLS traffic with a [proxy](/primers/networking/proxies-and-bastions/#forward-proxies) that re-signs every certificate with a company CA. Either way, it's the same chain of trust with a different root: clients only trust those certificates if the company's root certificate is in their trust store. And different tools have different trust stores:

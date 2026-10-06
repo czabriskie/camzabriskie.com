@@ -225,6 +225,7 @@ export const references = {
   'git-for-windows-release-notes': { authors: 'Git for Windows', title: 'Git for Windows Release Notes', container: 'git-for-windows/build-extra', date: 'Oct. 5, 2026', url: 'https://github.com/git-for-windows/build-extra/blob/main/ReleaseNotes.md', accessed: '2026-10-06' },
   'apple-dns-cache': { authors: 'Apple', title: 'Reset the DNS cache in OS X', container: 'Apple Support', url: 'https://support.apple.com/en-us/101481', accessed: '2026-10-06' },
   'systemd-resolvectl': { authors: 'systemd project', title: 'resolvectl', container: 'systemd manual pages', url: 'https://www.freedesktop.org/software/systemd/man/latest/resolvectl.html', accessed: '2026-10-06' },
+  'ms-new-selfsignedcertificate': { authors: 'Microsoft', title: 'New-SelfSignedCertificate', container: 'Windows PowerShell PKI Module Reference', url: 'https://learn.microsoft.com/en-us/powershell/module/pki/new-selfsignedcertificate', accessed: '2026-10-06' },
 
   // Reaching private resources
   'aws-s2s-vpn-what-is': aws('What is AWS Site-to-Site VPN?', 'AWS Site-to-Site VPN User Guide', 'https://docs.aws.amazon.com/vpn/latest/s2svpn/VPC_VPN.html'),
