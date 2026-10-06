@@ -2,7 +2,7 @@
 title: Reaching private resources
 description: The ways into a private network, from connecting whole networks with VPNs and Transit Gateway to forwarding one port for an afternoon, and what to check when you're connected but still can't reach anything.
 order: 6
-updated: 2026-10-05
+updated: 2026-10-06
 ---
 
 Databases, internal tools, and Kubernetes nodes live in private subnets on purpose, so nothing on the internet can reach them. People still need to, though, and so do other networks. The options run from permanent links between whole networks down to a tunnel to one port that lasts as long as a terminal window.
@@ -71,7 +71,7 @@ Sometimes you only need to reach one database for an afternoon, and a VPN is mor
 
 If you can already reach a Kubernetes cluster inside the VPC with `kubectl`, the cluster can act as the way in. Run a tiny relay pod that forwards to the database, then forward a local port to that pod:
 
-```bash
+```bash tab="macOS / Linux"
 # a throwaway pod that relays port 5432 to the database
 kubectl run pg-proxy --rm -i --restart=Never --image=alpine/socat -- \
   TCP-LISTEN:5432,fork,reuseaddr \
@@ -79,6 +79,16 @@ kubectl run pg-proxy --rm -i --restart=Never --image=alpine/socat -- \
 
 # connect local port 5433 to the pod's port 5432
 sleep 3 && kubectl port-forward pod/pg-proxy 5433:5432
+```
+
+```powershell tab="Windows (PowerShell)"
+# window 1: a throwaway pod that relays port 5432 to the database (leave it running)
+kubectl run pg-proxy --rm -i --restart=Never --image=alpine/socat -- `
+  TCP-LISTEN:5432,fork,reuseaddr `
+  TCP:my-db.xxxxxxxxxxxx.us-east-1.rds.amazonaws.com:5432
+
+# window 2, once the pod is running: connect local port 5433 to the pod's port 5432
+kubectl port-forward pod/pg-proxy 5433:5432
 ```
 
 Then the database client connects to `localhost` on port `5433`.
@@ -98,11 +108,19 @@ The same idea works with other ways in:
 
 - **AWS Systems Manager Session Manager** can forward a local port through an EC2 instance to another host in the VPC, with no SSH keys and no inbound ports open on the instance [@aws-ssm-session-manager, @aws-ssm-start-session]:
 
-  ```bash
+  ```bash tab="macOS / Linux"
   aws ssm start-session --target i-xxxxxxxxxxxxxxxxx \
     --document-name AWS-StartPortForwardingSessionToRemoteHost \
     --parameters '{"host":["my-db.xxxxxxxxxxxx.us-east-1.rds.amazonaws.com"],"portNumber":["5432"],"localPortNumber":["5433"]}'
   ```
+
+  ```powershell tab="Windows (PowerShell)"
+  aws ssm start-session --target i-xxxxxxxxxxxxxxxxx `
+    --document-name AWS-StartPortForwardingSessionToRemoteHost `
+    --parameters 'host=my-db.xxxxxxxxxxxx.us-east-1.rds.amazonaws.com,portNumber=5432,localPortNumber=5433'
+  ```
+
+  The PowerShell version uses the AWS CLI's shorthand instead of JSON, because Windows PowerShell 5.1 doesn't pass double quotes inside an argument through to other programs the way PowerShell 7.3 and later do [@ms-about-parsing], and the JSON breaks without them.
 
 - **An SSH [bastion host](/primers/networking/proxies-and-bastions/#bastion-hosts)** (a small instance whose only job is to be SSH'd into) does the same with `ssh -L 5433:<database host>:5432 user@bastion`, at the cost of keeping an SSH port open and managing keys.
 
