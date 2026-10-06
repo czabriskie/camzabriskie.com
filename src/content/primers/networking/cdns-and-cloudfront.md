@@ -2,7 +2,7 @@
 title: CDNs and CloudFront
 description: How a content delivery network serves copies of your site from near your users, how long those copies last, what makes two requests "the same," and how to keep people from going around it to your origin.
 order: 8
-updated: 2026-10-05
+updated: 2026-10-06
 ---
 
 A content delivery network (CDN) keeps copies of your content on servers spread around the world and answers each request from one close to the person asking. Pages load faster because the content travels a shorter distance, your own servers handle a fraction of the traffic, and a big spike lands on the CDN instead of on you. Amazon CloudFront is AWS's CDN, and it's the usual way to put HTTPS and a custom domain in front of an S3 bucket or a load balancer.
@@ -106,9 +106,15 @@ CloudFront also gets automatic protection against common DDoS attacks at no extr
 
 The response headers show whether a request hit the cache:
 
-```bash
+```bash tab="macOS / Linux"
 curl -sI https://www.example.com/logo.png
 ```
+
+```powershell tab="Windows (PowerShell)"
+curl.exe -sI https://www.example.com/logo.png
+```
+
+On Windows, type `curl.exe` rather than `curl`, because in Windows PowerShell 5.1 plain `curl` is an alias for a different command [@ms-curl-windows].
 
 - `x-cache: Hit from cloudfront` or `Miss from cloudfront` says whether the edge had it [@aws-cloudfront-cache-tags-blog].
 - `age: 120` says roughly how many seconds it's been since the origin generated or last revalidated this copy [@rfc9111].
