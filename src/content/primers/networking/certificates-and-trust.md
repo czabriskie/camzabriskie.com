@@ -75,19 +75,35 @@ A website's certificate isn't signed directly by the root. There's at least one 
 | How your device gets it | Already installed, in the trust store | The server sends it | The server sends it |
 | Typical lifetime | Decades | A few years | Months |
 
-The names come from picturing a tree upside down: the root at the top, intermediates branching off it, and each website's certificate a leaf at the end of a branch. (It's also called the **end-entity** certificate.)
+The names come from picturing a tree upside down, with the root at the top. A leaf certificate is also called the **end-entity** certificate.
 
-A passport is a useful comparison. A country's national seal is the root: every border agent has been taught to recognize it in advance. The passport office is the intermediate, authorized under that seal to issue passports every day. Your passport is the leaf, issued by that office and naming you. The border agent has never seen your passport before, but can trace its authority back to a seal they already trust.
-
-<div class="trust-chain" role="img" aria-label="Chain of trust: Example Root CA, already on your device in the trust store, signs Example Intermediate CA, which signs the app.example.com certificate. The server sends the intermediate and the site's certificate.">
-<div class="tc-link tc-root"><div class="tc-head"><span class="tc-kind">Root certificate</span><span class="tc-badge tc-local">already on your device, in the trust store</span></div><div class="tc-name">Example Root CA</div><div class="tc-detail">Signs itself. Trusted only because it's in the trust store.</div></div>
-<div class="tc-arrow" aria-hidden="true"><span>signs</span></div>
-<div class="tc-link"><div class="tc-head"><span class="tc-kind">Intermediate certificate</span><span class="tc-badge tc-sent">sent by the server</span></div><div class="tc-name">Example Intermediate CA</div><div class="tc-detail">Signed with the root's private key. Does the day-to-day signing, so the root's key can stay offline.</div></div>
-<div class="tc-arrow" aria-hidden="true"><span>signs</span></div>
-<div class="tc-link tc-leaf"><div class="tc-head"><span class="tc-kind">Leaf certificate</span><span class="tc-badge tc-sent">sent by the server</span></div><div class="tc-name">app.example.com</div><div class="tc-detail">Signed with the intermediate's private key. Names the site and holds its public key.</div></div>
+<div class="cert-tree" role="img" aria-label="The certificate tree drawn upside down. Example Root CA is at the top. Two intermediates branch off it, Example Intermediate CA and Other Intermediate CA. Four website certificates hang off them as leaves. The path from Example Root CA through Example Intermediate CA to app.example.com is highlighted as that site's chain of trust.">
+<svg viewBox="0 0 380 194" aria-hidden="true" focusable="false">
+<line class="ct-on" x1="190" y1="42" x2="95" y2="78"/>
+<line class="ct-off" x1="190" y1="42" x2="285" y2="78"/>
+<line class="ct-off" x1="95" y1="116" x2="47.5" y2="152"/>
+<line class="ct-on" x1="95" y1="116" x2="142.5" y2="152"/>
+<line class="ct-off" x1="285" y1="116" x2="237.5" y2="152"/>
+<line class="ct-off" x1="285" y1="116" x2="332.5" y2="152"/>
+<g class="ct-root ct-on"><rect x="135" y="4" width="120" height="38" rx="6"/><text class="ct-kind" x="195" y="19">root</text><text class="ct-name" x="195" y="34">Example Root CA</text></g>
+<g class="ct-mid ct-on"><rect x="29" y="78" width="132" height="38" rx="6"/><text class="ct-kind" x="95" y="93">intermediate</text><text class="ct-name" x="95" y="108">Example Intermediate CA</text></g>
+<g class="ct-mid ct-off"><rect x="219" y="78" width="132" height="38" rx="6"/><text class="ct-kind" x="285" y="93">intermediate</text><text class="ct-name" x="285" y="108">Other Intermediate CA</text></g>
+<g class="ct-leaf ct-off"><rect x="3.5" y="152" width="88" height="38" rx="6"/><text class="ct-kind" x="47.5" y="167">leaf</text><text class="ct-name" x="47.5" y="182">example.com</text></g>
+<g class="ct-leaf ct-on"><rect x="98.5" y="152" width="88" height="38" rx="6"/><text class="ct-kind" x="142.5" y="167">leaf</text><text class="ct-name" x="142.5" y="182">app.example.com</text></g>
+<g class="ct-leaf ct-off"><rect x="193.5" y="152" width="88" height="38" rx="6"/><text class="ct-kind" x="237.5" y="167">leaf</text><text class="ct-name" x="237.5" y="182">example.org</text></g>
+<g class="ct-leaf ct-off"><rect x="288.5" y="152" width="88" height="38" rx="6"/><text class="ct-kind" x="332.5" y="167">leaf</text><text class="ct-name" x="332.5" y="182">example.net</text></g>
+</svg>
 </div>
 
-<p class="bitgrid-caption">Trust flows down from the root, which your device already has. The server only sends the two certificates below it, and the client works its way back up, checking each signature with the public key of the certificate above.</p>
+<p class="bitgrid-caption">The highlighted branch is the chain of trust for app.example.com. Other sites hang off the same root through their own branches.</p>
+
+- **Root certificate** (Example Root CA): signs itself. It's already on your device, in the trust store, and that's the only reason it's trusted.
+- **Intermediate certificate** (Example Intermediate CA): signed with the root's private key, and sent by the server. It does the CA's day-to-day signing, so the root's key can stay offline.
+- **Leaf certificate** (app.example.com): signed with the intermediate's private key, and sent by the server. It names the site and holds the site's public key.
+
+Trust flows down from the root, but checking goes the other way. The client starts at the leaf and works its way up, checking each signature with the public key of the certificate above, until it reaches a root it already has.
+
+A passport is a useful comparison. A country's national seal is the root: every border agent has been taught to recognize it in advance. The passport office is the intermediate, authorized under that seal to issue passports every day. Your passport is the leaf, issued by that office and naming you. The border agent has never seen your passport before, but can trace its authority back to a seal they already trust.
 
 ### Why there's a middle step
 

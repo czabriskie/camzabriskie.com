@@ -308,20 +308,22 @@ nav.note-nav .mono { color: var(--tech); font-weight: 400; }
 .cmd-builder-note { color: var(--muted); font-size: 0.8rem; }
 .cmd-var { text-decoration: underline dotted; text-underline-offset: 3px; }
 /* Chain of trust diagram (Certificates and Trust primer), static HTML/CSS */
-.trust-chain { display: flex; flex-direction: column; align-items: stretch; max-width: 32rem; margin: 1.2rem auto 0.5rem; font-size: 0.92rem; }
-.tc-link { border: 1px solid var(--line); border-left: 3px solid var(--tech); border-radius: 8px; padding: 0.6rem 0.8rem; background: var(--surface); }
-.tc-root { border-left-color: var(--life); }
-.tc-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 0.2rem 0.8rem; }
-.tc-kind { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 0.72rem; color: var(--muted); }
-.tc-badge { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 0.68rem; border-radius: 4px; padding: 0.05rem 0.4rem; border: 1px solid var(--line); }
-.tc-local { color: var(--life); border-color: var(--life); }
-.tc-sent { color: var(--tech); border-color: var(--tech); }
-.tc-name { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 1.02rem; margin: 0.15rem 0; }
-.tc-detail { color: var(--muted); font-size: 0.88rem; }
-.tc-arrow { display: flex; flex-direction: column; align-items: center; color: var(--muted); font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 0.72rem; line-height: 1; padding: 0.3rem 0; }
-.tc-arrow::before { content: ""; width: 1px; height: 0.7rem; background: var(--muted); }
-.tc-arrow::after { content: "▼"; font-size: 0.6rem; }
-.tc-arrow span { padding: 0.15rem 0; }
+.cert-tree { max-width: 30rem; margin: 1.2rem auto 0.5rem; }
+.cert-tree svg { display: block; width: 100%; height: auto; }
+.cert-tree line { stroke: var(--muted); stroke-width: 1; }
+.cert-tree rect { fill: var(--surface); stroke: var(--line); stroke-width: 1; }
+.cert-tree .ct-root rect { stroke: var(--life); stroke-width: 1.5; }
+.cert-tree .ct-leaf rect { stroke: var(--tech); }
+.cert-tree text { text-anchor: middle; fill: var(--ink); }
+.cert-tree .ct-kind { font: 8px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.cert-tree .ct-name { font: 600 10px 'Bricolage Grotesque', sans-serif; }
+.cert-tree .ct-root .ct-kind { fill: var(--life); }
+.cert-tree .ct-leaf .ct-kind { fill: var(--tech); }
+.cert-tree line.ct-on { stroke: var(--tech); stroke-width: 2; }
+.cert-tree .ct-on rect { stroke-width: 2; }
+.cert-tree .ct-off { opacity: 0.5; }
+.cert-tree .ct-mid.ct-on rect { stroke: var(--tech); }
+.cert-tree .ct-leaf .ct-name { font-size: 9px; }
 
 /* Certificate check walkthrough (src/scripts/cert-chain.ts) */
 .cert-walk { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 1rem 1.1rem; margin: 1.2rem 0 1.8rem; font-size: 0.92rem; }
