@@ -49,7 +49,7 @@ $null | openssl s_client -connect camzabriskie.com:443 -servername camzabriskie.
 
 Windows doesn't include OpenSSL, but Git for Windows comes with it [@git-for-windows-release-notes], so if you have Git installed the macOS / Linux version works in Git Bash.
 
-Two of those fields carry the whole chain of trust below: the **subject** says who a certificate is about, and the **issuer** says who signed it.
+The **subject** says who a certificate is about, and the **issuer** says who signed it. One certificate's issuer is the next one's subject, and following those links from the site's certificate up to one your device already trusts is [the chain of trust](#the-chain-of-trust), which gets its own section further down.
 
 ### SANs and wildcards
 
