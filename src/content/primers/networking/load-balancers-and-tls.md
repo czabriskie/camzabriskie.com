@@ -53,6 +53,30 @@ There are three common places:
 
 One load balancer often serves several hostnames, each with its own certificate. The client says which hostname it wants at the very start of the TLS handshake, before anything is encrypted, using an extension called **SNI** (Server Name Indication) [@rfc6066]. The load balancer uses that to pick the right certificate. Without SNI, every hostname on an address would need to share one certificate.
 
+### SNI on an ALB or NLB
+
+There's no SNI setting to turn on. A secure listener (HTTPS on an ALB, TLS on an NLB) has two places for certificates, and SNI happens automatically as soon as the second one is used [@aws-alb-certificates, @aws-nlb-certificates]:
+
+- **The default certificate,** the one you choose when you create the listener. Every secure listener has one.
+- **The certificate list,** under the listener's Certificates tab (or the `AddListenerCertificates` API), for extra certificates. An ALB takes up to 25 beyond the default before you need a quota increase [@aws-alb-quotas].
+
+If a listener only has the default certificate, or one wildcard or multi-name certificate that covers everything, there's nothing to choose between, so SNI is still sent on every connection but never changes anything. That's why it's easy to run load balancers for years without noticing it.
+
+When there is a choice, here's what happens for a connection to `api.example.org`:
+
+1. **The client's first handshake message names the host** it wants: `api.example.org`.
+2. **The load balancer looks for certificates that cover that name** in the certificate list. One match gets used. If several match (an exact certificate and a wildcard, say), it picks the best one the client supports, preferring ECDSA keys over RSA and unexpired certificates over expired ones [@aws-alb-certificates].
+3. **No match, or no hostname sent at all, falls back to the default certificate.**
+4. **The handshake finishes, the request gets decrypted,** and only then do the listener rules run.
+
+Step 4 is why SNI is easy to mix up with host-based routing, even though they're separate steps. **SNI picks the certificate,** during the handshake, before anything is decrypted. **The `Host` header picks the target group,** through the listener rules, after decryption. Both usually carry the same hostname, which makes them look like one feature.
+
+A few details that matter in practice:
+
+- A listener created in the console has its default certificate added to the certificate list too. One created through the API or CLI doesn't, and then the default is only a fallback that doesn't take part in matching [@aws-alb-certificates].
+- On an NLB this only applies to a TLS listener. With a plain TCP listener the NLB never decrypts anything [@aws-nlb-listeners], so the servers behind it read SNI and pick their own certificates.
+- The ALB's access logs record the hostname each client asked for and which certificate it got, which is the quickest way to answer "why did this client get the wrong certificate?" [@aws-alb-certificates]
+
 ## WAFs only work on HTTP
 
 A **web application firewall (WAF)** inspects HTTP requests for attacks: SQL injection, cross-site scripting, bad bots, too many requests from one address. To see a request it has to be able to read it, so a WAF sits where TLS has already been terminated, on an ALB or in front of the site at a [CDN](/primers/networking/cdns-and-cloudfront/). AWS WAF, for example, attaches to ALBs, CloudFront, and API Gateway, but not to NLBs [@aws-waf-resources].
