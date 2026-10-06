@@ -180,11 +180,13 @@ Every publicly trusted certificate gets recorded in public, append-only **Certif
 
 ### CAA records can block a CA entirely
 
-A domain can publish a **CAA record** listing which CAs are allowed to issue certificates for it:
+**CAA** stands for **Certification Authority Authorization**. It's a type of DNS record, published alongside a domain's other records like its addresses and mail servers ([more on record types](/primers/networking/dns-resolution/#record-types)), and it lists which CAs are allowed to issue certificates for that domain [@rfc8659]:
 
 ```
 example.com.  CAA  0 issue "letsencrypt.org"
 ```
+
+Left to right, that's the domain, the record type, a flags field (`0` is the normal value), the tag `issue`, meaning "this CA may issue certificates for this domain," and the CA, named by its own domain. A domain that uses more than one CA lists each in its own `issue` record, and the `issuewild` tag does the same just for wildcard certificates [@rfc8659].
 
 CAs are required to check it before issuing [@rfc8659]. If the domain's CAA record only lists Amazon's CAs, for example, Let's Encrypt will refuse with a CAA error no matter how the challenge is set up, and retrying won't help. The only ways around it are changing the CAA record (a policy decision for the whole domain) or using a CA that's on the list. If a domain has no CAA record, any CA can issue.
 
