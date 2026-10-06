@@ -62,6 +62,7 @@ export const references = {
   rfc9001: rfc(9001, ['M. Thomson, Ed.', 'S. Turner, Ed.'], 'Using TLS to Secure QUIC', 'May 2021'),
   rfc9110: rfc(9110, ['R. Fielding, Ed.', 'M. Nottingham, Ed.', 'J. Reschke, Ed.'], 'HTTP Semantics', 'Jun. 2022'),
   rfc9114: rfc(9114, ['M. Bishop, Ed.'], 'HTTP/3', 'Jun. 2022'),
+  rfc9525: rfc(9525, ['P. Saint-Andre', 'R. Salz'], 'Service Identity in TLS', 'Nov. 2023'),
   rfc9542: rfc(9542, ['D. Eastlake 3rd', 'J. Abley', 'Y. Li'], 'IANA Considerations and IETF Protocol and Documentation Usage for IEEE 802 Parameters', 'Apr. 2024'),
   rfc9293: rfc(9293, ['W. Eddy, Ed.'], 'Transmission Control Protocol (TCP)', 'Aug. 2022'),
   rfc9111: rfc(9111, ['R. Fielding, Ed.', 'M. Nottingham, Ed.', 'J. Reschke, Ed.'], 'HTTP Caching', 'Jun. 2022'),
@@ -200,6 +201,7 @@ export const references = {
   'node-cli': { authors: 'OpenJS Foundation', title: 'Command-line API', container: 'Node.js Documentation', url: 'https://nodejs.org/api/cli.html', accessed: CHECKED },
   'java-keytool': { authors: 'Oracle', title: 'The keytool Command', container: 'Java SE 21 Tool Specifications', url: 'https://docs.oracle.com/en/java/javase/21/docs/specs/man/keytool.html', accessed: CHECKED },
   'trino-jdbc': { authors: 'Trino Software Foundation', title: 'JDBC driver', container: 'Trino Documentation', url: 'https://trino.io/docs/current/client/jdbc.html', accessed: CHECKED },
+  'openssl-verify-errors': { authors: 'OpenSSL Project', title: 'X509_STORE_CTX_get_error', container: 'OpenSSL Documentation', url: 'https://docs.openssl.org/master/man3/X509_STORE_CTX_get_error/', accessed: '2026-10-06' },
   'openssl-s-client': { authors: 'OpenSSL Project', title: 'openssl-s_client', container: 'OpenSSL Documentation', url: 'https://docs.openssl.org/master/man1/openssl-s_client/', accessed: CHECKED },
 
   // Command-line tools on Windows and macOS (PowerShell tabs, Decision 0008)

@@ -38,7 +38,23 @@ CAs don't sign server certificates with their most valuable key. The chain usual
 - One or more **intermediate certificates**, signed by the root.
 - The **leaf certificate**, the server's own, signed by an intermediate.
 
+<div class="trust-chain" role="img" aria-label="Chain of trust: Example Root CA, already on your device in the trust store, signs Example Intermediate CA, which signs the app.example.com certificate. The server sends the intermediate and the site's certificate.">
+<div class="tc-link tc-root"><div class="tc-head"><span class="tc-kind">Root certificate</span><span class="tc-badge tc-local">already on your device, in the trust store</span></div><div class="tc-name">Example Root CA</div><div class="tc-detail">Signs itself. Trusted only because it's in the trust store.</div></div>
+<div class="tc-arrow" aria-hidden="true"><span>signs</span></div>
+<div class="tc-link"><div class="tc-head"><span class="tc-kind">Intermediate certificate</span><span class="tc-badge tc-sent">sent by the server</span></div><div class="tc-name">Example Intermediate CA</div><div class="tc-detail">Signed with the root's private key. Does the day-to-day signing, so the root's key can stay offline.</div></div>
+<div class="tc-arrow" aria-hidden="true"><span>signs</span></div>
+<div class="tc-link tc-leaf"><div class="tc-head"><span class="tc-kind">Leaf certificate</span><span class="tc-badge tc-sent">sent by the server</span></div><div class="tc-name">app.example.com</div><div class="tc-detail">Signed with the intermediate's private key. Names the site and holds its public key.</div></div>
+</div>
+
+<p class="bitgrid-caption">Trust flows down from the root, which your device already has. The server only sends the two certificates below it, and the client works its way back up, checking each signature with the public key of the certificate above.</p>
+
 The server is supposed to send its leaf certificate plus the intermediates, and the client connects them up to a root in its trust store. If the server forgets the intermediates, some clients cope (browsers often fetch or cache them) and others fail, which is one way a site can work in a browser and fail from a script.
+
+### Watching a browser check a certificate
+
+Step through what a browser does with the certificates a server sends, or pick a scenario to see where each kind of problem gets caught. Real clients don't always run the checks in this order, but every one of them has to pass: the name check [@rfc9525], the dates and signatures up the chain to a trusted root [@rfc5280], and proof that the server holds the private key [@rfc8446]. The error messages are the ones OpenSSL reports [@openssl-verify-errors], and a copied certificate without its key gets the handshake aborted with a `decrypt_error` alert [@rfc8446].
+
+<div class="cert-walk"></div>
 
 ## Getting a certificate
 
