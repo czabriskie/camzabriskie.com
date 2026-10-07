@@ -169,6 +169,12 @@ export const references = {
   'root-servers': { authors: 'Root Server Technical Operations Association', title: 'Root Servers', url: 'https://root-servers.org/', accessed: CHECKED },
 
   // DNS and Route 53
+  'bind9-dig': { authors: 'Internet Systems Consortium', title: 'dig: DNS lookup utility', container: 'BIND 9 Administrator Reference Manual: Manual Pages', url: 'https://bind9.readthedocs.io/en/stable/manpages.html', accessed: '2026-10-07' },
+  'tcpdump-man': { authors: 'The Tcpdump Group', title: 'tcpdump(1): dump traffic on a network', container: 'tcpdump man pages', url: 'https://www.tcpdump.org/manpages/tcpdump.1.html', accessed: '2026-10-07' },
+  'pcap-filter-man': { authors: 'The Tcpdump Group', title: 'pcap-filter(7): packet filter syntax', container: 'tcpdump man pages', url: 'https://www.tcpdump.org/manpages/pcap-filter.7.html', accessed: '2026-10-07' },
+  'systemd-resolved': { authors: 'systemd project', title: 'systemd-resolved.service', container: 'systemd manual pages', url: 'https://www.freedesktop.org/software/systemd/man/latest/systemd-resolved.service.html', accessed: '2026-10-07' },
+  'ms-get-dnsclientserveraddress': { authors: 'Microsoft', title: 'Get-DnsClientServerAddress', container: 'Windows PowerShell DnsClient Module Reference', url: 'https://learn.microsoft.com/en-us/powershell/module/dnsclient/get-dnsclientserveraddress', accessed: '2026-10-07' },
+  'aws-vpc-amazon-dns': { authors: AWS, title: 'Understanding Amazon DNS', container: VPC_GUIDE, url: 'https://docs.aws.amazon.com/vpc/latest/userguide/AmazonDNS-concepts.html', accessed: '2026-10-07' },
   'aws-route53-concepts': aws('Amazon Route 53 concepts', 'Amazon Route 53 Developer Guide', 'https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/route-53-concepts.html'),
   'aws-route53-public-zones': aws('Considerations when working with public hosted zones', 'Amazon Route 53 Developer Guide', 'https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/hosted-zone-public-considerations.html'),
   'aws-route53-private-zones': aws('Working with private hosted zones', 'Amazon Route 53 Developer Guide', 'https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/hosted-zones-private.html'),

@@ -411,6 +411,33 @@ nav.note-nav .mono { color: var(--tech); font-weight: 400; }
 /* CIDR calculator (src/scripts/cidr-calc.ts) */
 .cidr-calc { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 1rem 1.2rem; margin: 1.2rem 0 1.6rem; }
 .cidr-calc:empty { display: none; }
+
+/* DNS primer diagrams: one lookup (.dns-walk) and the name tree with its zones (.dns-tree) */
+.dns-walk, .dns-tree { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+.dns-walk svg, .dns-tree svg { display: block; width: 100%; height: auto; }
+.dns-walk .dw-actor { font: 600 10px 'Bricolage Grotesque', sans-serif; text-anchor: middle; fill: var(--ink); }
+.dns-walk .dw-role { font: 8px 'IBM Plex Mono', ui-monospace, monospace; text-anchor: middle; fill: var(--muted); }
+.dns-walk .dw-life { stroke: var(--line); stroke-width: 2; }
+.dns-walk .dw-msg { stroke: var(--muted); stroke-width: 1.2; }
+.dns-walk .dw-ref { stroke-dasharray: 4 3; }
+.dns-walk .dw-ans { stroke: var(--tech); stroke-width: 1.8; }
+.dns-walk .dw-head { fill: var(--muted); }
+.dns-walk .dw-head-ans { fill: var(--tech); }
+.dns-walk .dw-label { font: 8px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--ink); paint-order: stroke; stroke: var(--paper); stroke-width: 3px; stroke-linejoin: round; }
+.dns-walk .dw-mid { text-anchor: middle; }
+.dns-walk .dw-ref-text { fill: var(--muted); }
+.dns-walk .dw-ans-text { fill: var(--tech); font-weight: 600; }
+.dns-tree .dt-zone { fill: none; stroke: var(--tech); stroke-width: 1; stroke-dasharray: 4 3; }
+.dns-tree .dt-zone-other { stroke: var(--muted); opacity: 0.6; }
+.dns-tree .dt-node rect { fill: var(--surface); stroke: var(--muted); stroke-width: 0.8; }
+.dns-tree .dt-node text { font: 10px 'IBM Plex Mono', ui-monospace, monospace; text-anchor: middle; fill: var(--ink); }
+.dns-tree .dt-edge { stroke: var(--muted); stroke-width: 1; }
+.dns-tree .dt-deleg { stroke: var(--tech); stroke-width: 1.5; }
+.dns-tree .dt-zname { font: 600 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--tech); }
+.dns-tree .dt-who { font: 8px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.dns-tree .dt-ns { font: 8px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--tech); }
+.dns-tree .dt-end { text-anchor: end; }
+.dns-tree .dt-mid { text-anchor: middle; }
 .cidr-calc .controls { display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap; }
 .cidr-calc label { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; }
 .cidr-calc input[type=number], .cidr-calc input.ip {
