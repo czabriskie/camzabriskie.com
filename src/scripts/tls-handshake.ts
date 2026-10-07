@@ -88,7 +88,8 @@ for (const root of document.querySelectorAll<HTMLElement>('.tls-walk')) {
       .map((m, i) => {
         const state = i < shown - 1 ? 'past' : i === shown - 1 ? 'current' : 'future';
         return `<li class="tw-msg tw-${m.dir} tw-${state}${m.encrypted ? ' tw-enc' : ''}" ${state === 'future' ? 'aria-hidden="true"' : ''}>
-          <span class="tw-line"><span class="tw-name">${m.encrypted ? '<span class="tw-lock" aria-label="encrypted">🔒</span> ' : ''}${esc(m.name)}</span></span>
+          <span class="tw-line"><span class="tw-name">${m.encrypted ? '<span class="tw-lock" aria-label="encrypted">🔒</span> ' : ''}${esc(m.name)}</span>
+            <span class="tw-arrow" aria-hidden="true"><i class="tw-dot"></i><i class="tw-shaft"></i><i class="tw-head"></i></span></span>
           <span class="tw-carries">${esc(m.carries)}</span>
           ${m.check ? `<span class="tw-check tw-check-${m.dir === 'left' ? 'client' : 'server'}">✓ ${esc(m.check)}</span>` : ''}
         </li>`;
