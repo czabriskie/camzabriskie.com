@@ -29,6 +29,9 @@ export const topics = [
     slug: 'working-with-ai',
     title: 'Working with AI',
     blurb: 'How to set up AI assistants so their work can be trusted and checked.',
+    slug: 'observability',
+    title: 'Observability',
+    blurb: 'Watching systems as they run: metrics, logs, and the tools that keep them.',
   },
 ];
 
