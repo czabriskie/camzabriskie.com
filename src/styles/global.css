@@ -322,6 +322,54 @@ nav.note-nav .mono { color: var(--tech); font-weight: 400; }
 .encap-payload .encap-tag { display: block; margin-bottom: 0.2rem; }
 @media (max-width: 30rem) { .encap-layer { padding: 0.45rem 0.5rem 0.55rem; } }
 
+/* Reaching private resources primer: peering vs. Transit Gateway, VPN source addresses,
+   and the hops of a kubectl port forward. Teal marks the path that works. */
+.peer-mesh, .vpn-path, .relay-path { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+.peer-mesh svg, .vpn-path svg, .relay-path svg { display: block; width: 100%; height: auto; }
+.peer-mesh text, .vpn-path text, .relay-path text { text-anchor: middle; fill: var(--ink); }
+.peer-mesh .pe-title { font: 600 10px 'Bricolage Grotesque', sans-serif; }
+.peer-mesh .pe-link { stroke: var(--muted); stroke-width: 1.2; }
+.peer-mesh .pe-no { stroke: var(--life); stroke-width: 1.4; stroke-dasharray: 4 3; }
+.peer-mesh .pe-x { fill: none; stroke: var(--life); stroke-width: 2; stroke-linecap: round; }
+.peer-mesh .pe-spoke { stroke: var(--tech); stroke-width: 1.8; }
+.peer-mesh .pe-vpc { fill: var(--surface); stroke: var(--line); stroke-width: 1.2; }
+.peer-mesh .pe-name { font: 600 9px 'IBM Plex Mono', ui-monospace, monospace; }
+.peer-mesh .pe-hub { fill: var(--surface); stroke: var(--tech); stroke-width: 1.5; }
+.peer-mesh .pe-hub-name { font: 600 8px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--tech); }
+.peer-mesh .pe-note { font: 8px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.peer-mesh .pe-count { font: 600 8.5px 'IBM Plex Mono', ui-monospace, monospace; }
+.peer-mesh .pe-count-hub { fill: var(--tech); }
+.vpn-path .vp-title { font: 600 10.5px 'Bricolage Grotesque', sans-serif; text-anchor: start; }
+.vpn-path .vp-vpc { fill: none; stroke: var(--line); stroke-width: 1.2; stroke-dasharray: 5 3; }
+.vpn-path .vp-vpc-label { font: 8px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); text-anchor: end; }
+.vpn-path .vp-node { fill: var(--surface); stroke: var(--line); stroke-width: 1; }
+.vpn-path .vp-name { font: 600 9.5px 'Bricolage Grotesque', sans-serif; }
+.vpn-path .vp-addr { font: 8px 'IBM Plex Mono', ui-monospace, monospace; }
+.vpn-path .vp-sub { font: 8px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.vpn-path .vp-src { font: 600 8.5px 'IBM Plex Mono', ui-monospace, monospace; }
+.vpn-path .vp-msg { stroke: var(--muted); stroke-width: 1.2; }
+.vpn-path .vp-head { fill: var(--muted); }
+.vpn-path .vp-head-ok { fill: var(--tech); }
+.vpn-path .vp-reply { fill: none; stroke-width: 1.4; }
+.vpn-path .vp-ok { stroke: var(--tech); }
+.vpn-path .vp-miss { stroke: var(--muted); stroke-dasharray: 4 3; }
+.vpn-path .vp-note { font: 8px 'IBM Plex Mono', ui-monospace, monospace; }
+.vpn-path .vp-new { fill: var(--tech); }
+.vpn-path .vp-need { fill: var(--life); }
+.relay-path .rp-zone { fill: none; stroke: var(--line); stroke-width: 1.2; stroke-dasharray: 5 3; }
+.relay-path .rp-vpc { stroke: var(--tech); }
+.relay-path .rp-zone-label { font: 8px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); text-anchor: start; }
+.relay-path .rp-vpc-label { fill: var(--tech); text-anchor: end; }
+.relay-path .rp-node { fill: var(--surface); stroke: var(--line); stroke-width: 1; }
+.relay-path .rp-name { font: 600 9.5px 'Bricolage Grotesque', sans-serif; }
+.relay-path .rp-sub { font: 8px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.relay-path .rp-hop { font: 8px 'IBM Plex Mono', ui-monospace, monospace; text-anchor: start; }
+.relay-path .rp-enc-text { fill: var(--tech); text-anchor: middle; }
+.relay-path .rp-msg { stroke: var(--muted); stroke-width: 1.2; }
+.relay-path .rp-msg.rp-enc { stroke: var(--tech); stroke-width: 2; }
+.relay-path .rp-head { fill: var(--muted); }
+.relay-path .rp-head-enc { fill: var(--tech); }
+
 /* Code tabs, copy buttons, and command builders (Decision 0008, src/scripts/code-tabs.ts).
    Without JS every tab panel shows under its own label. */
 .code-tabs { margin: 1.2rem 0; }
