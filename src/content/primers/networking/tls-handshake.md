@@ -99,14 +99,21 @@ Real TLS does this with math instead of paint, where the "un-mixing" step is wha
 <details class="aside">
 <summary>The same trick with numbers</summary>
 
-The original version of this, from Diffie and Hellman in 1976, uses ordinary numbers [@diffie-hellman-1976]. The public "yellow" is two numbers, here 5 and 23. "Mixing in" a secret number means multiplying 5 by itself that many times, then keeping only the remainder after dividing by 23.
+The paint stands in for math. The original version, from Diffie and Hellman in 1976, uses ordinary numbers [@diffie-hellman-1976], and every step lines up with a step of the paint example. "Mixing" a secret into a number means multiplying that number by itself the secret number of times, then keeping only the remainder after dividing by 23. For example, mixing 6 into 5 means 5⁶ = 15,625, and 15,625 ÷ 23 is 679 with **8** left over, so the result is 8.
 
-1. The browser's secret is 6. Its key share is 5⁶ = 15,625, which leaves a remainder of **8** after dividing by 23. It sends 8.
-2. The server's secret is 15. Its key share is 5¹⁵, which leaves **19**. It sends 19.
-3. The browser takes the server's 19 and mixes in its own 6: 19⁶ leaves **2**.
-4. The server takes the browser's 8 and mixes in its own 15: 8¹⁵ leaves **2**.
+| Step | With paint | With numbers |
+|---|---|---|
+| 1. Agree in public | Yellow | 5, and the 23 used for remainders |
+| 2. The browser's secret | Red | 6 |
+| 2. The server's secret | Blue | 15 |
+| 3. The browser's key share, sent | Orange (yellow + red) | 5⁶ leaves **8** |
+| 3. The server's key share, sent | Green (yellow + blue) | 5¹⁵ leaves **19** |
+| 4. The browser finishes | Green + red = brown | 19⁶ leaves **2** |
+| 4. The server finishes | Orange + blue = brown | 8¹⁵ leaves **2** |
+| What a watcher saw | Yellow, orange, green | 5, 23, 8, 19 |
+| What the watcher would need | Un-mix the red out of the orange | Work out "5 to what power leaves 8?" |
 
-Both sides get 2. Someone watching saw 5, 23, 8, and 19. To get to 2 they need the 6 or the 15, which means answering "5 to what power leaves 8?" With numbers this small they can just try every power, but real key exchanges use numbers hundreds of digits long, where nobody knows a practical way to answer that question, and the whole method depends on it staying that way [@diffie-hellman-1976]. X25519 does the same thing with a different kind of math (elliptic curves) that gets the same protection from much shorter numbers [@rfc7748].
+Both sides end up with 2, the brown. The watcher's question is easy here, since they can just try every power until one leaves 8. Real key exchanges use numbers hundreds of digits long, where nobody knows a practical way to answer it, and the whole method depends on that staying true [@diffie-hellman-1976]. X25519 does the same thing with a different kind of math (elliptic curves) that gets the same protection from much shorter numbers [@rfc7748].
 
 </details>
 
