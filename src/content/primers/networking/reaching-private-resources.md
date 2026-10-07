@@ -104,6 +104,9 @@ Two details catch people out:
 
 - **A VPC attachment needs a subnet in each availability zone.** Resources in a zone with no attachment subnet can't reach the Transit Gateway at all, even with a route to it [@aws-tgw-how-it-works, @aws-tgw-vpc-attachments].
 - **Return routes live in the VPC.** Each subnet with resources that should be reachable needs a route back to the far side's range pointing at the Transit Gateway, like the last row in the table above. Without it, requests arrive and replies go nowhere [@aws-tgw-vpc-attachments].
+- **Address ranges can't overlap, same as with peering.** Transit Gateway lets you attach a VPC whose range matches or overlaps one that's already attached, but it won't route between them: the new VPC's routes just never get added to the gateway's route table [@aws-tgw-vpc-attachments]. It couldn't work anyway. The gateway's route table sends a range to exactly one attachment, so two VPCs on `10.0.0.0/16` can't both be "the" `10.0.0.0/16`, and inside each VPC the `local` route already claims that range, so a packet for it never leaves for the gateway in the first place.
+
+When two networks that overlap really do need to talk, AWS's documented workaround is a **private NAT gateway**. Each VPC gets an extra range that doesn't overlap with anything, and the traffic crosses the Transit Gateway using only addresses from those extra ranges: it leaves VPC A through a private NAT gateway, which swaps the source for its own non-overlapping address, and arrives at a load balancer in VPC B's non-overlapping range, which passes it on to the real servers [@aws-nat-gateway-scenarios]. Neither side ever has to route to the overlapping range. If only one service needs to be reachable, [PrivateLink](#vpcs-in-different-aws-accounts) is simpler and allows overlapping ranges directly.
 
 ### VPCs in different AWS accounts
 
