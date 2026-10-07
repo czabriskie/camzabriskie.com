@@ -528,5 +528,8 @@ details.aside[open] summary { margin-bottom: 0.4rem; }
 .tw-name { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 0.82rem; font-weight: 500; }
 .tw-lock { font-size: 0.75rem; }
 .tw-carries { font-size: 0.8rem; color: var(--muted); padding: 0.2rem 0.8rem 0; }
+.tw-check { font-size: 0.8rem; font-weight: 600; color: var(--ink); padding: 0 0.8rem; }
+.tw-check-client { text-align: left; }
+.tw-check-server { text-align: right; }
 .tw-explain { border-top: 1px solid var(--line); margin-top: 0.8rem; padding-top: 0.6rem; min-height: 3.2rem; }
 @media (prefers-reduced-motion: reduce) { .tw-msg { transition: none; } }
