@@ -78,7 +78,7 @@ Loading a page takes more than one request. Here's everything that happens, in o
 2. **Find the router.** To send anything off the local network, the laptop needs the router's MAC address, so it asks with [ARP](#arp-from-an-ip-address-to-a-mac-address). The answer gets cached and reused for everything after.
 3. **Look up the name.** The laptop asks DNS for `www.example.com` and gets `203.0.113.10` ([How DNS resolution works](/primers/networking/dns-resolution/) covers that lookup step by step).
 4. **Open a connection.** TCP sets up a connection with the server in a **three-way handshake**: the laptop sends a SYN ("let's talk"), the server answers SYN-ACK ("okay"), and the laptop sends an ACK ("okay, starting") [@rfc9293].
-5. **Agree on encryption.** TLS does its own handshake over that connection. The server shows its certificate, the laptop [checks it](/primers/networking/certificates-and-trust/#what-a-certificate-proves), and they agree on keys [@rfc8446].
+5. **Agree on encryption.** TLS does its own handshake over that connection. The server shows its certificate, the laptop [checks it](/primers/networking/certificates-and-trust/#what-a-certificate-proves), and they agree on keys [@rfc9846].
 6. **Send the request.** Now the browser can finally send `GET /`, which is what the next section follows down the stack.
 
 Steps 1 and 2 happen once and get reused. Steps 3 through 5 happen for each new server, which is part of why the first visit to a site feels slower than the second.
