@@ -67,6 +67,24 @@ export const references = {
   rfc9542: rfc(9542, ['D. Eastlake 3rd', 'J. Abley', 'Y. Li'], 'IANA Considerations and IETF Protocol and Documentation Usage for IEEE 802 Parameters', 'Apr. 2024'),
   rfc9293: rfc(9293, ['W. Eddy, Ed.'], 'Transmission Control Protocol (TCP)', 'Aug. 2022'),
   rfc9111: rfc(9111, ['R. Fielding, Ed.', 'M. Nottingham, Ed.', 'J. Reschke, Ed.'], 'HTTP Caching', 'Jun. 2022'),
+  rfc5246: rfc(5246, ['T. Dierks', 'E. Rescorla'], 'The Transport Layer Security (TLS) Protocol Version 1.2', 'Aug. 2008'),
+  rfc7301: rfc(7301, ['S. Friedl', 'A. Popov', 'A. Langley', 'E. Stephan'], 'Transport Layer Security (TLS) Application-Layer Protocol Negotiation Extension', 'Jul. 2014'),
+  rfc7748: rfc(7748, ['A. Langley', 'M. Hamburg', 'S. Turner'], 'Elliptic Curves for Security', 'Jan. 2016'),
+  rfc8996: rfc(8996, ['K. Moriarty', 'S. Farrell'], 'Deprecating TLS 1.0 and TLS 1.1', 'Mar. 2021'),
+  rfc9849: rfc(9849, ['E. Rescorla', 'K. Oku', 'N. Sullivan', 'C. A. Wood'], 'TLS Encrypted Client Hello', 'Mar. 2026'),
+  'wireshark-tls': { authors: 'Wireshark Foundation', title: 'TLS', container: 'Wireshark Wiki', url: 'https://wiki.wireshark.org/TLS', accessed: '2026-10-06' },
+  rfc5116: rfc(5116, ['D. McGrew'], 'An Interface and Algorithms for Authenticated Encryption', 'Jan. 2008'),
+  rfc10024: rfc(10024, ['K. Kwiatkowski', 'P. Kampanakis', 'B. E. Westerbaan', 'D. Stebila'], 'Post-Quantum Traditional (PQ/T) Hybrid Key Agreement Mechanisms for TLS 1.3', 'Aug. 2026'),
+  'nist-sp-800-175b': {
+    authors: ['E. Barker'],
+    title: 'Guideline for Using Cryptographic Standards in the Federal Government: Cryptographic Mechanisms',
+    note: 'NIST Special Publication 800-175B Rev. 1, National Institute of Standards and Technology',
+    date: 'Mar. 2020',
+    url: 'https://doi.org/10.6028/NIST.SP.800-175Br1',
+    accessed: '2026-10-06',
+  },
+  'google-kyber-blog': { authors: ['D. Adrian', 'D. Benjamin', 'B. Beck', "D. O'Brien"], title: 'A new path for Kyber on the web', container: 'Google Online Security Blog', date: 'Sep. 13, 2024', url: 'https://security.googleblog.com/2024/09/a-new-path-for-kyber-on-web.html', accessed: '2026-10-06' },
+  'diffie-hellman-1976': { authors: ['W. Diffie', 'M. E. Hellman'], title: 'New Directions in Cryptography', container: 'IEEE Transactions on Information Theory', note: 'vol. IT-22, no. 6, pp. 644-654', date: 'Nov. 1976', url: 'https://ee.stanford.edu/~hellman/publications/24.pdf', accessed: '2026-10-06' },
 
   // Other standards and announcements
   'iana-ports': {

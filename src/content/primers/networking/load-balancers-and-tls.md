@@ -97,7 +97,7 @@ Each load balancer is also its own entry point, with its own DNS name, its own s
 
 ## Terminating TLS
 
-TLS is the encryption in HTTPS (and in plenty of other protocols) [@rfc9846, @rfc9110]. **Terminating** TLS means being the end of the encrypted connection: holding the certificate and private key, decrypting what comes in, and handing the plain request to whatever's behind it. Where that happens matters, because whatever terminates TLS is the only thing that can see inside the traffic.
+TLS is the encryption in HTTPS (and in plenty of other protocols) [@rfc9846, @rfc9110], set up by a short [handshake](/primers/networking/tls-handshake/) at the start of each connection. **Terminating** TLS means being the end of the encrypted connection: holding the certificate and private key, decrypting what comes in, and handing the plain request to whatever's behind it. Where that happens matters, because whatever terminates TLS is the only thing that can see inside the traffic.
 
 There are three common places:
 
