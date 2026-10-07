@@ -20,13 +20,13 @@ const FLOWS: Record<string, { label: string; msgs: Msg[]; done: string }> = {
     label: 'TLS 1.3',
     done: 'One round trip, and the request goes out. The server never sent anything readable after its hello.',
     msgs: [
-      { dir: 'right', name: 'ClientHello', encrypted: false, rtt: 0, carries: 'name it wants (SNI): app.example.com · protocols (ALPN): h2, http/1.1 · versions: 1.3, 1.2 · cipher suites · its key share (its half of the key exchange)', explain: 'The client says what it wants and what it supports, and sends its half of the key exchange right away, guessing which method the server will pick.' },
-      { dir: 'left', name: 'ServerHello', encrypted: false, rtt: 1, carries: 'chosen version: 1.3 · chosen cipher suite · its key share', explain: 'The server picks from the client’s lists and sends its half of the key exchange. Both sides can now work out the same secret, and everything from here on is encrypted.' },
+      { dir: 'right', name: 'ClientHello', encrypted: false, rtt: 0, carries: 'name it wants (SNI): app.example.com · protocols (ALPN): h2, http/1.1 · versions: 1.3, 1.2 · cipher suites · its key share (its half of the key exchange)', explain: 'The client says which site it wants and what it supports, and sends its key share (its paint) right away, guessing which key exchange method the server will pick.' },
+      { dir: 'left', name: 'ServerHello', encrypted: false, rtt: 1, carries: 'chosen version: 1.3 · chosen cipher suite · its key share', explain: 'The server picks a version and cipher suite from the client’s lists and sends its own key share. Both sides can now make the same session key (the brown), so everything from here on is encrypted.' },
       { dir: 'left', name: 'EncryptedExtensions', encrypted: true, rtt: 1, carries: 'chosen protocol (ALPN): h2', explain: 'The rest of the server’s choices, now encrypted, including which application protocol to speak.' },
-      { dir: 'left', name: 'Certificate', encrypted: true, rtt: 1, carries: 'leaf certificate + intermediates', explain: 'The server’s certificate chain, the same one the Certificates and Trust primer walks through. Encrypted in 1.3, so someone watching can’t see which certificate it is.' },
-      { dir: 'left', name: 'CertificateVerify', encrypted: true, rtt: 1, carries: 'a signature over the whole handshake so far, made with the certificate’s private key', explain: 'Proof that the server holds the private key matching its certificate. A copied certificate is useless without this.' },
-      { dir: 'left', name: 'Finished', encrypted: true, rtt: 1, carries: 'a checksum of the whole handshake', explain: 'Confirms both sides saw exactly the same messages, so nothing was tampered with on the way.' },
-      { dir: 'right', name: 'Finished', encrypted: true, rtt: 1, carries: 'the client’s checksum of the handshake', explain: 'The client confirms the same thing from its side.' },
+      { dir: 'left', name: 'Certificate', encrypted: true, rtt: 1, carries: 'leaf certificate + intermediates', explain: 'The server’s certificate chain. The client checks it against its trust store, the way the Certificates and Trust primer describes. Encrypted in 1.3, so someone watching can’t see which certificate it is.' },
+      { dir: 'left', name: 'CertificateVerify', encrypted: true, rtt: 1, carries: 'a signature over the whole handshake so far, made with the certificate’s private key', explain: 'The server signs the handshake so far with its certificate’s private key, and the client checks the signature with the public key in the certificate. That proves the server really holds the key. A copied certificate is useless without it.' },
+      { dir: 'left', name: 'Finished', encrypted: true, rtt: 1, carries: 'a checksum of the whole handshake', explain: 'A checksum of the whole handshake, made with the new session key. The client compares it with its own record of the handshake, so it knows nothing was changed on the way.' },
+      { dir: 'right', name: 'Finished', encrypted: true, rtt: 1, carries: 'the client’s checksum of the handshake', explain: 'Everything checked out, so the client sends its own checksum for the server to check the same way.' },
       { dir: 'right', name: 'GET / (HTTP)', encrypted: true, rtt: 1, carries: 'the actual request', explain: 'The client can send its request right behind its Finished, without waiting for another reply.' },
     ],
   },
@@ -36,7 +36,7 @@ const FLOWS: Record<string, { label: string; msgs: Msg[]; done: string }> = {
     msgs: [
       { dir: 'right', name: 'ClientHello', encrypted: false, rtt: 0, carries: 'name it wants (SNI) · protocols (ALPN) · versions · cipher suites', explain: 'The client says what it supports, but doesn’t send any key exchange yet.' },
       { dir: 'left', name: 'ServerHello', encrypted: false, rtt: 1, carries: 'chosen version and cipher suite', explain: 'The server picks from the client’s lists.' },
-      { dir: 'left', name: 'Certificate', encrypted: false, rtt: 1, carries: 'leaf certificate + intermediates', explain: 'Same certificate chain as in 1.3, but sent in the clear, so anyone watching can read it.' },
+      { dir: 'left', name: 'Certificate', encrypted: false, rtt: 1, carries: 'leaf certificate + intermediates', explain: 'Same certificate chain as in 1.3, and the client checks it the same way, but here it’s sent in the clear, so anyone watching can read it.' },
       { dir: 'left', name: 'ServerKeyExchange', encrypted: false, rtt: 1, carries: 'its half of the key exchange, signed with the certificate’s private key', explain: 'The server’s half of the key exchange, signed so the client knows it came from the certificate’s owner.' },
       { dir: 'left', name: 'ServerHelloDone', encrypted: false, rtt: 1, carries: '(nothing else)', explain: 'The server is done with its part and waits for the client.' },
       { dir: 'right', name: 'ClientKeyExchange', encrypted: false, rtt: 1, carries: 'its half of the key exchange', explain: 'Only now does the client send its half, a whole round trip later than in 1.3.' },
@@ -66,6 +66,7 @@ for (const root of document.querySelectorAll<HTMLElement>('.tls-walk')) {
         <button type="button" class="tw-play">Play</button>
       </span>
     </div>
+    <p class="tw-key">Each arrow is one message, from the side that sends it (the dot) to the side that receives it (the arrowhead), in order from top to bottom. <span class="tw-key-enc">Teal with a 🔒</span> means encrypted.</p>
     <div class="tw-stage">
       <div class="tw-ends" aria-hidden="true"><span>Client</span><span class="tw-rtt"></span><span>Server</span></div>
       <ol class="tw-msgs"></ol>
