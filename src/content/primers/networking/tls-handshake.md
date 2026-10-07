@@ -246,7 +246,21 @@ curl.exe https://wrong.host.badssl.com/            # a certificate for a differe
 In normal TLS only the server proves who it is. In **mutual TLS (mTLS)** the server also asks the client for a certificate, and the client answers with its own **Certificate** and **CertificateVerify** messages, proving it holds that certificate's private key the same way the server did [@rfc9846]. [Load balancers and TLS termination](/primers/networking/load-balancers-and-tls/#mtls-the-client-proves-who-it-is-too) covers how that interacts with load balancers.
 
 ### Watching it happen
-`curl -v` prints the result of the handshake (on Windows, type `curl.exe -v`, since in Windows PowerShell 5.1 plain `curl` is an alias for a different command [@ms-curl-windows]). Here's this site, on a Mac, trimmed to the TLS lines:
+`curl -v` prints the result of the handshake. This command asks for a page, throws the page away (`-o`), and keeps only the handshake lines from curl's report (`-v` turns the report on, `-s` hides the progress bar):
+
+<div class="cmd-builder" data-default="camzabriskie.com" data-label="Site"></div>
+
+```bash tab="macOS / Linux"
+curl -sv -o /dev/null https://camzabriskie.com/ 2>&1 \
+  | grep -E 'ALPN|SSL connection|Server certificate|subject:|issuer:|verify ok'
+```
+
+```powershell tab="Windows (PowerShell)"
+curl.exe -sv -o NUL https://camzabriskie.com/ 2>&1 |
+  Select-String 'ALPN|SSL connection|Server certificate|subject:|issuer:|verify ok'
+```
+
+On Windows, type `curl.exe` rather than `curl`, since in Windows PowerShell 5.1 plain `curl` is an alias for a different command [@ms-curl-windows]. Here's what it printed for this site, on a Mac:
 
 ```
 * ALPN: curl offers h2,http/1.1
