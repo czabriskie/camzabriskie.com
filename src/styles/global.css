@@ -461,6 +461,28 @@ ul.references .cited-in { display: block; color: var(--muted); margin-top: 0.2re
 /* TLS handshake message diagram (src/scripts/tls-handshake.ts) */
 .tls-walk { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 1rem 1.1rem; margin: 1.2rem 0 1.8rem; font-size: 0.92rem; }
 .tls-walk:empty { display: none; }
+.paint-mix { max-width: 30rem; margin: 1.2rem auto 0.5rem; }
+.paint-mix svg { display: block; width: 100%; height: auto; }
+.paint-mix .pm-wire { fill: none; stroke: var(--line); stroke-width: 1.5; stroke-dasharray: 4 3; }
+.paint-mix text { text-anchor: middle; }
+.paint-mix .pm-actor { font: 600 11px 'Bricolage Grotesque', sans-serif; fill: var(--ink); }
+.paint-mix .pm-sub, .paint-mix .pm-note { font: 8px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.paint-mix .pm-step { font: 600 9px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--ink); }
+.paint-mix .pm-op { font: 600 12px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--ink); }
+.paint-mix .pm-bad { font: 600 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: #b4413a; }
+.paint-mix .pm-arrow { stroke: var(--muted); stroke-width: 1.2; }
+.paint-mix .pm-head { fill: var(--muted); }
+.paint-mix .pm-sw { stroke: var(--ink); stroke-opacity: 0.35; stroke-width: 1; }
+.paint-mix .pm-yellow { fill: #e8c440; }
+.paint-mix .pm-red { fill: #c8423b; }
+.paint-mix .pm-blue { fill: #3a6cc4; }
+.paint-mix .pm-orange { fill: #e3873a; }
+.paint-mix .pm-blue-green { fill: #5f9a6a; }
+.paint-mix .pm-brown { fill: #6e4a2e; }
+.paint-mix .pm-muddy { fill: #9a8a3e; }
+details.aside { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 0.6rem 1rem; margin: 1.2rem 0; }
+details.aside summary { cursor: pointer; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; }
+details.aside[open] summary { margin-bottom: 0.4rem; }
 .conn-timeline { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
 .conn-timeline svg { display: block; width: 100%; height: auto; }
 .conn-timeline .ct-actor { font: 600 11px 'Bricolage Grotesque', sans-serif; text-anchor: middle; fill: var(--ink); }

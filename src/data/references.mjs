@@ -84,6 +84,7 @@ export const references = {
     accessed: '2026-10-06',
   },
   'google-kyber-blog': { authors: ['D. Adrian', 'D. Benjamin', 'B. Beck', "D. O'Brien"], title: 'A new path for Kyber on the web', container: 'Google Online Security Blog', date: 'Sep. 13, 2024', url: 'https://security.googleblog.com/2024/09/a-new-path-for-kyber-on-web.html', accessed: '2026-10-06' },
+  'diffie-hellman-1976': { authors: ['W. Diffie', 'M. E. Hellman'], title: 'New Directions in Cryptography', container: 'IEEE Transactions on Information Theory', note: 'vol. IT-22, no. 6, pp. 644-654', date: 'Nov. 1976', url: 'https://ee.stanford.edu/~hellman/publications/24.pdf', accessed: '2026-10-06' },
 
   // Other standards and announcements
   'iana-ports': {

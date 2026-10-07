@@ -34,9 +34,81 @@ The second job sounds impossible. Two computers that have never met need to end 
 3. Each side mixes its secret color into the yellow and sends the mixture across. The client sends orange (yellow + red), and the server sends green (yellow + blue). That mixture is each side's **key share**.
 4. Each side adds its own secret color to the mixture it received. The client adds red to the green, the server adds blue to the orange, and both end up with the same brown (yellow + red + blue).
 
-Someone watching saw yellow, orange, and green, but un-mixing paint to get the red or the blue back out is impractical, so they can't make the brown. In the handshake, the client's key share rides in its very first message and the server's in its reply, so both sides can make the brown after one exchange. The brown becomes the session key that encrypts the rest of the conversation [@rfc9846].
+<div class="paint-mix" role="img" aria-label="The paint example step by step. 1: Both sides agree in public on yellow. 2: The browser secretly picks red and the server secretly picks blue. 3: The browser mixes yellow and red into orange and sends it; the server mixes yellow and blue into green and sends it. Both mixtures cross the wire where anyone can see them. 4: The browser mixes the green it received with its red and gets brown. The server mixes the orange it received with its blue and gets the same brown. 5: Someone watching has only orange and green. Mixing those gives yellow, red, yellow and blue: a brown with twice the yellow, which is the wrong color.">
+<svg viewBox="0 0 400 412" aria-hidden="true" focusable="false">
+<defs><marker id="pm-head" viewBox="0 0 8 8" refX="7" refY="4" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" orient="auto"><path class="pm-head" d="M0,0 L8,4 L0,8 z"/></marker></defs>
+<rect class="pm-wire" x="138" y="22" width="124" height="386" rx="8"/>
+<text class="pm-actor" x="70" y="16">Browser</text>
+<text class="pm-actor" x="200" y="16">On the wire</text>
+<text class="pm-actor" x="330" y="16">Server</text>
+<text class="pm-sub" x="200" y="36">anyone can see this</text>
+<text class="pm-step" x="200" y="58">1. agree on a color</text>
+<circle class="pm-sw pm-yellow" cx="200" cy="78" r="10"/>
+<text class="pm-step" x="200" y="108">2. pick a secret</text>
+<circle class="pm-sw pm-red" cx="70" cy="126" r="10"/>
+<text class="pm-note" x="70" y="148">secret</text>
+<circle class="pm-sw pm-blue" cx="330" cy="126" r="10"/>
+<text class="pm-note" x="330" y="148">secret</text>
+<text class="pm-step" x="200" y="176">3. mix your secret in, send it</text>
+<circle class="pm-sw pm-yellow" cx="30" cy="196" r="10"/>
+<text class="pm-op" x="50" y="200">+</text>
+<circle class="pm-sw pm-red" cx="70" cy="196" r="10"/>
+<text class="pm-op" x="90" y="200">=</text>
+<circle class="pm-sw pm-orange" cx="110" cy="196" r="10"/>
+<circle class="pm-sw pm-yellow" cx="290" cy="196" r="10"/>
+<text class="pm-op" x="310" y="200">+</text>
+<circle class="pm-sw pm-blue" cx="330" cy="196" r="10"/>
+<text class="pm-op" x="350" y="200">=</text>
+<circle class="pm-sw pm-blue-green" cx="370" cy="196" r="10"/>
+<line class="pm-arrow" x1="118" y1="204" x2="176" y2="228" marker-end="url(#pm-head)"/>
+<circle class="pm-sw pm-orange" cx="188" cy="232" r="10"/>
+<line class="pm-arrow" x1="366" y1="208" x2="224" y2="230" marker-end="url(#pm-head)"/>
+<circle class="pm-sw pm-blue-green" cx="212" cy="232" r="10"/>
+<text class="pm-note" x="200" y="256">the key shares</text>
+<text class="pm-step" x="200" y="284">4. add your secret to theirs</text>
+<circle class="pm-sw pm-blue-green" cx="30" cy="304" r="10"/>
+<text class="pm-op" x="50" y="308">+</text>
+<circle class="pm-sw pm-red" cx="70" cy="304" r="10"/>
+<text class="pm-op" x="90" y="308">=</text>
+<circle class="pm-sw pm-brown" cx="110" cy="304" r="10"/>
+<circle class="pm-sw pm-orange" cx="290" cy="304" r="10"/>
+<text class="pm-op" x="310" y="308">+</text>
+<circle class="pm-sw pm-blue" cx="330" cy="304" r="10"/>
+<text class="pm-op" x="350" y="308">=</text>
+<circle class="pm-sw pm-brown" cx="370" cy="304" r="10"/>
+<text class="pm-note" x="70" y="328">same brown</text>
+<text class="pm-note" x="330" y="328">same brown</text>
+<text class="pm-step" x="200" y="354">5. a watcher mixes what it saw</text>
+<circle class="pm-sw pm-orange" cx="160" cy="374" r="10"/>
+<text class="pm-op" x="180" y="378">+</text>
+<circle class="pm-sw pm-blue-green" cx="200" cy="374" r="10"/>
+<text class="pm-op" x="220" y="378">=</text>
+<circle class="pm-sw pm-muddy" cx="240" cy="374" r="10"/>
+<text class="pm-bad" x="200" y="396">two yellows: wrong color</text>
+</svg>
+</div>
+
+<p class="bitgrid-caption">Each side ends up with brown because it adds its own unmixed secret to the other side's mixture. Someone watching only ever has mixtures.</p>
+
+Making the brown in step 4 takes one mixture plus one *unmixed* secret color, and only the two ends have one of those. Someone watching saw yellow, orange, and green. If they mix the orange and green together, they get yellow + red + yellow + blue: a brown with twice as much yellow, which is the wrong color, and there's no way to take the extra yellow back out. They could get the right brown if they could pull the red back out of the orange, but un-mixing paint is impractical, so they can't.
+
+In the handshake, the client's key share rides in its very first message and the server's in its reply, so both sides can make the brown after one exchange. The brown becomes the session key that encrypts the rest of the conversation [@rfc9846].
 
 Real TLS does this with math instead of paint, where the "un-mixing" step is what's impractical. For years the usual method was an elliptic curve one called X25519 [@rfc7748]. Newer browsers and servers now use **X25519MLKEM768**, which runs X25519 together with ML-KEM, a newer method designed to hold up against future quantum computers, and stays secure as long as either one does [@rfc10024]. Chrome has offered it since version 131 [@google-kyber-blog], and a connection to this site from a current OpenSSL picks it.
+
+<details class="aside">
+<summary>The same trick with numbers</summary>
+
+The original version of this, from Diffie and Hellman in 1976, uses ordinary numbers [@diffie-hellman-1976]. The public "yellow" is two numbers, here 5 and 23. "Mixing in" a secret number means multiplying 5 by itself that many times, then keeping only the remainder after dividing by 23.
+
+1. The browser's secret is 6. Its key share is 5⁶ = 15,625, which leaves a remainder of **8** after dividing by 23. It sends 8.
+2. The server's secret is 15. Its key share is 5¹⁵, which leaves **19**. It sends 19.
+3. The browser takes the server's 19 and mixes in its own 6: 19⁶ leaves **2**.
+4. The server takes the browser's 8 and mixes in its own 15: 8¹⁵ leaves **2**.
+
+Both sides get 2. Someone watching saw 5, 23, 8, and 19. To get to 2 they need the 6 or the 15, which means answering "5 to what power leaves 8?" With numbers this small they can just try every power, but real key exchanges use numbers hundreds of digits long, where nobody knows a practical way to answer that question, and the whole method depends on it staying that way [@diffie-hellman-1976]. X25519 does the same thing with a different kind of math (elliptic curves) that gets the same protection from much shorter numbers [@rfc7748].
+
+</details>
 
 ### Forward secrecy
 
