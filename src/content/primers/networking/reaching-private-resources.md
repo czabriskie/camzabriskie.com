@@ -100,7 +100,7 @@ Now `10.0.1.25` in A connects to a database at `10.1.20.10` in B:
 
 Every hop only looks at the destination address, and neither address changes along the way. Adding a third VPC means one more attachment and one more row in each VPC that should reach it, not a new connection to every other VPC.
 
-Two details catch people out:
+Three details catch people out:
 
 - **A VPC attachment needs a subnet in each availability zone.** Resources in a zone with no attachment subnet can't reach the Transit Gateway at all, even with a route to it [@aws-tgw-how-it-works, @aws-tgw-vpc-attachments].
 - **Return routes live in the VPC.** Each subnet with resources that should be reachable needs a route back to the far side's range pointing at the Transit Gateway, like the last row in the table above. Without it, requests arrive and replies go nowhere [@aws-tgw-vpc-attachments].
