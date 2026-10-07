@@ -461,6 +461,19 @@ ul.references .cited-in { display: block; color: var(--muted); margin-top: 0.2re
 /* TLS handshake message diagram (src/scripts/tls-handshake.ts) */
 .tls-walk { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 1rem 1.1rem; margin: 1.2rem 0 1.8rem; font-size: 0.92rem; }
 .tls-walk:empty { display: none; }
+.conn-timeline { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+.conn-timeline svg { display: block; width: 100%; height: auto; }
+.conn-timeline .ct-actor { font: 600 11px 'Bricolage Grotesque', sans-serif; text-anchor: middle; fill: var(--ink); }
+.conn-timeline .ct-life { stroke: var(--line); stroke-width: 2; }
+.conn-timeline .ct-msg { stroke: var(--muted); stroke-width: 1.2; }
+.conn-timeline .ct-msg.ct-enc { stroke: var(--tech); stroke-width: 1.8; }
+.conn-timeline .ct-head { fill: var(--muted); }
+.conn-timeline .ct-head-enc { fill: var(--tech); }
+.conn-timeline .ct-label { font: 9px 'IBM Plex Mono', ui-monospace, monospace; text-anchor: middle; fill: var(--ink); }
+.conn-timeline .ct-enc-text { fill: var(--tech); }
+.conn-timeline .ct-bracket { fill: none; stroke: var(--muted); stroke-width: 1; }
+.conn-timeline .ct-phase { font: 600 10px 'Bricolage Grotesque', sans-serif; text-anchor: end; fill: var(--ink); }
+.conn-timeline .ct-rtt { font: 8px 'IBM Plex Mono', ui-monospace, monospace; text-anchor: end; fill: var(--muted); }
 .tw-controls { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.6rem; margin-bottom: 0.8rem; }
 .tw-modes, .tw-buttons { display: flex; gap: 0.4rem; }
 .tw-controls button { font: inherit; font-size: 0.88rem; color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: 4px; padding: 0.2rem 0.6rem; cursor: pointer; }

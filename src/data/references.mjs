@@ -73,6 +73,17 @@ export const references = {
   rfc8996: rfc(8996, ['K. Moriarty', 'S. Farrell'], 'Deprecating TLS 1.0 and TLS 1.1', 'Mar. 2021'),
   rfc9849: rfc(9849, ['E. Rescorla', 'K. Oku', 'N. Sullivan', 'C. A. Wood'], 'TLS Encrypted Client Hello', 'Mar. 2026'),
   'wireshark-tls': { authors: 'Wireshark Foundation', title: 'TLS', container: 'Wireshark Wiki', url: 'https://wiki.wireshark.org/TLS', accessed: '2026-10-06' },
+  rfc5116: rfc(5116, ['D. McGrew'], 'An Interface and Algorithms for Authenticated Encryption', 'Jan. 2008'),
+  rfc10024: rfc(10024, ['K. Kwiatkowski', 'P. Kampanakis', 'B. E. Westerbaan', 'D. Stebila'], 'Post-Quantum Traditional (PQ/T) Hybrid Key Agreement Mechanisms for TLS 1.3', 'Aug. 2026'),
+  'nist-sp-800-175b': {
+    authors: ['E. Barker'],
+    title: 'Guideline for Using Cryptographic Standards in the Federal Government: Cryptographic Mechanisms',
+    note: 'NIST Special Publication 800-175B Rev. 1, National Institute of Standards and Technology',
+    date: 'Mar. 2020',
+    url: 'https://doi.org/10.6028/NIST.SP.800-175Br1',
+    accessed: '2026-10-06',
+  },
+  'google-kyber-blog': { authors: ['D. Adrian', 'D. Benjamin', 'B. Beck', "D. O'Brien"], title: 'A new path for Kyber on the web', container: 'Google Online Security Blog', date: 'Sep. 13, 2024', url: 'https://security.googleblog.com/2024/09/a-new-path-for-kyber-on-web.html', accessed: '2026-10-06' },
 
   // Other standards and announcements
   'iana-ports': {
