@@ -24,7 +24,7 @@ Each one gets a section below, in that order, and [the last section](#connected-
 
 ## Connecting whole networks
 
-These connect one network to another, so everything on one side can reach (whatever the firewalls allow on) the other side.
+These connect one network to another, so everything on one side can reach (whatever the firewalls allow on) the other side. Peering and Transit Gateway also work between VPCs that belong to [different AWS accounts](#vpcs-in-different-aws-accounts).
 
 ### VPC peering
 
@@ -104,6 +104,48 @@ Two details catch people out:
 
 - **A VPC attachment needs a subnet in each availability zone.** Resources in a zone with no attachment subnet can't reach the Transit Gateway at all, even with a route to it [@aws-tgw-how-it-works, @aws-tgw-vpc-attachments].
 - **Return routes live in the VPC.** Each subnet with resources that should be reachable needs a route back to the far side's range pointing at the Transit Gateway, like the last row in the table above. Without it, requests arrive and replies go nowhere [@aws-tgw-vpc-attachments].
+
+### VPCs in different AWS accounts
+
+Companies often give each team or environment its own AWS account, so the VPCs that need to talk end up in different accounts. Peering and Transit Gateway both work across accounts, and the difference from the single-account case is mostly about who has to agree to what.
+
+**With peering, one account asks and the other accepts** [@aws-vpc-peering-create, @aws-vpc-peering-basics]:
+
+1. The **requester** (say account `111111111111`, which owns VPC A) creates a peering request, giving the other account's ID and its VPC's ID, plus that VPC's region if it's in a different one.
+2. The **accepter** (account `222222222222`, which owns VPC B) sees the request as pending and accepts it. A request nobody acts on expires after 7 days.
+3. **Each account adds its own route,** exactly as in the [peering table above](#vpc-peering). Neither account can change the other's route tables, so both have to do their half.
+4. **Each account opens its own security groups.** In the same region, a rule can name the other account's security group directly, as `222222222222/sg-…`. Across regions it has to use the other VPC's address range instead [@aws-vpc-peering-sg].
+
+```bash tab="macOS / Linux"
+# in account 111111111111: ask to peer VPC A with VPC B in the other account
+aws ec2 create-vpc-peering-connection --vpc-id vpc-aaaa1111 \
+  --peer-vpc-id vpc-bbbb2222 --peer-owner-id 222222222222
+
+# in account 222222222222: accept it, using the pcx- ID from the request
+aws ec2 accept-vpc-peering-connection --vpc-peering-connection-id pcx-0123456789abcdef0
+```
+
+```powershell tab="Windows (PowerShell)"
+# in account 111111111111: ask to peer VPC A with VPC B in the other account
+aws ec2 create-vpc-peering-connection --vpc-id vpc-aaaa1111 `
+  --peer-vpc-id vpc-bbbb2222 --peer-owner-id 222222222222
+
+# in account 222222222222: accept it, using the pcx- ID from the request
+aws ec2 accept-vpc-peering-connection --vpc-peering-connection-id pcx-0123456789abcdef0
+```
+
+Add `--peer-region` to the first command when VPC B is in another region. Everything else about peering still applies: the two address ranges can't overlap, and the connection doesn't carry traffic on to a third VPC [@aws-vpc-peering-basics]. If instances should find each other by their public DNS names, turn on DNS resolution for the peering connection, which makes those names resolve to private addresses. Both VPCs need DNS hostnames and DNS resolution enabled for that to work [@aws-vpc-peering-dns].
+
+**With Transit Gateway, one account owns the gateway and shares it** through AWS Resource Access Manager (RAM), with specific accounts or the whole organization [@aws-tgw-share]:
+
+1. The owning account shares the transit gateway in RAM.
+2. The other account accepts the share and creates a VPC attachment from its own VPC to the shared gateway.
+3. The owning account accepts the attachment, unless the gateway was created with **Auto accept shared attachments** turned on [@aws-tgw-create].
+4. Routes split by ownership. Only the owning account can change the transit gateway's route tables [@aws-tgw-share], and each account adds the routes in its own VPC pointing at the gateway, the same as in [the walkthrough above](#following-a-packet-through-it).
+
+**Which one to use** follows the same logic as in one account. For a couple of VPCs, peering is simpler, and it has no hourly charge. Data that crosses an availability zone over a peering connection is billed at $0.01 per GB in each direction [@aws-vpc-pricing]. For many accounts, Transit Gateway scales better: each account attaches once instead of peering with every other VPC. It's billed per attachment per hour plus per GB of data it processes [@aws-tgw-pricing].
+
+**When only one service needs to be reachable,** connecting whole networks is more than the job needs. With **PrivateLink**, the account that runs the service puts it behind a Network Load Balancer and publishes it as an *endpoint service*, then allows the other account to use it. The other account creates an interface endpoint in its own VPC and reaches the service through that endpoint's local address [@aws-privatelink-share, @aws-privatelink-concepts]. Connections only go one way, from the consumer to the service, and the two VPCs' address ranges are allowed to overlap [@aws-multivpc-privatelink], which helps when two accounts happened to pick the same `10.0.0.0/16`.
 
 ### Site-to-site VPN
 

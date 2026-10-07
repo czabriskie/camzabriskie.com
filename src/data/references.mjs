@@ -252,6 +252,17 @@ export const references = {
   'ms-new-selfsignedcertificate': { authors: 'Microsoft', title: 'New-SelfSignedCertificate', container: 'Windows PowerShell PKIClient Module Reference', url: 'https://learn.microsoft.com/en-us/powershell/module/pki/new-selfsignedcertificate', accessed: '2026-10-06' },
 
   // Reaching private resources
+  'aws-vpc-peering-create': { ...aws('Create a VPC peering connection', 'Amazon VPC Peering Guide', 'https://docs.aws.amazon.com/vpc/latest/peering/create-vpc-peering-connection.html'), accessed: '2026-10-07' },
+  'aws-vpc-peering-basics': { ...aws('How VPC peering connections work', 'Amazon VPC Peering Guide', 'https://docs.aws.amazon.com/vpc/latest/peering/vpc-peering-basics.html'), accessed: '2026-10-07' },
+  'aws-vpc-peering-sg': { ...aws('Update your security groups to reference peer security groups', 'Amazon VPC Peering Guide', 'https://docs.aws.amazon.com/vpc/latest/peering/vpc-peering-security-groups.html'), accessed: '2026-10-07' },
+  'aws-vpc-peering-dns': { ...aws('Enable DNS resolution for a VPC peering connection', 'Amazon VPC Peering Guide', 'https://docs.aws.amazon.com/vpc/latest/peering/vpc-peering-dns.html'), accessed: '2026-10-07' },
+  'aws-tgw-share': { ...aws('Shared transit gateways', 'Amazon VPC Transit Gateways', 'https://docs.aws.amazon.com/vpc/latest/tgw/transit-gateway-share.html'), accessed: '2026-10-07' },
+  'aws-tgw-create': { ...aws('Create a transit gateway in AWS Transit Gateway', 'Amazon VPC Transit Gateways', 'https://docs.aws.amazon.com/vpc/latest/tgw/create-tgw.html'), accessed: '2026-10-07' },
+  'aws-vpc-pricing': { ...aws('Amazon VPC pricing', undefined, 'https://aws.amazon.com/vpc/pricing/'), accessed: '2026-10-07' },
+  'aws-tgw-pricing': { ...aws('AWS Transit Gateway pricing', undefined, 'https://aws.amazon.com/transit-gateway/pricing/'), accessed: '2026-10-07' },
+  'aws-privatelink-share': { ...aws('Share your services through AWS PrivateLink', 'AWS PrivateLink', 'https://docs.aws.amazon.com/vpc/latest/privatelink/privatelink-share-your-services.html'), accessed: '2026-10-07' },
+  'aws-privatelink-concepts': { ...aws('AWS PrivateLink concepts', 'AWS PrivateLink', 'https://docs.aws.amazon.com/vpc/latest/privatelink/concepts.html'), accessed: '2026-10-07' },
+  'aws-multivpc-privatelink': { ...aws('AWS PrivateLink', 'Building a Scalable and Secure Multi-VPC AWS Network Infrastructure (AWS Whitepaper)', 'https://docs.aws.amazon.com/whitepapers/latest/building-scalable-secure-multi-vpc-network-infrastructure/aws-privatelink.html'), accessed: '2026-10-07' },
   'aws-vpc-peering-routing': { ...aws('Update your route tables for a VPC peering connection', 'Amazon VPC Peering Guide', 'https://docs.aws.amazon.com/vpc/latest/peering/vpc-peering-routing.html'), accessed: '2026-10-07' },
   'aws-ec2-eni': { ...aws('Elastic network interfaces', 'Amazon EC2 User Guide', 'https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-eni.html'), accessed: '2026-10-07' },
   rfc4301: { ...rfc(4301, ['S. Kent', 'K. Seo'], 'Security Architecture for the Internet Protocol', 'Dec. 2005'), accessed: '2026-10-07' },
