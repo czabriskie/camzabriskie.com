@@ -536,6 +536,35 @@ details.aside[open] summary { margin-bottom: 0.4rem; }
 .conn-timeline .ct-bracket { fill: none; stroke: var(--muted); stroke-width: 1; }
 .conn-timeline .ct-phase { font: 600 10px 'Bricolage Grotesque', sans-serif; text-anchor: end; fill: var(--ink); }
 .conn-timeline .ct-rtt { font: 8px 'IBM Plex Mono', ui-monospace, monospace; text-anchor: end; fill: var(--muted); }
+.px-sides, .px-connect, .px-hop { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+.px-sides svg, .px-connect svg, .px-hop svg { display: block; width: 100%; height: auto; }
+.px-sides text, .px-hop text, .px-connect .px-label, .px-connect .px-note, .px-connect .px-actor { text-anchor: middle; }
+.px-sides .px-row { font: 600 11px 'Bricolage Grotesque', sans-serif; text-anchor: start; fill: var(--ink); }
+.px-sides .px-zone { fill: none; stroke: var(--muted); stroke-width: 1; stroke-dasharray: 4 3; }
+.px-sides .px-zone-label { font: 8px 'IBM Plex Mono', ui-monospace, monospace; text-anchor: start; fill: var(--muted); }
+.px-sides .px-zone-label.px-end { text-anchor: end; }
+.px-sides .px-divide { stroke: var(--line); stroke-width: 1; stroke-dasharray: 2 3; }
+.px-sides .px-net { font: italic 9px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.px-node rect { fill: var(--surface); stroke: var(--line); stroke-width: 1.2; }
+.px-node text { font: 600 9.5px 'Bricolage Grotesque', sans-serif; fill: var(--ink); }
+.px-node.px-mid rect { stroke: var(--tech); stroke-width: 1.8; }
+.px-node.px-mid text { fill: var(--tech); }
+.px-arrow { stroke: var(--muted); stroke-width: 1.2; }
+.px-head { fill: var(--muted); }
+.px-head-enc { fill: var(--tech); }
+.px-connect .px-actor { font: 600 11px 'Bricolage Grotesque', sans-serif; fill: var(--ink); }
+.px-connect .px-life { stroke: var(--line); stroke-width: 2; }
+.px-connect .px-tunnel { fill: var(--tech); fill-opacity: 0.06; stroke: var(--tech); stroke-opacity: 0.4; stroke-width: 1; stroke-dasharray: 4 3; }
+.px-connect .px-msg { stroke: var(--muted); stroke-width: 1.2; }
+.px-connect .px-msg.px-pass { stroke-dasharray: 5 3; }
+.px-connect .px-msg.px-enc { stroke: var(--tech); stroke-width: 1.8; }
+.px-label { font: 9px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--ink); }
+.px-note { font: 8px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.px-enc-text { fill: var(--tech); }
+.px-halo { paint-order: stroke; stroke: var(--paper); stroke-width: 4px; stroke-linejoin: round; }
+.px-hop .px-pipe { fill: var(--line); }
+.px-hop .px-guide { stroke: var(--line); stroke-width: 1; }
+.px-hop .px-inner { stroke: var(--tech); stroke-width: 2; }
 .tw-controls { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.6rem; margin-bottom: 0.8rem; }
 .tw-modes, .tw-buttons { display: flex; gap: 0.4rem; }
 .tw-controls button { font: inherit; font-size: 0.88rem; color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: 4px; padding: 0.2rem 0.6rem; cursor: pointer; }
