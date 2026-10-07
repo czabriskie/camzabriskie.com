@@ -178,6 +178,11 @@ export const references = {
 
   // CDNs and CloudFront
   'aws-cloudfront-intro': aws('What is Amazon CloudFront?', 'Amazon CloudFront Developer Guide', 'https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html'),
+  'aws-ebs-modify-volume': aws('Modify an Amazon EBS volume using Elastic Volumes operations', 'Amazon EBS User Guide', 'https://docs.aws.amazon.com/ebs/latest/userguide/ebs-modify-volume.html'),
+  'aws-ebs-volume-lifecycle': aws('Attach an Amazon EBS volume to an Amazon EC2 instance', 'Amazon EBS User Guide', 'https://docs.aws.amazon.com/ebs/latest/userguide/ebs-volume-lifecycle.html'),
+  'aws-ebs-restore-volume': aws('Replace an Amazon EBS volume using a snapshot', 'Amazon EBS User Guide', 'https://docs.aws.amazon.com/ebs/latest/userguide/ebs-restoring-volume.html'),
+  'aws-efs-how-it-works': aws('How Amazon EFS works', 'Amazon EFS User Guide', 'https://docs.aws.amazon.com/efs/latest/ug/how-it-works.html'),
+  'prometheus-storage': { authors: 'Prometheus Authors', title: 'Storage', container: 'Prometheus documentation', url: 'https://prometheus.io/docs/prometheus/latest/storage/', accessed: CHECKED },
   'aws-cloudfront-cache-key': aws('Understand the cache key', 'Amazon CloudFront Developer Guide', 'https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/understanding-the-cache-key.html'),
   'aws-cloudfront-expiration': aws('Manage how long content stays in the cache (expiration)', 'Amazon CloudFront Developer Guide', 'https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Expiration.html'),
   'aws-cloudfront-invalidation': aws('Invalidate files to remove content', 'Amazon CloudFront Developer Guide', 'https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Invalidation.html'),
