@@ -228,7 +228,7 @@ Of the patterns that send traffic through one account, this is the only one that
 
 Only the first two patterns ignore overlapping ranges, because neither one routes traffic between the accounts' VPCs. The other two need every connected VPC to have its own range, which is much easier to plan from the start ([don't overlap with networks you'll connect to](/primers/networking/aws-vpc-subnets/#dont-overlap-with-networks-youll-connect-to)) than to fix later.
 
-When it's too late for that, AWS documents a workaround with a **private NAT gateway**. Each VPC gets a second, non-overlapping range alongside its original one. A private NAT gateway in VPC A's new range, and an ALB in VPC B's new range, let VPC A's servers reach VPC B's servers through a transit gateway, with the traffic appearing to come from the NAT gateway's address [@aws-nat-gateway-scenarios]. It works, but it adds a range, a NAT gateway, and a load balancer per VPC, and some careful routing, all to get around a numbering decision.
+When it's too late for that, AWS documents a workaround with a **private NAT gateway**. Each VPC gets a second, non-overlapping range alongside its original one. A private NAT gateway in VPC A's new range, and an ALB in VPC B's new range, let VPC A's servers reach VPC B's servers through a transit gateway, with the traffic appearing to come from the NAT gateway's address [@aws-nat-gateway-overlap]. It works, but it adds a range, a NAT gateway, and a load balancer per VPC, and some careful routing, all to get around a numbering decision.
 
 ## Choosing
 

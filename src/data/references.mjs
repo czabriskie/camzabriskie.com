@@ -211,7 +211,7 @@ export const references = {
   'aws-tgw-network-function': { ...aws('AWS Transit Gateway network function attachments', 'Amazon VPC Transit Gateways', 'https://docs.aws.amazon.com/vpc/latest/tgw/tgw-nf-fw.html'), accessed: '2026-10-07' },
   'aws-tgw-appliance-steering': { ...aws('Example: Steering traffic to a security appliance in AWS Transit Gateway', 'Amazon VPC Transit Gateways', 'https://docs.aws.amazon.com/vpc/latest/tgw/tgw-policy-tables-example.html'), accessed: '2026-10-07' },
   'aws-cloudfront-alb-restrict': { ...aws('Restrict access to Application Load Balancers', 'Amazon CloudFront Developer Guide', 'https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/restrict-access-to-load-balancer.html'), accessed: '2026-10-07' },
-  'aws-nat-gateway-scenarios': { ...aws('NAT gateway use cases', VPC_GUIDE, 'https://docs.aws.amazon.com/vpc/latest/userguide/nat-gateway-scenarios.html'), accessed: '2026-10-07' },
+  'aws-nat-gateway-overlap': { ...aws('NAT gateway use cases', VPC_GUIDE, 'https://docs.aws.amazon.com/vpc/latest/userguide/nat-gateway-scenarios.html'), accessed: '2026-10-07' },
   'aws-nlb-listeners': aws('Listeners for your Network Load Balancers', 'Elastic Load Balancing User Guide for Network Load Balancers', 'https://docs.aws.amazon.com/elasticloadbalancing/latest/network/load-balancer-listeners.html'),
   'aws-nlb-intro': aws('What is a Network Load Balancer?', 'Elastic Load Balancing User Guide for Network Load Balancers', 'https://docs.aws.amazon.com/elasticloadbalancing/latest/network/introduction.html'),
   'aws-gwlb-intro': aws('What is a Gateway Load Balancer?', 'Elastic Load Balancing User Guide for Gateway Load Balancers', 'https://docs.aws.amazon.com/elasticloadbalancing/latest/gateway/introduction.html'),
