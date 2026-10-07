@@ -10,10 +10,9 @@ Every new HTTPS connection starts with a short exchange called the **TLS handsha
 1. **Prove who the server is.** The server shows its certificate, and proves it holds the matching private key. [Certificates and Trust](/primers/networking/certificates-and-trust/) covers how the browser decides to believe it.
 2. **Agree on encryption keys** that nobody else knows, even though every message of the handshake itself crosses the open internet.
 
-In the [OSI model](/primers/networking/osi-model/), TLS sits on top of TCP (layer 4) and underneath HTTP (layer 7), which is why [it doesn't fit neatly into one layer](/primers/networking/osi-model/#tls-isnt-the-transport-layer-despite-its-name). The TCP connection is set up first, then the TLS handshake runs over it, and only then does HTTP get to speak. So if the handshake fails, the two machines are already connected, but the browser never sends its request and the server never sends the page. One side sends an alert and both close the connection without sending anything else [@rfc9846]. The one exception is [0-RTT](#coming-back-resumption-and-0-rtt), covered below, where a returning client sends its request before the handshake finishes.
+## The ideas behind it
 
-## Two kinds of keys
-
+### Two kinds of keys
 The handshake involves two different kinds of keys, and keeping them apart makes the rest of this page much easier to follow.
 
 | | The certificate's key pair | The session key |
@@ -25,8 +24,7 @@ The handshake involves two different kinds of keys, and keeping them apart makes
 
 Why not use the certificate's keys for everything? Asymmetric math is much slower than symmetric, so it's kept for small, one-off jobs like signing and never used to encrypt a whole web page [@nist-sp-800-175b]. The handshake uses the slow kind briefly to set up the fast kind, and the fast kind does the rest. [Certificates and Trust](/primers/networking/certificates-and-trust/#keys-and-signatures) covers how key pairs and signatures work.
 
-## Agreeing on a secret in public
-
+### Agreeing on a secret in public
 The second job sounds impossible. Two computers that have never met need to end up with the same secret key, while anyone in between can read everything they send. They do it with a **key exchange**, and the classic way to picture it is mixing paint:
 
 1. Both sides agree, in public, on a common starting color, say yellow.
@@ -118,12 +116,12 @@ Both sides end up with 2, the brown. The watcher's question is easy here, since 
 </details>
 
 ### Forward secrecy
-
 The secret colors are made fresh for every connection and thrown away afterward. So even if someone records an encrypted conversation today and steals the server's certificate private key next year, they still can't decrypt the recording, because the certificate key was only ever used to *sign* (prove identity), never to protect the session key. That property is **forward secrecy**, and TLS 1.3 requires it: the older key exchange methods that didn't provide it were removed [@rfc9846].
 
-## The TLS 1.3 handshake, message by message
+## The handshake, step by step
 
-Here's a browser opening `https://app.example.com` [@rfc9846]:
+### The TLS 1.3 handshake, message by message
+A browser opening `https://app.example.com` sends and receives these messages [@rfc9846]:
 
 1. **ClientHello** (client → server, not encrypted). What the client wants and supports:
    - **SNI** (Server Name Indication): the hostname it wants, so a server hosting many sites can pick the right certificate [@rfc6066].
@@ -145,9 +143,30 @@ Step through it here, and switch to TLS 1.2 to compare:
 
 <div class="tls-walk"></div>
 
-## The whole connection, start to finish
+### TLS 1.2: one more round trip
+TLS 1.2 is still widely supported, and its handshake takes two round trips instead of one [@rfc5246]:
 
-The TLS handshake isn't the only setup. TCP has its own handshake first, and the page can't arrive until the HTTP request has gone out and come back [@rfc9293, @rfc9846]:
+- The client's first message doesn't include its half of the key exchange, so the key exchange only finishes on the second trip.
+- The certificate travels **unencrypted**, so anyone watching can see exactly which certificate the server sent.
+- Older 1.2 setups could use a key exchange without forward secrecy, where stealing the server's key later would unlock recorded traffic. That's the main reason 1.3 removed those options [@rfc9846].
+
+TLS 1.0 and 1.1 are formally deprecated and shouldn't be used at all [@rfc8996].
+
+### Versions and cipher suites
+A **cipher suite** is the set of algorithms a connection uses. In TLS 1.2, a suite's name lists everything at once: the key exchange, how the server proves its identity, the encryption, and the hash, which is why 1.2 suite names get long. TLS 1.3 simplified it. Key exchange and signatures are negotiated separately, and the cipher suite only names the encryption and the hash, so there are just five of them, like `TLS_AES_128_GCM_SHA256` and `TLS_CHACHA20_POLY1305_SHA256` [@rfc9846].
+
+### Coming back: resumption and 0-RTT
+After a full handshake, the server can hand the client a **session ticket**. Next time, the client presents the ticket and the two sides skip the certificate part, because they've already been through it [@rfc9846].
+
+With a ticket, TLS 1.3 also allows **0-RTT** ("zero round trip"): the client sends its request alongside its very first message, before the handshake finishes. It's fast, but it comes with a catch: that early data has no protection against being **replayed**, so someone who captures it can send it again [@rfc9846]. It's only safe for requests where doing the same thing twice is harmless, like loading a page, and never for something like "place an order."
+
+## In a real connection
+
+### Where the handshake fits
+
+In the [OSI model](/primers/networking/osi-model/), TLS sits on top of TCP (layer 4) and underneath HTTP (layer 7), which is why [it doesn't fit neatly into one layer](/primers/networking/osi-model/#tls-isnt-the-transport-layer-despite-its-name). The TCP connection is set up first, then the TLS handshake runs over it, and only then does HTTP get to speak. So if the handshake fails, the two machines are already connected, but the browser never sends its request and the server never sends the page. One side sends an alert and both close the connection without sending anything else [@rfc9846]. The one exception is [0-RTT](#coming-back-resumption-and-0-rtt), covered above, where a returning client sends its request before the handshake finishes.
+
+TCP has its own handshake before TLS starts, and the page can't arrive until the HTTP request has gone out and come back [@rfc9293, @rfc9846]:
 
 <div class="conn-timeline" role="img" aria-label="Timeline of a new HTTPS connection. TCP: the browser sends SYN, the server answers SYN-ACK, the browser sends ACK. That is one round trip. TLS 1.3: the browser sends ClientHello with its key share, the server answers ServerHello with its key share, then the encrypted certificate through Finished. That is one round trip. HTTP: the browser sends its Finished and GET request, encrypted, and the server sends the page, encrypted. That is one round trip, three in all.">
 <svg viewBox="0 0 400 300" aria-hidden="true" focusable="false">
@@ -188,24 +207,7 @@ The TLS handshake isn't the only setup. TCP has its own handshake first, and the
 
 Round trips are what make a first connection slow, because each one costs the full travel time to the server and back no matter how small the messages are. If a round trip takes 50 milliseconds, the page starts arriving about 150 milliseconds after the browser starts connecting. TLS 1.2 adds one more round trip, to 200, and a [returning client](#coming-back-resumption-and-0-rtt) can save one.
 
-## TLS 1.2: one more round trip
-
-TLS 1.2 is still widely supported, and its handshake takes two round trips instead of one [@rfc5246]:
-
-- The client's first message doesn't include its half of the key exchange, so the key exchange only finishes on the second trip.
-- The certificate travels **unencrypted**, so anyone watching can see exactly which certificate the server sent.
-- Older 1.2 setups could use a key exchange without forward secrecy, where stealing the server's key later would unlock recorded traffic. That's the main reason 1.3 removed those options [@rfc9846].
-
-TLS 1.0 and 1.1 are formally deprecated and shouldn't be used at all [@rfc8996].
-
-## Coming back: resumption and 0-RTT
-
-After a full handshake, the server can hand the client a **session ticket**. Next time, the client presents the ticket and the two sides skip the certificate part, because they've already been through it [@rfc9846].
-
-With a ticket, TLS 1.3 also allows **0-RTT** ("zero round trip"): the client sends its request alongside its very first message, before the handshake finishes. It's fast, but it comes with a catch: that early data has no protection against being **replayed**, so someone who captures it can send it again [@rfc9846]. It's only safe for requests where doing the same thing twice is harmless, like loading a page, and never for something like "place an order."
-
-## What someone watching can still see
-
+### What someone watching can still see
 TLS hides the contents of the conversation, but not everything:
 
 - **The server name.** SNI is in the ClientHello, which goes out before any encryption exists, so anyone on the path can see that you connected to `app.example.com` (just not which page). **Encrypted Client Hello (ECH)** fixes this by encrypting the ClientHello with a public key the server publishes in DNS, but it needs support from both the browser and the server [@rfc9849].
@@ -214,8 +216,7 @@ TLS hides the contents of the conversation, but not everything:
 - **Sizes and timing** of the encrypted traffic.
 - **In TLS 1.2, the certificate** as well, since it isn't encrypted there.
 
-## When the handshake fails
-
+### When the handshake fails
 When something goes wrong, the side that notices sends an **alert**, a short message with a name and number from the TLS standard, and closes the connection [@rfc9846]. Tools print the alert's name, though the wording varies between them, and some still say "SSL" or "sslv3" for historical reasons. The common failures:
 
 | What went wrong | What happens | What a tool like curl shows |
@@ -239,16 +240,12 @@ curl.exe https://expired.badssl.com/               # an expired certificate
 curl.exe https://wrong.host.badssl.com/            # a certificate for a different name
 ```
 
-## Versions and cipher suites
+## Going further
 
-A **cipher suite** is the set of algorithms a connection uses. In TLS 1.2, a suite's name lists everything at once: the key exchange, how the server proves its identity, the encryption, and the hash, which is why 1.2 suite names get long. TLS 1.3 simplified it. Key exchange and signatures are negotiated separately, and the cipher suite only names the encryption and the hash, so there are just five of them, like `TLS_AES_128_GCM_SHA256` and `TLS_CHACHA20_POLY1305_SHA256` [@rfc9846].
-
-## A variation: mutual TLS
-
+### Mutual TLS
 In normal TLS only the server proves who it is. In **mutual TLS (mTLS)** the server also asks the client for a certificate, and the client answers with its own **Certificate** and **CertificateVerify** messages, proving it holds that certificate's private key the same way the server did [@rfc9846]. [Load balancers and TLS termination](/primers/networking/load-balancers-and-tls/#mtls-the-client-proves-who-it-is-too) covers how that interacts with load balancers.
 
-## Watching it happen
-
+### Watching it happen
 `curl -v` prints the result of the handshake (on Windows, type `curl.exe -v`, since in Windows PowerShell 5.1 plain `curl` is an alias for a different command [@ms-curl-windows]). Here's this site, on a Mac, trimmed to the TLS lines:
 
 ```
