@@ -10,7 +10,7 @@ Every new HTTPS connection starts with a short exchange called the **TLS handsha
 1. **Prove who the server is.** The server shows its certificate, and proves it holds the matching private key. [Certificates and Trust](/primers/networking/certificates-and-trust/) covers how the browser decides to believe it.
 2. **Agree on encryption keys** that nobody else knows, even though every message of the handshake itself crosses the open internet.
 
-In the [OSI model](/primers/networking/osi-model/), TLS sits on top of TCP and underneath HTTP: the TCP connection is set up first, then the TLS handshake runs over it, and only then does HTTP get to speak.
+In the [OSI model](/primers/networking/osi-model/), TLS sits on top of TCP (layer 4) and underneath HTTP (layer 7), which is why [it doesn't fit neatly into one layer](/primers/networking/osi-model/#tls-isnt-the-transport-layer-despite-its-name). The TCP connection is set up first, then the TLS handshake runs over it, and only then does HTTP get to speak. So if the handshake fails, the two machines are already connected, but the browser never sends its request and the server never sends the page. One side sends an alert and both close the connection without sending anything else [@rfc9846]. The one exception is [0-RTT](#coming-back-resumption-and-0-rtt), covered below, where a returning client sends its request before the handshake finishes.
 
 ## Agreeing on a secret in public
 
