@@ -260,7 +260,7 @@ curl.exe -sv -o NUL https://camzabriskie.com/ 2>&1 |
   Select-String 'ALPN|SSL connection|Server certificate|subject:|issuer:|verify ok'
 ```
 
-On Windows, type `curl.exe` rather than `curl`, since in Windows PowerShell 5.1 plain `curl` is an alias for a different command [@ms-curl-windows]. Here's what it printed for this site, on a Mac:
+On Windows, type `curl.exe` rather than `curl`, since in Windows PowerShell 5.1 plain `curl` is an alias for a different command [@ms-curl-windows]. For this site, on a Mac, it printed:
 
 ```
 * ALPN: curl offers h2,http/1.1
