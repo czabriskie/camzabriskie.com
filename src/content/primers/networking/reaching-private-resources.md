@@ -198,13 +198,13 @@ Sometimes you only need to reach one database for an afternoon, and a VPN is mor
 If you can already reach a Kubernetes cluster inside the VPC with `kubectl`, the cluster can act as the way in. `kubectl port-forward` can only forward to a pod, or to a pod picked by a service or deployment, not to an arbitrary host like a database [@kubectl-port-forward]. So the first step runs a tiny relay pod that forwards to the database, and the second forwards a local port to that pod:
 
 ```bash tab="macOS / Linux"
-# a throwaway pod that relays port 5432 to the database
+# terminal 1: a throwaway pod that relays port 5432 to the database (leave it running)
 kubectl run pg-proxy --rm -i --restart=Never --image=alpine/socat -- \
   TCP-LISTEN:5432,fork,reuseaddr \
-  TCP:my-db.xxxxxxxxxxxx.us-east-1.rds.amazonaws.com:5432 &
+  TCP:my-db.xxxxxxxxxxxx.us-east-1.rds.amazonaws.com:5432
 
-# connect local port 5433 to the pod's port 5432
-sleep 3 && kubectl port-forward pod/pg-proxy 5433:5432
+# terminal 2, once the pod is running: connect local port 5433 to the pod's port 5432
+kubectl port-forward pod/pg-proxy 5433:5432
 ```
 
 ```powershell tab="Windows (PowerShell)"
@@ -269,15 +269,14 @@ The pieces of the first command:
   - `fork` handles each new connection in its own child process and keeps listening, so more than one connection (and a reconnect) works [@socat-manual].
   - `reuseaddr` lets other sockets bind the same port even while socat is using parts of it. Since socat 1.8.0 it's set automatically for listening TCP addresses, so on a recent image it changes nothing and is harmless to include [@socat-manual].
   - `TCP:my-db…:5432` connects each one to the database on port 5432. The `xxxxxxxxxxxx` and `us-east-1` are placeholders for your own database's endpoint name and region, which the RDS console shows.
-- **The trailing `&`** (macOS and Linux) runs the first command in the background, so the same terminal can go on to the next one. PowerShell uses a second window instead.
+- **Two terminals**, because the first command stays attached to the pod and keeps running. Start the second once the pod is up (`kubectl get pod pg-proxy` shows `Running`).
 
 And the second:
 
-- **`sleep 3 &&`** waits a few seconds for the pod to start before the port forward looks for it.
 - **`kubectl port-forward pod/pg-proxy 5433:5432`** listens on local port 5433 and forwards each connection to port 5432 in the pod. The order is always local first, then the pod's [@kubectl-port-forward]. The traffic travels through the encrypted connection to the Kubernetes API that `kubectl` already has, and the API server passes it to the pod through the node's kubelet, so the database never has to be exposed anywhere [@k8s-port-forward, @k8s-control-plane-comms].
 - **Local port 5433** instead of 5432, so it doesn't clash with a Postgres you might have running locally.
 
-It only lasts as long as the terminal is open. Close it and the forward stops. If the pod outlives it anyway, `kubectl delete pod pg-proxy` removes it. The database's security group still has to allow traffic from the pod, which usually means allowing the cluster nodes' security group.
+It only lasts as long as both commands keep running. Stop the port forward with Ctrl+C, then stop the first command, and `--rm` deletes the pod. If a pod outlives it anyway, `kubectl delete pod pg-proxy` removes it. The database's security group still has to allow traffic from the pod, which usually means allowing the cluster nodes' security group.
 
 ### Through Session Manager or SSH
 
