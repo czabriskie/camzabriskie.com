@@ -353,6 +353,8 @@ export const references = {
   'aws-access-analyzer-checks': { ...aws('Validate policies with IAM Access Analyzer custom policy checks', 'AWS Identity and Access Management User Guide', 'https://docs.aws.amazon.com/IAM/latest/UserGuide/access-analyzer-custom-policy-checks.html'), accessed: '2026-10-09' },
   // Container runtimes on macOS
   'docker-desktop-license': { authors: 'Docker, Inc.', title: 'Docker Desktop license agreement', container: 'Docker Docs', url: 'https://docs.docker.com/subscription-billing/desktop-license/', accessed: '2026-10-08' },
+  'docker-multi-platform': { authors: 'Docker, Inc.', title: 'Multi-platform builds', container: 'Docker Build manual', url: 'https://docs.docker.com/build/building/multi-platform/', accessed: '2026-10-08' },
+  'docker-desktop-settings': { authors: 'Docker, Inc.', title: 'Change your Docker Desktop settings', container: 'Docker Desktop manual', url: 'https://docs.docker.com/desktop/settings-and-maintenance/settings/', accessed: '2026-10-08' },
   'docker-desktop-vmm': { authors: 'Docker, Inc.', title: 'Virtual Machine Manager', container: 'Docker Desktop manual', url: 'https://docs.docker.com/desktop/features/vmm/', accessed: '2026-10-08' },
   'podman-remote-clients': { authors: 'The Podman Authors', title: 'Podman Remote clients for macOS and Windows', container: 'Podman documentation', url: 'https://github.com/containers/podman/blob/main/docs/tutorials/mac_win_client.md', accessed: '2026-10-08' },
   'podman-desktop-rosetta': { authors: 'Podman Desktop Authors', title: 'Native Apple Rosetta translation layer (macOS)', container: 'Podman Desktop documentation', url: 'https://podman-desktop.io/docs/podman/rosetta', accessed: '2026-10-08' },
