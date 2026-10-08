@@ -16,6 +16,8 @@ export const topics = [
     slug: 'philosophy',
     title: 'Philosophy',
     blurb: 'The history of ideas, starting with the first people to ask what everything is made of.',
+  },
+  {
     slug: 'containers',
     title: 'Containers',
     blurb: 'What runs your containers, and how to choose the tooling around them.',
