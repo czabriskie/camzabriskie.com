@@ -5,7 +5,7 @@ order: 0
 updated: 2026-10-08
 ---
 
-A code review answers two different questions. Does this change do what was asked? And is it written so the next person can live with it? An AI reviewer that reads only the diff can answer a rough version of the second question and has nothing to measure the first against. The setup below fixes that by giving the reviewer the ticket, the running code, and a narrow job.
+A code review answers two different questions. Does this change do what was asked? And is it written so the next person can live with it? An AI reviewer that reads only the diff can answer a rough version of the second question and has nothing to measure the first against. One way to fix that is to give the reviewer three things: the requirement it's checking against, the running code, and a narrow job.
 
 ## Two questions, two passes
 
@@ -30,9 +30,9 @@ Start by turning the ticket into a numbered list, one line per acceptance criter
 |---|---|---|---|
 | 1 | Uploads over 10 MB return 413 | Met | `upload.py:42`, observed `413` on an 11 MB file |
 | 2 | Exactly 10 MB is accepted | Not met | Check uses `>=`, observed `413` at 10 MB |
-| 3 | Error message is helpful | Untestable | "Helpful" has no pass condition |
+| 3 | Error message is helpful | Flagged as untestable | "Helpful" has no pass condition |
 
-Four verdicts cover the cases: Met, Partially met, Not met, and Unverifiable. A criterion with no pass condition ("as needed", "improve", "helpful") gets flagged as Untestable and goes back to the ticket author as a question. An AI asked to confirm a vague requirement tends to confirm it, so the vague ones need to be caught by rule and not left to judgment.
+Four verdicts cover the cases: Met, Partially met, Not met, and Unverifiable (it can't be checked here, for example because it needs production access). A criterion with no pass condition ("as needed", "improve", "helpful") doesn't get a verdict at all. It gets flagged as untestable and goes back to whoever wrote the requirement as a question. A reviewer of any kind has nothing to check a vague requirement against, so it's easy to wave through, and catching these by a simple rule works better than leaving it to judgment.
 
 Two extra outputs make this pass useful. Changes in the diff that map to no requirement are scope creep. Requirements with no test covering them are missing tests.
 
@@ -56,7 +56,7 @@ Tests and linters run first, and the reviewers receive their results. A model as
 
 Google's list gives the order to look in: design, functionality, complexity, tests, naming, comments, style, documentation [@google-review-looking-for]. It also says when to stop: reviewers should favor approving a change once it definitely improves the overall health of the code, even if it is not perfect [@google-review-standard]. An AI reviewer has no tiredness to make it stop, so the instruction has to say so.
 
-Complexity deserves a specific mention. Google flags over-engineering, meaning code made more generic than the problem needs, as something reviewers should watch for especially [@google-review-looking-for]. A model tends to suggest more abstraction by default, so this check pushes the other way.
+Google flags over-engineering, meaning code made more generic than the problem needs, as something reviewers should watch for especially [@google-review-looking-for]. A reviewer that's asked to find improvements can easily suggest more abstraction than the change needs, so it helps to say plainly that simpler is the goal.
 
 Each finding carries enough structure to triage at a glance:
 
@@ -71,17 +71,13 @@ The pass also lists what it checked and found fine. A review that only lists com
 
 ## After the two passes
 
-A parent step merges the results. It removes duplicates, drops any finding whose cited file and line do not exist, and confirms no requirement was skipped. A finding with no evidence gets deleted.
+The two passes then get merged into one report: duplicates removed, any finding whose cited file and line don't exist dropped, and every requirement checked for a verdict. A finding with no evidence behind it gets deleted.
 
-The result is advisory. The reviewer reports and a person decides. Nothing in the process approves the change or edits the code under review.
+The result works best as advice. The reviewer reports and a person decides, and the review itself never approves the change or edits the code.
 
-## A ticket is a precondition
+## When there's no ticket
 
-All of this assumes a ticket exists. Without one, pass one has nothing to trace against, and the review quietly turns into a generic code-health pass that confirms nothing about intent. The strict version of the rule is that a change with no ticket stops the review and gets treated as a gap in the process, to be fixed by writing the ticket first.
-
-## Quick formula
-
-Ticket in, evidence out, linters first, advisory only.
+All of this assumes the change has a written requirement somewhere: a ticket, an issue, or even a few lines in the pull request description. Without one, pass one has nothing to trace against, and the review quietly turns into a code-health pass that says nothing about whether the change does what was meant. Writing the requirement down first, even briefly, is usually the cheapest fix.
 
 ## Limits
 
