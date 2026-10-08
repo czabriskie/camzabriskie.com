@@ -586,6 +586,15 @@ export const references = {
   'curl-manpage': { authors: 'curl project', title: 'curl man page', container: 'curl documentation', url: 'https://curl.se/docs/manpage.html', accessed: '2026-10-17' },
   'ms-measure-command': { authors: 'Microsoft', title: 'Measure-Command', container: 'PowerShell 7.5 Documentation', url: 'https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/measure-command', accessed: '2026-10-17' },
   'ms-invoke-webrequest': { authors: 'Microsoft', title: 'Invoke-WebRequest', container: 'PowerShell 7.5 Documentation', url: 'https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/invoke-webrequest', accessed: '2026-10-17' },
+  // Container runtimes on macOS
+  'docker-desktop-license': { authors: 'Docker, Inc.', title: 'Docker Desktop license agreement', container: 'Docker Docs', url: 'https://docs.docker.com/subscription-billing/desktop-license/', accessed: '2026-10-08' },
+  'docker-desktop-vmm': { authors: 'Docker, Inc.', title: 'Virtual Machine Manager', container: 'Docker Desktop manual', url: 'https://docs.docker.com/desktop/features/vmm/', accessed: '2026-10-08' },
+  'podman-remote-clients': { authors: 'The Podman Authors', title: 'Podman Remote clients for macOS and Windows', container: 'Podman documentation', url: 'https://github.com/containers/podman/blob/main/docs/tutorials/mac_win_client.md', accessed: '2026-10-08' },
+  'podman-desktop-rosetta': { authors: 'Podman Desktop Authors', title: 'Native Apple Rosetta translation layer (macOS)', container: 'Podman Desktop documentation', url: 'https://podman-desktop.io/docs/podman/rosetta', accessed: '2026-10-08' },
+  'podman-desktop-docker-compat': { authors: 'Podman Desktop Authors', title: 'Managing Docker compatibility', container: 'Podman Desktop documentation', url: 'https://podman-desktop.io/docs/migrating-from-docker/managing-docker-compatibility', accessed: '2026-10-08' },
+  'colima-readme': { authors: 'A. Oladipo and contributors', title: 'Colima: container runtimes on macOS (and Linux) with minimal setup', container: 'GitHub README', url: 'https://github.com/abiosoft/colima', accessed: '2026-10-08' },
+  'rancher-desktop-docs': { authors: 'SUSE', title: 'Introduction', container: 'Rancher Desktop documentation', url: 'https://docs.rancherdesktop.io/', accessed: '2026-10-08' },
+  'orbstack-pricing': { authors: 'Orbital Labs, LLC', title: 'Pricing', container: 'OrbStack', url: 'https://orbstack.dev/pricing', accessed: '2026-10-08' },
 };
 
 const MONTHS = ['Jan.', 'Feb.', 'Mar.', 'Apr.', 'May', 'Jun.', 'Jul.', 'Aug.', 'Sep.', 'Oct.', 'Nov.', 'Dec.'];
