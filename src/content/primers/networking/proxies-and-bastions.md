@@ -1,8 +1,8 @@
 ---
 title: Proxies, reverse proxies, and bastion hosts
 description: Three kinds of machine in the middle, told apart by whose side they're on, with what each one does, what a connection through each looks like, and the settings and headers that trip people up.
-order: 9
-updated: 2026-10-07
+order: 5
+updated: 2026-10-08
 ---
 
 A proxy, a reverse proxy, and a bastion host all sit in the middle of a connection. Each one takes a connection from one side and makes a new connection on the other side for it. They differ by **whose side they're on**:
@@ -84,7 +84,7 @@ Say a laptop on a company network fetches `https://www.example.com`, with its pr
    ```
 
    Any `2xx` status means the tunnel is up [@rfc9110, @mdn-connect]. The words after `200` vary between proxies, and clients are supposed to ignore them [@rfc9112].
-4. **The laptop does its TLS handshake with `www.example.com` through the tunnel.** From here on the proxy just passes encrypted bytes back and forth.
+4. **The laptop does its TLS handshake with `www.example.com` through the tunnel.** TLS is the encryption in HTTPS, and the handshake is the few messages that set it up at the start of a connection [@rfc9846] ([The TLS handshake](/primers/networking/tls-handshake/) goes through them). From here on the proxy just passes encrypted bytes back and forth.
 
 A **tunnel** here means the proxy agrees to copy bytes blindly in both directions, without looking at them, until either side closes the connection [@rfc9110]. The laptop's TLS connection runs inside it, so the proxy can't read or change what goes through without breaking the encryption [@curl-http-proxy].
 
@@ -117,7 +117,7 @@ A **tunnel** here means the proxy agrees to copy bytes blindly in both direction
 
 <p class="bitgrid-caption">Time runs downward. The proxy reads the CONNECT line and its own reply. Everything in teal is encrypted between the laptop and the site, and the proxy only copies it.</p>
 
-So for HTTPS, an ordinary forward proxy knows which host you connected to and how much data moved, but not what was inside. Proxies that do read HTTPS do it by **TLS inspection**: they **terminate** the laptop's TLS connection, meaning they become the end that holds a certificate and decrypts it ([Load balancers and TLS termination](/primers/networking/load-balancers-and-tls/#terminating-tls) covers the idea), and then open a second TLS connection of their own to the real site. To make the laptop accept that, the proxy hands it a certificate for `www.example.com` that it made on the spot and signed with a company CA installed on company machines.
+So for HTTPS, an ordinary forward proxy knows which host you connected to and how much data moved, but not what was inside. Proxies that do read HTTPS do it by **TLS inspection**: they **terminate** the laptop's TLS connection, meaning they become the end that holds the certificate and decrypts the traffic ([Load balancers and TLS termination](/primers/networking/load-balancers-and-tls/#terminating-tls) covers the idea), and then open a second TLS connection of their own to the real site. A **certificate** is a small file that ties a public key to a name like `www.example.com`, signed by a **certificate authority** (CA) the laptop already trusts [@rfc5280] ([Certificates and trust](/primers/networking/certificates-and-trust/) covers them). To make the laptop accept the proxy's end, the proxy hands it a certificate for `www.example.com` that it made on the spot and signed with a company CA installed on company machines.
 
 | | Plain tunnel | TLS inspection |
 |---|---|---|
@@ -149,13 +149,12 @@ Either way the settings only last for that terminal session and the programs sta
 - `https_proxy` is the proxy to use for `https://` URLs.
 - `no_proxy` lists the hosts to reach directly, skipping the proxy.
 
-`https_proxy` starting with `http://` looks like a mistake, but the value describes how to talk to the proxy itself, not to the site. The tool connects to the proxy in plain HTTP, sends `CONNECT`, and does its TLS with the site through the tunnel, so the site's traffic is still encrypted [@curl-http-proxy]. A value starting with `https://` would mean the connection to the proxy is encrypted as well [@curl-https-proxy].
+`https_proxy` starting with `http://` looks like a mistake, but the value describes how to talk to the proxy itself, not to the site. The tool connects to the proxy in plain HTTP, sends `CONNECT`, and does its TLS with the site through the tunnel, so the site's traffic is still encrypted [@curl-http-proxy].
 
-Three things catch people:
+Two things catch people:
 
 - **`no_proxy` matters as much as the proxy itself.** Anything internal should skip the proxy: internal hostnames, private address ranges, and on AWS the instance metadata address `169.254.169.254`. That address is where an EC2 instance asks for its own settings and, if it has an IAM role, temporary credentials for that role, and it only answers requests from the instance itself [@aws-ec2-instance-metadata, @aws-ec2-imds-access]. Sent through the proxy, a request for it can't get this instance's answer, and the same goes for internal services the proxy can't reach. A name with a leading dot, like `.corp.example.com`, matches every host under that domain, so `wiki.corp.example.com` goes direct [@curl-proxy-env].
-- **Case isn't consistent between tools.** curl only reads the lowercase `http_proxy`, on purpose: a web server sets the uppercase `HTTP_PROXY` variable from a request header that anyone can send, so trusting it would let a visitor reroute the server's own requests [@curl-proxy-env]. Other tools read the uppercase versions. Setting both is the safe habit. On Windows, setting one sets both, because environment variable names aren't case-sensitive there [@ms-about-env-vars].
-- **Support for CIDR ranges in `no_proxy` varies.** curl has accepted ranges like `10.0.0.0/8` since version 7.86.0 [@curl-proxy-env], and some tools only match hostnames and suffixes [@gitlab-no-proxy], so test the tools you actually use.
+- **Case isn't consistent between tools.** curl only reads the lowercase `http_proxy`, because on a web server the uppercase one can be set by a visitor's request header [@curl-proxy-env]. Other tools read the uppercase versions. Setting both is the safe habit. On Windows, setting one sets both, because environment variable names aren't case-sensitive there [@ms-about-env-vars].
 
 Three requests, with the settings above:
 
@@ -165,11 +164,13 @@ Three requests, with the settings above:
 | `curl http://wiki.corp.example.com` | `.corp.example.com` | Direct |
 | `curl http://10.0.2.11` | `10.0.0.0/8`, if the tool understands CIDR | Direct in curl 7.86.0 or later, through the proxy in a tool that only matches names |
 
+The last row depends on the tool. curl has accepted CIDR ranges like `10.0.0.0/8` in `no_proxy` since version 7.86.0 [@curl-proxy-env], and some tools only match hostnames and suffixes [@gitlab-no-proxy], so test the tools you actually use.
+
 Browsers usually use the operating system's proxy settings or a **PAC file** (a small script that picks a proxy per URL) instead [@chromium-network-settings, @mdn-proxies].
 
 ### Forward proxy vs NAT gateway
 
-A private subnet's [NAT gateway](/primers/networking/aws-vpc-subnets/#public-and-private-subnets) also lets machines reach the internet without being reachable from it, but it works on addresses and ports, not on names. It can't tell a request to a package repository from a request to anywhere else on the same port. When outbound traffic has to be limited to particular domains, a forward proxy (or a firewall that understands domain names) is the tool.
+On AWS, a **private subnet** is a part of the network with no route in from the internet [@aws-vpc-subnets], and a **NAT gateway** is how machines in one reach the internet anyway. It sends their traffic out from its own public address and passes the replies back, and nothing on the internet can start a connection in through it [@aws-vpc-nat-gateways] ([AWS VPCs, subnets, and routing](/primers/networking/aws-vpc-subnets/#public-and-private-subnets) covers where it fits). That overlaps with a forward proxy's job, but a NAT gateway works on addresses and ports, not on names. It can't tell a request to a package repository from a request to anywhere else on the same port. When outbound traffic has to be limited to particular domains, a forward proxy (or a firewall that understands domain names) is the tool.
 
 ## Reverse proxies
 
@@ -239,7 +240,7 @@ A **bastion host** (or jump host) is a single, locked-down machine that administ
 
 ### One SSH session through a bastion
 
-Say the bastion is `bastion.example.com` in a public subnet and the target is a private instance at `10.0.2.11`:
+Say the bastion is `bastion.example.com` in a public subnet, one with a route to the internet [@aws-vpc-subnets], and the target is a private instance at `10.0.2.11`:
 
 ```bash
 ssh -J admin@bastion.example.com admin@10.0.2.11
@@ -316,9 +317,9 @@ That starts a SOCKS proxy on your laptop's port 1080, and every connection made 
 
 ### Keeping a bastion safe
 
-A bastion is a machine with SSH open to the outside, so it gets attacked constantly. The usual precautions:
+A bastion is a machine with SSH open to the outside, so it gets attacked constantly. On AWS, much of the protection comes from **security groups**, the firewall attached to each instance, which lists the traffic allowed in and drops everything else [@aws-vpc-security-groups] ([more on security groups](/primers/networking/aws-vpc-subnets/#security-groups-and-network-acls)). The usual precautions:
 
-- Its [security group](/primers/networking/aws-vpc-subnets/#security-groups-and-network-acls) allows port 22 only from known address ranges, never `0.0.0.0/0`, which means any address on the internet.
+- Its security group allows port 22 only from known address ranges, never `0.0.0.0/0`, which means any address on the internet.
 - The private instances' security groups allow port 22 only from the bastion's security group, so the bastion is the only way to reach their SSH port [@aws-vpc-sg-rules].
 - Key-based login only, no passwords, and one key per person so access can be revoked individually.
 - Nothing else runs on it, and it gets patched promptly.

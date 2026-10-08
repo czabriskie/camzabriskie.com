@@ -228,7 +228,6 @@ export const references = {
   'mdn-connect': { authors: 'MDN contributors', title: 'CONNECT request method', container: 'MDN Web Docs', url: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods/CONNECT', accessed: '2026-10-07' },
   rfc9112: { ...rfc(9112, ['R. Fielding, Ed.', 'M. Nottingham, Ed.', 'J. Reschke, Ed.'], 'HTTP/1.1', 'Jun. 2022'), accessed: '2026-10-07' },
   'curl-http-proxy': { authors: 'D. Stenberg', title: 'HTTP proxy', container: 'Everything curl', url: 'https://everything.curl.dev/usingcurl/proxies/http.html', accessed: '2026-10-07' },
-  'curl-https-proxy': { authors: 'D. Stenberg', title: 'HTTPS proxy', container: 'Everything curl', url: 'https://everything.curl.dev/usingcurl/proxies/https.html', accessed: '2026-10-07' },
   'openssh-ssh-config': { authors: 'OpenBSD', title: 'ssh_config(5)', container: 'OpenBSD manual pages', url: 'https://man.openbsd.org/ssh_config', accessed: '2026-10-07' },
   'aws-ec2-instance-metadata': { authors: AWS, title: 'Use instance metadata to manage your EC2 instance', container: 'Amazon EC2 User Guide', url: 'https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html', accessed: '2026-10-07' },
   'aws-ec2-imds-access': { authors: AWS, title: 'Access instance metadata for an EC2 instance', container: 'Amazon EC2 User Guide', url: 'https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-data-retrieval.html', accessed: '2026-10-07' },
