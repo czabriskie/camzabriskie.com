@@ -169,6 +169,7 @@ export const references = {
   'root-servers': { authors: 'Root Server Technical Operations Association', title: 'Root Servers', url: 'https://root-servers.org/', accessed: CHECKED },
 
   // DNS and Route 53
+  'aws-route53-resolver-inbound': { ...aws('Forwarding inbound DNS queries to your VPCs', 'Amazon Route 53 Developer Guide', 'https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resolver-forwarding-inbound-queries.html'), accessed: '2026-10-08' },
   'bind9-dig': { authors: 'Internet Systems Consortium', title: 'dig: DNS lookup utility', container: 'BIND 9 Administrator Reference Manual: Manual Pages', url: 'https://bind9.readthedocs.io/en/stable/manpages.html', accessed: '2026-10-07' },
   'tcpdump-man': { authors: 'The Tcpdump Group', title: 'tcpdump(1): dump traffic on a network', container: 'tcpdump man pages', url: 'https://www.tcpdump.org/manpages/tcpdump.1.html', accessed: '2026-10-07' },
   'pcap-filter-man': { authors: 'The Tcpdump Group', title: 'pcap-filter(7): packet filter syntax', container: 'tcpdump man pages', url: 'https://www.tcpdump.org/manpages/pcap-filter.7.html', accessed: '2026-10-07' },

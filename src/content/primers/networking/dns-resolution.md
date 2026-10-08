@@ -1,8 +1,8 @@
 ---
 title: How DNS resolution works
 description: The steps between typing a name and connecting to an address, who answers each question along the way, why changes take time to show up, and where Route 53 fits.
-order: 7
-updated: 2026-10-07
+order: 2
+updated: 2026-10-08
 ---
 
 Every connection starts with a lookup. Before a browser can talk to `www.example.com`, something has to turn that name into an address like `203.0.113.10`, and DNS (the Domain Name System) is how that happens [@rfc1034]. It's usually invisible, and it's behind a surprising number of "it works on my machine" problems.
@@ -148,7 +148,7 @@ Say `www.example.com` has a TTL of 3600 seconds (an hour) and you move it to a n
 | The day before | Nothing changes. | You lower the TTL to 300. Copies cached under the old 3600-second TTL run out within the hour. |
 | 11:30 | The resolver caches the old address until 12:30. | The resolver caches the old address until 11:35. |
 | 12:00 | You change the record. The authoritative server gives the new address straight away. | Same. |
-| 12:00 to 12:30 | The resolver keeps handing out the old address. | The resolver's copy expired at 11:35, so its next lookup gets the new address. |
+| 12:00 to 12:30 | The resolver keeps handing out the old address. | The 11:30 copy expired at 11:35. Any copy the resolver fetched again before 12:00 expires by 12:05. |
 | Last moment anyone can get the old address | 13:00, from a resolver that cached it just before 12:00 | 12:05 |
 
 That's why the usual advice before moving a site is to lower the record's TTL a day or so ahead, so the old copies expire quickly when you make the switch, and raise it again afterward. The lower TTL has to go in at least one old TTL early, because resolvers holding the old copy don't see the change to the TTL either until their copy expires.
@@ -265,7 +265,8 @@ Each block ends with a `Received ... from` line naming the server that sent it:
 - **Third block, from a `.com` server:** the second referral, the NS records for `example.com`.
 - **Last block, from `ns1.example.com`:** the answer, from the authoritative server.
 
-### Watching the packets
+<details class="aside">
+<summary>Watching the packets</summary>
 
 You can also watch the raw traffic. DNS normally uses UDP port 53 (falling back to TCP for large answers) [@rfc1035, @rfc7766], so clear the local cache, watch port 53, and make a request:
 
@@ -303,6 +304,8 @@ The cache commands come from each system's own documentation [@apple-dns-cache, 
 
 The first request shows the queries going out. Repeat it and there's little or nothing, because the answer is cached. If you see nothing even the first time, your browser or system may be using **DNS over HTTPS**, which sends lookups inside ordinary encrypted HTTPS traffic on port 443 [@rfc8484], so a filter on port 53 never sees them.
 
+</details>
+
 ## Where Route 53 fits
 
 Route 53 is AWS's DNS service, and it does a few separate jobs that are easy to blur together [@aws-route53-concepts]:
@@ -330,7 +333,10 @@ A **private hosted zone** holds records that only answer inside the VPCs you ass
 
 An instance in an associated VPC asks the VPC resolver at `10.0.0.2` for `db.internal.example.com` and gets `10.0.1.25`. A laptop at home asks its usual resolver, which looks on the public internet and finds no such name. So a laptop on a VPN can reach a private address but still fail to resolve its name, unless its DNS queries go to a resolver that can see the private zone.
 
-The VPC resolver can bridge that gap in both directions: networks outside AWS can forward queries to it, and it can forward queries for chosen domains out to resolvers on another network. When forwarding rules overlap, the most specific domain wins [@aws-route53-resolver-forwarding], the same idea as [longest prefix match](/primers/networking/aws-vpc-subnets/#when-more-than-one-route-matches) in route tables.
+Route 53 Resolver can bridge that gap in both directions, through endpoints you create in the VPC:
+
+- An **inbound endpoint** is an address in your VPC that accepts DNS queries from outside it. Resolvers on an office network, reached over a VPN or Direct Connect, send queries for the private names there and get answers from the private zones associated with that VPC [@aws-route53-resolver-inbound, @aws-route53-private-zones]. Sending those queries straight to the VPC's `.2` address from outside isn't supported, and AWS recommends an inbound endpoint instead [@aws-route53-resolver-forwarding].
+- An **outbound endpoint** goes the other way. With forwarding rules, the VPC resolver sends queries for chosen domains out to resolvers on another network. When rules overlap, the most specific domain wins [@aws-route53-resolver-forwarding], the same idea as [longest prefix match](/primers/networking/aws-vpc-subnets/#when-more-than-one-route-matches) in route tables.
 
 ### Routing policies
 
@@ -340,12 +346,10 @@ A plain record always returns the same answer. Route 53 can also choose between 
 |---|---|
 | Simple | Nothing. One answer. |
 | Weighted | Proportions you set, like 90% to the current version and 10% to a new one |
-| Latency | Whichever AWS Region gives the person asking the lowest latency |
 | Failover | A health check: the primary while it's healthy, a standby when it isn't |
-| Geolocation | Where the person asking is located |
-| Geoproximity | Where your resources are, optionally shifting traffic from one location to another |
-| IP-based | Which address range the query comes from |
-| Multivalue answer | Up to eight healthy records, picked at random |
+| Latency | Whichever AWS Region gives the person asking the lowest latency |
+
+There are a few more that choose by location or by the asker's address range, all listed in [AWS's guide to routing policies](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy.html).
 
 A routing policy only decides which address goes in the answer [@aws-route53-routing-policies]. The client then connects to that address directly, and none of the traffic itself passes through Route 53. Despite the name, routing policies have nothing to do with [route tables](/primers/networking/aws-vpc-subnets/#route-tables).
 
@@ -368,7 +372,6 @@ example.com.              3600  TXT    "v=spf1 include:_spf.mail.example.net -al
 _dmarc.example.com.       3600  TXT    "v=DMARC1; p=reject"
 example.com.              3600  CAA    0 issue "letsencrypt.org"
 _sip._tcp.example.com.    3600  SRV    10 50 5060 sip1.example.com.
-10.113.0.203.in-addr.arpa. 3600 PTR    example.com.
 ```
 
 ### Reading the zone file
@@ -433,6 +436,12 @@ dig -x 203.0.113.10
 Resolve-DnsName 10.113.0.203.in-addr.arpa -Type PTR
 ```
 
+The PTR record isn't in the `example.com` zone from earlier. It lives in a zone under `in-addr.arpa` run by whoever owns the `203.0.113.0/24` block [@rfc1035], and there it looks like this:
+
+```
+10.113.0.203.in-addr.arpa.  3600  PTR  example.com.
+```
+
 It's a quick way to see who runs a resolver or server, when the owner has set one up.
 
 ### Email
@@ -454,7 +463,8 @@ Email leans on DNS more than anything else, mostly through TXT records with spec
 | **SRV** | The host and port for a service, with priority and weight [@rfc2782] | Named `_service._protocol.example.com`. Used by protocols like SIP and XMPP and some directory services. |
 | **CAA** | Which certificate authorities may issue certificates for the domain [@rfc8659] | Covered in [Certificates and Trust](/primers/networking/certificates-and-trust/#caa-records-can-block-a-ca-entirely). |
 
-### DNSSEC
+<details class="aside">
+<summary>DNSSEC record types</summary>
 
 Plain DNS has no way to prove an answer is genuine. **DNSSEC** adds signatures so a resolver can check that an answer really came from the zone's owner and wasn't changed on the way [@rfc4033]. It adds its own record types [@rfc4034]:
 
@@ -465,12 +475,17 @@ Plain DNS has no way to prove an answer is genuine. **DNSSEC** adds signatures s
 | **DS** | A fingerprint of a child zone's key, published in the **parent** zone. This is how trust chains down from the root, through the TLD, to your domain. |
 | **NSEC** (and NSEC3) | Signed proof that a name or type doesn't exist, so "no such name" can't be forged either. |
 
-### Less common
+</details>
+
+<details class="aside">
+<summary>Less common record types</summary>
 
 | Type | Holds |
 |---|---|
 | **NAPTR** | Rewrite rules for turning one kind of identifier into another, mostly used in telephony [@rfc3403]. |
 | **SSHFP** | The fingerprint of a server's SSH key, so an SSH client can check it against DNS instead of asking you [@rfc4255]. |
 | **TLSA** | A pin for a server's TLS certificate or CA, published in DNS (DANE). Only meaningful with DNSSEC [@rfc6698]. |
+
+</details>
 
 Route 53 supports 17 types: A, AAAA, CAA, CNAME, DS, HTTPS, MX, NAPTR, NS, PTR, SOA, SPF, SRV, SSHFP, SVCB, TLSA, and TXT, plus its own alias records [@aws-route53-record-types].
