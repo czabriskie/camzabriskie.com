@@ -1,7 +1,7 @@
 ---
 import Base from '../../../layouts/Base.astro';
 import NoteList from '../../../components/NoteList.astro';
-import { publishedTopics, sectionedNotes } from '../../../lib/primers';
+import { publishedTopics, sectionedNotes, noteUrl, pos } from '../../../lib/primers';
 
 export async function getStaticPaths() {
   return (await publishedTopics()).map(({ topic, notes }) => ({ params: { topic: topic.slug }, props: { topic, notes } }));
@@ -18,6 +18,9 @@ const groups = sectionedNotes(topic.slug, notes);
       <h1>{topic.title}</h1>
     </div>
     <p class="lede" style="color: var(--muted); margin-bottom: 2rem;">{topic.blurb}</p>
+    {notes.length > 1 && (
+      <p class="start-here"><span class="mono start-tag">Start here</span> <a href={noteUrl(notes[0])}><span class="mono">{pos(0)}</span> {notes[0].data.title}</a>, then read in order.</p>
+    )}
     {groups.length > 1 && (
       <nav class="section-jump mono" aria-label="Sections">
         {groups.map((g) => <a href={`#${g.id}`}>{g.title}</a>)}
@@ -27,6 +30,7 @@ const groups = sectionedNotes(topic.slug, notes);
       g.title ? (
         <section class="topic-section" id={g.id}>
           <h2 class="section-title">{g.title}</h2>
+          {g.blurb && <p class="section-blurb">{g.blurb}</p>}
           <NoteList notes={g.notes} all={notes} />
         </section>
       ) : (
