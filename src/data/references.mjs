@@ -283,6 +283,7 @@ export const references = {
   'sep-zeno': sep(['J. Palmer'], 'Zeno of Elea', 'rev. May 12, 2025', 'zeno-elea'),
   'sep-empedocles': sep(['K. S. Kingsley', 'R. Parry'], 'Empedocles', 'rev. Sep. 25, 2024', 'empedocles'),
   'sep-democritus': sep(['S. Berryman'], 'Democritus', 'rev. Jan. 7, 2023', 'democritus'),
+  'sep-socrates': sep(['D. Nails', 'S. S. Monoson'], 'Socrates', 'rev. May 26, 2022', 'socrates'),
   'sep-leucippus': sep(['S. Berryman'], 'Leucippus', 'rev. Jan. 9, 2023', 'leucippus'),
   'iep-thales': { authors: ["P. O'Grady"], title: 'Thales of Miletus', container: IEP, url: 'https://iep.utm.edu/thales/', accessed: PHIL },
   'iep-anaximander': { authors: ['D. L. Couprie'], title: 'Anaximander', container: IEP, url: 'https://iep.utm.edu/anaximan/', accessed: PHIL },
