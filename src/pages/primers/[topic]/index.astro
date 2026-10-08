@@ -1,13 +1,14 @@
 ---
 import Base from '../../../layouts/Base.astro';
 import NoteList from '../../../components/NoteList.astro';
-import { publishedTopics } from '../../../lib/primers';
+import { publishedTopics, sectionedNotes } from '../../../lib/primers';
 
 export async function getStaticPaths() {
   return (await publishedTopics()).map(({ topic, notes }) => ({ params: { topic: topic.slug }, props: { topic, notes } }));
 }
 
 const { topic, notes } = Astro.props;
+const groups = sectionedNotes(topic.slug, notes);
 ---
 <Base title={`${topic.title} — Primers — Cam Zabriskie`} description={topic.blurb}>
   <div class="primers stream-tech">
@@ -17,6 +18,20 @@ const { topic, notes } = Astro.props;
       <h1>{topic.title}</h1>
     </div>
     <p class="lede" style="color: var(--muted); margin-bottom: 2rem;">{topic.blurb}</p>
-    <NoteList notes={notes} />
+    {groups.length > 1 && (
+      <nav class="section-jump mono" aria-label="Sections">
+        {groups.map((g) => <a href={`#${g.id}`}>{g.title}</a>)}
+      </nav>
+    )}
+    {groups.map((g) =>
+      g.title ? (
+        <section class="topic-section" id={g.id}>
+          <h2 class="section-title">{g.title}</h2>
+          <NoteList notes={g.notes} all={notes} />
+        </section>
+      ) : (
+        <NoteList notes={g.notes} />
+      ),
+    )}
   </div>
 </Base>

@@ -18,7 +18,8 @@
 - `/tech-bytes/<slug>/`, `/life-bytes/<slug>/` — posts
 - `/primers/`, `/primers/<topic>/`, `/primers/<topic>/<slug>/` — Primers:
   explainers grouped by topic, read in order, revised over time (Decision 0006). Topics
-  are listed in `src/lib/primers.ts`.
+  are listed in `src/lib/primers.ts`. /primers/ shows topic cards, recently updated
+  primers, and a filter; topic pages can group primers into sections (Decision 0009).
 - `/primers/references/` — every source cited by any primer (Decision 0007).
 - `/projects/` — curated public GitHub projects, grouped as tools / experiments / teaching
 - `/resume/` — resume (email + GitHub only; no phone/address)
