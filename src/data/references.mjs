@@ -158,6 +158,7 @@ export const references = {
   'aws-route53-resolver-forwarding': aws('Resolving DNS queries between VPCs and your network', 'Amazon Route 53 Developer Guide', 'https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resolver-overview-DSN-queries-to-vpc.html'),
   'aws-route53-routing-policies': aws('Choosing a routing policy', 'Amazon Route 53 Developer Guide', 'https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy.html'),
   'aws-route53-resolver': aws('What is Route 53 VPC Resolver?', 'Amazon Route 53 Developer Guide', 'https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resolver.html'),
+  'aws-route53-resolver-inbound': { ...aws('Forwarding inbound DNS queries to your VPCs', 'Amazon Route 53 Developer Guide', 'https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resolver-forwarding-inbound-queries.html'), accessed: '2026-10-08' },
 
   // CDNs and CloudFront
   'aws-cloudfront-intro': aws('What is Amazon CloudFront?', 'Amazon CloudFront Developer Guide', 'https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html'),
