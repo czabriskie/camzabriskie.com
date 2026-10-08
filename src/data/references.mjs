@@ -295,6 +295,12 @@ export const references = {
   'iep-thales': { authors: ["P. O'Grady"], title: 'Thales of Miletus', container: IEP, url: 'https://iep.utm.edu/thales/', accessed: PHIL },
   'iep-anaximander': { authors: ['D. L. Couprie'], title: 'Anaximander', container: IEP, url: 'https://iep.utm.edu/anaximan/', accessed: PHIL },
   'iep-anaximenes': { authors: ['D. W. Graham'], title: 'Anaximenes', container: IEP, url: 'https://iep.utm.edu/anaximen/', accessed: PHIL },
+  // Code review
+  'google-review-standard': { authors: 'Google', title: 'The Standard of Code Review', container: 'Google Engineering Practices Documentation', url: 'https://google.github.io/eng-practices/review/reviewer/standard.html', accessed: '2026-10-08' },
+  'google-review-looking-for': { authors: 'Google', title: 'What to look for in a code review', container: 'Google Engineering Practices Documentation', url: 'https://google.github.io/eng-practices/review/reviewer/looking-for.html', accessed: '2026-10-08' },
+  'coderabbit-pr-validation': { authors: 'CodeRabbit', title: 'PR validation using linked issues', container: 'CodeRabbit Documentation', url: 'https://docs.coderabbit.ai/issues/pr-validation', accessed: '2026-10-08' },
+  'qodo-ticketing': { authors: 'Qodo', title: 'Use ticket context in code reviews', container: 'Qodo Documentation', url: 'https://docs.qodo.ai/integrations/ticketing-integrations', accessed: '2026-10-08' },
+  'conventional-comments': { authors: 'Conventional Comments', title: 'Conventional Comments', url: 'https://conventionalcomments.io', accessed: '2026-10-08' },
 };
 
 const MONTHS = ['Jan.', 'Feb.', 'Mar.', 'Apr.', 'May', 'Jun.', 'Jul.', 'Aug.', 'Sep.', 'Oct.', 'Nov.', 'Dec.'];
