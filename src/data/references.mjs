@@ -24,6 +24,19 @@ const rfc = (n, authors, title, date) => ({
 
 const aws = (title, container, url) => ({ authors: AWS, title, container, url, accessed: CHECKED });
 
+// Philosophy sources: the Stanford Encyclopedia of Philosophy (dated by its last
+// substantive revision) and the Internet Encyclopedia of Philosophy.
+const PHIL = '2026-10-08';
+const IEP = 'Internet Encyclopedia of Philosophy';
+const sep = (authors, title, date, slug) => ({
+  authors,
+  title,
+  container: 'The Stanford Encyclopedia of Philosophy',
+  date,
+  url: `https://plato.stanford.edu/entries/${slug}/`,
+  accessed: PHIL,
+});
+
 export const references = {
   // RFCs
   rfc768: rfc(768, ['J. Postel'], 'User Datagram Protocol', 'Aug. 1980'),
@@ -259,6 +272,21 @@ export const references = {
   'k8s-port-forward': { authors: 'The Kubernetes Authors', title: 'Use Port Forwarding to Access Applications in a Cluster', container: 'Kubernetes Documentation', url: 'https://kubernetes.io/docs/tasks/access-application-cluster/port-forward-access-application-cluster/', accessed: CHECKED },
   'k8s-control-plane-comms': { authors: 'The Kubernetes Authors', title: 'Communication between Nodes and the Control Plane', container: 'Kubernetes Documentation', url: 'https://kubernetes.io/docs/concepts/architecture/control-plane-node-communication/', accessed: CHECKED },
   'socat-manual': { authors: 'G. Rieger', title: 'socat - Multipurpose relay', container: 'socat documentation', url: 'http://www.dest-unreach.org/socat/doc/socat.html', accessed: CHECKED },
+
+  // Philosophy: the Presocratics
+  'pt-001': { authors: ['S. West'], title: 'Episode #001 - Transcript', container: 'Philosophize This!', note: 'transcript of "Ionian Pre-Socratic Philosophy"', url: 'https://www.philosophizethis.org/transcript/episode-001-transcript', accessed: PHIL },
+  'pt-002': { authors: ['S. West'], title: 'Episode #002 - Transcript', container: 'Philosophize This!', note: 'transcript of "Italian Pre-Socratic Philosophy"', url: 'https://www.philosophizethis.org/transcript/episode-2-transcript', accessed: PHIL },
+  'sep-presocratics': sep(['P. Curd'], 'Presocratic Philosophy', 'rev. Jun. 22, 2020', 'presocratics'),
+  'sep-heraclitus': sep(['D. W. Graham'], 'Heraclitus', 'rev. Dec. 8, 2023', 'heraclitus'),
+  'sep-pythagoras': sep(['C. Huffman'], 'Pythagoras', 'rev. Feb. 5, 2024', 'pythagoras'),
+  'sep-parmenides': sep(['J. Palmer'], 'Parmenides', 'rev. Mar. 4, 2025', 'parmenides'),
+  'sep-zeno': sep(['J. Palmer'], 'Zeno of Elea', 'rev. May 12, 2025', 'zeno-elea'),
+  'sep-empedocles': sep(['K. S. Kingsley', 'R. Parry'], 'Empedocles', 'rev. Sep. 25, 2024', 'empedocles'),
+  'sep-democritus': sep(['S. Berryman'], 'Democritus', 'rev. Jan. 7, 2023', 'democritus'),
+  'sep-leucippus': sep(['S. Berryman'], 'Leucippus', 'rev. Jan. 9, 2023', 'leucippus'),
+  'iep-thales': { authors: ["P. O'Grady"], title: 'Thales of Miletus', container: IEP, url: 'https://iep.utm.edu/thales/', accessed: PHIL },
+  'iep-anaximander': { authors: ['D. L. Couprie'], title: 'Anaximander', container: IEP, url: 'https://iep.utm.edu/anaximan/', accessed: PHIL },
+  'iep-anaximenes': { authors: ['D. W. Graham'], title: 'Anaximenes', container: IEP, url: 'https://iep.utm.edu/anaximen/', accessed: PHIL },
 };
 
 const MONTHS = ['Jan.', 'Feb.', 'Mar.', 'Apr.', 'May', 'Jun.', 'Jul.', 'Aug.', 'Sep.', 'Oct.', 'Nov.', 'Dec.'];

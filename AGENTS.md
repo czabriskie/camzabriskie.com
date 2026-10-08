@@ -73,6 +73,9 @@ it's a Tech Byte. One experience can produce both, and then the post links to th
 document instead of explaining the concept inline. That split is also how work stays out
 of it: the post can stay vague about the job while the document carries the substance.
 
+- Primers aren't tech-only (Decision 0010): Philosophy is a topic too. Non-tech primers
+  cite the Stanford or Internet Encyclopedia of Philosophy over podcasts, and say where
+  the popular version and the scholarship disagree.
 - Primers live in `src/content/primers/<topic>/<slug>.md` (Decision 0006);
   frontmatter `title`, `description`, `order` (reading order in the topic), `updated`,
   optional `draft`. New topics also need an entry in `src/lib/primers.ts`, and a new
