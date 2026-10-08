@@ -60,7 +60,7 @@ const blurb =
             <p class="topic-card-blurb">{topic.blurb}</p>
             <ol class="topic-card-list">
               {notes.slice(0, PREVIEW).map((note, i) => (
-                <li><span class="pos mono">{pos(i)}</span><a href={noteUrl(note)}>{note.data.title}</a></li>
+                <li><span class="pos mono">{pos(i)}</span><span><a href={noteUrl(note)}>{note.data.title}</a>{i === 0 && notes.length > 1 && <span class="mono start-tag">start here</span>}</span></li>
               ))}
             </ol>
             {notes.length > PREVIEW && (
