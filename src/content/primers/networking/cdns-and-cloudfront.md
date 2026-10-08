@@ -1,8 +1,8 @@
 ---
 title: CDNs and CloudFront
 description: How a content delivery network serves copies of your site from near your users, how long those copies last, what makes two requests "the same," and how to keep people from going around it to your origin.
-order: 8
-updated: 2026-10-07
+order: 4
+updated: 2026-10-08
 ---
 
 A content delivery network (CDN) keeps copies of your content on servers spread around the world and answers each request from one close to the person asking. Pages load faster because the content travels a shorter distance, your own servers handle a fraction of the traffic, and a big spike lands on the CDN instead of on you. Amazon CloudFront is AWS's CDN, and it's the usual way to put HTTPS and a custom domain in front of an S3 bucket or a load balancer.
@@ -13,7 +13,7 @@ This builds on [How DNS resolution works](/primers/networking/dns-resolution/) a
 
 A few words come up constantly, and CloudFront uses some of its own:
 
-- **Origin:** where the real content lives. An S3 bucket, a load balancer, or any web server [@aws-cloudfront-intro]. This isn't the "origin" from browser security, which is a scheme, host, and port like `https://www.example.com:443` [@rfc6454] and is the unit that CORS rules decide sharing between [@whatwg-fetch]. In a CDN, the origin is a server.
+- **Origin:** where the real content lives. An S3 bucket, a load balancer, or any web server [@aws-cloudfront-intro]. It isn't the browser-security origin that CORS uses; here it's a server.
 - **Edge location:** one of the CDN's data centers, holding cached copies and answering requests. AWS calls them points of presence (POPs) too [@aws-cloudfront-how-it-works]. There are far more of them than AWS regions, the places your servers and buckets live: 39 regions, but more than 750 CloudFront POPs in over 100 cities [@aws-global-infrastructure, @aws-cloudfront-features].
 - **Distribution:** a configuration object, not a server. It holds one CDN setup: the domain names it answers to, the origins behind it, and the rules for caching. CloudFront copies that configuration (but not your content) out to all of its edge locations [@aws-cloudfront-intro].
 - **Viewer:** CloudFront's word for whoever makes the request, usually a browser. It's just the client.
@@ -129,8 +129,6 @@ curl.exe -s -o NUL -D - https://www.example.com/logo.png
 - `-o /dev/null` throws the body away. `NUL` does the same on Windows.
 - `-D -` writes the response headers out, and the `-` means to the screen [@curl-manpage].
 
-You'll often see `curl -I` for this instead. It sends a `HEAD` request, which asks for the headers only [@curl-manpage]. Browsers load pages with `GET`, though, so sending a `GET` keeps the test the same as real traffic.
-
 On Windows, type `curl.exe` rather than `curl`, because in Windows PowerShell 5.1 plain `curl` is an alias for a different command [@ms-curl-windows].
 
 The first run might print something like this:
@@ -165,7 +163,7 @@ age: 14
 - `x-cache: Hit from cloudfront` or `Miss from cloudfront` says whether the edge had it [@aws-cloudfront-cache-tags-blog].
 - `age: 14` says roughly how many seconds it's been since the origin generated or last revalidated this copy [@rfc9111]. On a miss there's usually no `age` at all, because the copy is brand new.
 - `cache-control` shows what the origin asked for.
-- `x-amz-cf-pop` names the edge location that answered. The letters are usually the IATA code of an airport near it and the number tells apart several sites in the same area [@aws-cloudfront-logs-reference, @httpdev-x-amz-cf-pop]. AWS doesn't document the part after the dash [@httpdev-x-amz-cf-pop].
+- `x-amz-cf-pop` names the edge location that answered [@httpdev-x-amz-cf-pop].
 
 A miss followed by a hit means caching is working. Two misses in a row usually means the cache key includes something that changes between requests, or the origin is telling the CDN not to cache.
 
@@ -188,18 +186,13 @@ Nobody gets new HTML with old CSS, or old HTML with new CSS, because each versio
 
 Static content, like images, CSS, JavaScript, and prebuilt HTML, is the easy case: the same for everyone, so cache it for a long time.
 
-Dynamic content, built per request, is harder, but a CDN still helps. Short TTLs (even a few seconds) can take a lot of load off an origin during a spike, and requests that aren't cached at all still get the faster network path and TLS handled at the edge. The second one helps because the [handshake's round trips](/primers/networking/tls-handshake/#where-the-handshake-fits) only travel as far as the nearby edge instead of all the way to the origin.
+Dynamic content, built per request, is harder, but a CDN still helps. Short TTLs (even a few seconds) can take a lot of load off an origin during a spike, and requests that aren't cached at all still get the faster network path and TLS, the encryption in HTTPS, handled at the edge. The second one helps because the handshake, the few messages a browser and server trade to set up an encrypted connection, only has to make its [round trips](/primers/networking/tls-handshake/#where-the-handshake-fits) as far as the nearby edge instead of all the way to the origin [@rfc9846].
 
-### Running code at the edge
-
-A common first use is a rewrite: someone visits `/blog/`, and a small function changes the request to `/blog/index.html` on its way in, so the edge looks up and fetches the file that actually exists [@aws-cloudfront-add-index]. An S3 website endpoint used to do that job (see [S3 origins](#s3-origins-keep-the-bucket-private)). CloudFront has two kinds of edge code [@aws-cloudfront-faq]:
-
-- **CloudFront Functions** are for small, fast changes to requests and responses: rewriting a URL like that, adding a header, normalizing the cache key.
-- **Lambda@Edge** is for heavier work that takes longer, needs libraries, or calls other services.
+CloudFront can also run small functions at the edge that change requests and responses on the way through ([Running code at the edge](#running-code-at-the-edge)).
 
 ## HTTPS with CloudFront
 
-There are two separate TLS connections, one on each side of the edge, which is [TLS termination](/primers/networking/load-balancers-and-tls/#terminating-tls) again:
+There are two separate TLS connections, one on each side of the edge. That's [TLS termination](/primers/networking/load-balancers-and-tls/#terminating-tls): the edge holds the certificate, decrypts what the browser sends, and opens its own connection onward. A **certificate** is a small file that ties a public key to a name like `www.example.com`, signed by someone browsers trust [@rfc5280] ([Certificates and trust](/primers/networking/certificates-and-trust/) covers them), and AWS's service for getting one is AWS Certificate Manager, ACM ([more on ACM](/primers/networking/certificates-and-trust/#aws-certificate-manager)) [@aws-acm-faq].
 
 <div class="cdn-tls" role="img" aria-label="Two TLS connections. TLS connection 1 runs from the browser to the edge location and uses a certificate for www.example.com from ACM in us-east-1. The edge location decrypts the request there. TLS connection 2 runs from the edge location to the origin, an Application Load Balancer, and uses the origin's own certificate, the ALB's, which can be from ACM in any region. With an S3 origin, S3 provides the certificate for connection 2.">
 <svg viewBox="0 0 400 158" aria-hidden="true" focusable="false">
@@ -223,10 +216,10 @@ There are two separate TLS connections, one on each side of the edge, which is [
 </div>
 <p class="bitgrid-caption">The edge ends the first connection and opens the second, so each side has its own certificate.</p>
 
-- **Browser to edge.** The certificate has to cover `www.example.com`, and you add that name to the distribution as an **alternate domain name** (CloudFront also calls it a CNAME), which CloudFront only accepts with a valid certificate that covers it [@aws-cloudfront-cnames]. If the certificate comes from ACM, it has to be requested in `us-east-1`, whichever region the rest of your site is in [@aws-cloudfront-cert-requirements]. CloudFront is a global service rather than one that lives in a region, and AWS treats US East (N. Virginia) as its home: CloudFront's API activity is logged there [@aws-cloudfront-cloudtrail], and that's the only region it reads ACM certificates from [@aws-acm-services].
+- **Browser to edge.** The certificate has to cover `www.example.com`, and you add that name to the distribution as an **alternate domain name** (CloudFront also calls it a CNAME), which CloudFront only accepts with a valid certificate that covers it [@aws-cloudfront-cnames]. An ACM certificate for CloudFront has to be in `us-east-1` [@aws-cloudfront-cert-requirements].
 - **Edge to origin.** A load balancer origin uses its own certificate, which can come from any region [@aws-cloudfront-cert-requirements]. An S3 origin needs nothing from you here, because S3 provides the certificate [@aws-cloudfront-s3-https].
 
-Then the domain itself points at the distribution, usually with a Route 53 alias record, since a CNAME isn't allowed on the bare domain, `example.com` with nothing in front ([How DNS resolution works](/primers/networking/dns-resolution/#addresses-and-aliases) explains why).
+Then the domain itself points at the distribution, usually with a Route 53 alias record, since a CNAME isn't allowed on the bare domain, `example.com` with nothing in front ([How DNS resolution works](/primers/networking/dns-resolution/#alias-records-and-the-zone-apex) explains why).
 
 ## Keeping people from going around the CDN
 
@@ -245,15 +238,22 @@ The website endpoint serves the bucket like a simple web server, and the REST en
 
 The older way to host a static site on S3, which plenty of tutorials still teach, was to turn on static website hosting, make the bucket public, and point CloudFront at the website endpoint. It's described here so you'll recognize it. It leaves the bucket open to everyone [@aws-s3-website-permissions], and S3 website endpoints don't support HTTPS anyway [@aws-s3-endpoints].
 
-The current way is to use the bucket's REST endpoint as the origin and turn on **origin access control (OAC)**. CloudFront signs its requests to S3, the bucket policy only allows requests signed by your distribution, and the bucket stays completely private [@aws-cloudfront-s3-oac]. OAC doesn't work with website endpoints, which is one more reason to leave them behind. Without the website endpoint, features like a default `index.html` in every folder have to be handled another way, usually with the small [CloudFront Function](#running-code-at-the-edge) described above.
+The current way is to use the bucket's REST endpoint as the origin and turn on **origin access control (OAC)**. CloudFront signs its requests to S3, the bucket policy only allows requests signed by your distribution, and the bucket stays completely private [@aws-cloudfront-s3-oac]. OAC doesn't work with website endpoints, which is one more reason to leave them behind. Without the website endpoint, nothing serves a default `index.html` in every folder anymore, because only the website endpoint returns index documents [@aws-s3-website-endpoints], so a request for `/blog/` finds nothing.
+
+### Running code at the edge
+
+The fix for that `index.html` problem is a rewrite: someone visits `/blog/`, and a small function changes the request to `/blog/index.html` on its way in, so the edge looks up and fetches the file that actually exists [@aws-cloudfront-add-index]. CloudFront has two kinds of edge code [@aws-cloudfront-faq]:
+
+- **CloudFront Functions** are for small, fast changes to requests and responses: rewriting a URL like that, adding a header, normalizing the cache key.
+- **Lambda@Edge** is for heavier work that takes longer, needs libraries, or calls other services.
 
 ### Load balancer and server origins
 
 There are two ways to make sure only CloudFront reaches a load balancer or server:
 
-- **VPC origins.** The load balancer or EC2 instance sits in a [private subnet](/primers/networking/aws-vpc-subnets/#public-and-private-subnets) with no public address at all, and CloudFront connects to it privately. CloudFront becomes the only way in [@aws-cloudfront-vpc-origins].
+- **VPC origins.** The load balancer or EC2 instance sits in a [private subnet](/primers/networking/aws-vpc-subnets/#public-and-private-subnets), a part of your AWS network with no route to or from the internet [@aws-vpc-subnets], with no public address of its own. CloudFront connects to it privately. CloudFront becomes the only way in [@aws-cloudfront-vpc-origins].
 - **A public origin, locked down two ways** [@aws-cloudfront-restrict-alb]:
-  - **By address.** A **managed prefix list** is a named set of address ranges that a security group rule can use as its source instead of listing the ranges one by one [@aws-vpc-prefix-lists]. AWS maintains one for the CloudFront servers that connect to origins, `com.amazonaws.global.cloudfront.origin-facing`, and keeps it up to date, so a security group rule allowing HTTPS from it lets in CloudFront's servers and nothing else [@aws-cloudfront-prefix-list].
+  - **By address.** A **security group** is the firewall attached to a load balancer or instance, a list of rules for what traffic it lets in ([more on security groups](/primers/networking/aws-vpc-subnets/#security-groups-and-network-acls)) [@aws-vpc-security-groups]. A **managed prefix list** is a named set of address ranges that a security group rule can use as its source instead of listing the ranges one by one [@aws-vpc-prefix-lists]. AWS maintains one for the CloudFront servers that connect to origins, `com.amazonaws.global.cloudfront.origin-facing`, and keeps it up to date, so a security group rule allowing HTTPS from it lets in CloudFront's servers and nothing else [@aws-cloudfront-prefix-list].
   - **By a secret header.** CloudFront adds a custom header with a random value to every request it sends to the origin, and the origin rejects requests without it, either with its own rules or with a WAF rule in front of it [@aws-cloudfront-restrict-alb, @aws-cloudfront-alb-origin].
 
   You need both, because the prefix list covers every CloudFront distribution in the world, including other people's. The header proves the request came from yours.
