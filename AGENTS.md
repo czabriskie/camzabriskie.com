@@ -75,7 +75,9 @@ of it: the post can stay vague about the job while the document carries the subs
 
 - Primers live in `src/content/primers/<topic>/<slug>.md` (Decision 0006);
   frontmatter `title`, `description`, `order` (reading order in the topic), `updated`,
-  optional `draft`. New topics also need an entry in `src/lib/primers.ts`.
+  optional `draft`. New topics also need an entry in `src/lib/primers.ts`, and a new
+  primer in a topic with sections (`sections` in the same file, Decision 0009) needs a
+  line there too, or it lands in that topic's "More" group.
 - **Strictly the material and Cam's understanding of it. Nothing from work.** Source
   notes usually come from real projects (often his work vault), so scrub before
   writing: no employer or customer names or abbreviations, hostnames, certificate

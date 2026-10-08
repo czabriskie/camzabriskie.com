@@ -2,13 +2,15 @@
 import { noteUrl, pos, type Note } from '../lib/primers';
 interface Props {
   notes: Note[];
+  /** The topic's full reading order, so a subset (one section) keeps each note's number. */
+  all?: Note[];
 }
-const { notes } = Astro.props;
+const { notes, all = notes } = Astro.props;
 ---
 <ol class="notes">
-  {notes.map((note, i) => (
+  {notes.map((note) => (
     <li>
-      <span class="pos mono">{pos(i)}</span>
+      <span class="pos mono">{pos(all.indexOf(note))}</span>
       <div>
         <a class="title" href={noteUrl(note)}>{note.data.title}</a>
         <p class="desc">{note.data.description}</p>
