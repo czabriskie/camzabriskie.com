@@ -65,6 +65,21 @@ Some secondary sources claim a later Podman release flipped that default. Treat 
 
 > **Rule of thumb:** If amd64 containers are slow on a Mac, check the VM manager and Rosetta setting before switching tools.
 
+### When Rosetta is not enough
+
+Rosetta is not a complete x86_64 implementation. Reports of failures cluster around AVX instructions and JIT-heavy runtimes, though those reports come from secondary sources and are worth reproducing before you rely on them. An image that crashes with `Illegal instruction` under `--platform linux/amd64` is the typical symptom.
+
+Docker Desktop bundles QEMU user-mode emulation, which runs without setup, and its Rosetta option is documented as disabled by default [@docker-desktop-settings]. The VM can have both registered at once, so check which one your settings select. QEMU covers more instructions than Rosetta and runs slower, and Docker's documentation says as much for emulated builds [@docker-multi-platform].
+
+| Approach | Fidelity | Speed |
+|---|---|---|
+| Rosetta | Good, with known gaps | Near-native |
+| QEMU user-mode | Broader | Much slower |
+| Full x86_64 VM under QEMU | Most complete | Slowest |
+| Native amd64 host | Complete | Native |
+
+Docker documents two ways to skip emulation: a builder with a native amd64 node, and cross-compilation [@docker-multi-platform]. A remote amd64 machine is the only option that is both fast and faithful. To reinstall the QEMU handlers manually, Docker documents `docker run --privileged --rm tonistiigi/binfmt --install all` [@docker-multi-platform].
+
 ## Choosing
 
 | Priority | Look at |
