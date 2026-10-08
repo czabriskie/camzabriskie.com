@@ -351,6 +351,15 @@ export const references = {
   'helm-template': { authors: 'The Helm Authors', title: 'helm template', container: 'Helm Documentation', url: 'https://helm.sh/docs/helm/helm_template/', accessed: '2026-10-09' },
   'aws-iam-best-practices': { ...aws('Security best practices in IAM', 'AWS Identity and Access Management User Guide', 'https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html'), accessed: '2026-10-09' },
   'aws-access-analyzer-checks': { ...aws('Validate policies with IAM Access Analyzer custom policy checks', 'AWS Identity and Access Management User Guide', 'https://docs.aws.amazon.com/IAM/latest/UserGuide/access-analyzer-custom-policy-checks.html'), accessed: '2026-10-09' },
+  // Container runtimes on macOS
+  'docker-desktop-license': { authors: 'Docker, Inc.', title: 'Docker Desktop license agreement', container: 'Docker Docs', url: 'https://docs.docker.com/subscription-billing/desktop-license/', accessed: '2026-10-08' },
+  'docker-desktop-vmm': { authors: 'Docker, Inc.', title: 'Virtual Machine Manager', container: 'Docker Desktop manual', url: 'https://docs.docker.com/desktop/features/vmm/', accessed: '2026-10-08' },
+  'podman-remote-clients': { authors: 'The Podman Authors', title: 'Podman Remote clients for macOS and Windows', container: 'Podman documentation', url: 'https://github.com/containers/podman/blob/main/docs/tutorials/mac_win_client.md', accessed: '2026-10-08' },
+  'podman-desktop-rosetta': { authors: 'Podman Desktop Authors', title: 'Native Apple Rosetta translation layer (macOS)', container: 'Podman Desktop documentation', url: 'https://podman-desktop.io/docs/podman/rosetta', accessed: '2026-10-08' },
+  'podman-desktop-docker-compat': { authors: 'Podman Desktop Authors', title: 'Managing Docker compatibility', container: 'Podman Desktop documentation', url: 'https://podman-desktop.io/docs/migrating-from-docker/managing-docker-compatibility', accessed: '2026-10-08' },
+  'colima-readme': { authors: 'A. Oladipo and contributors', title: 'Colima: container runtimes on macOS (and Linux) with minimal setup', container: 'GitHub README', url: 'https://github.com/abiosoft/colima', accessed: '2026-10-08' },
+  'rancher-desktop-docs': { authors: 'SUSE', title: 'Introduction', container: 'Rancher Desktop documentation', url: 'https://docs.rancherdesktop.io/', accessed: '2026-10-08' },
+  'orbstack-pricing': { authors: 'Orbital Labs, LLC', title: 'Pricing', container: 'OrbStack', url: 'https://orbstack.dev/pricing', accessed: '2026-10-08' },
 };
 
 const MONTHS = ['Jan.', 'Feb.', 'Mar.', 'Apr.', 'May', 'Jun.', 'Jul.', 'Aug.', 'Sep.', 'Oct.', 'Nov.', 'Dec.'];
