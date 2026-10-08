@@ -1,8 +1,8 @@
 ---
 title: Reaching private resources
 description: The ways into a private network, from connecting whole networks with VPNs and Transit Gateway to forwarding one port for an afternoon, and what to check when you're connected but still can't reach anything.
-order: 6
-updated: 2026-10-07
+order: 9
+updated: 2026-10-08
 ---
 
 Databases, internal tools, and Kubernetes nodes live in private subnets on purpose, so nothing on the internet can reach them. People still need to, though, and so do other networks. The options run from permanent links between whole networks down to a tunnel to one port that lasts as long as a terminal window.
@@ -17,10 +17,11 @@ This leans on [AWS VPCs, subnets, and routing](/primers/networking/aws-vpc-subne
 | Transit Gateway | network ↔ network | Many VPCs, plus VPNs and Direct Connect | Medium: an attachment per network and its own route tables | Permanent |
 | Site-to-site VPN | network ↔ network | An office or data center, over the internet | Medium: a VPN device at the far end and two tunnels | Permanent |
 | Direct Connect | network ↔ network | An office or data center that needs steady bandwidth | High: a physical cable and a provider | Permanent |
+| PrivateLink | person or network ↔ one service | One service, even when the address ranges overlap | Medium: a load balancer, an endpoint service, and an endpoint on the other side | Permanent |
 | Client VPN | person ↔ network | People who need regular access | Medium: an endpoint, client software, and sign-in | While connected |
 | Port forwarding | person ↔ one port | One person, one port, right now | Low: one command, if you already have a way in | While the terminal is open |
 
-Each one gets a section below, in that order, and [the last section](#connected-but-cant-reach-it) covers what to check when you're connected and the database still doesn't answer.
+Each one gets a section below, in that order (PrivateLink is covered under [VPCs in different AWS accounts](#vpcs-in-different-aws-accounts)), and [the last section](#connected-but-cant-reach-it) covers what to check when you're connected and the database still doesn't answer.
 
 ## Connecting whole networks
 
@@ -104,11 +105,25 @@ Three details catch people out:
 
 - **A VPC attachment needs a subnet in each availability zone.** Resources in a zone with no attachment subnet can't reach the Transit Gateway at all, even with a route to it [@aws-tgw-how-it-works, @aws-tgw-vpc-attachments].
 - **Return routes live in the VPC.** Each subnet with resources that should be reachable needs a route back to the far side's range pointing at the Transit Gateway, like the last row in the table above. Without it, requests arrive and replies go nowhere [@aws-tgw-vpc-attachments].
-- **Address ranges can't overlap, same as with peering.** Transit Gateway lets you attach a VPC whose range matches or overlaps one that's already attached, but it won't route between them: the new VPC's routes just never get added to the gateway's route table [@aws-tgw-vpc-attachments]. It couldn't work anyway. The gateway's route table sends a range to exactly one attachment, so two VPCs on `10.0.0.0/16` can't both be "the" `10.0.0.0/16`, and inside each VPC the `local` route already claims that range, so a packet for it never leaves for the gateway in the first place.
+- **Address ranges can't overlap, same as with peering.** Transit Gateway lets you attach a VPC whose range matches or overlaps one that's already attached, but it won't route between them: the new VPC's routes just never get added to the gateway's route table [@aws-tgw-vpc-attachments].
 
-When two networks that overlap really do need to talk, AWS's documented workaround is a **private NAT gateway**. Each VPC gets an extra range that doesn't overlap with anything, and the traffic crosses the Transit Gateway using only addresses from those extra ranges: it leaves VPC A through a private NAT gateway, which swaps the source for its own non-overlapping address, and arrives at a load balancer in VPC B's non-overlapping range, which passes it on to the real servers [@aws-nat-gateway-scenarios]. Neither side ever has to route to the overlapping range. If only one service needs to be reachable, [PrivateLink](#vpcs-in-different-aws-accounts) is simpler and allows overlapping ranges directly.
+For two overlapping networks that really do need to talk, AWS documents a workaround with a private NAT gateway [@aws-nat-gateway-scenarios]. [PrivateLink](#vpcs-in-different-aws-accounts) is usually simpler for one service.
 
-### VPCs in different AWS accounts
+### Site-to-site VPN
+
+A **site-to-site VPN** is an encrypted tunnel between two whole networks, usually an office or data center and AWS. A **tunnel** is a packet wrapped inside another packet. The original packet, still addressed from one private address to another, becomes the payload of a new packet addressed between the two VPN devices, and the far device unwraps it and sends the original on. It's the same [encapsulation](/primers/networking/osi-model/#down-the-stack-encapsulation) every layer of the network already does, with a second IP header on the outside [@rfc4301].
+
+AWS's site-to-site VPN uses **IPsec** for the tunnel [@aws-s2s-vpn-what-is]. IPsec works at the IP layer, so it encrypts every packet between the two networks whatever program sent it [@rfc4301], and any protocol can ride inside: HTTP, database connections, anything. TLS, the encryption behind HTTPS (see [the TLS handshake](/primers/networking/tls-handshake/)), works differently: it protects one application's connection, set up by that application [@rfc9846]. A site-to-site VPN protects all the traffic between two places, and TLS protects one conversation wherever it goes.
+
+In AWS, the far end is described by a **customer gateway** (the office's VPN device), and the AWS end is a **virtual private gateway** on one VPC or a Transit Gateway. Each VPN connection comes with two tunnels that end in different availability zones, and the office device should have both up, because AWS takes one down from time to time for maintenance [@aws-s2s-vpn-what-is, @aws-s2s-vpn-resilience]. The routes for the office's ranges are either typed in as static routes or learned over BGP (Border Gateway Protocol, which lets the office device announce its ranges itself), and AWS recommends BGP when the device supports it because its checks help traffic fail over to the second tunnel [@aws-s2s-vpn-static-dynamic].
+
+### Direct Connect
+
+**Direct Connect** is a dedicated physical connection into AWS instead of a tunnel over the internet: a fiber-optic Ethernet cable with your router on one end and an AWS Direct Connect router on the other, at a Direct Connect location. To use one, your equipment is either in that facility already (colocated) or you reach it through a Direct Connect partner or another network provider [@aws-dx-what-is].
+
+It costs more and takes longer to set up, and in return you get more bandwidth and much steadier latency. It isn't encrypted by default. The traffic is private, but if it needs to be encrypted you add MACsec (on supported connections) or run a site-to-site VPN over the Direct Connect link [@aws-dx-encryption-in-transit]. **MACsec** is an IEEE standard that encrypts at layer 2, one Ethernet link at a time: here, between your router and AWS's device at the Direct Connect location. It protects that cable, not the whole path end to end [@aws-dx-macsec]. Large setups often use Direct Connect as the main path with a VPN as the backup.
+
+## VPCs in different AWS accounts
 
 Companies often give each team or environment its own AWS account, so the VPCs that need to talk end up in different accounts. Peering and Transit Gateway both work across accounts, and the difference from the single-account case is mostly about who has to agree to what.
 
@@ -137,7 +152,14 @@ aws ec2 create-vpc-peering-connection --vpc-id vpc-aaaa1111 `
 aws ec2 accept-vpc-peering-connection --vpc-peering-connection-id pcx-0123456789abcdef0
 ```
 
-Add `--peer-region` to the first command when VPC B is in another region. Everything else about peering still applies: the two address ranges can't overlap, and the connection doesn't carry traffic on to a third VPC [@aws-vpc-peering-basics]. If instances should find each other by their public DNS names, turn on DNS resolution for the peering connection, which makes those names resolve to private addresses. Both VPCs need DNS hostnames and DNS resolution enabled for that to work [@aws-vpc-peering-dns].
+Add `--peer-region` to the first command when VPC B is in another region. Everything else about peering still applies: the two address ranges can't overlap, and the connection doesn't carry traffic on to a third VPC [@aws-vpc-peering-basics].
+
+<details class="aside">
+<summary>Public DNS names across a peering connection</summary>
+
+If instances should find each other by their public DNS names, turn on DNS resolution for the peering connection, which makes those names resolve to private addresses. Both VPCs need DNS hostnames and DNS resolution enabled for that to work [@aws-vpc-peering-dns].
+
+</details>
 
 **With Transit Gateway, one account owns the gateway and shares it** through AWS Resource Access Manager (RAM), with specific accounts or the whole organization [@aws-tgw-share]:
 
@@ -146,23 +168,16 @@ Add `--peer-region` to the first command when VPC B is in another region. Everyt
 3. The owning account accepts the attachment, unless the gateway was created with **Auto accept shared attachments** turned on [@aws-tgw-create].
 4. Routes split by ownership. Only the owning account can change the transit gateway's route tables [@aws-tgw-share], and each account adds the routes in its own VPC pointing at the gateway, the same as in [the walkthrough above](#following-a-packet-through-it).
 
-**Which one to use** follows the same logic as in one account. For a couple of VPCs, peering is simpler, and it has no hourly charge. Data that crosses an availability zone over a peering connection is billed at $0.01 per GB in each direction [@aws-vpc-pricing]. For many accounts, Transit Gateway scales better: each account attaches once instead of peering with every other VPC. It's billed per attachment per hour plus per GB of data it processes [@aws-tgw-pricing].
+**Which one to use** follows the same logic as in one account. For a couple of VPCs, peering is simpler. For many accounts, Transit Gateway scales better: each account attaches once instead of peering with every other VPC.
+
+<details class="aside">
+<summary>What each one costs</summary>
+
+Peering has no hourly charge. Data that crosses an availability zone over a peering connection is billed at $0.01 per GB in each direction [@aws-vpc-pricing]. Transit Gateway is billed per attachment per hour plus per GB of data it processes [@aws-tgw-pricing].
+
+</details>
 
 **When only one service needs to be reachable,** connecting whole networks is more than the job needs. With **PrivateLink**, the account that runs the service puts it behind a Network Load Balancer and publishes it as an *endpoint service*, then allows the other account to use it. The other account creates an interface endpoint in its own VPC and reaches the service through that endpoint's local address [@aws-privatelink-share, @aws-privatelink-concepts]. Connections only go one way, from the consumer to the service, and the two VPCs' address ranges are allowed to overlap [@aws-multivpc-privatelink], which helps when two accounts happened to pick the same `10.0.0.0/16`.
-
-### Site-to-site VPN
-
-A **site-to-site VPN** is an encrypted tunnel between two whole networks, usually an office or data center and AWS. A **tunnel** is a packet wrapped inside another packet. The original packet, still addressed from one private address to another, becomes the payload of a new packet addressed between the two VPN devices, and the far device unwraps it and sends the original on. It's the same [encapsulation](/primers/networking/osi-model/#down-the-stack-encapsulation) every layer of the network already does, with a second IP header on the outside [@rfc4301].
-
-AWS's site-to-site VPN uses **IPsec** for the tunnel [@aws-s2s-vpn-what-is]. IPsec works at the IP layer, so it encrypts every packet between the two networks whatever program sent it [@rfc4301], and any protocol can ride inside: HTTP, database connections, anything. TLS, the encryption behind HTTPS (see [the TLS handshake](/primers/networking/tls-handshake/)), works differently: it protects one application's connection, set up by that application [@rfc9846]. A site-to-site VPN protects all the traffic between two places, and TLS protects one conversation wherever it goes.
-
-In AWS, the far end is described by a **customer gateway** (the office's VPN device), and the AWS end is a **virtual private gateway** on one VPC or a Transit Gateway. Each VPN connection comes with two tunnels that end in different availability zones, and the office device should have both up, because AWS takes one down from time to time for maintenance [@aws-s2s-vpn-what-is, @aws-s2s-vpn-resilience]. The routes for the office's ranges are either typed in as static routes or learned over BGP (Border Gateway Protocol, which lets the office device announce its ranges itself), and AWS recommends BGP when the device supports it because its checks help traffic fail over to the second tunnel [@aws-s2s-vpn-static-dynamic].
-
-### Direct Connect
-
-**Direct Connect** is a dedicated physical connection into AWS instead of a tunnel over the internet: a fiber-optic Ethernet cable with your router on one end and an AWS Direct Connect router on the other, at a Direct Connect location. To use one, your equipment is either in that facility already (colocated) or you reach it through a Direct Connect partner or another network provider [@aws-dx-what-is].
-
-It costs more and takes longer to set up, and in return you get more bandwidth and much steadier latency. It isn't encrypted by default. The traffic is private, but if it needs to be encrypted you add MACsec (on supported connections) or run a site-to-site VPN over the Direct Connect link [@aws-dx-encryption-in-transit]. **MACsec** is an IEEE standard that encrypts at layer 2, one Ethernet link at a time: here, between your router and AWS's device at the Direct Connect location. It protects that cable, not the whole path end to end [@aws-dx-macsec]. Large setups often use Direct Connect as the main path with a VPN as the backup.
 
 ## Connecting people: client VPN
 
@@ -312,7 +327,7 @@ The pieces of the first command:
 - **socat** (SOcket CAT) connects two streams of bytes, and takes two addresses [@socat-manual]:
   - `TCP-LISTEN:5432` listens on port 5432 inside the pod.
   - `fork` handles each new connection in its own child process and keeps listening, so more than one connection (and a reconnect) works [@socat-manual].
-  - `reuseaddr` lets other sockets bind the same port even while socat is using parts of it. Since socat 1.8.0 it's set automatically for listening TCP addresses, so on a recent image it changes nothing and is harmless to include [@socat-manual].
+  - `reuseaddr` is harmless to include, and recent socat versions set it on listening addresses already [@socat-manual].
   - `TCP:my-db…:5432` connects each one to the database on port 5432. The `xxxxxxxxxxxx` and `us-east-1` are placeholders for your own database's endpoint name and region, which the RDS console shows.
 - **Two terminals**, because the first command stays attached to the pod and keeps running. Start the second once the pod is up (`kubectl get pod pg-proxy` shows `Running`).
 
@@ -349,9 +364,9 @@ The same idea works with other ways in:
 
   A few things have to be in place first. Your laptop needs the AWS CLI and its **Session Manager plugin** installed [@aws-ssm-start-session]. The instance needs the **SSM Agent** running, recent enough to support port forwarding to a remote host [@aws-ssm-start-session], plus outbound HTTPS to the Systems Manager endpoints and permission to talk to Systems Manager, usually through an **instance profile** (the IAM role attached to the instance) with the `AmazonSSMManagedInstanceCore` policy [@aws-ssm-prerequisites, @aws-ssm-instance-permissions]. The database's security group has to allow the instance, because the instance opens the connection to it.
 
-  The PowerShell version uses the AWS CLI's shorthand instead of JSON, because Windows PowerShell 5.1 doesn't pass double quotes inside an argument through to other programs the way PowerShell 7.3 and later do [@ms-about-parsing], and the JSON breaks without them.
+  The PowerShell version uses the AWS CLI's shorthand instead of JSON, because Windows PowerShell 5.1 drops the JSON's inner double quotes [@ms-about-parsing].
 
-- **An SSH [bastion host](/primers/networking/proxies-and-bastions/#bastion-hosts)** (a small instance whose only job is to be SSH'd into) does the same with `ssh -L 5433:<database host>:5432 user@bastion`, at the cost of keeping an SSH port open and managing keys. The bastion makes the connection to the database, so the database name is looked up and dialed from the bastion, not from your laptop [@openssh-ssh]. A private name that only resolves inside the VPC works fine.
+- **An SSH [bastion host](/primers/networking/proxies-and-bastions/#bastion-hosts)** does the same with `ssh -L`, at the cost of keeping an SSH port open and managing keys. [Forwarding a port through a bastion](/primers/networking/proxies-and-bastions/#forwarding-a-port-through-a-bastion) walks through the command.
 
 ## Connected but can't reach it
 
@@ -363,7 +378,7 @@ Work through the path in order, from the laptop to the resource and back. The st
 4. **A route back** (general). Every subnet the destination lives in has a route for the source range (the client range or the VPN's own range, depending on the VPN) pointing back the way it came. This one is easy to miss, especially when an environment has more subnets than the ones you checked.
 5. **The NACLs, both ways** (general). Including [ephemeral ports](/primers/networking/aws-vpc-subnets/#security-groups-and-network-acls) on the way back: the port the client picked for its end of the connection, which the reply is addressed to.
 6. **The security group on the destination** (general). It allows the source the destination actually sees, on the right port.
-7. **The name resolves to the private address.** If the hostname only resolves inside the VPC (a [private hosted zone](/primers/networking/dns-resolution/#private-hosted-zones)), the laptop needs to use the VPC's DNS over the VPN, or it'll resolve the name somewhere else or not at all.
+7. **The name resolves to the private address.** If the hostname only resolves inside the VPC (a [private hosted zone](/primers/networking/dns-resolution/#private-hosted-zones)), the laptop's queries have to reach a resolver that can see the zone, and the zone has to be associated with the VPC that resolver answers for. The VPC's own `.2` resolver is only for queries from inside the VPC, so when the VPN's clients reach it from outside (a self-run VPN that passes the client address through, say), the VPN should hand out a Route 53 Resolver **inbound endpoint**, an address in the VPC that accepts queries from outside it, or a DNS forwarder running inside the VPC [@aws-route53-private-zones, @aws-route53-resolver-forwarding, @aws-route53-resolver-inbound].
 8. **Something is listening** (general). On that address and port, not just on `localhost`.
 
 ### A worked example
@@ -378,7 +393,7 @@ A self-run VPN server runs on an instance at `10.0.1.30` in VPC A (`10.0.0.0/16`
 | 4. A route back | The database's subnet in B has `10.250.0.0/22 → tgw-…`. In A, the attachment's subnets have `10.250.0.0/22 →` the VPN instance, and the instance's source/destination check is off [@aws-tgw-vpc-attachments, @aws-ec2-eni]. | **No** for B's subnet: it only had `10.0.0.0/16 → tgw-…`. Add the route. |
 | 5. The NACLs | B's database subnet allows `5432` in from `10.250.0.0/22` and ephemeral ports out to it. | Yes: the default NACL allows everything. |
 | 6. The security group | The database's security group allows `10.250.0.0/22` on `5432`. | **No:** it allowed `10.0.0.0/16`, which covers the VPN instance but not the laptop, and the database sees the laptop's address. Add the rule. |
-| 7. The name | `db.internal.example.com` resolves to `10.1.20.10` on the laptop. | Yes, once the VPN hands out the VPC's DNS server. |
+| 7. The name | `db.internal.example.com` resolves to `10.1.20.10` on the laptop. The private zone is associated with VPC A, and the DNS server the VPN hands out can see it. | **No:** the VPN handed out `10.0.0.2`, but queries from `10.250.0.7` come from outside the VPC, where the `.2` resolver isn't supported [@aws-route53-resolver-forwarding], and the zone was only associated with VPC B. Associate the zone with VPC A and point the VPN's DNS setting at an inbound endpoint in VPC A, or at a forwarder on the VPN instance that passes queries to `10.0.0.2` [@aws-route53-private-zones, @aws-route53-resolver-inbound, @aws-repost-client-vpn-phz]. An inbound endpoint sees the laptop's own address, like the database does, so its subnet needs the same `10.250.0.0/22` route back to the VPN instance. |
 | 8. Something is listening | Postgres listens on `10.1.20.10:5432`. | Yes: other things in the VPC connect fine. |
 
-Three fixes, and all three are on the way back to an address from the client range. With AWS Client VPN in the same spot, the database would see the endpoint's address in VPC A, and the existing `10.0.0.0/16` routes and security group rule would already cover the reply. The endpoint would only need a route and an authorization rule for `10.1.0.0/16`.
+Four fixes. Three are on the way back to an address from the client range, and the fourth is DNS, for the same reason: the laptop's queries arrive from outside the VPC. With AWS Client VPN in the same spot, the database would see the endpoint's address in VPC A, and the existing `10.0.0.0/16` routes and security group rule would already cover the reply. The endpoint would only need a route and an authorization rule for `10.1.0.0/16`, and its DNS setting could be `10.0.0.2`, as long as the zone is associated with VPC A [@aws-repost-client-vpn-phz].

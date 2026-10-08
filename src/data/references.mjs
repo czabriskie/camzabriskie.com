@@ -252,6 +252,8 @@ export const references = {
   'ms-new-selfsignedcertificate': { authors: 'Microsoft', title: 'New-SelfSignedCertificate', container: 'Windows PowerShell PKIClient Module Reference', url: 'https://learn.microsoft.com/en-us/powershell/module/pki/new-selfsignedcertificate', accessed: '2026-10-06' },
 
   // Reaching private resources
+  'aws-route53-resolver-inbound': { ...aws('Forwarding inbound DNS queries to your VPCs', 'Amazon Route 53 Developer Guide', 'https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resolver-forwarding-inbound-queries.html'), accessed: '2026-10-08' },
+  'aws-repost-client-vpn-phz': { ...aws('How do I resolve resource records in my private hosted zone using Client VPN?', 'AWS re:Post Knowledge Center', 'https://repost.aws/knowledge-center/client-vpn-resolve-resource-records'), accessed: '2026-10-08' },
   'aws-vpc-peering-create': { ...aws('Create a VPC peering connection', 'Amazon VPC Peering Guide', 'https://docs.aws.amazon.com/vpc/latest/peering/create-vpc-peering-connection.html'), accessed: '2026-10-07' },
   'aws-vpc-peering-basics': { ...aws('How VPC peering connections work', 'Amazon VPC Peering Guide', 'https://docs.aws.amazon.com/vpc/latest/peering/vpc-peering-basics.html'), accessed: '2026-10-07' },
   'aws-vpc-peering-sg': { ...aws('Update your security groups to reference peer security groups', 'Amazon VPC Peering Guide', 'https://docs.aws.amazon.com/vpc/latest/peering/vpc-peering-security-groups.html'), accessed: '2026-10-07' },
