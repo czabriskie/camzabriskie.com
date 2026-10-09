@@ -1,9 +1,11 @@
 ---
 import Base from '../../layouts/Base.astro';
-import NoteList from '../../components/NoteList.astro';
-import { publishedTopics } from '../../lib/primers';
+import { publishedTopics, recentlyUpdated, noteUrl, pos } from '../../lib/primers';
+import { fmtDate } from '../../lib/bytes';
 
 const groups = await publishedTopics();
+const recent = await recentlyUpdated(5);
+const PREVIEW = 3; // titles shown on each topic card
 const blurb =
   "Explainers for things I've had to learn, written so someone else can pick them up too. These get revised as I understand more, unlike the posts.";
 ---
@@ -13,18 +15,66 @@ const blurb =
       <span class="tick" aria-hidden="true"></span>
       <h1>Primers</h1>
     </div>
-    <p class="lede" style="color: var(--muted); margin-bottom: 2.5rem;">{blurb}</p>
+    <p class="lede" style="color: var(--muted); margin-bottom: 2rem;">{blurb}</p>
 
-    {groups.map(({ topic, notes }) => (
-      <section class="group">
-        <div class="group-head">
-          <h2><a href={`/primers/${topic.slug}/`}>{topic.title}</a></h2>
-          <span class="mono count">{notes.length} {notes.length === 1 ? 'note' : 'notes'}</span>
-        </div>
-        <p class="group-note">{topic.blurb}</p>
-        <NoteList notes={notes} />
+    <div class="primer-filter" data-placeholder="Filter primers by title or topic"></div>
+    <div class="primer-results" hidden>
+      <p class="results-status visually-hidden" role="status" aria-live="polite"></p>
+      <p class="results-empty mono" hidden>No primers match.</p>
+      <ol class="notes">
+        {groups.flatMap(({ topic, notes }) =>
+          notes.map((note, i) => (
+            <li data-text={`${note.data.title} ${note.data.description} ${topic.title}`.toLowerCase()}>
+              <span class="pos mono">{pos(i)}</span>
+              <div>
+                <a class="title" href={noteUrl(note)}>{note.data.title}</a>
+                <p class="desc"><span class="mono topic-tag">{topic.title}</span> {note.data.description}</p>
+              </div>
+            </li>
+          )),
+        )}
+      </ol>
+    </div>
+
+    <div class="primer-browse">
+      <section class="recent">
+        <h2 class="section-title">Recently updated</h2>
+        <ul class="recent-list">
+          {recent.map(({ topic, note }) => (
+            <li>
+              <span class="mono date">{fmtDate(note.data.updated)}</span>
+              <a href={noteUrl(note)}>{note.data.title}</a>
+              <span class="mono topic-tag">{topic.title}</span>
+            </li>
+          ))}
+        </ul>
       </section>
-    ))}
-    <p class="mono" style="color: var(--muted);"><a href="/primers/references/">All references</a>, every source the primers cite.</p>
+
+      <div class="topic-cards">
+        {groups.map(({ topic, notes }) => (
+          <section class="topic-card">
+            <div class="topic-card-head">
+              <h2><a href={`/primers/${topic.slug}/`}>{topic.title}</a></h2>
+              <span class="mono count">{notes.length} {notes.length === 1 ? 'primer' : 'primers'}</span>
+            </div>
+            <p class="topic-card-blurb">{topic.blurb}</p>
+            <ol class="topic-card-list">
+              {notes.slice(0, PREVIEW).map((note, i) => (
+                <li><span class="pos mono">{pos(i)}</span><span><a href={noteUrl(note)}>{note.data.title}</a>{i === 0 && notes.length > 1 && <span class="mono start-tag">start here</span>}</span></li>
+              ))}
+            </ol>
+            {notes.length > PREVIEW && (
+              <a class="topic-card-more mono" href={`/primers/${topic.slug}/`}>+ {notes.length - PREVIEW} more →</a>
+            )}
+          </section>
+        ))}
+      </div>
+    </div>
+
+    <p class="mono" style="color: var(--muted); margin-top: 2.5rem;"><a href="/primers/references/">All references</a>, every source the primers cite.</p>
   </div>
 </Base>
+
+<script>
+  import '../../scripts/primer-filter';
+</script>
