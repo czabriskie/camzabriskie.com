@@ -17,6 +17,8 @@
     --life: #e0a45e;
     --line: #2a2e2a;
   }
+  /* macOS thickens light text on a dark background; grayscale smoothing keeps letters apart. */
+  body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 }
 
 * { box-sizing: border-box; }
@@ -28,6 +30,9 @@ body {
   font-family: 'Source Serif 4', Georgia, 'Times New Roman', serif;
   font-size: 1.05rem;
   line-height: 1.7;
+  /* Never fake a weight the page didn't load: a synthesized bold smears the letters
+     together. Bold uses the 600 weights loaded in Base.astro instead (see strong below). */
+  font-synthesis-weight: none;
 }
 
 .wrap { max-width: 48rem; margin: 0 auto; padding: 0 1.25rem; }
@@ -42,6 +47,7 @@ h2 { font-size: 1.45rem; font-weight: 600; margin: 2.2rem 0 0.7rem; }
 h3 { font-size: 1.15rem; font-weight: 600; margin: 1.8rem 0 0.5rem; }
 
 p { margin: 0 0 1.05rem; }
+strong, b { font-weight: 600; }
 a { color: inherit; text-decoration-color: var(--muted); text-underline-offset: 3px; }
 a:hover { text-decoration-color: currentColor; }
 a:focus-visible { outline: 2px solid var(--tech); outline-offset: 2px; border-radius: 2px; }
