@@ -2,7 +2,7 @@
 title: Reviewing code with an AI, against a ticket
 description: How to set up an AI code review so it checks the change against the ticket's requirements, then for security, then for code health, and why it should run the code instead of only reading it.
 order: 0
-updated: 2026-10-08
+updated: 2026-10-09
 ---
 
 A code review answers three different questions. Does this change do what was asked? Could someone use it to do something they shouldn't? And is it written so the next person can live with it? An AI reviewer that reads only the diff can answer a rough version of the last question and has nothing to measure the first against, and reviewers of any kind, people included, look hard at the second mostly when they're asked to [@braz-2022]. One way to fix that is to give the reviewer three things: the requirement it's checking against, the running code, and a narrow job for each question.
@@ -33,7 +33,7 @@ The diff adds a size check to the `/upload` endpoint. Reading it, the size check
 
 As of October 2026, several review tools already pull in the ticket for this reason. CodeRabbit validates a pull request against the linked issue's requirements [@coderabbit-pr-validation], and Qodo uses fetched ticket context such as the title and description to judge whether the change matches its intent [@qodo-ticketing]. Google's public Engineering Practices code review guide asks the first reviewer question in plain words: does the change do what the developer intended, and is what they intended good for the people who use the code [@google-review-looking-for]?
 
-So the review splits in three:
+The other two questions don't come from the ticket at all. It never asks who's allowed to upload or what happens to the filename, and it never asks for readable code, but a reviewer still has to look. So the review splits in three, one pass per question:
 
 | Pass | Question | Output |
 |---|---|---|
@@ -112,6 +112,8 @@ Reading code finds a lot, but some requirements are about behavior, and behavior
 4. For a modification, run the same calls on the base branch and compare.
 5. Keep every command and its trimmed output as an execution log in the review.
 
+The reviewers receive the test and linter results with the log. A model asked to review what a linter already flagged only adds noise.
+
 For the upload ticket, three lines of that log might read:
 
 ```text
@@ -123,8 +125,6 @@ For the upload ticket, three lines of that log might read:
 The base branch accepted the file and the change rejects it. A Met verdict for a behavioral requirement needs evidence of that kind: an observed result, or an existing test that passes.
 
 An AI that can run commands can also run the wrong ones, and on shared or production systems a mistaken command can delete data or change something other people depend on. So the run uses local, mock, or development resources only. Anything that cannot run safely, because it needs production credentials or infrastructure that does not exist locally, is marked Unverifiable and never assumed to work.
-
-Tests and linters run first, and the reviewers receive their results. A model asked to review what a linter already flagged only adds noise.
 
 ## Pass one: requirement traceability
 
@@ -171,7 +171,28 @@ This reviewer reads the change as someone trying to misuse it. The ticket says w
 - **Which file types are allowed?** An allowlist of extensions, checked by the server. The `Content-Type` header comes from the client and can say anything.
 - **Does the size limit protect the disk?** That was the ticket's reason for the limit. If the server writes the whole file to disk before checking its size, a 5 GB upload still fills the disk, even though the client gets its 413 at the end. Requirement 1 passes and the ticket's goal fails, which is easy to miss when the only question is whether a 413 comes back.
 
-Outside file uploads, the same reading applies to anything the change takes in from outside (request parameters, headers, files, data from other services), what it lets out (secrets in the code, personal data in logs), and what it pulls in (a new dependency). Findings use the same format as the code-health pass below.
+Outside file uploads, the same reading applies to anything the change takes in from outside (request parameters, headers, files, data from other services), what it lets out (secrets in the code, personal data in logs), and what it pulls in (a new dependency).
+
+Each finding from this pass, and from the code-health pass after it, carries enough structure to triage at a glance:
+
+- A label: issue, suggestion, question, nitpick, or praise.
+- Blocking or non-blocking.
+- Severity and a confidence score.
+- A file and line, why it matters, and a suggested fix.
+
+The labels follow Conventional Comments, which puts a word such as `issue` or `nitpick` in front of each comment, with an optional blocking or non-blocking note, so the author knows how to read it [@conventional-comments]. A bare "this loop could be simpler" does not tell the author whether it is a requirement or an idea. The last question above, written up as a finding:
+
+```text
+issue (blocking): an oversized upload is written to disk before it's rejected
+  severity: high   confidence: 0.8   upload.py:38
+  why: the file is saved at line 38 and its size is checked at line 42, so a 5 GB
+       upload still fills the disk before the 413 goes back, which is the problem
+       the ticket was written to fix.
+  fix: check the size while reading the upload and stop once it passes the limit,
+       before anything is saved.
+```
+
+A confidence cutoff, for example 0.7, keeps guesses out: anything below it is either dropped or rewritten as a question. And the pass also lists what it checked and found fine. A review that only lists complaints hides its own coverage, and a reader cannot tell "looked and fine" from "never looked".
 
 ### The reviewer can be attacked too
 
@@ -183,14 +204,7 @@ Google's guide gives the order to look in: design, functionality, complexity, te
 
 The guide flags over-engineering, meaning code made more generic than the problem needs, as something reviewers should watch for especially [@google-review-looking-for]. A reviewer that's asked to find improvements can easily suggest more abstraction than the change needs, so it helps to say plainly that simpler is the goal.
 
-Each finding carries enough structure to triage at a glance:
-
-- A label: issue, suggestion, question, nitpick, or praise.
-- Blocking or non-blocking.
-- Severity and a confidence score.
-- A file and line, why it matters, and a suggested fix.
-
-The labels follow Conventional Comments, which puts a word such as `issue` or `nitpick` in front of each comment, with an optional blocking or non-blocking note, so the author knows how to read it [@conventional-comments]. A bare "this loop could be simpler" does not tell the author whether it is a requirement or an idea. One finding from the upload change:
+Its findings use the same format as the security pass. One from the upload change:
 
 ```text
 issue (blocking): a file of exactly 10 MB is rejected
@@ -200,15 +214,13 @@ issue (blocking): a file of exactly 10 MB is rejected
   fix: use `size > MAX_UPLOAD` and add a test at exactly the limit.
 ```
 
-Two limits keep the report readable. Cap nitpicks at something like three per review, so the one real bug doesn't sit under a dozen style remarks. And set a confidence cutoff, for example 0.7: anything below it is either dropped or rewritten as a question.
-
-The pass also lists what it checked and found fine. A review that only lists complaints hides its own coverage, and a reader cannot tell "looked and fine" from "never looked".
+Cap nitpicks at something like three per review, so the one real bug doesn't sit under a dozen style remarks.
 
 ## After the passes
 
-The three passes then get merged into one report: duplicates removed, every requirement checked for a verdict, and every cited file and line checked by a script rather than by another model. Models can cite lines that don't exist or quote code that isn't there, and a mechanical check catches that cheaply, so a finding whose citation fails gets dropped. A finding with no evidence behind it gets deleted too.
+The three passes then get merged into one report: duplicates removed (the 10 MB boundary shows up in both pass one and pass three), every requirement checked for a verdict, and every cited file and line checked by a script rather than by another model. Models can cite lines that don't exist or quote code that isn't there, and a mechanical check catches that cheaply, so a finding whose citation fails gets dropped. A finding with no evidence behind it gets deleted too.
 
-The result works best as advice. The reviewer reports and a person decides, and the review itself never approves the change or edits the code. The reviewer can tell whether the code matches the ticket, but it can't tell whether the ticket was right, and approving a change is a judgment about that too.
+The result works best as advice. The reviewer reports and a person decides, and the review itself never approves the change or edits the code.
 
 ## When there's no ticket
 
@@ -216,6 +228,6 @@ All of this assumes the change has a written requirement somewhere: a ticket, an
 
 ## Limits
 
-A review by people does more than check code. A study of code review at Microsoft found that reviews turned up fewer defects than developers expected and did other jobs instead: spreading knowledge of the code, keeping the team aware of what's changing, and suggesting other ways to solve the problem [@bacchelli-bird-2013]. An AI review does none of that for the team, so it works better as preparation for a person's review than as a replacement for one.
+Tickets can be wrong or thin, and a perfectly traced review of a bad ticket still ships the wrong thing. The process finds mismatches between ticket and code and says nothing about whether the ticket was a good idea, and approving a change is a judgment about that too. Behavior can often be checked directly, but not for free: running code locally costs time and needs a working development setup, which makes the review slower than a read-through. The trade is worth it for changes where behavior matters and harder to justify for a one-line docs fix.
 
-Tickets can be wrong or thin, and a perfectly traced review of a bad ticket still ships the wrong thing. The process finds mismatches between ticket and code and says nothing about whether the ticket was a good idea. Behavior can often be checked directly, but not for free: running code locally costs time and needs a working development setup, which makes the review slower than a read-through. The trade is worth it for changes where behavior matters and harder to justify for a one-line docs fix.
+A review by people does more than check code. A study of code review at Microsoft found that reviews turned up fewer defects than developers expected and did other jobs instead: spreading knowledge of the code, keeping the team aware of what's changing, and suggesting other ways to solve the problem [@bacchelli-bird-2013]. An AI review does none of that for the team, so it works better as preparation for a person's review than as a replacement for one.
