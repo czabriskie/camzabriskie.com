@@ -3,6 +3,7 @@ title: EBS vs EFS, and choosing storage on AWS
 description: What an EBS volume is, why it lives in one availability zone, how to grow it, what EFS does differently, why databases usually want EBS, and which kind of storage fits which job.
 order: 0
 updated: 2026-10-08
+only: AWS
 ---
 
 A server needs somewhere to keep data that outlives a restart. On AWS the two common answers are EBS and EFS, and they behave very differently. EBS is a disk that plugs into one machine. EFS is a folder that many machines share over the network.
