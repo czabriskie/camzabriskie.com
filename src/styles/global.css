@@ -525,6 +525,16 @@ ol.references a, ul.references a { word-break: break-word; }
 ul.references.all li { margin-bottom: 1.1rem; scroll-margin-top: 1rem; }
 ul.references .cited-in { display: block; color: var(--muted); margin-top: 0.2rem; }
 .references-all { color: var(--muted); font-size: 0.9rem; }
+
+/* Platform-specific sections: a heading tagged {only: AWS} (src/lib/remark-only-sections.mjs) */
+.only-section { border-left: 3px dashed var(--muted); padding: 0.1rem 0 0.4rem 1rem; margin: 2.2rem 0 1.6rem -1.15rem; }
+.only-section > :is(h2, h3, h4):first-child { margin-top: 0.4rem; }
+.only-banner { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.3rem 0.6rem; font-size: 0.9rem; color: var(--muted); margin: -0.2rem 0 1.1rem; }
+.only-tag { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink); border: 1px solid var(--muted); border-radius: 4px; padding: 0.05rem 0.45rem; white-space: nowrap; }
+.only-banner a { color: var(--tech); text-decoration: none; white-space: nowrap; }
+.only-banner a:hover { text-decoration: underline; }
+.only-end { display: block; scroll-margin-top: 1rem; }
+@media (max-width: 40rem) { .only-section { margin-left: 0; padding-left: 0.8rem; } }
 .references-toggle > summary { cursor: pointer; color: var(--tech); font-size: 0.92rem; margin: 0.4rem 0 0.6rem; }
 .references-toggle > summary:focus-visible { outline: 2px solid var(--tech); outline-offset: 2px; border-radius: 2px; }
 .references-toggle[open] > summary { color: var(--muted); }
