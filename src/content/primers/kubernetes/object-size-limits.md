@@ -122,6 +122,8 @@ For release records that really are that large, Helm documents a beta `sql` stor
 | Split into several ConfigMaps | The content separates cleanly, such as per component | More objects, each mounted separately |
 | Mount a volume or use an object store | The data is large reference data, not settings | A storage dependency and a loading step |
 | Fetch at startup | The data changes independently of deploys | Pods depend on that source to start |
-| Move to a Secret | Never, for size | Same 1 MiB limit |
+| Compress it yourself | The data compresses well and the app can unzip it | Put gzipped bytes under `binaryData`, which holds raw bytes [@k8s-configmap]. The app or a startup step has to decompress it, and diffs stop being readable |
+
+Moving the data to a Secret doesn't help. Kubernetes doesn't compress Secrets, and the base64 you see in a Secret's YAML is only how the bytes are written down: the check counts the decoded bytes under `data`, against the same 1,048,576 [@k8s-validation-secret-size]. Helm's release record is smaller than its contents only because Helm compresses it before saving it, which any app can do for its own data with the last option above.
 
 The Kubernetes docs point the same way for settings larger than the limit: a mounted volume, a database, or a file service [@k8s-configmap]. Start with the template, though. If the rendered output holds the same block many times, include it once and reference it, and the object may drop well under the limit with no change to how the app works.
