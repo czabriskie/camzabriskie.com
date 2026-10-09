@@ -231,7 +231,6 @@ export const references = {
   'openssh-ssh-config': { authors: 'OpenBSD', title: 'ssh_config(5)', container: 'OpenBSD manual pages', url: 'https://man.openbsd.org/ssh_config', accessed: '2026-10-07' },
   'aws-ec2-instance-metadata': { authors: AWS, title: 'Use instance metadata to manage your EC2 instance', container: 'Amazon EC2 User Guide', url: 'https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html', accessed: '2026-10-07' },
   'aws-ec2-imds-access': { authors: AWS, title: 'Access instance metadata for an EC2 instance', container: 'Amazon EC2 User Guide', url: 'https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-data-retrieval.html', accessed: '2026-10-07' },
-  'aws-vpc-sg-rules': { authors: AWS, title: 'Security group rules', container: VPC_GUIDE, url: 'https://docs.aws.amazon.com/vpc/latest/userguide/security-group-rules.html', accessed: '2026-10-07' },
   'curl-proxy-env': { authors: 'D. Stenberg', title: 'Proxy environment variables', container: 'Everything curl', url: 'https://everything.curl.dev/usingcurl/proxies/env.html', accessed: CHECKED },
   'mdn-x-forwarded-proto': { authors: 'MDN contributors', title: 'X-Forwarded-Proto header', container: 'MDN Web Docs', url: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/X-Forwarded-Proto', accessed: CHECKED },
   'gitlab-no-proxy': { authors: 'S. Hu', title: 'We need to talk: Can we standardize NO_PROXY?', container: 'GitLab Blog', url: 'https://about.gitlab.com/blog/we-need-to-talk-no-proxy/', accessed: CHECKED },
