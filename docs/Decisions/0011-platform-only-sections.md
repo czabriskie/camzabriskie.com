@@ -19,11 +19,10 @@ it, that a section was safe to skip. Cam asked for a visual that says so.
 - A remark plugin (`src/lib/remark-only-sections.mjs`) removes the tag, so the heading
   text and its anchor stay clean, and wraps everything up to the next heading of the same
   or higher level in a `<section class="only-section">`.
-- The section gets an "AWS only" tag under the heading and a "Skip to <next heading> →"
-  link that jumps past it, naming where the reader lands. A dashed border down the whole
-  section was tried and dropped as distracting; the skip link already says where the
-  section ends. Colors come from the existing palette (ink and muted), with the link in
-  the tech accent, so no new hue is added.
+- The section gets a small "AWS only" tag under its heading, and nothing else. A dashed
+  border down the whole section and a "Skip to <next heading>" link were tried and
+  dropped: the border was distracting, and the tag alone says the section can be
+  skipped. The tag uses the existing palette (ink and muted), so no new hue is added.
 - Whole primers that are about AWS (VPCs, EBS vs EFS) aren't tagged. Their titles and the
   topic's section blurb ("Skip this part if you don't use AWS") already say it.
 
@@ -34,4 +33,4 @@ it, that a section was safe to skip. Cam asked for a visual that says so.
 - The tag only works on top-level headings in the markdown (not headings inside HTML
   blocks or asides), and the wrapped section ends at the next heading of the same or
   higher level, so a tagged `###` stops at the next `###` or `##`.
-- Without CSS the section still reads normally, with the tag and skip link as plain text.
+- Without CSS the section still reads normally, with the tag as plain text.
