@@ -17,6 +17,16 @@ export const topics = [
     title: 'Philosophy',
     blurb: 'The history of ideas, starting with the first people to ask what everything is made of.',
   },
+  {
+    slug: 'practices',
+    title: 'Practices',
+    blurb: 'How engineering work gets done well, and how to check that it was.',
+  },
+  {
+    slug: 'working-with-ai',
+    title: 'Working with AI',
+    blurb: 'How to set up AI assistants so their work can be trusted and checked.',
+  },
 ];
 
 export type Topic = (typeof topics)[number];
