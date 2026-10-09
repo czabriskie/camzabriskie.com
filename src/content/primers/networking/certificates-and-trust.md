@@ -192,7 +192,7 @@ Left to right, that's the domain, the record type, a flags field (`0` is the nor
 
 CAs are required to check it before issuing [@rfc8659, @cabf-baseline-requirements]. If the domain's CAA record only lists Amazon's CAs, for example, Let's Encrypt will refuse with a CAA error no matter how the challenge is set up, and retrying won't help. The only ways around it are changing the CAA record (a policy decision for the whole domain) or using a CA that's on the list. If a domain has no CAA record, any CA can issue.
 
-### AWS Certificate Manager
+### AWS Certificate Manager {only: AWS}
 
 **ACM** is AWS's certificate service. Its public certificates are free to use with AWS's own services (load balancers, CloudFront, API Gateway). They can be validated through DNS, and ACM renews a DNS-validated certificate automatically as long as it's in use and the validation record stays in place [@aws-acm-faq, @aws-acm-dns-renewal]. ACM keeps the private key itself [@aws-acm-faq]: you never see it, and ACM attaches the certificate to the load balancer for you.
 
