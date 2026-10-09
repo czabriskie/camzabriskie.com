@@ -159,6 +159,8 @@ export const references = {
   'aws-route53-routing-policies': aws('Choosing a routing policy', 'Amazon Route 53 Developer Guide', 'https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy.html'),
   'aws-route53-resolver': aws('What is Route 53 VPC Resolver?', 'Amazon Route 53 Developer Guide', 'https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resolver.html'),
   'aws-route53-resolver-inbound': { ...aws('Forwarding inbound DNS queries to your VPCs', 'Amazon Route 53 Developer Guide', 'https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resolver-forwarding-inbound-queries.html'), accessed: '2026-10-08' },
+  rfc4301: { ...rfc(4301, ['S. Kent', 'K. Seo'], 'Security Architecture for the Internet Protocol', 'Dec. 2005'), accessed: '2026-10-08' },
+  'aws-vpc-sg-rules': { ...aws('Security group rules', VPC_GUIDE, 'https://docs.aws.amazon.com/vpc/latest/userguide/security-group-rules.html'), accessed: '2026-10-08' },
 
   // CDNs and CloudFront
   'aws-cloudfront-intro': aws('What is Amazon CloudFront?', 'Amazon CloudFront Developer Guide', 'https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html'),
