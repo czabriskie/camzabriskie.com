@@ -67,9 +67,12 @@ export default function remarkCitations() {
       {
         type: 'html',
         value:
+          // Collapsed by default so the list doesn't dominate the end of the page.
+          // src/scripts/references.ts opens it whenever a citation link points into it.
+          `<details class="references-toggle"><summary><span class="when-closed">Show all ${order.length} source${order.length === 1 ? '' : 's'}</span><span class="when-open">Hide sources</span></summary>` +
           '<ol class="references">' +
           order.map((key, i) => `<li id="ref-${i + 1}"><span class="ref-n">[${i + 1}]</span> <span>${backLinks(i + 1, uses[i + 1])} ${formatReference(references[key])}</span></li>`).join('') +
-          '</ol>' +
+          '</ol></details>' +
           '<p class="references-all">Every source cited across the primers is collected on <a href="/primers/references/">one page</a>.</p>',
       },
     );

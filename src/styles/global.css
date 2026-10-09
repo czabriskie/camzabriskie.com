@@ -17,6 +17,8 @@
     --life: #e0a45e;
     --line: #2a2e2a;
   }
+  /* macOS thickens light text on a dark background; grayscale smoothing keeps letters apart. */
+  body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 }
 
 * { box-sizing: border-box; }
@@ -28,6 +30,9 @@ body {
   font-family: 'Source Serif 4', Georgia, 'Times New Roman', serif;
   font-size: 1.05rem;
   line-height: 1.7;
+  /* Never fake a weight the page didn't load: a synthesized bold smears the letters
+     together. Bold uses the 600 weights loaded in Base.astro instead (see strong below). */
+  font-synthesis-weight: none;
 }
 
 .wrap { max-width: 48rem; margin: 0 auto; padding: 0 1.25rem; }
@@ -42,6 +47,7 @@ h2 { font-size: 1.45rem; font-weight: 600; margin: 2.2rem 0 0.7rem; }
 h3 { font-size: 1.15rem; font-weight: 600; margin: 1.8rem 0 0.5rem; }
 
 p { margin: 0 0 1.05rem; }
+strong, b { font-weight: 600; }
 a { color: inherit; text-decoration-color: var(--muted); text-underline-offset: 3px; }
 a:hover { text-decoration-color: currentColor; }
 a:focus-visible { outline: 2px solid var(--tech); outline-offset: 2px; border-radius: 2px; }
@@ -322,6 +328,54 @@ nav.note-nav .mono { color: var(--tech); font-weight: 400; }
 .encap-payload .encap-tag { display: block; margin-bottom: 0.2rem; }
 @media (max-width: 30rem) { .encap-layer { padding: 0.45rem 0.5rem 0.55rem; } }
 
+/* Reaching private resources primer: peering vs. Transit Gateway, VPN source addresses,
+   and the hops of a kubectl port forward. Teal marks the path that works. */
+.peer-mesh, .vpn-path, .relay-path { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+.peer-mesh svg, .vpn-path svg, .relay-path svg { display: block; width: 100%; height: auto; }
+.peer-mesh text, .vpn-path text, .relay-path text { text-anchor: middle; fill: var(--ink); }
+.peer-mesh .pe-title { font: 600 10px 'Bricolage Grotesque', sans-serif; }
+.peer-mesh .pe-link { stroke: var(--muted); stroke-width: 1.2; }
+.peer-mesh .pe-no { stroke: var(--life); stroke-width: 1.4; stroke-dasharray: 4 3; }
+.peer-mesh .pe-x { fill: none; stroke: var(--life); stroke-width: 2; stroke-linecap: round; }
+.peer-mesh .pe-spoke { stroke: var(--tech); stroke-width: 1.8; }
+.peer-mesh .pe-vpc { fill: var(--surface); stroke: var(--line); stroke-width: 1.2; }
+.peer-mesh .pe-name { font: 600 9px 'IBM Plex Mono', ui-monospace, monospace; }
+.peer-mesh .pe-hub { fill: var(--surface); stroke: var(--tech); stroke-width: 1.5; }
+.peer-mesh .pe-hub-name { font: 600 8px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--tech); }
+.peer-mesh .pe-note { font: 8px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.peer-mesh .pe-count { font: 600 8.5px 'IBM Plex Mono', ui-monospace, monospace; }
+.peer-mesh .pe-count-hub { fill: var(--tech); }
+.vpn-path .vp-title { font: 600 10.5px 'Bricolage Grotesque', sans-serif; text-anchor: start; }
+.vpn-path .vp-vpc { fill: none; stroke: var(--line); stroke-width: 1.2; stroke-dasharray: 5 3; }
+.vpn-path .vp-vpc-label { font: 8px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); text-anchor: end; }
+.vpn-path .vp-node { fill: var(--surface); stroke: var(--line); stroke-width: 1; }
+.vpn-path .vp-name { font: 600 9.5px 'Bricolage Grotesque', sans-serif; }
+.vpn-path .vp-addr { font: 8px 'IBM Plex Mono', ui-monospace, monospace; }
+.vpn-path .vp-sub { font: 8px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.vpn-path .vp-src { font: 600 8.5px 'IBM Plex Mono', ui-monospace, monospace; }
+.vpn-path .vp-msg { stroke: var(--muted); stroke-width: 1.2; }
+.vpn-path .vp-head { fill: var(--muted); }
+.vpn-path .vp-head-ok { fill: var(--tech); }
+.vpn-path .vp-reply { fill: none; stroke-width: 1.4; }
+.vpn-path .vp-ok { stroke: var(--tech); }
+.vpn-path .vp-miss { stroke: var(--muted); stroke-dasharray: 4 3; }
+.vpn-path .vp-note { font: 8px 'IBM Plex Mono', ui-monospace, monospace; }
+.vpn-path .vp-new { fill: var(--tech); }
+.vpn-path .vp-need { fill: var(--life); }
+.relay-path .rp-zone { fill: none; stroke: var(--line); stroke-width: 1.2; stroke-dasharray: 5 3; }
+.relay-path .rp-vpc { stroke: var(--tech); }
+.relay-path .rp-zone-label { font: 8px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); text-anchor: start; }
+.relay-path .rp-vpc-label { fill: var(--tech); text-anchor: end; }
+.relay-path .rp-node { fill: var(--surface); stroke: var(--line); stroke-width: 1; }
+.relay-path .rp-name { font: 600 9.5px 'Bricolage Grotesque', sans-serif; }
+.relay-path .rp-sub { font: 8px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.relay-path .rp-hop { font: 8px 'IBM Plex Mono', ui-monospace, monospace; text-anchor: start; }
+.relay-path .rp-enc-text { fill: var(--tech); text-anchor: middle; }
+.relay-path .rp-msg { stroke: var(--muted); stroke-width: 1.2; }
+.relay-path .rp-msg.rp-enc { stroke: var(--tech); stroke-width: 2; }
+.relay-path .rp-head { fill: var(--muted); }
+.relay-path .rp-head-enc { fill: var(--tech); }
+
 /* Code tabs, copy buttons, and command builders (Decision 0008, src/scripts/code-tabs.ts).
    Without JS every tab panel shows under its own label. */
 .code-tabs { margin: 1.2rem 0; }
@@ -472,6 +526,15 @@ ul.references.all li { margin-bottom: 1.1rem; scroll-margin-top: 1rem; }
 ul.references .cited-in { display: block; color: var(--muted); margin-top: 0.2rem; }
 .references-all { color: var(--muted); font-size: 0.9rem; }
 
+/* Platform-specific sections: a heading tagged {only: AWS} (src/lib/remark-only-sections.mjs) */
+.only-banner { margin: -0.2rem 0 1.1rem; line-height: 1; }
+.only-tag.in-list { font-size: 0.62rem; padding: 0 0.35rem; margin-left: 0.5rem; vertical-align: 0.15em; }
+.only-tag { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink); border: 1px solid var(--muted); border-radius: 4px; padding: 0.05rem 0.45rem; white-space: nowrap; }
+.references-toggle > summary { cursor: pointer; color: var(--tech); font-size: 0.92rem; margin: 0.4rem 0 0.6rem; }
+.references-toggle > summary:focus-visible { outline: 2px solid var(--tech); outline-offset: 2px; border-radius: 2px; }
+.references-toggle[open] > summary { color: var(--muted); }
+.references-toggle:not([open]) .when-open, .references-toggle[open] .when-closed { display: none; }
+
 /* Route table lookup (src/scripts/route-lookup.ts), sharing the calculator's box */
 .route-lookup { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 1rem 1.2rem; margin: 1.2rem 0 1.6rem; }
 .route-lookup:empty { display: none; }
@@ -501,6 +564,36 @@ ul.references .cited-in { display: block; color: var(--muted); margin-top: 0.2re
 /* TLS handshake message diagram (src/scripts/tls-handshake.ts) */
 .tls-walk { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 1rem 1.1rem; margin: 1.2rem 0 1.8rem; font-size: 0.92rem; }
 .tls-walk:empty { display: none; }
+.air-flow { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+.air-flow svg { display: block; width: 100%; height: auto; }
+.air-flow .air-box { fill: var(--surface); stroke: var(--muted); stroke-width: 1; }
+.air-flow .air-input { stroke: var(--ink); }
+.air-flow .air-pass { stroke: var(--tech); stroke-width: 1.8; }
+.air-flow .air-person { fill: var(--line); stroke: var(--tech); stroke-width: 1.8; }
+.air-flow .air-name { font: 600 10px 'Bricolage Grotesque', sans-serif; text-anchor: middle; fill: var(--ink); }
+.air-flow .air-small { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; text-anchor: middle; fill: var(--muted); }
+.air-flow .air-arrow { stroke: var(--muted); stroke-width: 1.2; }
+.air-flow .air-arrowhead { fill: var(--muted); }
+
+/* Kubernetes object size limits: where the check happens, and how a loop multiplies size */
+.k8s-path, .k8s-size { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+.k8s-path svg, .k8s-size svg { display: block; width: 100%; height: auto; }
+.k8s-path .k8p-box { fill: var(--surface); stroke: var(--muted); stroke-width: 1; }
+.k8s-path .k8p-check { stroke: var(--tech); stroke-width: 1.8; }
+.k8s-path .k8p-reject { stroke: var(--ink); stroke-dasharray: 4 3; }
+.k8s-path .k8p-name { font: 600 10px 'Bricolage Grotesque', sans-serif; text-anchor: middle; fill: var(--ink); }
+.k8s-path .k8p-small { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; text-anchor: middle; fill: var(--muted); }
+.k8s-path .k8p-limit { fill: var(--tech); }
+.k8s-path .k8p-label { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.k8s-path .k8p-label-left { text-anchor: end; }
+.k8s-path .k8p-arrow { stroke: var(--muted); stroke-width: 1.2; }
+.k8s-path .k8p-arrowhead { fill: var(--muted); }
+.k8s-size .k8b-seg { fill: color-mix(in srgb, var(--tech) 18%, var(--surface)); stroke: var(--tech); stroke-width: 1; }
+.k8s-size .k8b-over { stroke: var(--ink); stroke-width: 1; }
+.k8s-size .k8b-hatch-line { stroke: var(--ink); stroke-width: 1.4; opacity: 0.55; }
+.k8s-size .k8b-limit { stroke: var(--ink); stroke-width: 1.5; stroke-dasharray: 4 3; }
+.k8s-size .k8b-text { font: 9px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.k8s-size .k8b-limit-text { fill: var(--ink); }
 .paint-mix { max-width: 30rem; margin: 1.2rem auto 0.5rem; }
 .paint-mix svg { display: block; width: 100%; height: auto; }
 .paint-mix .pm-wire { fill: none; stroke: var(--line); stroke-width: 1.5; stroke-dasharray: 4 3; }
@@ -594,3 +687,66 @@ details.aside[open] summary { margin-bottom: 0.4rem; }
 .tw-check-server { text-align: right; }
 .tw-explain { border-top: 1px solid var(--line); margin-top: 0.8rem; padding-top: 0.6rem; min-height: 3.2rem; }
 @media (prefers-reduced-motion: reduce) { .tw-msg { transition: none; } }
+
+/* Philosophy diagrams (Presocratics primer): static inline SVG, colored from the tokens */
+.phil-fig { max-width: 32rem; margin: 1.4rem auto 0.4rem; }
+.phil-fig svg { display: block; width: 100%; height: auto; }
+.phil-fig text { fill: var(--ink); font: 10px 'Bricolage Grotesque', sans-serif; text-anchor: middle; }
+/* timeline: Ionia solid teal, Italy hollow teal, atomists muted */
+.tl-tick { stroke: var(--line); stroke-width: 1; }
+.tl-axis { font: 8px 'IBM Plex Mono', ui-monospace, monospace !important; fill: var(--muted) !important; }
+.phil-fig .tl-left { text-anchor: start; }
+.phil-fig .tl-name { text-anchor: end; font-weight: 600; }
+.tl-soc { fill: var(--line); opacity: 0.7; }
+.phil-fig .tl-soc-label { font: 8px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.tl-bar.tl-io, .tl-dot.tl-io { fill: var(--tech); }
+.tl-bar.tl-it, .tl-dot.tl-it { fill: var(--surface); stroke: var(--tech); stroke-width: 1.5; }
+.tl-bar.tl-at, .tl-dot.tl-at { fill: var(--muted); }
+.tl-dash { stroke-width: 2; stroke-dasharray: 3 3; }
+.tl-dash.tl-io, .tl-dash.tl-it { stroke: var(--tech); }
+.tl-dash.tl-at { stroke: var(--muted); }
+/* Anaximenes' ladder */
+.lad-box rect { fill: var(--surface); stroke: var(--line); stroke-width: 1; }
+.lad-air rect { stroke: var(--tech); stroke-width: 2; }
+.phil-fig .lad-air text, .phil-fig .lad-note { fill: var(--tech); font-weight: 600; }
+.phil-fig .lad-arrow { fill: var(--muted); }
+.lad-axis { stroke: var(--muted); stroke-width: 1; }
+.lad-head { fill: var(--muted); }
+.phil-fig .lad-cap { font: 8px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.phil-fig .lad-l { text-anchor: start; }
+.phil-fig .lad-r { text-anchor: end; }
+/* vibrating strings */
+.phil-fig .st-name { text-anchor: end; font-weight: 600; }
+.st-ghost { stroke: var(--line); stroke-width: 2; }
+.st-line { stroke: var(--tech); stroke-width: 2.5; }
+.st-bridge { stroke: var(--muted); stroke-width: 1.5; }
+.phil-fig .st-frac { text-anchor: start; font: 8px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.phil-fig .st-ratio { text-anchor: end; font: 9px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--tech); }
+/* Zeno's dichotomy */
+.z-track { stroke: var(--line); stroke-width: 3; }
+.z-seg { stroke: var(--tech); stroke-width: 3; }
+.z-mark { stroke: var(--muted); stroke-width: 1; }
+.phil-fig .z-lab { font: 8px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.phil-fig .z-end { font-weight: 600; }
+.phil-fig .z-l { text-anchor: start; }
+.phil-fig .z-r { text-anchor: end; }
+.z-runner { fill: var(--tech); }
+/* the change debate */
+.ch-axis { stroke: var(--muted); stroke-width: 1.5; }
+.ch-end { fill: var(--surface); stroke: var(--tech); stroke-width: 2; }
+.ch-mid { fill: var(--tech); }
+.phil-fig .ch-who { font-weight: 700; font-size: 11px; }
+.phil-fig .ch-claim { fill: var(--muted); font: 9px 'Source Serif 4', Georgia, serif; }
+.phil-fig .ch-l { text-anchor: start; }
+.phil-fig .ch-r { text-anchor: end; }
+/* classification chart: region columns x answer rows */
+.cl-rule { stroke: var(--line); stroke-width: 1; }
+.phil-fig .cl-col { font-weight: 700; font-size: 11px; }
+.phil-fig .cl-colsub, .phil-fig .cl-time { font: 8px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.phil-fig .cl-time { text-anchor: start; }
+.cl-arrow { stroke: var(--line); stroke-width: 1.5; }
+.cl-head-arrow { fill: var(--line); }
+.phil-fig .cl-row { text-anchor: end; font: 9px 'Source Serif 4', Georgia, serif; fill: var(--muted); }
+.cl-box rect { fill: var(--surface); stroke: var(--tech); stroke-width: 1.2; }
+.phil-fig .cl-school { font: 500 7.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--tech); letter-spacing: 0.06em; text-transform: uppercase; }
+.phil-fig .cl-name { font-weight: 600; font-size: 10px; }

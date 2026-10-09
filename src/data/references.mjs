@@ -24,6 +24,19 @@ const rfc = (n, authors, title, date) => ({
 
 const aws = (title, container, url) => ({ authors: AWS, title, container, url, accessed: CHECKED });
 
+// Philosophy sources: the Stanford Encyclopedia of Philosophy (dated by its last
+// substantive revision) and the Internet Encyclopedia of Philosophy.
+const PHIL = '2026-10-08';
+const IEP = 'Internet Encyclopedia of Philosophy';
+const sep = (authors, title, date, slug) => ({
+  authors,
+  title,
+  container: 'The Stanford Encyclopedia of Philosophy',
+  date,
+  url: `https://plato.stanford.edu/entries/${slug}/`,
+  accessed: PHIL,
+});
+
 export const references = {
   // RFCs
   rfc768: rfc(768, ['J. Postel'], 'User Datagram Protocol', 'Aug. 1980'),
@@ -161,6 +174,7 @@ export const references = {
   'aws-route53-resolver-inbound': { ...aws('Forwarding inbound DNS queries to your VPCs', 'Amazon Route 53 Developer Guide', 'https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resolver-forwarding-inbound-queries.html'), accessed: '2026-10-08' },
   rfc4301: { ...rfc(4301, ['S. Kent', 'K. Seo'], 'Security Architecture for the Internet Protocol', 'Dec. 2005'), accessed: '2026-10-08' },
   'aws-vpc-sg-rules': { ...aws('Security group rules', VPC_GUIDE, 'https://docs.aws.amazon.com/vpc/latest/userguide/security-group-rules.html'), accessed: '2026-10-08' },
+  'aws-ec2-eni': { ...aws('Elastic network interfaces', 'Amazon EC2 User Guide', 'https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-eni.html'), accessed: '2026-10-08' },
 
   // CDNs and CloudFront
   'aws-cloudfront-intro': aws('What is Amazon CloudFront?', 'Amazon CloudFront Developer Guide', 'https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html'),
@@ -297,12 +311,39 @@ export const references = {
   'ms-pktmon-start': { authors: 'Microsoft', title: 'pktmon start', container: 'Microsoft Learn: Windows Commands', url: 'https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/pktmon-start', accessed: '2026-10-06' },
   'ms-openssh-overview': { authors: 'Microsoft', title: 'OpenSSH for Windows overview', container: 'Microsoft Learn: Windows Server', url: 'https://learn.microsoft.com/en-us/windows-server/administration/openssh/openssh-overview', accessed: '2026-10-06' },
   'ms-about-env-vars': { authors: 'Microsoft', title: 'about_Environment_Variables', container: 'PowerShell 7.5 Documentation', url: 'https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_environment_variables', accessed: '2026-10-06' },
+  'ms-about-parsing': { authors: 'Microsoft', title: 'about_Parsing', container: 'PowerShell 7.5 Documentation', date: 'Jun. 29, 2026', url: 'https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_parsing', accessed: '2026-10-06' },
   'git-for-windows-release-notes': { authors: 'Git for Windows', title: 'Git for Windows Release Notes', container: 'git-for-windows/build-extra', date: 'Oct. 5, 2026', url: 'https://github.com/git-for-windows/build-extra/blob/main/ReleaseNotes.md', accessed: '2026-10-06' },
   'apple-dns-cache': { authors: 'Apple', title: 'Reset the DNS cache in OS X', container: 'Apple Support', url: 'https://support.apple.com/en-us/101481', accessed: '2026-10-06' },
   'systemd-resolvectl': { authors: 'systemd project', title: 'resolvectl', container: 'systemd manual pages', url: 'https://www.freedesktop.org/software/systemd/man/latest/resolvectl.html', accessed: '2026-10-06' },
   'ms-new-selfsignedcertificate': { authors: 'Microsoft', title: 'New-SelfSignedCertificate', container: 'Windows PowerShell PKIClient Module Reference', url: 'https://learn.microsoft.com/en-us/powershell/module/pki/new-selfsignedcertificate', accessed: '2026-10-06' },
 
   // Reaching private resources
+  'aws-repost-client-vpn-phz': { ...aws('How do I resolve resource records in my private hosted zone using Client VPN?', 'AWS re:Post Knowledge Center', 'https://repost.aws/knowledge-center/client-vpn-resolve-resource-records'), accessed: '2026-10-08' },
+  'aws-vpc-peering-create': { ...aws('Create a VPC peering connection', 'Amazon VPC Peering Guide', 'https://docs.aws.amazon.com/vpc/latest/peering/create-vpc-peering-connection.html'), accessed: '2026-10-07' },
+  'aws-vpc-peering-basics': { ...aws('How VPC peering connections work', 'Amazon VPC Peering Guide', 'https://docs.aws.amazon.com/vpc/latest/peering/vpc-peering-basics.html'), accessed: '2026-10-07' },
+  'aws-vpc-peering-sg': { ...aws('Update your security groups to reference peer security groups', 'Amazon VPC Peering Guide', 'https://docs.aws.amazon.com/vpc/latest/peering/vpc-peering-security-groups.html'), accessed: '2026-10-07' },
+  'aws-vpc-peering-dns': { ...aws('Enable DNS resolution for a VPC peering connection', 'Amazon VPC Peering Guide', 'https://docs.aws.amazon.com/vpc/latest/peering/vpc-peering-dns.html'), accessed: '2026-10-07' },
+  'aws-tgw-share': { ...aws('Shared transit gateways', 'Amazon VPC Transit Gateways', 'https://docs.aws.amazon.com/vpc/latest/tgw/transit-gateway-share.html'), accessed: '2026-10-07' },
+  'aws-tgw-create': { ...aws('Create a transit gateway in AWS Transit Gateway', 'Amazon VPC Transit Gateways', 'https://docs.aws.amazon.com/vpc/latest/tgw/create-tgw.html'), accessed: '2026-10-07' },
+  'aws-vpc-pricing': { ...aws('Amazon VPC pricing', undefined, 'https://aws.amazon.com/vpc/pricing/'), accessed: '2026-10-07' },
+  'aws-tgw-pricing': { ...aws('AWS Transit Gateway pricing', undefined, 'https://aws.amazon.com/transit-gateway/pricing/'), accessed: '2026-10-07' },
+  'aws-privatelink-share': { ...aws('Share your services through AWS PrivateLink', 'AWS PrivateLink', 'https://docs.aws.amazon.com/vpc/latest/privatelink/privatelink-share-your-services.html'), accessed: '2026-10-07' },
+  'aws-privatelink-concepts': { ...aws('AWS PrivateLink concepts', 'AWS PrivateLink', 'https://docs.aws.amazon.com/vpc/latest/privatelink/concepts.html'), accessed: '2026-10-07' },
+  'aws-multivpc-privatelink': { ...aws('AWS PrivateLink', 'Building a Scalable and Secure Multi-VPC AWS Network Infrastructure (AWS Whitepaper)', 'https://docs.aws.amazon.com/whitepapers/latest/building-scalable-secure-multi-vpc-network-infrastructure/aws-privatelink.html'), accessed: '2026-10-07' },
+  'aws-nat-gateway-scenarios': { ...aws('NAT gateway use cases', 'Amazon VPC User Guide', 'https://docs.aws.amazon.com/vpc/latest/userguide/nat-gateway-scenarios.html'), accessed: '2026-10-07' },
+  'aws-vpc-peering-routing': { ...aws('Update your route tables for a VPC peering connection', 'Amazon VPC Peering Guide', 'https://docs.aws.amazon.com/vpc/latest/peering/vpc-peering-routing.html'), accessed: '2026-10-07' },
+  'aws-s2s-vpn-static-dynamic': { ...aws('Static and dynamic routing in AWS Site-to-Site VPN', 'AWS Site-to-Site VPN User Guide', 'https://docs.aws.amazon.com/vpn/latest/s2svpn/vpn-static-dynamic.html'), accessed: '2026-10-07' },
+  'aws-dx-what-is': { ...aws('What is Direct Connect?', 'AWS Direct Connect User Guide', 'https://docs.aws.amazon.com/directconnect/latest/UserGuide/Welcome.html'), accessed: '2026-10-07' },
+  'aws-dx-macsec': { ...aws('MAC Security in Direct Connect', 'AWS Direct Connect User Guide', 'https://docs.aws.amazon.com/directconnect/latest/UserGuide/MACsec.html'), accessed: '2026-10-07' },
+  'aws-client-vpn-what-is': { ...aws('What is AWS Client VPN?', 'AWS Client VPN Administrator Guide', 'https://docs.aws.amazon.com/vpn/latest/clientvpn-admin/what-is.html'), accessed: '2026-10-07' },
+  'aws-client-vpn-rules': { ...aws('Rules and best practices for using AWS Client VPN', 'AWS Client VPN Administrator Guide', 'https://docs.aws.amazon.com/vpn/latest/clientvpn-admin/what-is-best-practices.html'), accessed: '2026-10-07' },
+  'kubectl-run': { authors: 'The Kubernetes Authors', title: 'kubectl run', container: 'Kubernetes Documentation', url: 'https://kubernetes.io/docs/reference/kubectl/generated/kubectl_run/', accessed: '2026-10-07' },
+  'kubectl-port-forward': { authors: 'The Kubernetes Authors', title: 'kubectl port-forward', container: 'Kubernetes Documentation', url: 'https://kubernetes.io/docs/reference/kubectl/generated/kubectl_port-forward/', accessed: '2026-10-07' },
+  'alpine-socat-dockerfile': { authors: 'alpine-docker', title: 'socat/Dockerfile', container: 'alpine-docker/multi-arch-libs', note: 'GitHub repository', url: 'https://github.com/alpine-docker/multi-arch-libs/blob/master/socat/Dockerfile', accessed: '2026-10-07' },
+  'aws-ssm-cli-start-session': { ...aws('start-session', 'AWS CLI Command Reference', 'https://docs.aws.amazon.com/cli/latest/reference/ssm/start-session.html'), accessed: '2026-10-07' },
+  'aws-ssm-documents': { ...aws('AWS Systems Manager Documents', 'AWS Systems Manager User Guide', 'https://docs.aws.amazon.com/systems-manager/latest/userguide/documents.html'), accessed: '2026-10-07' },
+  'aws-ssm-prerequisites': { ...aws('Step 1: Complete Session Manager prerequisites', 'AWS Systems Manager User Guide', 'https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-prerequisites.html'), accessed: '2026-10-07' },
+  'aws-ssm-instance-permissions': { ...aws('Step 2: Verify or add instance permissions for Session Manager', 'AWS Systems Manager User Guide', 'https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-getting-started-instance-profile.html'), accessed: '2026-10-07' },
   'aws-s2s-vpn-what-is': aws('What is AWS Site-to-Site VPN?', 'AWS Site-to-Site VPN User Guide', 'https://docs.aws.amazon.com/vpn/latest/s2svpn/VPC_VPN.html'),
   'aws-dx-encryption-in-transit': aws('Encryption in AWS Direct Connect', 'AWS Direct Connect User Guide', 'https://docs.aws.amazon.com/directconnect/latest/UserGuide/encryption-in-transit.html'),
   'aws-s2s-vpn-resilience': aws('Resilience in AWS Site-to-Site VPN', 'AWS Site-to-Site VPN User Guide', 'https://docs.aws.amazon.com/vpn/latest/s2svpn/disaster-recovery-resiliency.html'),
@@ -314,7 +355,72 @@ export const references = {
   'openssh-ssh': { authors: 'OpenBSD', title: 'ssh(1)', container: 'OpenBSD manual pages', url: 'https://man.openbsd.org/ssh', accessed: CHECKED },
   'k8s-port-forward': { authors: 'The Kubernetes Authors', title: 'Use Port Forwarding to Access Applications in a Cluster', container: 'Kubernetes Documentation', url: 'https://kubernetes.io/docs/tasks/access-application-cluster/port-forward-access-application-cluster/', accessed: CHECKED },
   'k8s-control-plane-comms': { authors: 'The Kubernetes Authors', title: 'Communication between Nodes and the Control Plane', container: 'Kubernetes Documentation', url: 'https://kubernetes.io/docs/concepts/architecture/control-plane-node-communication/', accessed: CHECKED },
+  'k8s-network-policies': { authors: 'The Kubernetes Authors', title: 'Network Policies', container: 'Kubernetes Documentation', url: 'https://kubernetes.io/docs/concepts/services-networking/network-policies/', accessed: '2026-10-08' },
+  'k8s-rbac-good-practices': { authors: 'The Kubernetes Authors', title: 'Role Based Access Control Good Practices', container: 'Kubernetes Documentation', url: 'https://kubernetes.io/docs/concepts/security/rbac-good-practices/', accessed: '2026-10-08' },
+  'k8s-images': { authors: 'The Kubernetes Authors', title: 'Images', container: 'Kubernetes Documentation', url: 'https://kubernetes.io/docs/concepts/containers/images/', accessed: '2026-10-08' },
+  'postgresql-libpq-ssl': { authors: 'The PostgreSQL Global Development Group', title: 'SSL Support', container: 'PostgreSQL Documentation', url: 'https://www.postgresql.org/docs/current/libpq-ssl.html', accessed: '2026-10-08' },
+  'aws-rds-postgres-ssl': { ...aws('Using SSL with a PostgreSQL DB instance', 'Amazon RDS User Guide', 'https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/PostgreSQL.Concepts.General.SSL.html'), accessed: '2026-10-08' },
   'socat-manual': { authors: 'G. Rieger', title: 'socat - Multipurpose relay', container: 'socat documentation', url: 'http://www.dest-unreach.org/socat/doc/socat.html', accessed: CHECKED },
+
+  // Kubernetes object size limits
+  'k8s-configmap': { authors: 'The Kubernetes Authors', title: 'ConfigMaps', container: 'Kubernetes Documentation', url: 'https://kubernetes.io/docs/concepts/configuration/configmap/', accessed: '2026-10-09' },
+  'k8s-secret': { authors: 'The Kubernetes Authors', title: 'Secrets', container: 'Kubernetes Documentation', url: 'https://kubernetes.io/docs/concepts/configuration/secret/', accessed: '2026-10-09' },
+  'etcd-limits': { authors: 'The etcd Authors', title: 'System limits', container: 'etcd v3.5 Documentation', url: 'https://etcd.io/docs/v3.5/dev-guide/limit/', accessed: '2026-10-09' },
+  'helm-storage-backends': { authors: 'The Helm Authors', title: 'Storage backends', container: 'Helm Documentation, Advanced Helm Techniques', url: 'https://helm.sh/docs/topics/advanced/', accessed: '2026-10-09' },
+  'k8s-components': { authors: 'The Kubernetes Authors', title: 'Kubernetes Components', container: 'Kubernetes Documentation', url: 'https://kubernetes.io/docs/concepts/overview/components/', accessed: '2026-10-09' },
+  'k8s-validation-size': { authors: 'The Kubernetes Authors', title: 'pkg/apis/core/validation/validation.go (ValidateConfigMap)', container: 'kubernetes/kubernetes', note: 'GitHub repository, commit ef06af9', url: 'https://github.com/kubernetes/kubernetes/blob/ef06af9b9d09e8dc0eb1cc0768b0b542f35549bb/pkg/apis/core/validation/validation.go#L8204-L8232', accessed: '2026-10-09' },
+  'k8s-validation-secret-size': { authors: 'The Kubernetes Authors', title: 'pkg/apis/core/validation/validation.go (ValidateSecret)', container: 'kubernetes/kubernetes', note: 'GitHub repository, commit ef06af9', url: 'https://github.com/kubernetes/kubernetes/blob/ef06af9b9d09e8dc0eb1cc0768b0b542f35549bb/pkg/apis/core/validation/validation.go#L8101-L8115', accessed: '2026-10-09' },
+  'airlock-configmap-size': { authors: 'Ergon Informatik AG', title: 'ConfigMaps size limit', container: 'Airlock Microgateway 4.7 Documentation', url: 'https://docs.airlock.com/microgateway/4.7/index/1730261073553.html', accessed: '2026-10-09' },
+  'helm-intro': { authors: 'The Helm Authors', title: 'Introduction to Helm', container: 'Helm Documentation', url: 'https://helm.sh/docs/intro/introduction/', accessed: '2026-10-09' },
+  'helm-using': { authors: 'The Helm Authors', title: 'Using Helm', container: 'Helm Documentation', url: 'https://helm.sh/docs/intro/using_helm/', accessed: '2026-10-09' },
+  'helm-source-storage': { authors: 'The Helm Authors', title: 'pkg/storage/storage.go (makeKey)', container: 'helm/helm', note: 'GitHub repository, commit dc56a44', url: 'https://github.com/helm/helm/blob/dc56a44fee5ac036807348bc48653bc93d714953/pkg/storage/storage.go#L339-L341', accessed: '2026-10-09' },
+  'helm-source-upgrade': { authors: 'The Helm Authors', title: 'pkg/action/upgrade.go', container: 'helm/helm', note: 'GitHub repository, commit dc56a44', url: 'https://github.com/helm/helm/blob/dc56a44fee5ac036807348bc48653bc93d714953/pkg/action/upgrade.go#L408-L470', accessed: '2026-10-09' },
+  'helm-source-encode': { authors: 'The Helm Authors', title: 'pkg/storage/driver/util.go (encodeRelease)', container: 'helm/helm', note: 'GitHub repository, commit dc56a44', url: 'https://github.com/helm/helm/blob/dc56a44fee5ac036807348bc48653bc93d714953/pkg/storage/driver/util.go#L36-L58', accessed: '2026-10-09' },
+  'ms-out-string': { authors: 'Microsoft', title: 'Out-String', container: 'PowerShell 7.6 Documentation', url: 'https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/out-string', accessed: '2026-10-09' },
+  'dotnet-getbytecount': { authors: 'Microsoft', title: 'Encoding.GetByteCount Method', container: '.NET API Reference', url: 'https://learn.microsoft.com/en-us/dotnet/api/system.text.encoding.getbytecount', accessed: '2026-10-09' },
+
+  // Philosophy: the Presocratics
+  'pt-001': { authors: ['S. West'], title: 'Episode #001 - Transcript', container: 'Philosophize This!', note: 'transcript of "Ionian Pre-Socratic Philosophy"', url: 'https://www.philosophizethis.org/transcript/episode-001-transcript', accessed: PHIL },
+  'pt-002': { authors: ['S. West'], title: 'Episode #002 - Transcript', container: 'Philosophize This!', note: 'transcript of "Italian Pre-Socratic Philosophy"', url: 'https://www.philosophizethis.org/transcript/episode-2-transcript', accessed: PHIL },
+  'sep-presocratics': sep(['P. Curd'], 'Presocratic Philosophy', 'rev. Jun. 22, 2020', 'presocratics'),
+  'sep-heraclitus': sep(['D. W. Graham'], 'Heraclitus', 'rev. Dec. 8, 2023', 'heraclitus'),
+  'sep-pythagoras': sep(['C. Huffman'], 'Pythagoras', 'rev. Feb. 5, 2024', 'pythagoras'),
+  'sep-parmenides': sep(['J. Palmer'], 'Parmenides', 'rev. Mar. 4, 2025', 'parmenides'),
+  'sep-zeno': sep(['J. Palmer'], 'Zeno of Elea', 'rev. May 12, 2025', 'zeno-elea'),
+  'sep-empedocles': sep(['K. S. Kingsley', 'R. Parry'], 'Empedocles', 'rev. Sep. 25, 2024', 'empedocles'),
+  'sep-democritus': sep(['S. Berryman'], 'Democritus', 'rev. Jan. 7, 2023', 'democritus'),
+  'sep-socrates': sep(['D. Nails', 'S. S. Monoson'], 'Socrates', 'rev. May 26, 2022', 'socrates'),
+  'sep-leucippus': sep(['S. Berryman'], 'Leucippus', 'rev. Jan. 9, 2023', 'leucippus'),
+  'sep-about': { authors: 'Metaphysics Research Lab, Stanford University', title: 'About the Stanford Encyclopedia of Philosophy', container: 'The Stanford Encyclopedia of Philosophy', url: 'https://plato.stanford.edu/about.html', accessed: '2026-10-09' },
+  'sep-editorial': { authors: 'Metaphysics Research Lab, Stanford University', title: 'Editorial Information', container: 'The Stanford Encyclopedia of Philosophy', url: 'https://plato.stanford.edu/info.html', accessed: '2026-10-09' },
+  'iep-about': { authors: 'Internet Encyclopedia of Philosophy', title: 'About the IEP', container: IEP, url: 'https://iep.utm.edu/about/', accessed: '2026-10-09' },
+  'iep-thales': { authors: ["P. O'Grady"], title: 'Thales of Miletus', container: IEP, url: 'https://iep.utm.edu/thales/', accessed: PHIL },
+  'iep-anaximander': { authors: ['D. L. Couprie'], title: 'Anaximander', container: IEP, url: 'https://iep.utm.edu/anaximan/', accessed: PHIL },
+  'iep-anaximenes': { authors: ['D. W. Graham'], title: 'Anaximenes', container: IEP, url: 'https://iep.utm.edu/anaximen/', accessed: PHIL },
+  // Code review
+  rfc7231: { ...rfc(7231, ['R. Fielding, Ed.', 'J. Reschke, Ed.'], 'Hypertext Transfer Protocol (HTTP/1.1): Semantics and Content', 'Jun. 2014'), accessed: '2026-10-08' },
+  'git-worktree': { authors: 'Git Project', title: 'git-worktree: manage multiple working trees', container: 'Git documentation', url: 'https://git-scm.com/docs/git-worktree', accessed: '2026-10-08' },
+  'google-review-standard': { authors: 'Google', title: 'The Standard of Code Review', container: 'Google Engineering Practices Documentation', url: 'https://google.github.io/eng-practices/review/reviewer/standard.html', accessed: '2026-10-08' },
+  'google-review-looking-for': { authors: 'Google', title: 'What to look for in a code review', container: 'Google Engineering Practices Documentation', url: 'https://google.github.io/eng-practices/review/reviewer/looking-for.html', accessed: '2026-10-08' },
+  'coderabbit-pr-validation': { authors: 'CodeRabbit', title: 'PR validation using linked issues', container: 'CodeRabbit Documentation', url: 'https://docs.coderabbit.ai/issues/pr-validation', accessed: '2026-10-08' },
+  'qodo-ticketing': { authors: 'Qodo', title: 'Use ticket context in code reviews', container: 'Qodo Documentation', url: 'https://docs.qodo.ai/integrations/ticketing-integrations', accessed: '2026-10-08' },
+  'conventional-comments': { authors: 'Conventional Comments', title: 'Conventional Comments', url: 'https://conventionalcomments.io', accessed: '2026-10-08' },
+  'braz-2022': { authors: ['L. Braz', 'C. Aeberhard', 'G. Çalikli', 'A. Bacchelli'], title: 'Less is More: Supporting Developers in Vulnerability Detection during Code Review', container: 'Proc. 44th Int. Conf. Software Engineering (ICSE)', date: 'May 2022', url: 'https://arxiv.org/abs/2202.04586', accessed: '2026-10-08' },
+  'bacchelli-bird-2013': { authors: ['A. Bacchelli', 'C. Bird'], title: 'Expectations, Outcomes, and Challenges of Modern Code Review', container: 'Proc. 35th Int. Conf. Software Engineering (ICSE)', date: 'May 2013', url: 'https://www.microsoft.com/en-us/research/publication/expectations-outcomes-and-challenges-of-modern-code-review/', accessed: '2026-10-08' },
+  'owasp-file-upload': { authors: 'OWASP', title: 'File Upload Cheat Sheet', container: 'OWASP Cheat Sheet Series', url: 'https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html', accessed: '2026-10-08' },
+  'owasp-llm01': { authors: 'OWASP', title: 'LLM01:2025 Prompt Injection', container: 'OWASP Top 10 for LLM Applications', url: 'https://genai.owasp.org/llmrisk/llm01-prompt-injection/', accessed: '2026-10-08' },
+  'github-codeowners': { authors: 'GitHub', title: 'About code owners', container: 'GitHub Docs', url: 'https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners', accessed: '2026-10-09' },
+  'sre-book-intro': { authors: ['B. Beyer', 'C. Jones', 'J. Petoff', 'N. R. Murphy'], title: 'Introduction', container: 'Site Reliability Engineering: How Google Runs Production Systems', note: "O'Reilly Media", date: '2016', url: 'https://sre.google/sre-book/introduction/', accessed: '2026-10-09' },
+  'sre-book-launches': { authors: ['B. Beyer', 'C. Jones', 'J. Petoff', 'N. R. Murphy'], title: 'Reliable Product Launches at Scale', container: 'Site Reliability Engineering: How Google Runs Production Systems', note: "O'Reilly Media", date: '2016', url: 'https://sre.google/sre-book/reliable-product-launches/', accessed: '2026-10-09' },
+  'aws-builders-retries': { authors: 'M. Brooker', title: 'Timeouts, retries, and backoff with jitter', container: "The Amazon Builders' Library", url: 'https://builder.aws.com/content/3EumjoZascWd1oZiEgL8ORlv3qE/timeouts-retries-and-backoff-with-jitter', accessed: '2026-10-09' },
+  'aws-builders-rollback': { authors: 'S. Pokkunuri', title: 'Ensuring rollback safety during deployments', container: "The Amazon Builders' Library", url: 'https://builder.aws.com/content/3F04j2yRAAMBuPSPs50xwXZqg01/ensuring-rollback-safety-during-deployments', accessed: '2026-10-09' },
+  'nginx-client-max-body-size': { authors: 'F5, Inc.', title: 'Module ngx_http_core_module: client_max_body_size', container: 'nginx documentation', url: 'https://nginx.org/en/docs/http/ngx_http_core_module.html#client_max_body_size', accessed: '2026-10-09' },
+  'terraform-plan': { authors: 'HashiCorp', title: 'terraform plan command reference', container: 'Terraform CLI Documentation', url: 'https://developer.hashicorp.com/terraform/cli/commands/plan', accessed: '2026-10-09' },
+  'terraform-lifecycle': { authors: 'HashiCorp', title: 'lifecycle block reference', container: 'Terraform Language Documentation', url: 'https://developer.hashicorp.com/terraform/language/meta-arguments/lifecycle', accessed: '2026-10-09' },
+  'cdk-deploy': { ...aws('cdk deploy', 'AWS Cloud Development Kit (AWS CDK) v2 Developer Guide', 'https://docs.aws.amazon.com/cdk/v2/guide/ref-cli-cmd-deploy.html'), accessed: '2026-10-09' },
+  'helm-template': { authors: 'The Helm Authors', title: 'helm template', container: 'Helm Documentation', url: 'https://helm.sh/docs/helm/helm_template/', accessed: '2026-10-09' },
+  'aws-iam-best-practices': { ...aws('Security best practices in IAM', 'AWS Identity and Access Management User Guide', 'https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html'), accessed: '2026-10-09' },
+  'aws-access-analyzer-checks': { ...aws('Validate policies with IAM Access Analyzer custom policy checks', 'AWS Identity and Access Management User Guide', 'https://docs.aws.amazon.com/IAM/latest/UserGuide/access-analyzer-custom-policy-checks.html'), accessed: '2026-10-09' },
 };
 
 const MONTHS = ['Jan.', 'Feb.', 'Mar.', 'Apr.', 'May', 'Jun.', 'Jul.', 'Aug.', 'Sep.', 'Oct.', 'Nov.', 'Dec.'];
