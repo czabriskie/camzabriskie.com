@@ -26,6 +26,9 @@ const aws = (title, container, url) => ({ authors: AWS, title, container, url, a
 
 export const references = {
   // RFCs
+  'letsencrypt-short-lived': { authors: ['J. Aas'], title: 'We Issued Our First Six Day Cert', container: "Let's Encrypt", date: 'Feb. 20, 2025', url: 'https://letsencrypt.org/2025/02/20/first-short-lived-cert-issued/', accessed: '2026-10-08' },
+  'curl-ssl-certs': { authors: 'curl project', title: 'SSL CA Certificates', container: 'curl documentation', url: 'https://curl.se/docs/sslcerts.html', accessed: '2026-10-08' },
+  'openssl-security-level': { authors: 'OpenSSL Project', title: 'SSL_CTX_set_security_level', container: 'OpenSSL Documentation', url: 'https://docs.openssl.org/master/man3/SSL_CTX_set_security_level/', accessed: '2026-10-08' },
   rfc768: rfc(768, ['J. Postel'], 'User Datagram Protocol', 'Aug. 1980'),
   rfc791: rfc(791, ['J. Postel'], 'Internet Protocol', 'Sep. 1981'),
   rfc792: rfc(792, ['J. Postel'], 'Internet Control Message Protocol', 'Sep. 1981'),
