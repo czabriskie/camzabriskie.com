@@ -13,6 +13,11 @@ export const topics = [
     blurb: 'How networks are put together, starting from the addresses.',
   },
   {
+    slug: 'kubernetes',
+    title: 'Kubernetes',
+    blurb: 'The limits and rules the cluster enforces, and what to do when a deploy hits one.',
+  },
+  {
     slug: 'philosophy',
     title: 'Philosophy',
     blurb: 'The history of ideas, starting with the first people to ask what everything is made of.',

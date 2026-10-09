@@ -17,6 +17,8 @@
     --life: #e0a45e;
     --line: #2a2e2a;
   }
+  /* macOS thickens light text on a dark background; grayscale smoothing keeps letters apart. */
+  body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 }
 
 * { box-sizing: border-box; }
@@ -28,6 +30,9 @@ body {
   font-family: 'Source Serif 4', Georgia, 'Times New Roman', serif;
   font-size: 1.05rem;
   line-height: 1.7;
+  /* Never fake a weight the page didn't load: a synthesized bold smears the letters
+     together. Bold uses the 600 weights loaded in Base.astro instead (see strong below). */
+  font-synthesis-weight: none;
 }
 
 .wrap { max-width: 48rem; margin: 0 auto; padding: 0 1.25rem; }
@@ -42,6 +47,7 @@ h2 { font-size: 1.45rem; font-weight: 600; margin: 2.2rem 0 0.7rem; }
 h3 { font-size: 1.15rem; font-weight: 600; margin: 1.8rem 0 0.5rem; }
 
 p { margin: 0 0 1.05rem; }
+strong, b { font-weight: 600; }
 a { color: inherit; text-decoration-color: var(--muted); text-underline-offset: 3px; }
 a:hover { text-decoration-color: currentColor; }
 a:focus-visible { outline: 2px solid var(--tech); outline-offset: 2px; border-radius: 2px; }
@@ -543,6 +549,14 @@ ul.references.all li { margin-bottom: 1.1rem; scroll-margin-top: 1rem; }
 ul.references .cited-in { display: block; color: var(--muted); margin-top: 0.2rem; }
 .references-all { color: var(--muted); font-size: 0.9rem; }
 
+/* Platform-specific sections: a heading tagged {only: AWS} (src/lib/remark-only-sections.mjs) */
+.only-banner { margin: -0.2rem 0 1.1rem; line-height: 1; }
+.only-tag { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink); border: 1px solid var(--muted); border-radius: 4px; padding: 0.05rem 0.45rem; white-space: nowrap; }
+.references-toggle > summary { cursor: pointer; color: var(--tech); font-size: 0.92rem; margin: 0.4rem 0 0.6rem; }
+.references-toggle > summary:focus-visible { outline: 2px solid var(--tech); outline-offset: 2px; border-radius: 2px; }
+.references-toggle[open] > summary { color: var(--muted); }
+.references-toggle:not([open]) .when-open, .references-toggle[open] .when-closed { display: none; }
+
 /* Route table lookup (src/scripts/route-lookup.ts), sharing the calculator's box */
 .route-lookup { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 1rem 1.2rem; margin: 1.2rem 0 1.6rem; }
 .route-lookup:empty { display: none; }
@@ -582,6 +596,26 @@ ul.references .cited-in { display: block; color: var(--muted); margin-top: 0.2re
 .air-flow .air-small { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; text-anchor: middle; fill: var(--muted); }
 .air-flow .air-arrow { stroke: var(--muted); stroke-width: 1.2; }
 .air-flow .air-arrowhead { fill: var(--muted); }
+
+/* Kubernetes object size limits: where the check happens, and how a loop multiplies size */
+.k8s-path, .k8s-size { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+.k8s-path svg, .k8s-size svg { display: block; width: 100%; height: auto; }
+.k8s-path .k8p-box { fill: var(--surface); stroke: var(--muted); stroke-width: 1; }
+.k8s-path .k8p-check { stroke: var(--tech); stroke-width: 1.8; }
+.k8s-path .k8p-reject { stroke: var(--ink); stroke-dasharray: 4 3; }
+.k8s-path .k8p-name { font: 600 10px 'Bricolage Grotesque', sans-serif; text-anchor: middle; fill: var(--ink); }
+.k8s-path .k8p-small { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; text-anchor: middle; fill: var(--muted); }
+.k8s-path .k8p-limit { fill: var(--tech); }
+.k8s-path .k8p-label { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.k8s-path .k8p-label-left { text-anchor: end; }
+.k8s-path .k8p-arrow { stroke: var(--muted); stroke-width: 1.2; }
+.k8s-path .k8p-arrowhead { fill: var(--muted); }
+.k8s-size .k8b-seg { fill: color-mix(in srgb, var(--tech) 18%, var(--surface)); stroke: var(--tech); stroke-width: 1; }
+.k8s-size .k8b-over { stroke: var(--ink); stroke-width: 1; }
+.k8s-size .k8b-hatch-line { stroke: var(--ink); stroke-width: 1.4; opacity: 0.55; }
+.k8s-size .k8b-limit { stroke: var(--ink); stroke-width: 1.5; stroke-dasharray: 4 3; }
+.k8s-size .k8b-text { font: 9px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.k8s-size .k8b-limit-text { fill: var(--ink); }
 .paint-mix { max-width: 30rem; margin: 1.2rem auto 0.5rem; }
 .paint-mix svg { display: block; width: 100%; height: auto; }
 .paint-mix .pm-wire { fill: none; stroke: var(--line); stroke-width: 1.5; stroke-dasharray: 4 3; }
