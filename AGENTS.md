@@ -76,6 +76,10 @@ of it: the post can stay vague about the job while the document carries the subs
 - Primers aren't tech-only (Decision 0010): Philosophy is a topic too. Non-tech primers
   cite the Stanford or Internet Encyclopedia of Philosophy over podcasts, and say where
   the popular version and the scholarship disagree.
+- **Use the `primer` skill** (`.claude/skills/primer/SKILL.md`) for writing or reviewing any
+  primer, including someone else's PR. It has the full checklist: scrub, beginner pass,
+  looking for visuals (diagrams wherever a picture beats the text), verifying claims, PowerShell
+  tabs, voice, build.
 - Primers live in `src/content/primers/<topic>/<slug>.md` (Decision 0006);
   frontmatter `title`, `description`, `order` (reading order in the topic), `updated`,
   optional `draft`. New topics also need an entry in `src/lib/primers.ts`, and a new
