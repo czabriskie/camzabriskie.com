@@ -21,13 +21,15 @@ A code review answers three different questions. Does this change do what was as
 
 ## Three questions, three passes
 
-Take a ticket that reads:
+The examples in this primer follow one made-up app: a small photo-sharing site written in Python. It has two **endpoints** (URLs the app answers requests on) that take files. People add photos to their albums through `/upload` and set their profile picture through `/avatar`. Both save the file to a folder on the server's disk, and the code for `/upload` lives in `upload.py`. On a developer's laptop the app runs at `localhost:8000`.
+
+A ticket for that app reads:
 
 > **Limit upload size.** Reject file uploads over 10 MB with a 413 so large files stop filling the disk. Show the user a helpful error message.
 
 **413** is the HTTP status code for a request whose content is larger than the server will accept. RFC 9110 names it Content Too Large [@rfc9110], and the older RFC 7231 called it Payload Too Large [@rfc7231], so you'll see both names.
 
-The diff adds a size check to the `/upload` endpoint. Reading it, the size check looks right. Whether it returns 413 and not 400, whether exactly 10 MB passes, and whether the limit also applies to `/avatar`, the second endpoint that takes files and that nobody mentioned, are all questions the diff alone does not answer.
+The diff adds a size check to the `/upload` endpoint. Reading it, the size check looks right. Whether it returns 413 and not 400, whether exactly 10 MB passes, and whether the limit also applies to `/avatar`, which takes files too but which the ticket never mentions, are all questions the diff alone does not answer.
 
 As of October 2026, several review tools already pull in the ticket for this reason. CodeRabbit validates a pull request against the linked issue's requirements [@coderabbit-pr-validation], and Qodo uses fetched ticket context such as the title and description to judge whether the change matches its intent [@qodo-ticketing]. Google's public Engineering Practices code review guide asks the first reviewer question in plain words: does the change do what the developer intended, and is what they intended good for the people who use the code [@google-review-looking-for]?
 
