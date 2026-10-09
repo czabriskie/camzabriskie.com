@@ -401,6 +401,61 @@ nav.note-nav .mono { color: var(--tech); font-weight: 400; }
 .cmd-builder input:focus-visible { outline: 2px solid var(--tech); outline-offset: 1px; }
 .cmd-builder-note { color: var(--muted); font-size: 0.8rem; }
 .cmd-var { text-decoration: underline dotted; text-underline-offset: 3px; }
+/* VPC map, request/reply steps, and callout (AWS VPC primer), static HTML/CSS */
+.vpc-map { margin: 1.2rem 0 0.5rem; font-size: 0.88rem; line-height: 1.45; border: 1.5px solid var(--tech); border-radius: 10px; background: var(--surface); padding: 0.7rem; }
+.vpc-edge { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.4rem 1rem; margin-bottom: 0.6rem; }
+.vpc-tag { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 0.74rem; color: var(--tech); }
+.vpc-tag code, .vpc-igw code { font-size: inherit; }
+.vpc-igw { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 0.72rem; color: var(--ink); border: 1.5px solid var(--tech); border-radius: 999px; padding: 0.1rem 0.6rem; background: var(--paper); }
+.vpc-zones { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+@media (max-width: 30rem) { .vpc-zones { grid-template-columns: 1fr; } }
+.vpc-zone { border: 1px solid var(--line); border-radius: 8px; background: var(--paper); padding: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem; }
+.vpc-zone-name { font: 600 0.8rem 'Bricolage Grotesque', sans-serif; color: var(--muted); }
+.vpc-subnet { border: 1.5px dashed var(--muted); border-radius: 7px; background: var(--surface); padding: 0.45rem 0.5rem 0.55rem; }
+.vpc-subnet-head { display: flex; flex-direction: column; gap: 0.05rem; margin-bottom: 0.4rem; }
+.vpc-rt { font-size: 0.75rem; color: var(--muted); }
+.vpc-res { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.vpc-sg, .vpc-nosg { font-size: 0.78rem; padding: 0.15rem 0.5rem; border-radius: 6px; background: var(--paper); }
+.vpc-sg { border: 1.5px solid var(--tech); box-shadow: 0 0 0 2px var(--surface), 0 0 0 3px color-mix(in srgb, var(--tech) 45%, transparent); margin: 2px; }
+.vpc-nosg { border: 1px solid var(--line); margin: 2px; }
+.vpc-legend { display: flex; flex-wrap: wrap; gap: 0.3rem 1rem; margin-top: 0.6rem; font-size: 0.75rem; color: var(--muted); }
+.vpc-legend > span { display: inline-flex; align-items: center; gap: 0.35rem; }
+.vpc-key { display: inline-block; width: 1.1rem; height: 0.75rem; border-radius: 3px; }
+.vpc-key-nacl { border: 1.5px dashed var(--muted); }
+.vpc-key-sg { border: 1.5px solid var(--tech); }
+.vpc-key-none { border: 1px solid var(--line); }
+.vpc-steps { margin: 1.2rem 0 0.5rem; display: flex; flex-direction: column; gap: 0.7rem; font-size: 0.85rem; line-height: 1.4; }
+.vpc-flow { border: 1px solid var(--line); border-left: 3px solid var(--tech); border-radius: 8px; background: var(--surface); padding: 0.55rem 0.7rem 0.65rem; }
+.vpc-flow-name { display: block; font: 600 0.85rem 'Bricolage Grotesque', sans-serif; margin-bottom: 0.45rem; }
+.vpc-flow-name code { font-size: 0.78rem; font-weight: 400; }
+.vpc-flow-steps { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 0.2rem; }
+.vpc-step { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.15rem 0.5rem 0.15rem 0.2rem; border: 1px solid var(--line); border-radius: 999px; background: var(--paper); }
+.vpc-step + .vpc-step::before { content: '→'; color: var(--muted); margin: 0 0.35rem 0 -0.55rem; order: -1; }
+.vpc-step.vpc-auto { color: var(--muted); border-style: dashed; padding-left: 0.5rem; }
+.vpc-num { display: inline-flex; align-items: center; justify-content: center; width: 1.25rem; height: 1.25rem; border-radius: 50%; background: var(--tech); color: var(--paper); font: 600 0.72rem 'IBM Plex Mono', ui-monospace, monospace; flex: none; }
+.vpc-note { border: 1px solid var(--line); border-left: 3px solid var(--tech); border-radius: 8px; background: var(--surface); padding: 0.1rem 1rem; margin: 1.2rem 0; }
+/* Load balancer request paths and TLS termination options (load balancers primer) */
+.lb-path, .lb-term { margin: 1.2rem 0 0.5rem; display: flex; flex-direction: column; gap: 0.7rem; font-size: 0.85rem; line-height: 1.4; }
+.lb-row, .lb-term-row { border: 1px solid var(--line); border-left: 3px solid var(--tech); border-radius: 8px; background: var(--surface); padding: 0.55rem 0.7rem 0.65rem; }
+.lb-row-name { display: block; font: 600 0.85rem 'Bricolage Grotesque', sans-serif; margin-bottom: 0.45rem; }
+.lb-hops { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 0.45rem 1.1rem; }
+.lb-hop { position: relative; display: flex; flex-direction: column; padding: 0.25rem 0.55rem; border: 1px solid var(--line); border-radius: 6px; background: var(--paper); }
+.lb-hop + .lb-hop::before { content: '→'; position: absolute; left: -0.95rem; top: 50%; transform: translateY(-50%); color: var(--muted); }
+.lb-hop small, .lb-end small { font-size: 0.74rem; color: var(--muted); }
+.lb-hop code, .lb-end code { font-size: 0.74rem; }
+.lb-hop-end { border-color: var(--tech); }
+.lb-chain { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 0; }
+.lb-end { display: inline-flex; flex-direction: column; padding: 0.2rem 0.55rem; border: 1px solid var(--line); border-radius: 6px; background: var(--paper); }
+.lb-end.lb-cert { border: 1.5px solid var(--tech); }
+.lb-end.lb-pass { border-style: dashed; }
+.lb-link { font: 0.7rem 'IBM Plex Mono', ui-monospace, monospace; color: var(--muted); padding: 0 0.6rem 0.15rem; border-bottom: 2px dashed var(--muted); margin: 0 0.25rem; align-self: center; }
+.lb-link.lb-enc { color: var(--tech); border-bottom: 3px solid var(--tech); }
+.lb-term-key { display: flex; flex-wrap: wrap; gap: 0.3rem 1rem; font-size: 0.75rem; color: var(--muted); }
+.lb-term-key > span { display: inline-flex; align-items: center; gap: 0.35rem; }
+.lb-key { display: inline-block; width: 1.3rem; }
+.lb-key-enc { border-bottom: 3px solid var(--tech); }
+.lb-key-plain { border-bottom: 2px dashed var(--muted); }
+.lb-key-cert { height: 0.75rem; border: 1.5px solid var(--tech); border-radius: 3px; }
 /* Chain of trust diagram (Certificates and Trust primer), static HTML/CSS */
 .cert-tree { max-width: 30rem; margin: 1.2rem auto 0.5rem; }
 .cert-tree svg { display: block; width: 100%; height: auto; }

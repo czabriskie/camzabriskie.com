@@ -139,6 +139,23 @@ export const references = {
   },
 
   // Amazon VPC
+  'aws-ec2-elastic-ip': { ...aws('Elastic IP addresses', 'Amazon EC2 User Guide', 'https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/elastic-ip-addresses-eip.html'), accessed: '2026-10-08' },
+  'aws-ec2-eni': { ...aws('Elastic network interfaces', 'Amazon EC2 User Guide', 'https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-eni.html'), accessed: '2026-10-08' },
+  'aws-ec2-imds': { ...aws('Use instance metadata to manage your EC2 instance', 'Amazon EC2 User Guide', 'https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html'), accessed: '2026-10-08' },
+  'aws-vpc-igw': { ...aws('Enable internet access for a VPC using an internet gateway', VPC_GUIDE, 'https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html'), accessed: '2026-10-08' },
+  'aws-vpc-reachability-analyzer': { ...aws('What is Reachability Analyzer?', 'Reachability Analyzer', 'https://docs.aws.amazon.com/vpc/latest/reachability/what-is-reachability-analyzer.html'), accessed: '2026-10-08' },
+  'aws-vpc-reachability-how': { ...aws('How Reachability Analyzer works', 'Reachability Analyzer', 'https://docs.aws.amazon.com/vpc/latest/reachability/how-reachability-analyzer-works.html'), accessed: '2026-10-08' },
+  'aws-vpc-flow-logs': { ...aws('Logging IP traffic using VPC Flow Logs', VPC_GUIDE, 'https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs.html'), accessed: '2026-10-08' },
+  'aws-vpc-flow-log-records': { ...aws('Flow log records', VPC_GUIDE, 'https://docs.aws.amazon.com/vpc/latest/userguide/flow-log-records.html'), accessed: '2026-10-08' },
+  'aws-alb-http-headers': { ...aws('HTTP headers and Application Load Balancers', 'Elastic Load Balancing User Guide for Application Load Balancers', 'https://docs.aws.amazon.com/elasticloadbalancing/latest/application/x-forwarded-headers.html'), accessed: '2026-10-08' },
+  'aws-alb-health-checks': { ...aws('Health checks for Application Load Balancer target groups', 'Elastic Load Balancing User Guide for Application Load Balancers', 'https://docs.aws.amazon.com/elasticloadbalancing/latest/application/target-group-health-checks.html'), accessed: '2026-10-08' },
+  'aws-alb-security-groups': { ...aws('Security groups for your Application Load Balancer', 'Elastic Load Balancing User Guide for Application Load Balancers', 'https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-update-security-groups.html'), accessed: '2026-10-08' },
+  'aws-alb-troubleshooting': { ...aws('Troubleshoot your Application Load Balancers', 'Elastic Load Balancing User Guide for Application Load Balancers', 'https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-troubleshooting.html'), accessed: '2026-10-08' },
+  'caddy-tls-directive': { authors: 'Caddy', title: 'tls (Caddyfile directive)', container: 'Caddy Documentation', url: 'https://caddyserver.com/docs/caddyfile/directives/tls', accessed: '2026-10-08' },
+  'caddy-reverse-proxy': { authors: 'Caddy', title: 'reverse_proxy (Caddyfile directive)', container: 'Caddy Documentation', url: 'https://caddyserver.com/docs/caddyfile/directives/reverse_proxy', accessed: '2026-10-08' },
+  'caddy-caddyfile-concepts': { authors: 'Caddy', title: 'Caddyfile Concepts', container: 'Caddy Documentation', url: 'https://caddyserver.com/docs/caddyfile/concepts', accessed: '2026-10-08' },
+  'mdn-secure-contexts': { authors: 'MDN contributors', title: 'Secure contexts', container: 'MDN Web Docs', url: 'https://developer.mozilla.org/en-US/docs/Web/Security/Secure_Contexts', accessed: '2026-10-08' },
+  'mdn-secure-contexts-features': { authors: 'MDN contributors', title: 'Features restricted to secure contexts', container: 'MDN Web Docs', url: 'https://developer.mozilla.org/en-US/docs/Web/Security/Secure_Contexts/features_restricted_to_secure_contexts', accessed: '2026-10-08' },
   'aws-vpc-subnet-sizing': aws('Subnet CIDR blocks', VPC_GUIDE, 'https://docs.aws.amazon.com/vpc/latest/userguide/subnet-sizing.html'),
   'aws-vpc-cidr-blocks': aws('VPC CIDR blocks', VPC_GUIDE, 'https://docs.aws.amazon.com/vpc/latest/userguide/vpc-cidr-blocks.html'),
   'aws-vpc-subnets': aws('Subnets for your VPC', VPC_GUIDE, 'https://docs.aws.amazon.com/vpc/latest/userguide/configure-subnets.html'),
@@ -174,7 +191,6 @@ export const references = {
   'aws-route53-resolver-inbound': { ...aws('Forwarding inbound DNS queries to your VPCs', 'Amazon Route 53 Developer Guide', 'https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resolver-forwarding-inbound-queries.html'), accessed: '2026-10-08' },
   rfc4301: { ...rfc(4301, ['S. Kent', 'K. Seo'], 'Security Architecture for the Internet Protocol', 'Dec. 2005'), accessed: '2026-10-08' },
   'aws-vpc-sg-rules': { ...aws('Security group rules', VPC_GUIDE, 'https://docs.aws.amazon.com/vpc/latest/userguide/security-group-rules.html'), accessed: '2026-10-08' },
-  'aws-ec2-eni': { ...aws('Elastic network interfaces', 'Amazon EC2 User Guide', 'https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-eni.html'), accessed: '2026-10-08' },
 
   // CDNs and CloudFront
   'aws-cloudfront-intro': aws('What is Amazon CloudFront?', 'Amazon CloudFront Developer Guide', 'https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html'),
