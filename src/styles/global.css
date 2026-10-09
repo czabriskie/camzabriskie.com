@@ -530,6 +530,8 @@ ul.references .cited-in { display: block; color: var(--muted); margin-top: 0.2re
 .fw-diagram .fw-name { font: 600 10px 'Bricolage Grotesque', sans-serif; }
 .fw-diagram .fw-kind { font: 8px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
 .fw-diagram .fw-left { text-anchor: start; }
+.fw-diagram .fw-right { text-anchor: end; }
+.fw-diagram .fw-bad { font: 600 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--life); }
 .fw-diagram .fw-chip { font: 600 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--tech); }
 .fw-diagram .fw-flow { stroke: var(--muted); stroke-width: 1.2; }
 .fw-diagram .fw-policy { stroke: var(--muted); stroke-width: 1.2; stroke-dasharray: 4 3; }
