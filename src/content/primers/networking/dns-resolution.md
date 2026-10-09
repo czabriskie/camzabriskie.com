@@ -373,7 +373,7 @@ The first request shows the queries going out. Repeat it and there's little or n
 
 </details>
 
-## Where Route 53 fits
+## Where Route 53 fits {only: AWS}
 
 Route 53 is AWS's DNS service, and it does a few separate jobs that are easy to blur together [@aws-route53-concepts]:
 
