@@ -289,6 +289,11 @@ export const references = {
   'openssh-ssh': { authors: 'OpenBSD', title: 'ssh(1)', container: 'OpenBSD manual pages', url: 'https://man.openbsd.org/ssh', accessed: CHECKED },
   'k8s-port-forward': { authors: 'The Kubernetes Authors', title: 'Use Port Forwarding to Access Applications in a Cluster', container: 'Kubernetes Documentation', url: 'https://kubernetes.io/docs/tasks/access-application-cluster/port-forward-access-application-cluster/', accessed: CHECKED },
   'k8s-control-plane-comms': { authors: 'The Kubernetes Authors', title: 'Communication between Nodes and the Control Plane', container: 'Kubernetes Documentation', url: 'https://kubernetes.io/docs/concepts/architecture/control-plane-node-communication/', accessed: CHECKED },
+  'k8s-network-policies': { authors: 'The Kubernetes Authors', title: 'Network Policies', container: 'Kubernetes Documentation', url: 'https://kubernetes.io/docs/concepts/services-networking/network-policies/', accessed: '2026-10-08' },
+  'k8s-rbac-good-practices': { authors: 'The Kubernetes Authors', title: 'Role Based Access Control Good Practices', container: 'Kubernetes Documentation', url: 'https://kubernetes.io/docs/concepts/security/rbac-good-practices/', accessed: '2026-10-08' },
+  'k8s-images': { authors: 'The Kubernetes Authors', title: 'Images', container: 'Kubernetes Documentation', url: 'https://kubernetes.io/docs/concepts/containers/images/', accessed: '2026-10-08' },
+  'postgresql-libpq-ssl': { authors: 'The PostgreSQL Global Development Group', title: 'SSL Support', container: 'PostgreSQL Documentation', url: 'https://www.postgresql.org/docs/current/libpq-ssl.html', accessed: '2026-10-08' },
+  'aws-rds-postgres-ssl': { ...aws('Using SSL with a PostgreSQL DB instance', 'Amazon RDS User Guide', 'https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/PostgreSQL.Concepts.General.SSL.html'), accessed: '2026-10-08' },
   'socat-manual': { authors: 'G. Rieger', title: 'socat - Multipurpose relay', container: 'socat documentation', url: 'http://www.dest-unreach.org/socat/doc/socat.html', accessed: CHECKED },
 };
 

@@ -333,7 +333,7 @@ The pieces of the first command:
 
 And the second:
 
-- **`kubectl port-forward pod/pg-proxy 5433:5432`** listens on local port 5433 and forwards each connection to port 5432 in the pod. The order is always local first, then the pod's [@kubectl-port-forward]. The traffic travels through the encrypted connection to the Kubernetes API that `kubectl` already has, and the API server passes it to the pod through the node's kubelet, so the database never has to be exposed anywhere [@k8s-port-forward, @k8s-control-plane-comms].
+- **`kubectl port-forward pod/pg-proxy 5433:5432`** listens on local port 5433 and forwards each connection to port 5432 in the pod. The order is always local first, then the pod's [@kubectl-port-forward]. The traffic travels through the encrypted connection to the Kubernetes API that `kubectl` already has, and the API server passes it to the pod through the node's kubelet, so the database never has to be reachable from outside the VPC [@k8s-port-forward, @k8s-control-plane-comms].
 - **Local port 5433** instead of 5432, so it doesn't clash with a Postgres you might have running locally.
 
 It only lasts as long as both commands keep running. Stop the port forward with Ctrl+C, then stop the first command, and `--rm` deletes the pod. If a pod outlives it anyway, `kubectl delete pod pg-proxy` removes it. The database's security group still has to allow traffic from the pod, which usually means allowing the cluster nodes' security group.
@@ -367,6 +367,27 @@ The same idea works with other ways in:
   The PowerShell version uses the AWS CLI's shorthand instead of JSON, because Windows PowerShell 5.1 drops the JSON's inner double quotes [@ms-about-parsing].
 
 - **An SSH [bastion host](/primers/networking/proxies-and-bastions/#bastion-hosts)** does the same with `ssh -L`, at the cost of keeping an SSH port open and managing keys. [Forwarding a port through a bastion](/primers/networking/proxies-and-bastions/#forwarding-a-port-through-a-bastion) walks through the command.
+
+<details class="aside">
+<summary>How safe is a port forward?</summary>
+
+A port forward doesn't open anything new to the internet. It rides on access you already have, to the cluster or to the instance, so it's exactly as safe as that access and the pieces around it, hop by hop:
+
+- **Laptop to the cluster or instance.** This hop is encrypted and needs a login. `kubectl` uses its existing TLS connection to the Kubernetes API [@k8s-control-plane-comms]. Session Manager encrypts the session with TLS and only lets in the people and instances an IAM policy allows [@aws-ssm-session-manager]. In Kubernetes, starting the relay means you can create pods in that namespace, which already gives you a lot: a pod can mount the namespace's Secrets and run as any of its service accounts [@k8s-rbac-good-practices].
+- **The local port.** `kubectl port-forward` listens on `localhost` unless you pass `--address` [@kubectl-port-forward], so other machines on your Wi-Fi can't use port 5433. Don't pass `--address 0.0.0.0`, which would hand your access to the whole network. Every program on your own laptop can still connect to it, though, and the forward has no password of its own, so the database's login is the only check left. Close it when you're done.
+- **Pod or instance to the database.** The last hop is plain TCP. socat only relays bytes, so the traffic is encrypted end to end only if the database client asks for TLS itself. Postgres clients default to `sslmode=prefer`, which uses TLS when the server offers it but quietly carries on without it otherwise [@postgresql-libpq-ssl]. `sslmode=require` insists on encryption, and RDS for PostgreSQL 15 and later reject unencrypted connections by default [@aws-rds-postgres-ssl]:
+
+  ```bash
+  psql "host=localhost port=5433 dbname=app user=me sslmode=require"
+  ```
+
+  `require` doesn't check *which* server answered. `verify-full` does, by matching the name you connected to against the certificate [@postgresql-libpq-ssl], and through a port forward that fails: you connected to `localhost`, and the certificate names the RDS endpoint [@aws-rds-postgres-ssl]. `verify-ca` checks the certificate's issuer without the name, or you can point the RDS endpoint's name at `127.0.0.1` in your hosts file and connect to that name on port 5433.
+- **The relay pod.** socat listens on the pod's own address, not just for your forward. Kubernetes allows every inbound connection to a pod by default, until a NetworkPolicy selects it [@k8s-network-policies], so while `pg-proxy` runs, any other pod in the cluster can reach the database through it. That's the main reason to keep it short-lived. The `alpine/socat` image also comes from a community account on Docker Hub, and a tag can be moved to point at different code. Pinning the image by its digest (`alpine/socat@sha256:…`) runs the same image every time [@k8s-images], and an image from your own registry is safer still.
+- **The database's security group.** Allowing the cluster nodes' security group lets every pod on those nodes reach the database, all the time and not just during your session. Running the relay on a dedicated node group, and allowing only that group's security group, is tighter.
+
+Session Manager avoids most of the relay pod's problems. Nothing extra runs for other workloads to find, and the database only has to allow that one instance. Session Manager records who started each session in CloudTrail, but it can't log what passes through a port forward, since it only tunnels the bytes [@aws-ssm-session-manager].
+
+</details>
 
 ## Connected but can't reach it
 
