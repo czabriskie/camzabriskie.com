@@ -167,6 +167,9 @@ export const references = {
   'aws-eks-vpc-cni': aws('Assign IPs to Pods with the Amazon VPC CNI', 'Amazon EKS User Guide', 'https://docs.aws.amazon.com/eks/latest/userguide/managing-vpc-cni.html'),
 
   'root-servers': { authors: 'Root Server Technical Operations Association', title: 'Root Servers', url: 'https://root-servers.org/', accessed: CHECKED },
+  'iana-root-zone': { authors: 'IANA', title: 'Root Zone Management', url: 'https://www.iana.org/domains/root', accessed: '2026-10-09' },
+  'iana-tld-list': { authors: 'IANA', title: 'List of top-level domains', note: 'version 2026100900', url: 'https://data.iana.org/TLD/tlds-alpha-by-domain.txt', accessed: '2026-10-09' },
+  'iana-root-files': { authors: 'IANA', title: 'Root Files', url: 'https://www.iana.org/domains/root/files', accessed: '2026-10-09' },
 
   // DNS and Route 53
   'bind9-dig': { authors: 'Internet Systems Consortium', title: 'dig: DNS lookup utility', container: 'BIND 9 Administrator Reference Manual: Manual Pages', url: 'https://bind9.readthedocs.io/en/stable/manpages.html', accessed: '2026-10-07' },

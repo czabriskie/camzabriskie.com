@@ -2,7 +2,7 @@
 title: How DNS resolution works
 description: The steps between typing a name and connecting to an address, who answers each question along the way, why changes take time to show up, and where Route 53 fits.
 order: 2
-updated: 2026-10-08
+updated: 2026-10-09
 ---
 
 Every connection starts with a lookup. Before a browser can talk to `www.example.com`, something has to turn that name into an address like `203.0.113.10`, and DNS (the Domain Name System) is how that happens [@rfc1034]. It's usually invisible, and it's behind a surprising number of "it works on my machine" problems.
@@ -53,7 +53,7 @@ A name like `www.example.com` reads most naturally right to left, because that's
 </div>
 <p class="bitgrid-caption">Reading <code>www.example.com</code> from the bottom up: <code>www</code>, then <code>example</code>, then <code>com</code>, then the root. Each dashed box is a zone, and the teal lines are where one zone hands off to the next.</p>
 
-- **The root** sits at the top. It has no name of its own and is written as a trailing dot, so the full form of `www.example.com` is `www.example.com.`. Every lookup starts there.
+- **The root** sits at the top of the tree, above every TLD. Its label is empty, zero characters long, and that's why it shows up as nothing but a trailing dot: the full form of `www.example.com` is `www.example.com.`, where the last dot separates `com` from the root's empty label [@rfc1034]. [Why there's a root](#why-theres-a-root) below covers what it's for.
 - **`com`** is a **top-level domain (TLD)**, one level below the root.
 - **`example`** is the **second-level domain**, the part someone registers and owns.
 - **`www`** is a **subdomain**. The owner can make as many as they like (`app`, `api`, `mail`), and each one can point somewhere different.
@@ -61,6 +61,39 @@ A name like `www.example.com` reads most naturally right to left, because that's
 Nobody runs the whole tree. It's split into **zones**, each a connected piece of the tree run by one organization and answered by one set of name servers [@rfc1034]. The dashed boxes are zones. The root zone only knows about the TLDs, the `com` zone only knows about the domains registered under it, and the `example.com` zone holds the actual records for `example.com` and everything under it (unless its owner splits a piece off into a zone of its own).
 
 Handing part of the tree to someone else is called **delegation**. The parent zone keeps **NS records** (name server records) that say which servers answer for the child zone, and those records are the pointers across each zone boundary [@rfc1034]. The `com` zone has NS records for `example.com` and very little else about it: no web server addresses, no mail servers. So a lookup has to hop from zone to zone, following NS records down the tree.
+
+### Why there's a root
+
+The server that does lookups on your behalf, a **recursive resolver** ([more on it below](#whos-involved)), starts out knowing nothing about any domain. To look up a name it has never seen, it needs a fixed place to start, and that place has to lead to every name that exists. The root is that place. The root zone is mostly one list: every TLD, and the name servers that answer for each one [@iana-root-zone]. There are 1,437 TLDs as of October 2026 [@iana-tld-list], and new ones get added, so expecting every resolver in the world to keep its own up-to-date copy of all their servers wouldn't work.
+
+So the list lives in one zone, and every resolver only has to know where that zone is. Resolver software ships with a small file called the **root hints**, the names and addresses of the root servers, which is all it needs to get started [@iana-root-files]. RFC 1034 gives the same reason for starting from root servers when a resolver has nothing better: they "provide eventual access to all of the domain space" [@rfc1034].
+
+<div class="root-why" role="img" aria-label="Two panels. Left, without a root: a resolver would need lines to the servers of every TLD, shown as com, org, net, uk, de, and io, plus 1,431 more, and every resolver would have to keep that list up to date. Right, with a root: the resolver only knows the 13 root server names from its root hints file. The root zone holds the one list of all 1,437 TLDs and their servers.">
+<svg viewBox="0 0 400 148" aria-hidden="true" focusable="false">
+<defs><marker id="rt-head" viewBox="0 0 8 8" refX="7" refY="4" markerUnits="userSpaceOnUse" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="rt-arrowhead" d="M0,0 L8,4 L0,8 z"/></marker></defs>
+<text class="rt-title" x="97" y="12">Without a root</text>
+<rect class="rt-box" x="47" y="22" width="100" height="22" rx="4"/>
+<text class="rt-name" x="97" y="37">every resolver</text>
+<g class="rt-node"><rect x="9" y="80" width="26" height="18" rx="3"/><text x="22" y="93">com</text></g><line class="rt-edge" x1="97" y1="44" x2="22" y2="79"/><g class="rt-node"><rect x="39" y="80" width="26" height="18" rx="3"/><text x="52" y="93">org</text></g><line class="rt-edge" x1="97" y1="44" x2="52" y2="79"/><g class="rt-node"><rect x="69" y="80" width="26" height="18" rx="3"/><text x="82" y="93">net</text></g><line class="rt-edge" x1="97" y1="44" x2="82" y2="79"/><g class="rt-node"><rect x="99" y="80" width="26" height="18" rx="3"/><text x="112" y="93">uk</text></g><line class="rt-edge" x1="97" y1="44" x2="112" y2="79"/><g class="rt-node"><rect x="129" y="80" width="26" height="18" rx="3"/><text x="142" y="93">de</text></g><line class="rt-edge" x1="97" y1="44" x2="142" y2="79"/><g class="rt-node"><rect x="159" y="80" width="26" height="18" rx="3"/><text x="172" y="93">io</text></g><line class="rt-edge" x1="97" y1="44" x2="172" y2="79"/>
+<text class="rt-small" x="97" y="116">+ 1,431 more TLDs,</text>
+<text class="rt-small" x="97" y="128">each list kept up to date</text>
+<text class="rt-small" x="97" y="140">by every resolver</text>
+<line class="rt-divider" x1="200" y1="4" x2="200" y2="144"/>
+<text class="rt-title" x="302" y="12">With a root</text>
+<rect class="rt-box" x="252" y="22" width="100" height="22" rx="4"/>
+<text class="rt-name" x="302" y="37">every resolver</text>
+<line class="rt-arrow" x1="302" y1="44" x2="302" y2="56" marker-end="url(#rt-head)"/>
+<rect class="rt-box rt-root" x="217" y="58" width="170" height="30" rx="4"/>
+<text class="rt-name" x="302" y="72">root servers</text>
+<text class="rt-small" x="302" y="83">13 names, from the root hints</text>
+<line class="rt-arrow" x1="302" y1="88" x2="302" y2="100" marker-end="url(#rt-head)"/>
+<rect class="rt-box" x="217" y="102" width="170" height="30" rx="4"/>
+<text class="rt-name" x="302" y="116">root zone: one list</text>
+<text class="rt-small" x="302" y="127">com, org, net, … all 1,437 TLDs</text>
+</svg>
+</div>
+
+<p class="bitgrid-caption">The root moves the list of TLDs into one zone, served by 12 organizations, so each resolver only needs to know where the root is. In practice resolvers rarely ask it at all, because the TLD referrals it hands out <a href="#caching-ttls-and-propagation">get cached</a>.</p>
 
 ## Who's involved
 

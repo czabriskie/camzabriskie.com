@@ -432,6 +432,20 @@ nav.note-nav .mono { color: var(--tech); font-weight: 400; }
 .dns-tree .dt-node rect { fill: var(--surface); stroke: var(--muted); stroke-width: 0.8; }
 .dns-tree .dt-node text { font: 10px 'IBM Plex Mono', ui-monospace, monospace; text-anchor: middle; fill: var(--ink); }
 .dns-tree .dt-edge { stroke: var(--muted); stroke-width: 1; }
+.root-why { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+.root-why svg { display: block; width: 100%; height: auto; }
+.root-why text { text-anchor: middle; }
+.root-why .rt-title { font: 600 10px 'Bricolage Grotesque', sans-serif; fill: var(--muted); }
+.root-why .rt-box { fill: var(--surface); stroke: var(--muted); stroke-width: 1; }
+.root-why .rt-root { stroke: var(--tech); stroke-width: 1.8; }
+.root-why .rt-name { font: 600 10px 'Bricolage Grotesque', sans-serif; fill: var(--ink); }
+.root-why .rt-small { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.root-why .rt-node rect { fill: var(--surface); stroke: var(--muted); stroke-width: 0.8; }
+.root-why .rt-node text { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--ink); }
+.root-why .rt-edge { stroke: var(--muted); stroke-width: 0.8; opacity: 0.7; }
+.root-why .rt-arrow { stroke: var(--muted); stroke-width: 1.2; }
+.root-why .rt-arrowhead { fill: var(--muted); }
+.root-why .rt-divider { stroke: var(--line); stroke-width: 1; }
 .dns-tree .dt-deleg { stroke: var(--tech); stroke-width: 1.5; }
 .dns-tree .dt-zname { font: 600 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--tech); }
 .dns-tree .dt-who { font: 8px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
