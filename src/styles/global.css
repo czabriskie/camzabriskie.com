@@ -575,3 +575,66 @@ details.aside[open] summary { margin-bottom: 0.4rem; }
 .tw-check-server { text-align: right; }
 .tw-explain { border-top: 1px solid var(--line); margin-top: 0.8rem; padding-top: 0.6rem; min-height: 3.2rem; }
 @media (prefers-reduced-motion: reduce) { .tw-msg { transition: none; } }
+
+/* Philosophy diagrams (Presocratics primer): static inline SVG, colored from the tokens */
+.phil-fig { max-width: 32rem; margin: 1.4rem auto 0.4rem; }
+.phil-fig svg { display: block; width: 100%; height: auto; }
+.phil-fig text { fill: var(--ink); font: 10px 'Bricolage Grotesque', sans-serif; text-anchor: middle; }
+/* timeline: Ionia solid teal, Italy hollow teal, atomists muted */
+.tl-tick { stroke: var(--line); stroke-width: 1; }
+.tl-axis { font: 8px 'IBM Plex Mono', ui-monospace, monospace !important; fill: var(--muted) !important; }
+.phil-fig .tl-left { text-anchor: start; }
+.phil-fig .tl-name { text-anchor: end; font-weight: 600; }
+.tl-soc { fill: var(--line); opacity: 0.7; }
+.phil-fig .tl-soc-label { font: 8px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.tl-bar.tl-io, .tl-dot.tl-io { fill: var(--tech); }
+.tl-bar.tl-it, .tl-dot.tl-it { fill: var(--surface); stroke: var(--tech); stroke-width: 1.5; }
+.tl-bar.tl-at, .tl-dot.tl-at { fill: var(--muted); }
+.tl-dash { stroke-width: 2; stroke-dasharray: 3 3; }
+.tl-dash.tl-io, .tl-dash.tl-it { stroke: var(--tech); }
+.tl-dash.tl-at { stroke: var(--muted); }
+/* Anaximenes' ladder */
+.lad-box rect { fill: var(--surface); stroke: var(--line); stroke-width: 1; }
+.lad-air rect { stroke: var(--tech); stroke-width: 2; }
+.phil-fig .lad-air text, .phil-fig .lad-note { fill: var(--tech); font-weight: 600; }
+.phil-fig .lad-arrow { fill: var(--muted); }
+.lad-axis { stroke: var(--muted); stroke-width: 1; }
+.lad-head { fill: var(--muted); }
+.phil-fig .lad-cap { font: 8px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.phil-fig .lad-l { text-anchor: start; }
+.phil-fig .lad-r { text-anchor: end; }
+/* vibrating strings */
+.phil-fig .st-name { text-anchor: end; font-weight: 600; }
+.st-ghost { stroke: var(--line); stroke-width: 2; }
+.st-line { stroke: var(--tech); stroke-width: 2.5; }
+.st-bridge { stroke: var(--muted); stroke-width: 1.5; }
+.phil-fig .st-frac { text-anchor: start; font: 8px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.phil-fig .st-ratio { text-anchor: end; font: 9px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--tech); }
+/* Zeno's dichotomy */
+.z-track { stroke: var(--line); stroke-width: 3; }
+.z-seg { stroke: var(--tech); stroke-width: 3; }
+.z-mark { stroke: var(--muted); stroke-width: 1; }
+.phil-fig .z-lab { font: 8px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.phil-fig .z-end { font-weight: 600; }
+.phil-fig .z-l { text-anchor: start; }
+.phil-fig .z-r { text-anchor: end; }
+.z-runner { fill: var(--tech); }
+/* the change debate */
+.ch-axis { stroke: var(--muted); stroke-width: 1.5; }
+.ch-end { fill: var(--surface); stroke: var(--tech); stroke-width: 2; }
+.ch-mid { fill: var(--tech); }
+.phil-fig .ch-who { font-weight: 700; font-size: 11px; }
+.phil-fig .ch-claim { fill: var(--muted); font: 9px 'Source Serif 4', Georgia, serif; }
+.phil-fig .ch-l { text-anchor: start; }
+.phil-fig .ch-r { text-anchor: end; }
+/* classification chart: region columns x answer rows */
+.cl-rule { stroke: var(--line); stroke-width: 1; }
+.phil-fig .cl-col { font-weight: 700; font-size: 11px; }
+.phil-fig .cl-colsub, .phil-fig .cl-time { font: 8px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.phil-fig .cl-time { text-anchor: start; }
+.cl-arrow { stroke: var(--line); stroke-width: 1.5; }
+.cl-head-arrow { fill: var(--line); }
+.phil-fig .cl-row { text-anchor: end; font: 9px 'Source Serif 4', Georgia, serif; fill: var(--muted); }
+.cl-box rect { fill: var(--surface); stroke: var(--tech); stroke-width: 1.2; }
+.phil-fig .cl-school { font: 500 7.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--tech); letter-spacing: 0.06em; text-transform: uppercase; }
+.phil-fig .cl-name { font-weight: 600; font-size: 10px; }

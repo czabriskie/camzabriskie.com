@@ -12,6 +12,11 @@ export const topics = [
     title: 'Networking',
     blurb: 'How networks are put together, starting from the addresses.',
   },
+  {
+    slug: 'philosophy',
+    title: 'Philosophy',
+    blurb: 'The history of ideas, starting with the first people to ask what everything is made of.',
+  },
 ];
 
 export type Topic = (typeof topics)[number];
