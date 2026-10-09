@@ -3,6 +3,7 @@ title: AWS VPCs, subnets, and routing
 description: How a VPC is carved into subnets, how route tables make a subnet public or private, how security groups and network ACLs filter traffic, and how to lay it all out.
 order: 8
 updated: 2026-10-08
+only: AWS
 ---
 
 Most of the subnets I deal with live in AWS, inside a VPC (Virtual Private Cloud), which is your own private network in an AWS region. AWS follows the same CIDR rules as everywhere else and adds a few of its own on top. Inside the VPC, route tables decide where traffic can go and two kinds of firewall decide what's allowed to get there.
