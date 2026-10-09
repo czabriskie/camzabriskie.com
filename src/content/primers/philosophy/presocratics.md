@@ -2,10 +2,10 @@
 title: The Presocratics
 description: The first Greek philosophers, from Thales to the atomists, the two questions they kept asking (what is everything made of, and how can anything change), and how each answer set up the next.
 order: 0
-updated: 2026-10-08
+updated: 2026-10-09
 ---
 
-Western philosophy usually gets started with a group of Greek thinkers who lived between roughly 600 and 400 BCE ("before the common era," the same years as BC), before and alongside Socrates. None of their books survive whole. We know them from **fragments**, short passages that later writers quoted, and from summaries by people like Aristotle, so scholars still argue over what some of them meant [@sep-presocratics]. Many of the colorful stories about their lives were made up later, too [@sep-heraclitus, @sep-pythagoras]. This primer follows the first two episodes of the *Philosophize This!* podcast [@pt-001, @pt-002] and checks them against the encyclopedia entries listed at the end, flagging the places where the popular version and the scholarship disagree.
+Western philosophy usually gets started with a group of Greek thinkers who lived between roughly 600 and 400 BCE ("before the common era," the same years as BC), before and alongside Socrates. None of their books survive whole. We know them from **fragments**, short passages that later writers quoted, and from summaries by people like Aristotle, so scholars still argue over what some of them meant [@sep-presocratics]. Many of the colorful stories about their lives were made up later, too [@sep-heraclitus, @sep-pythagoras]. This primer follows the first two episodes of the *Philosophize This!* podcast [@pt-001, @pt-002] and checks them against two scholarly encyclopedias, flagging the places where the popular version and the scholarship disagree. The next section explains why the encyclopedias win when they do.
 
 Two questions run through all of them:
 
@@ -20,6 +20,21 @@ Each thinker's answer creates a problem for the next one, so they read best in o
 
 <p class="bitgrid-caption">Roughly when each one lived. Solid bars are life spans the sources give. Dashed lines are estimates from a single date, like a birth year or a year someone was active around. Filled marks are the Ionians, hollow ones the Italians, and grey the atomists. The shaded band is Socrates.</p>
 
+
+## The podcast and the encyclopedias
+
+*Philosophize This!* is a podcast by Stephen West that walks through the history of philosophy one episode at a time. It's one person retelling the story, built to be entertaining, with jokes and pop-culture comparisons that make the ideas stick. That makes it a good way in, but it also passes along legends because they're good stories. The episode on Pythagoras keeps the blacksmith story because every source the host read tells it, so "there has to be some merit to the story" [@pt-002]. A story showing up everywhere only shows it got copied a lot. The host says as much himself at one point: "Don't quote me on anything specific" [@pt-002].
+
+The **Stanford Encyclopedia of Philosophy** (SEP) is a free online reference published by the Metaphysics Research Lab in Stanford University's philosophy department [@sep-editorial]. Each entry is written and kept up to date by a specialist in that topic. Authors are invited, they need a PhD and published, peer-reviewed work on the subject, and every entry and every major revision is checked by an editorial board before it goes up [@sep-about, @sep-editorial]. The **Internet Encyclopedia of Philosophy** (IEP) works the same way on a smaller scale. It's free, peer-reviewed, written by professional philosophers, and edited by professors [@iep-about].
+
+| | The podcast | The encyclopedias |
+|---|---|---|
+| **Who writes it** | One host, covering every philosopher | A specialist in that philosopher or period |
+| **Checked before publishing** | No | Yes, by an editorial board or peer reviewers |
+| **Shows its evidence** | No citations in the transcripts | Cites the ancient sources by fragment number, plus the modern scholarship on them |
+| **Kept current** | An episode stays as recorded | Revised as research changes, with the revision date on each SEP entry |
+
+The encyclopedias aren't infallible. Their authors disagree with each other, and the entries say so when the evidence is thin, which is part of why they're more trustworthy on facts. The podcast is still the friendlier place to start, and this primer keeps its order.
 
 ## Before them: the gods explained everything
 
@@ -41,6 +56,15 @@ The podcast splits them by geography, and the split lines up well with how they 
 The atomists (Leucippus and Democritus) came later and don't sit cleanly in either one. Democritus was from Abdera, in northern Greece, and Leucippus is said to have been born in Elea, Abdera, or Miletus, depending on the source [@sep-leucippus].
 
 Roughly, the Ionians looked at the physical world and tried to name the stuff underneath it, and the Italians leaned toward numbers, logic, and reasoning that could overrule what you see.
+
+Sorting them by region and by their answer to "what is everything made of?" puts each one in a box. Thinkers who share a box usually get grouped as a **school**, and those are the names scholars use for them: the Milesians, the Pythagoreans, the Eleatics (after the city of Elea), the Pluralists, and the Atomists [@sep-presocratics].
+
+<div class="phil-fig phil-classify" role="img" aria-label="A chart sorting the thinkers by region and by answer, with earlier answers at the top. Ionia, one basic stuff that turns into everything: the Milesians Thales, Anaximander and Anaximenes, plus Heraclitus of Ephesus. Southern Italy and Sicily: the Pythagoreans, Pythagoras, with number and harmony; the Eleatics, Parmenides and Zeno, with one whole that never changes; and the Pluralist Empedocles, with many pieces that never change. Northern Greece: the Atomists Leucippus and Democritus, also many pieces that never change.">
+<svg viewBox="0 0 400 300" aria-hidden="true" focusable="false"><text class="cl-col" x="142.0" y="12">Ionia</text><text class="cl-colsub" x="142.0" y="24">west coast of Turkey</text><text class="cl-col" x="246.0" y="12">Southern Italy</text><text class="cl-colsub" x="246.0" y="24">and Sicily</text><text class="cl-col" x="349.0" y="12">Northern</text><text class="cl-colsub" x="349.0" y="24">Greece</text><line class="cl-rule cl-head" x1="0" y1="31" x2="400" y2="31"/><text class="cl-row" x="84" y="85.0">One basic stuff</text><text class="cl-row" x="84" y="96.0">turns into all</text><g class="cl-box"><rect x="94" y="40" width="96" height="56" rx="5"/><text class="cl-school" x="142.0" y="52">Milesians</text><text class="cl-name" x="142.0" y="68">Thales</text><text class="cl-name" x="142.0" y="80">Anaximander</text><text class="cl-name" x="142.0" y="92">Anaximenes</text></g><g class="cl-box"><rect x="94" y="102" width="96" height="32" rx="5"/><text class="cl-school" x="142.0" y="114">of Ephesus</text><text class="cl-name" x="142.0" y="130">Heraclitus</text></g><line class="cl-rule" x1="0" y1="140" x2="400" y2="140"/><text class="cl-row" x="84" y="160.0">Number</text><text class="cl-row" x="84" y="171.0">and harmony</text><g class="cl-box"><rect x="198" y="146" width="96" height="32" rx="5"/><text class="cl-school" x="246.0" y="158">Pythagoreans</text><text class="cl-name" x="246.0" y="174">Pythagoras</text></g><line class="cl-rule" x1="0" y1="184" x2="400" y2="184"/><text class="cl-row" x="84" y="210.0">One whole,</text><text class="cl-row" x="84" y="221.0">never changes</text><g class="cl-box"><rect x="198" y="190" width="96" height="44" rx="5"/><text class="cl-school" x="246.0" y="202">Eleatics</text><text class="cl-name" x="246.0" y="218">Parmenides</text><text class="cl-name" x="246.0" y="230">Zeno</text></g><line class="cl-rule" x1="0" y1="240" x2="400" y2="240"/><text class="cl-row" x="84" y="266.0">Many pieces,</text><text class="cl-row" x="84" y="277.0">never change</text><g class="cl-box"><rect x="198" y="246" width="96" height="32" rx="5"/><text class="cl-school" x="246.0" y="258">Pluralist</text><text class="cl-name" x="246.0" y="274">Empedocles</text></g><g class="cl-box"><rect x="302" y="246" width="94" height="44" rx="5"/><text class="cl-school" x="349.0" y="258">Atomists</text><text class="cl-name" x="349.0" y="274">Leucippus</text><text class="cl-name" x="349.0" y="286">Democritus</text></g></svg>
+</div>
+
+<p class="bitgrid-caption">The schools, by region and answer, with the rows roughly in the order they came. Heraclitus is the hardest to place, since his fire may be a basic stuff or a symbol of constant change, and Leucippus's birthplace is uncertain, so the Atomists sit with Democritus's home city of Abdera.</p>
+
 
 ## The Milesians: one basic stuff
 

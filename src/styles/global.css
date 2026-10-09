@@ -620,3 +620,14 @@ details.aside[open] summary { margin-bottom: 0.4rem; }
 .phil-fig .ch-claim { fill: var(--muted); font: 9px 'Source Serif 4', Georgia, serif; }
 .phil-fig .ch-l { text-anchor: start; }
 .phil-fig .ch-r { text-anchor: end; }
+/* classification chart: region columns x answer rows */
+.cl-rule { stroke: var(--line); stroke-width: 1; }
+.phil-fig .cl-col { font-weight: 700; font-size: 11px; }
+.phil-fig .cl-colsub, .phil-fig .cl-time { font: 8px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.phil-fig .cl-time { text-anchor: start; }
+.cl-arrow { stroke: var(--line); stroke-width: 1.5; }
+.cl-head-arrow { fill: var(--line); }
+.phil-fig .cl-row { text-anchor: end; font: 9px 'Source Serif 4', Georgia, serif; fill: var(--muted); }
+.cl-box rect { fill: var(--surface); stroke: var(--tech); stroke-width: 1.2; }
+.phil-fig .cl-school { font: 500 7.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--tech); letter-spacing: 0.06em; text-transform: uppercase; }
+.phil-fig .cl-name { font-weight: 600; font-size: 10px; }
