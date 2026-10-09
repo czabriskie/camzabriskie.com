@@ -726,3 +726,11 @@ details.aside[open] summary { margin-bottom: 0.4rem; }
 .cl-box rect { fill: var(--surface); stroke: var(--tech); stroke-width: 1.2; }
 .phil-fig .cl-school { font: 500 7.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--tech); letter-spacing: 0.06em; text-transform: uppercase; }
 .phil-fig .cl-name { font-weight: 600; font-size: 10px; }
+/* elenchus loop (Sophists and Socrates primer) */
+.el-box rect { fill: var(--surface); stroke: var(--line); stroke-width: 1.2; }
+.el-hot rect { stroke: var(--tech); stroke-width: 2; }
+.phil-fig .el-n { font: 600 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--tech); }
+.phil-fig .el-name { font: 600 10px 'Bricolage Grotesque', sans-serif; }
+.phil-fig .el-sub, .phil-fig .el-loop, .phil-fig .el-top { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.el-arrow { fill: none; stroke: var(--muted); stroke-width: 1.2; }
+.el-head { fill: var(--muted); }

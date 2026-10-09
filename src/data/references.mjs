@@ -329,6 +329,7 @@ export const references = {
   // Philosophy: the Presocratics
   'pt-001': { authors: ['S. West'], title: 'Episode #001 - Transcript', container: 'Philosophize This!', note: 'transcript of "Ionian Pre-Socratic Philosophy"', url: 'https://www.philosophizethis.org/transcript/episode-001-transcript', accessed: PHIL },
   'pt-002': { authors: ['S. West'], title: 'Episode #002 - Transcript', container: 'Philosophize This!', note: 'transcript of "Italian Pre-Socratic Philosophy"', url: 'https://www.philosophizethis.org/transcript/episode-2-transcript', accessed: PHIL },
+  'pt-003': { authors: ['S. West'], title: 'Episode #003 - Transcript', container: 'Philosophize This!', note: 'transcript of "Socrates and the Sophists"', url: 'https://www.philosophizethis.org/transcript/socrates-sophists-episode-3-transcript', accessed: '2026-10-09' },
   'sep-presocratics': sep(['P. Curd'], 'Presocratic Philosophy', 'rev. Jun. 22, 2020', 'presocratics'),
   'sep-heraclitus': sep(['D. W. Graham'], 'Heraclitus', 'rev. Dec. 8, 2023', 'heraclitus'),
   'sep-pythagoras': sep(['C. Huffman'], 'Pythagoras', 'rev. Feb. 5, 2024', 'pythagoras'),
@@ -337,6 +338,8 @@ export const references = {
   'sep-empedocles': sep(['K. S. Kingsley', 'R. Parry'], 'Empedocles', 'rev. Sep. 25, 2024', 'empedocles'),
   'sep-democritus': sep(['S. Berryman'], 'Democritus', 'rev. Jan. 7, 2023', 'democritus'),
   'sep-socrates': sep(['D. Nails', 'S. S. Monoson'], 'Socrates', 'rev. May 26, 2022', 'socrates'),
+  'sep-sophists': { ...sep(['C. C. W. Taylor', 'M.-K. Lee'], 'The Sophists', 'rev. Mar. 10, 2025', 'sophists'), accessed: '2026-10-09' },
+  'sep-plato-ethics-shorter': { ...sep(['P. Woodruff'], "Plato's Shorter Ethical Works", 'rev. Dec. 18, 2022', 'plato-ethics-shorter'), accessed: '2026-10-09' },
   'sep-leucippus': sep(['S. Berryman'], 'Leucippus', 'rev. Jan. 9, 2023', 'leucippus'),
   'sep-about': { authors: 'Metaphysics Research Lab, Stanford University', title: 'About the Stanford Encyclopedia of Philosophy', container: 'The Stanford Encyclopedia of Philosophy', url: 'https://plato.stanford.edu/about.html', accessed: '2026-10-09' },
   'sep-editorial': { authors: 'Metaphysics Research Lab, Stanford University', title: 'Editorial Information', container: 'The Stanford Encyclopedia of Philosophy', url: 'https://plato.stanford.edu/info.html', accessed: '2026-10-09' },
