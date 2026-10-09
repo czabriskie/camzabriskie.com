@@ -60,7 +60,7 @@ scrape ──▶ head (in memory) ──── every sample also written to ─�
 
 Prometheus runs on one machine, with no built-in copy of its data anywhere else. Its documentation says that local storage is "not clustered or replicated", so it isn't durable against a drive or machine failing, and should be managed like any other single-node database [@prometheus-storage]. One server, one disk, and that disk is the data.
 
-## Why EBS and not EFS
+## Why EBS and not EFS {only: AWS}
 
 Prometheus's documentation rules out NFS filesystems, "including AWS's EFS", for that directory, because filesystems that aren't fully POSIX-compliant can cause unrecoverable corruption, and it recommends a local filesystem [@prometheus-storage]. That's the general [databases and network filesystems](/primers/storage/ebs-vs-efs/#databases-and-network-filesystems) problem applied to one database.
 
