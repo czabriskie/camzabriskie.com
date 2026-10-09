@@ -309,6 +309,10 @@ nav.note-nav .mono { color: var(--tech); font-weight: 400; }
 .bitgrid .dec { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 0.72rem; color: var(--muted); }
 .bitgrid-caption { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.6rem; }
 
+/* TCP handshake diagram (OSI primer): reuses .conn-timeline, adds address labels and a box for the TLS handshake */
+.conn-timeline .osi-ct-addr { font: 9px 'IBM Plex Mono', ui-monospace, monospace; text-anchor: middle; fill: var(--muted); }
+.conn-timeline .osi-ct-box { fill: var(--surface); stroke: var(--line); stroke-width: 1.2; }
+
 /* Encapsulation diagram (OSI primer): nested boxes, one per layer, outermost first */
 .encap { margin: 1.2rem 0 0.5rem; font-size: 0.9rem; line-height: 1.5; }
 .encap-layer { border: 1px solid var(--line); border-left: 3px solid var(--tech); border-radius: 8px; padding: 0.55rem 0.7rem 0.7rem; background: var(--surface); }

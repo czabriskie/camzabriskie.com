@@ -2,7 +2,7 @@
 title: IP addresses and CIDR
 description: An IPv4 address is one 32-bit number, and the /n in CIDR notation says how many of those bits are locked.
 order: 1
-updated: 2026-10-05
+updated: 2026-10-08
 ---
 
 A CIDR range like `10.0.1.0/24` is a short way to write down a block of IP addresses, in this case the 256 addresses from `10.0.1.0` to `10.0.1.255`. Firewall rules, route tables, and VPN configs are all written in ranges like this, so once you can look at one and tell how big it is and where it starts and ends, most of a network diagram becomes readable.
@@ -18,24 +18,18 @@ An IPv4 address is one 32-bit number, 32 switches that are each 0 or 1. Nobody w
    10          0           1         25
 ```
 
-## IPv4 and IPv6
-
-Everything so far has been IPv4, the version that's been around since 1981 [@rfc791]. 32 bits only gives you about 4.3 billion addresses, which is fewer than the number of devices online now, and the pool of unassigned IPv4 addresses ran out in 2011 [@nro-ipv4-depleted]. It keeps working mostly because of private ranges (more on those below) and NAT, which lets a lot of machines share one public address.
-
-IPv6 is the replacement. Its addresses are 128 bits instead of 32 [@rfc8200], which works out to about 3.4 × 10<sup>38</sup> addresses, so running out isn't a real concern. 128 bits is a lot to write down, so IPv6 addresses are written as eight groups of four hex digits separated by colons, with two shortcuts: leading zeros in a group can be dropped, and one run of all-zero groups can be replaced with `::`. These are the same address [@rfc4291]:
+Each of the 8 positions in an octet is worth twice the one to its right, and you add up the positions that are 1. For the last octet:
 
 ```
-2001:0db8:0000:0000:0000:0000:0000:0001
-2001:db8::1
+place value   128  64  32  16   8   4   2   1
+25 =            0   0   0   1   1   0   0   1    = 16 + 8 + 1
 ```
 
-(`2001:db8::/32` is the IPv6 range set aside for documentation, the same idea as the `192.0.2.0/24` and `203.0.113.0/24` examples on this page [@rfc3849, @rfc5737].)
-
-The CIDR notation in the rest of this page works the same way for IPv6, just counting out of 128 bits instead of 32, and a typical IPv6 subnet is a `/64`. Most cloud networks still run on IPv4, often with IPv6 added alongside it (called dual-stack), so the examples here stick with IPv4.
+So `11000000` is 128 + 64 = 192, and `11111111` is every position added up, 255.
 
 ## What the /n means
 
-CIDR notation (`a.b.c.d/n`) is an address, a slash, and a prefix length [@rfc4632]. The prefix length says how many of the 32 bits, counting from the left, are locked in place. Those locked bits are the network part. The bits left over are the host part, and they can be anything, which is what makes it a range instead of one address.
+CIDR notation (`a.b.c.d/n`) is an address, a slash, and a prefix length [@rfc4632]. The prefix length says how many of the 32 bits, counting from the left, are locked in place. Those locked bits are the network part. The bits left over are the host part (a **host** is any device with an IP address), and they can be anything, which is what makes it a range instead of one address.
 
 In `10.0.1.0/24`, the first 24 bits are locked to `10.0.1` and the last 8 are free, so every address from `10.0.1.0` to `10.0.1.255` is in the range:
 
@@ -63,7 +57,10 @@ So a bigger number after the slash means more bits locked, which means a smaller
 
 ## Subnets
 
-A subnet (short for subnetwork) is a CIDR range used as one network, a group of addresses whose machines can reach each other directly. A machine on `10.0.1.0/24` sends traffic for anything from `10.0.1.0` to `10.0.1.255` straight to it. Traffic for any address outside that range goes to a router, which passes it along toward whichever subnet it belongs to.
+A subnet (short for subnetwork) is a CIDR range used as one network, a group of addresses whose machines can reach each other directly, without a router in between. Each host knows its own address and the size of its subnet, and that's enough for it to decide where to send each packet. Say a host is at `10.0.1.20/24`:
+
+- **To reach `10.0.1.77`,** it sees that address is inside its own range, so it looks up that machine's MAC address with [ARP](/primers/networking/osi-model/#arp-from-an-ip-address-to-a-mac-address) and sends the traffic straight to it.
+- **To reach `10.0.2.5`,** it sees that address is outside its range, so it sends the traffic to its default gateway, the router at `10.0.1.1`, which passes it along toward whichever subnet it belongs to.
 
 A bigger range gets split into subnets to keep things organized and separate: one subnet for web servers and another for databases, or one per office floor, each with its own routing and firewall rules. `10.0.0.0/16` could be split into 256 `/24` subnets, for example, or into a few big ones and a lot of small ones. Most of the rest of this page is about working out where those pieces start and end.
 
@@ -86,6 +83,8 @@ A range with prefix length `n` has `32 − n` free bits, and each free bit doubl
 | `/16` | 16 | 65,536 | a common size for a whole cloud network (VPC) |
 | `/0` | 32 | about 4.3 billion | `0.0.0.0/0`, which means anywhere |
 
+`/0` locks zero bits, so there's nothing an address has to match and every address is in the range. That's why `0.0.0.0/0` means "anywhere" in a firewall rule, and why a route table uses it as the default route, the one that catches everything no other route does [@rfc4632].
+
 ## Reading a range without binary
 
 Each extra bit past `/24` cuts a `/24` in half again, so `/25` blocks hold 128 addresses, `/26` hold 64, `/27` hold 32, and `/28` hold 16.
@@ -101,14 +100,17 @@ Blocks always start on a multiple of their size. The free bits are the lowest bi
 | `/27` | 32 | `.0`, `.32`, `.64`, `.96`, `.128`, `.160`, `.192`, `.224` |
 | `/28` | 16 | `.0`, `.16`, `.32`, and so on up to `.240` |
 
-Splitting `10.0.1.0/24` into `/26`s gives you these four ranges, and they don't overlap or leave gaps:
+Each step down splits every block into two halves, so splitting `10.0.1.0/24` into `/26`s goes through `/25`s on the way, and the pieces don't overlap or leave gaps:
 
-| Range | First address | Last address |
-|---|---|---|
-| `10.0.1.0/26` | `10.0.1.0` | `10.0.1.63` |
-| `10.0.1.64/26` | `10.0.1.64` | `10.0.1.127` |
-| `10.0.1.128/26` | `10.0.1.128` | `10.0.1.191` |
-| `10.0.1.192/26` | `10.0.1.192` | `10.0.1.255` |
+```
+10.0.1.0/24              .0 – .255
+├── 10.0.1.0/25          .0 – .127
+│   ├── 10.0.1.0/26      .0 – .63
+│   └── 10.0.1.64/26     .64 – .127
+└── 10.0.1.128/25        .128 – .255
+    ├── 10.0.1.128/26    .128 – .191
+    └── 10.0.1.192/26    .192 – .255
+```
 
 ### Finding the range an address belongs to
 
@@ -120,6 +122,14 @@ Given an address and a prefix, like `10.0.1.100/26`, you can find the whole rang
 4. **Add the block size minus one to get the end.** 64 + 63 = 127. Any octets after this one run from 0 to 255.
 
 So `10.0.1.100` sits in `10.0.1.64/26`, which covers `10.0.1.64` to `10.0.1.127`.
+
+Step 3 is the step a computer does in binary, using the subnet mask, whose job is to pull out the network part of an address [@rfc4632]. It lines the address up with the mask and keeps a bit only where both are 1 (a bitwise AND). The mask's 1s keep the locked bits and its 0s clear the free ones, which is the same as rounding down:
+
+```
+10.0.1.100        00001010.00000000.00000001.01100100
+255.255.255.192   11111111.11111111.11111111.11000000
+AND               00001010.00000000.00000001.01000000   = 10.0.1.64
+```
 
 The same steps work when the prefix ends in an earlier octet. For `10.0.37.5/20`:
 
@@ -142,11 +152,24 @@ This comes up constantly with firewall rules: a rule allows `10.0.1.64/26`, and 
 
 You'll sometimes see something like `10.0.1.50/26`. 50 isn't a multiple of 64, so `10.0.1.50` can't be the start of a `/26`. The notation can still be correct, though. It depends on what it's describing.
 
-**On a machine, it's normal.** Run `ip addr` on a Linux server and you'll see lines like `inet 10.0.1.50/26`. That reads as "this machine's address is `10.0.1.50`, and the subnet it's on is a `/26`." The machine uses the prefix to work out which other addresses are on its own subnet, so it can talk to them directly. Anything else goes to the router. Using the steps above, `10.0.1.50/26` belongs to `10.0.1.0/26`, so the machine treats `10.0.1.0` through `10.0.1.63` as local and sends everything else, `10.0.1.64` included, to the router. People sometimes call this interface notation: one address, plus the size of the network around it.
+**On a machine, it's normal.** Run `ip addr` on a Linux server and you'll see lines like this:
+
+```
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 ... state UP ...
+    inet 10.0.1.50/26 brd 10.0.1.63 scope global eth0
+```
+
+The `inet` line reads as "this machine's address is `10.0.1.50`, and the subnet it's on is a `/26`." `brd` is short for broadcast, and `10.0.1.63` is that subnet's broadcast address ([covered below](#network-broadcast-and-usable-addresses)) [@linux-ip-address, @iproute2-ipaddress-c]. The machine uses the prefix to work out which other addresses are on its own subnet, so it can talk to them directly. Anything else goes to the router. Using the steps above, `10.0.1.50/26` belongs to `10.0.1.0/26`, so the machine treats `10.0.1.0` through `10.0.1.63` as local and sends everything else, `10.0.1.64` included, to the router. People sometimes call this interface notation: one address, plus the size of the network around it.
 
 **In a range, it's a mistake.** Subnets, route tables, and firewall rules describe a block of addresses, and a block has to start on its boundary. Tools disagree on what to do when it doesn't:
 
-- **Some reject it.** Python's `ipaddress` module refuses `ip_network("10.0.1.50/26")` with a "has host bits set" error [@python-ipaddress]. Linux won't add a route for it either ("Invalid prefix for given prefix length").
+- **Some reject it.** Python's `ipaddress` module refuses `ip_network("10.0.1.50/26")` with a "has host bits set" error [@python-ipaddress]. Linux won't add a route for it either [@linux-fib-frontend]:
+
+  ```
+  $ sudo ip route add 10.0.1.50/26 via 10.0.1.1
+  Error: Invalid prefix for given prefix length.
+  ```
+
 - **Some correct it without telling you.** They clear the free bits and store `10.0.1.0/26`. AWS does this when you create a subnet through its API: ask for `10.0.1.50/26` and the subnet you get is `10.0.1.0/26` [@aws-vpc-subnet-sizing].
 
 Quiet correction can make a firewall rule much wider than intended. Say someone meant to allow just the one server at `10.0.1.50` and typed `/26` out of habit. The firewall stores `10.0.1.0/26`, and now 64 addresses are allowed instead of one, and the rule still looks almost right when you read it back.
@@ -163,9 +186,11 @@ So when you see an address that isn't on a boundary in a range, work out what wa
 Two addresses in every subnet are special, and you can spot them from the bits:
 
 - **The first address has every free bit set to 0.** It's the network address, the name of the subnet itself. In `10.0.1.0/24` that's `10.0.1.0`, and it's what shows up in route tables and firewall rules.
-- **The last address has every free bit set to 1.** It's the broadcast address. A packet sent there goes to every machine on the subnet at once, which is how things like DHCP (a new machine asking "can anyone give me an address?") reach everyone without knowing who's there. In `10.0.1.0/24` that's `10.0.1.255`.
+- **The last address has every free bit set to 1.** It's the broadcast address. A packet sent there goes to every machine on the subnet at once. In `10.0.1.0/24` that's `10.0.1.255`.
 
-Neither one can be given to a machine, so a normal subnet has 2<sup>(32 − n)</sup> − 2 usable addresses:
+A machine that has just joined a network can't use that second one, because it doesn't know its subnet yet. When it asks for an address with DHCP ("can anyone give me an address?"), it broadcasts to `255.255.255.255` instead, the limited broadcast address, which reaches every host on the local network and is never forwarded past it [@rfc1122, @rfc2131].
+
+Neither special address can be given to a machine, so a normal subnet has 2<sup>(32 − n)</sup> − 2 usable addresses:
 
 | Prefix | Addresses | Usable | Notes |
 |---|---|---|---|
@@ -185,7 +210,26 @@ Cloud providers usually reserve a few more on top of these two. AWS reserves fiv
 Three ranges are set aside for private networks and aren't supposed to be routed on the public internet [@rfc1918]:
 
 - `10.0.0.0/8`
-- `172.16.0.0/12` (that's `172.16.x.x` through `172.31.x.x`)
+- `172.16.0.0/12`
 - `192.168.0.0/16`
 
-If you see one of these on a diagram, it's traffic inside a cloud network or an office network. A single public address that a firewall allows in usually shows up as a `/32`.
+If you see one of these on a diagram, it's traffic inside a cloud network or an office network.
+
+The middle one is the odd one out, since `/12` doesn't end on an octet boundary. The same steps as before work it out: `/12` ends in the 2nd octet with 12 − 8 = 4 bits locked there, which leaves 4 free bits and a block size of 2<sup>4</sup> = 16. 16 is already a multiple of 16, so the block runs from 16 to 16 + 15 = 31 in the 2nd octet, and the octets after it run the full 0 to 255. That makes `172.16.0.0/12` everything from `172.16.0.0` to `172.31.255.255`, so `172.20.5.9` is private and anything starting `172.32` isn't.
+
+Machines with private addresses still reach the internet. A router doing NAT swaps the private address for a public one on the way out and back on the reply ([how NAT works](/primers/networking/osi-model/#across-the-internet-hop-by-hop)).
+
+## IPv4 and IPv6
+
+Everything so far has been IPv4, the version that's been around since 1981 [@rfc791]. 32 bits only gives you about 4.3 billion addresses, which is fewer than the number of devices online now, and the pool of unassigned IPv4 addresses ran out in 2011 [@nro-ipv4-depleted]. It keeps working mostly because of the private ranges above and [NAT](/primers/networking/osi-model/#across-the-internet-hop-by-hop), which lets a lot of machines share one public address.
+
+IPv6 is the replacement. Its addresses are 128 bits instead of 32 [@rfc8200], which works out to about 3.4 × 10<sup>38</sup> addresses, so running out isn't a real concern. 128 bits is a lot to write down, so IPv6 addresses are written in hex (base 16, which counts with the digits 0 to 9 and then a to f, so each hex digit stands for exactly 4 bits). An address is eight groups of four hex digits separated by colons, with two shortcuts: leading zeros in a group can be dropped, and one run of all-zero groups can be replaced with `::`. These are the same address [@rfc4291]:
+
+```
+2001:0db8:0000:0000:0000:0000:0000:0001
+2001:db8::1
+```
+
+(`2001:db8::/32` is the IPv6 range set aside for documentation, the same idea as the `192.0.2.0/24` and `203.0.113.0/24` examples on this page [@rfc3849, @rfc5737].)
+
+The CIDR notation on this page works the same way for IPv6, just counting out of 128 bits instead of 32. A typical IPv6 subnet is a `/64`, because most IPv6 addresses use their last 64 bits to identify the interface, which leaves 64 for the network [@rfc4291]. Most cloud networks still run on IPv4, often with IPv6 added alongside it (called dual-stack), so the examples here stick with IPv4.

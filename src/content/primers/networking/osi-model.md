@@ -2,14 +2,16 @@
 title: The OSI model
 description: The seven layers networking gets described in, the four-layer model the internet actually uses, what happens to one request on its way down and back up, and how to use the layers to troubleshoot.
 order: 0
-updated: 2026-10-05
+updated: 2026-10-08
 ---
 
 Networking people describe almost everything by layer. A Network Load Balancer is "layer 4," an Application Load Balancer is "layer 7," a router is "layer 3," and a problem gets narrowed down by asking which layer it's at. Those numbers come from the **OSI model** (Open Systems Interconnection), a reference model that splits the job of getting data from one program to another into seven layers [@itu-x200]. Every other primer in this topic uses its vocabulary, so it's the place to start.
 
 ## Why layers
 
-Getting a web page from a server to your browser involves a lot of separate problems: turning bits into electrical or radio signals, getting data to the next device on the same network, finding a path across many networks, getting it to the right program on the far end without losing anything, and finally what the data actually means. Layering gives each problem to one layer:
+Getting a web page from a server to your browser involves a lot of separate problems: turning bits into electrical or radio signals, getting data to the next device on the same local network, finding a path across many networks, getting it to the right program on the far end without losing anything, and finally what the data actually means. A **local network** is every device you can reach without going through a router, like everything on your home Wi-Fi, and a router sits at its edge and connects it to other networks.
+
+Each of those problems gets handled by one or more **protocols**, an agreed format for messages plus the rules for sending them, like HTTP for web requests or TCP for reliable delivery. Layering gives each problem to one layer:
 
 - Each layer **uses the layer below it** without caring how that layer works.
 - Each layer **serves the layer above it** without caring what that layer is doing.
@@ -38,7 +40,7 @@ Three of those layers have their own kind of address, and each one narrows thing
 
 - A **MAC address** (layer 2) identifies a network interface on the local network, like `00:00:5e:00:53:01` [@rfc9542]. It only matters for the next device the data is handed to.
 - An **IP address** (layer 3) identifies a machine anywhere on the internet, like `203.0.113.10`. It stays on the data the whole trip ([IP addresses and CIDR](/primers/networking/ip-addresses-and-cidr/)).
-- A **port** (layer 4) is a number that picks out one program on that machine. The IP address gets data to the right building, and the port is the apartment number inside it. Servers listen on well-known ports, like 443 for HTTPS, 22 for SSH, and 53 for DNS [@iana-ports]. Clients pick a random high port for their end of each connection, called an [ephemeral port](/primers/networking/aws-vpc-subnets/#security-groups-and-network-acls).
+- A **port** (layer 4) is a number in the TCP or UDP header that picks out one program on that machine. It has nothing to do with the physical socket you plug a cable into. The IP address gets data to the right building, and the port is the apartment number inside it. Servers listen on well-known ports, like 443 for HTTPS, 22 for SSH, and 53 for DNS [@iana-ports]. Clients pick a random high port for their end of each connection, called an [ephemeral port](/primers/networking/aws-vpc-subnets/#security-groups-and-network-acls), and the range set aside for those is 49152 to 65535 [@rfc6335].
 
 ## The model the internet actually uses
 
@@ -51,7 +53,7 @@ The OSI model is a way of describing networking, not how the internet's protocol
 | Internet | 3 | IP, ICMP |
 | Link | 1, 2 | Ethernet, Wi-Fi |
 
-Layers 5 and 6 never really became separate pieces in practice. Applications and libraries do that work themselves. So in day-to-day use, the numbers people actually say are 1, 2, 3, 4, and 7, and the OSI numbering survives mostly as shared vocabulary. When a product says it works "at layer 7," it means it understands the application protocol, and "layer 4" means it only sees connections and ports.
+The TCP/IP model has no separate presentation layer. Its application layer takes on the presentation work too [@rfc1122], and in practice the session work ends up in applications and libraries as well. So in day-to-day use, the numbers people actually say are 1, 2, 3, 4, and 7, and the OSI numbering survives mostly as shared vocabulary. When a product says it works "at layer 7," it means it understands the application protocol, and "layer 4" means it only sees connections and ports.
 
 ### TLS isn't the transport layer, despite its name
 
@@ -68,20 +70,98 @@ Its name makes it more confusing. TLS stands for Transport Layer Security, which
 
 ## One request, from start to finish
 
-Here's a laptop on a home network loading `https://www.example.com`, which lives on a server at `203.0.113.10`.
+Take a laptop on a home network loading `https://www.example.com`, which lives on a server at `203.0.113.10`.
 
 ### Before the first byte of the page
 
-Loading a page takes more than one request. Here's everything that happens, in order, the first time:
+Loading a page takes more than one request. The first time, all of this happens, in order:
 
-1. **Join the network.** When the laptop connects, [DHCP](#dhcp-how-a-device-gets-its-settings) gives it an address (`192.168.1.20`), the home router's address as its default gateway (`192.168.1.1`), and a DNS server to use.
+1. **Join the network.** When the laptop connects, [DHCP](#dhcp-how-a-device-gets-its-settings) gives it an address (`192.168.1.20`), a DNS server to use, and the address of its **default gateway** (`192.168.1.1`, the home router), which is the router a device sends anything bound for another network to.
 2. **Find the router.** To send anything off the local network, the laptop needs the router's MAC address, so it asks with [ARP](#arp-from-an-ip-address-to-a-mac-address). The answer gets cached and reused for everything after.
 3. **Look up the name.** The laptop asks DNS for `www.example.com` and gets `203.0.113.10` ([How DNS resolution works](/primers/networking/dns-resolution/) covers that lookup step by step).
-4. **Open a connection.** TCP sets up a connection with the server in a **three-way handshake**: the laptop sends a SYN ("let's talk"), the server answers SYN-ACK ("okay"), and the laptop sends an ACK ("okay, starting") [@rfc9293].
+4. **Open a connection.** TCP sets up a connection with the server in a [three-way handshake](#opening-the-connection-tcps-handshake) [@rfc9293].
 5. **Agree on encryption.** TLS does its own [handshake](/primers/networking/tls-handshake/) over that connection. The server shows its certificate, the laptop [checks it](/primers/networking/certificates-and-trust/#what-a-certificate-proves), and they agree on keys [@rfc9846].
-6. **Send the request.** Now the browser can finally send `GET /`, which is what the next section follows down the stack.
+6. **Send the request.** Now the browser can finally send `GET /`, which is what [the trip down the stack](#down-the-stack-encapsulation) follows.
 
-Steps 1 and 2 happen once and get reused. Steps 3 through 5 happen for each new server, which is part of why the first visit to a site feels slower than the second.
+Steps 1 and 2 happen once and get reused. Steps 3 through 5 happen for each new server, which is part of why the first visit to a site feels slower than the second. The next three sections zoom in on steps 1, 2, and 4.
+
+### DHCP: how a device gets its settings
+
+A device joining a network needs a few settings before it can do anything: its own IP address, the size of the subnet it's on, the default gateway's address, and which DNS servers to use. Typing those in by hand on every phone and laptop would be miserable, so almost every network hands them out automatically with **DHCP**, the Dynamic Host Configuration Protocol [@rfc2131]. On a home network the router is usually the DHCP server too.
+
+When the laptop joins, it has no address yet and doesn't know what network it's on, so the exchange starts with a broadcast to `255.255.255.255`, an address that means "everyone on this local network" [@rfc2131]:
+
+1. **Discover.** The laptop broadcasts "is there a DHCP server out there?"
+2. **Offer.** The router offers an address (`192.168.1.20`) along with the other settings.
+3. **Request.** The laptop asks to use that offer. (This step exists because more than one server might have answered.)
+4. **Acknowledge.** The router confirms, and the laptop configures itself.
+
+The other settings travel as numbered DHCP **options**: one for the subnet mask, one for the default gateway (DHCP calls it the "router" option), one for the DNS servers, and so on [@rfc2132]. That's also how the laptop knows which [recursive resolver](/primers/networking/dns-resolution/#which-resolver-your-machine-uses) to ask.
+
+The address is a **lease**, not a permanent assignment. The laptop has to renew it before it runs out, and if it leaves the network the address eventually goes back into the pool. That's why a device's IP address on a home network can change from one day to the next, and why servers usually get a fixed address or a reservation instead.
+
+### ARP: from an IP address to a MAC address
+
+A frame needs a MAC address and a packet needs an IP address, and something has to connect the two. That something is **ARP**, the Address Resolution Protocol [@rfc826]. It answers one question on the local network: "which MAC address has this IP address?" It's a lot like DNS, just lower down: DNS turns a name into an IP address, and ARP turns an IP address into a MAC address.
+
+Step 2 of the timeline, the first time the laptop needs to send something off the local network, goes like this:
+
+1. **The laptop decides who's next.** `203.0.113.10` isn't in the laptop's own subnet, `192.168.1.0/24` ([what a subnet is](/primers/networking/ip-addresses-and-cidr/#subnets)), so the packet has to go through the default gateway, the home router at `192.168.1.1`, which DHCP told it about.
+2. **It checks its ARP cache** for `192.168.1.1`. If it's there from a recent conversation, it's done.
+3. **If not, it broadcasts an ARP request,** sent to the special broadcast address `ff:ff:ff:ff:ff:ff` so every device on the local network hears it: "Who has `192.168.1.1`? Tell `192.168.1.20`."
+4. **The router replies directly to the laptop:** "`192.168.1.1` is at `00:00:5e:00:53:01`."
+5. **The laptop caches the answer** and addresses its frames to that MAC address.
+
+A few things follow from how that works:
+
+- **The laptop never ARPs for the server.** It only needs the MAC address of the next device, and the server isn't on its network. If the destination were in the same subnet (a printer at `192.168.1.40`, say), the laptop would ARP for the printer directly and skip the router.
+- **ARP stops at the router.** Broadcasts don't cross routers, so each router along the path does its own ARP on its own network to find the next hop's MAC address.
+- **You can see the cache.** `arp -a` on macOS and Windows, or `ip neigh` on Linux, lists the IP-to-MAC pairs the machine currently knows.
+- **IPv6 doesn't use ARP.** It does the same job with Neighbor Discovery [@rfc4861].
+
+### Opening the connection: TCP's handshake
+
+A TCP connection isn't anything physical. It's shared bookkeeping: each side remembers the other's address and port, and both agree on a starting **sequence number** for each direction, the counter TCP uses to number every byte it sends so the other side can spot gaps and put things back in order [@rfc9293]. Agreeing on those numbers takes three messages, named after the flags they set in the TCP header [@rfc9293]:
+
+1. **SYN** (synchronize): the laptop sends its starting number.
+2. **SYN-ACK** (synchronize and acknowledge): the server acknowledges the laptop's number and sends its own.
+3. **ACK** (acknowledge): the laptop acknowledges the server's number.
+
+After that, TLS runs its handshake over the connection, and only then does the request go out:
+
+<div class="conn-timeline" role="img" aria-label="Timeline of opening a connection from the laptop at 192.168.1.20 port 51544 to the server at 203.0.113.10 port 443. TCP: the laptop sends SYN, the server answers SYN-ACK, the laptop sends ACK. Then the TLS handshake runs between them. Then the laptop sends GET slash, encrypted, and the server sends the page, encrypted.">
+<svg viewBox="0 0 420 240" aria-hidden="true" focusable="false">
+<defs><marker id="osi-ct-head" viewBox="0 0 8 8" refX="7" refY="4" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ct-head" d="M0,0 L8,4 L0,8 z"/></marker><marker id="osi-ct-head-enc" viewBox="0 0 8 8" refX="7" refY="4" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ct-head-enc" d="M0,0 L8,4 L0,8 z"/></marker></defs>
+<text class="ct-actor" x="130" y="14">Laptop</text>
+<text class="osi-ct-addr" x="130" y="27">192.168.1.20:51544</text>
+<text class="ct-actor" x="370" y="14">Server</text>
+<text class="osi-ct-addr" x="370" y="27">203.0.113.10:443</text>
+<line class="ct-life" x1="130" y1="34" x2="130" y2="236"/>
+<line class="ct-life" x1="370" y1="34" x2="370" y2="236"/>
+<line class="ct-msg" x1="130" y1="52" x2="370" y2="64" marker-end="url(#osi-ct-head)"/>
+<text class="ct-label" x="250" y="48">SYN</text>
+<line class="ct-msg" x1="370" y1="82" x2="130" y2="94" marker-end="url(#osi-ct-head)"/>
+<text class="ct-label" x="250" y="78">SYN-ACK</text>
+<line class="ct-msg" x1="130" y1="112" x2="370" y2="124" marker-end="url(#osi-ct-head)"/>
+<text class="ct-label" x="250" y="108">ACK</text>
+<rect class="osi-ct-box" x="130" y="138" width="240" height="28" rx="4"/>
+<text class="ct-label" x="250" y="155">TLS handshake</text>
+<line class="ct-msg ct-enc" x1="130" y1="186" x2="370" y2="198" marker-end="url(#osi-ct-head-enc)"/>
+<text class="ct-label ct-enc-text" x="250" y="182">GET /</text>
+<line class="ct-msg ct-enc" x1="370" y1="216" x2="130" y2="228" marker-end="url(#osi-ct-head-enc)"/>
+<text class="ct-label ct-enc-text" x="250" y="212">the page</text>
+<path class="ct-bracket" d="M118,52 H112 V124 H118"/>
+<text class="ct-phase" x="106" y="86">TCP</text>
+<text class="ct-rtt" x="106" y="98">handshake</text>
+<path class="ct-bracket" d="M118,138 H112 V166 H118"/>
+<text class="ct-phase" x="106" y="155">TLS</text>
+<path class="ct-bracket" d="M118,186 H112 V228 H118"/>
+<text class="ct-phase" x="106" y="205">HTTP</text>
+<text class="ct-rtt" x="106" y="217">encrypted</text>
+</svg>
+</div>
+
+<p class="bitgrid-caption">Time runs downward, and teal is encrypted. <a href="/primers/networking/tls-handshake/">The TLS handshake</a> opens up the middle box. The server actually sees the laptop as <code>198.51.100.7:40001</code>, because the home router rewrites the address and port on the way out (<a href="#across-the-internet-hop-by-hop">NAT, below</a>).</p>
 
 ### Down the stack: encapsulation
 
@@ -105,60 +185,32 @@ Read the result from the outside in, and each layer's header only holds what tha
 </div></div></div></div>
 </div>
 
-<p class="bitgrid-caption">Each layer wraps the one above it. A router only opens the outer two boxes, a load balancer at layer 4 opens three, and only the server (or something terminating TLS) can see the request itself.</p>
+<p class="bitgrid-caption">Each layer wraps the one above it. A plain router only opens the outer two boxes (a home router doing NAT also opens the third to rewrite the port), a load balancer at layer 4 opens three, and only the server (or something terminating TLS) can see the request itself.</p>
 
 ### Across the internet: hop by hop
 
 A **hop** is one trip between two devices on the same local network, like the laptop to the home router, or one router to the next. At each router, only the bottom layers get unwrapped: the router strips off the layer 2 frame, reads the layer 3 destination address, looks it up in its route table to pick the next hop, and wraps the packet in a fresh layer 2 frame addressed to that next device. That's the same idea as a route table's [target being the next hop](/primers/networking/aws-vpc-subnets/#destination-and-target): the packet carries its final destination, and each router just picks the next step.
 
-So the layer 2 addresses change on every hop, and the layer 3 addresses stay the same, with one exception: the home router does **NAT** (network address translation). Private addresses like `192.168.1.20` can't be used on the internet, so as the packet leaves the home network, the router swaps the private source address (and usually the port) for the home's one public address and remembers the swap so it can undo it on the reply [@rfc3022].
+So the layer 2 addresses change on every hop, and the layer 3 addresses stay the same, with one exception: the home router does **NAT** (network address translation). Private addresses like `192.168.1.20` aren't routed on the public internet [@rfc1918], so as the packet leaves the home network, the router swaps the private source address and port for the home's one public address (the one its internet service provider, or ISP, assigned it) and a port of its own choosing [@rfc3022]:
 
-| Hop | Layer 2: from → to | Layer 3: from → to |
+| Hop | Layer 2: from → to | Layers 3 and 4: from → to |
 |---|---|---|
-| Laptop → home router | laptop's MAC → home router's MAC | `192.168.1.20` → `203.0.113.10` |
-| Home router → ISP's router | home router's MAC → ISP router's MAC | **`198.51.100.7`** → `203.0.113.10` (NAT swapped the source) |
-| More routers across the internet | each router's MAC → the next one's | `198.51.100.7` → `203.0.113.10` |
-| Last router → server | last router's MAC → server's MAC | `198.51.100.7` → `203.0.113.10` |
+| Laptop → home router | laptop's MAC → home router's MAC | `192.168.1.20:51544` → `203.0.113.10:443` |
+| Home router → ISP's router | home router's MAC → ISP router's MAC | **`198.51.100.7:40001`** → `203.0.113.10:443` (NAT swapped the source) |
+| More routers across the internet | each router's MAC → the next one's | `198.51.100.7:40001` → `203.0.113.10:443` |
+| Last router → server | last router's MAC → server's MAC | `198.51.100.7:40001` → `203.0.113.10:443` |
 
-The reply makes the same trip backwards, from `203.0.113.10` to `198.51.100.7`, and the home router swaps the destination back to `192.168.1.20` before handing it to the laptop.
+The router writes each swap down in a **NAT table**, one line per connection, so it can undo it when the reply comes back [@rfc3022]:
+
+| Inside (the laptop) | Outside (what the internet sees) | Talking to |
+|---|---|---|
+| `192.168.1.20:51544` | `198.51.100.7:40001` | `203.0.113.10:443` |
+
+The reply makes the same trip backwards, from `203.0.113.10:443` to `198.51.100.7:40001`. The home router finds port `40001` in its NAT table, rewrites the destination to `192.168.1.20:51544`, and hands the packet to the laptop. The port is what lets a whole house share one public address: a phone talking to the same server at the same time gets a different outside port, say `40002`, so the router can tell the two replies apart [@rfc3022].
 
 ### Back up the stack at the server
 
 At the server it goes back up: layer 2 checks the frame was for it, layer 3 checks the packet was for its address, layer 4 hands the data to whatever program is listening on port 443, TLS decrypts it, and the web server reads the HTTP request. The response goes through the same process in reverse.
-
-### ARP: from an IP address to a MAC address
-
-A frame needs a MAC address and a packet needs an IP address, and something has to connect the two. That something is **ARP**, the Address Resolution Protocol [@rfc826]. It answers one question on the local network: "which MAC address has this IP address?" It's a lot like DNS, just lower down: DNS turns a name into an IP address, and ARP turns an IP address into a MAC address.
-
-Here's step 2 of the timeline above, the first time the laptop needs to send something off the local network:
-
-1. **The laptop decides who's next.** `203.0.113.10` isn't in the laptop's own subnet, `192.168.1.0/24` ([what a subnet is](/primers/networking/ip-addresses-and-cidr/#subnets)), so the packet has to go through the **default gateway**, the home router at `192.168.1.1`, which DHCP told it about.
-2. **It checks its ARP cache** for `192.168.1.1`. If it's there from a recent conversation, it's done.
-3. **If not, it broadcasts an ARP request,** sent to the special broadcast address `ff:ff:ff:ff:ff:ff` so every device on the local network hears it: "Who has `192.168.1.1`? Tell `192.168.1.20`."
-4. **The router replies directly to the laptop:** "`192.168.1.1` is at `00:00:5e:00:53:01`."
-5. **The laptop caches the answer** and addresses its frames to that MAC address.
-
-A few things follow from how that works:
-
-- **The laptop never ARPs for the server.** It only needs the MAC address of the next device, and the server isn't on its network. If the destination were in the same subnet (a printer at `192.168.1.40`, say), the laptop would ARP for the printer directly and skip the router.
-- **ARP stops at the router.** Broadcasts don't cross routers, so each router along the path does its own ARP on its own network to find the next hop's MAC address.
-- **You can see the cache.** `arp -a` on macOS and Windows, or `ip neigh` on Linux, lists the IP-to-MAC pairs the machine currently knows.
-- **IPv6 doesn't use ARP.** It does the same job with Neighbor Discovery [@rfc4861].
-
-### DHCP: how a device gets its settings
-
-A device joining a network needs a few settings before it can do anything: its own IP address, the size of the subnet it's on, the default gateway's address, and which DNS servers to use. Typing those in by hand on every phone and laptop would be miserable, so almost every network hands them out automatically with **DHCP**, the Dynamic Host Configuration Protocol [@rfc2131]. On a home network the router is usually the DHCP server too.
-
-When the laptop joins, it has no address yet, so the exchange starts with a broadcast [@rfc2131]:
-
-1. **Discover.** The laptop broadcasts "is there a DHCP server out there?"
-2. **Offer.** The router offers an address (`192.168.1.20`) along with the other settings.
-3. **Request.** The laptop asks to use that offer. (This step exists because more than one server might have answered.)
-4. **Acknowledge.** The router confirms, and the laptop configures itself.
-
-The other settings travel as numbered DHCP **options**: one for the subnet mask, one for the default gateway (DHCP calls it the "router" option), one for the DNS servers, and so on [@rfc2132]. That's also how the laptop knows which [recursive resolver](/primers/networking/dns-resolution/#which-resolver-your-machine-uses) to ask.
-
-The address is a **lease**, not a permanent assignment. The laptop has to renew it before it runs out, and if it leaves the network the address eventually goes back into the pool. That's why a device's IP address on a home network can change from one day to the next, and why servers usually get a fixed address or a reservation instead.
 
 ## Where the things in the other primers sit
 
@@ -167,12 +219,14 @@ The address is a **lease**, not a permanent assignment. The laptop has to renew 
 | Switch | 2 | MAC addresses |
 | Router, [route table](/primers/networking/aws-vpc-subnets/#route-tables) | 3 | IP addresses |
 | NAT gateway, home router doing NAT | 3–4 | Addresses and ports, which it rewrites |
-| [Security group, NACL](/primers/networking/aws-vpc-subnets/#security-groups-and-network-acls) | 3–4 | Addresses, protocols, ports |
-| Site-to-site VPN (IPsec) | 3 | Whole packets, which it encrypts |
+| [Security group, NACL (network access control list)](/primers/networking/aws-vpc-subnets/#security-groups-and-network-acls) | 3–4 | Addresses, protocols, ports |
+| Site-to-site VPN using IPsec (IP Security) | 3 | Whole packets, which it encrypts [@rfc4301] |
 | AWS Gateway Load Balancer | 3 | Packets [@aws-gwlb-intro] |
 | [Network Load Balancer](/primers/networking/load-balancers-and-tls/#nlbs-and-albs) | 4 | Connections and ports [@aws-nlb-intro] |
-| [Application Load Balancer](/primers/networking/load-balancers-and-tls/#nlbs-and-albs) [@aws-alb-intro], WAF, CDN | 7 | Full HTTP requests: paths, headers, cookies |
+| [Application Load Balancer](/primers/networking/load-balancers-and-tls/#nlbs-and-albs) [@aws-alb-intro], [WAF (web application firewall)](/primers/networking/firewalls/), [CDN (content delivery network)](/primers/networking/cdns-and-cloudfront/) | 7 | Full HTTP requests: paths, headers, cookies |
 | [DNS](/primers/networking/dns-resolution/) | 7 | An application protocol, carried over UDP or TCP port 53 |
+
+A switch connects the devices inside one local network, and a router connects networks to each other. The box a home network calls its "router" is several of these at once: a router, a small switch, a Wi-Fi access point, a DHCP server, and NAT.
 
 The higher a device works, the more of the [envelope](#down-the-stack-encapsulation) it opens, so the more it can see and the smarter its decisions can be. It also has to understand the protocol, which is why a layer 7 load balancer can route by URL path but only for HTTP, and a layer 4 one can carry anything but can't look inside.
 
@@ -182,16 +236,47 @@ When something can't connect, working through the same order as the timeline kee
 
 | Layer | Question | Check |
 |---|---|---|
-| 1–2 | Is the machine connected to its network, with an address? | Is the link up, `ip addr` or `ifconfig` |
+| 1–2 | Is the machine connected to its network, with an address? | Is the link up (cable plugged in, or Wi-Fi joined)? `ip addr` or `ifconfig` |
 | Name | Does the name resolve, to the right address? | `dig <name>` ([watching DNS](/primers/networking/dns-resolution/#watching-it-happen)) |
 | 3 | Can packets reach the other address? | `ping`, `traceroute`, the [route tables](/primers/networking/aws-vpc-subnets/#when-traffic-doesnt-get-through) |
 | 4 | Is anything listening on the port, and does the firewall allow it? | `nc -vz <host> <port>`, security groups, NACLs |
 | TLS | Does the certificate check out? | `openssl s_client` ([Certificates and Trust](/primers/networking/certificates-and-trust/#reading-the-errors)) |
 | 7 | Does the application answer correctly? | `curl -v`, the HTTP status code, the app's logs |
 
-Two catches:
+**`ping` failing doesn't mean the host is down.** Ping uses ICMP [@rfc792], which a lot of firewalls block, and an AWS security group starts with no inbound rules at all, so it lets no ping in until someone adds a rule for ICMP [@aws-vpc-sg-rules]. A host can block ping and still serve web traffic fine, so check the port directly before concluding anything.
 
-- **`ping` failing doesn't mean the host is down.** Ping uses ICMP [@rfc792], which a lot of firewalls and security groups don't allow, so a host can block ping and still serve web traffic fine. Check the port directly with `nc` before concluding anything.
-- **A timeout and a refusal are different layers.** "Connection timed out" usually means nothing came back at all, so a firewall dropped the traffic or there's no route (layers 3–4). "Connection refused" means the machine answered and said nothing is listening on that port, so the network is fine and the problem is the service.
+### Checking a port with nc
+
+`nc` (netcat) tries a TCP connection to one port and tells you how it went. `-v` makes it print what happened, and `-z` makes it stop as soon as the connection opens instead of sending anything [@openbsd-nc]. Give it a connect timeout too, so a silent drop doesn't leave it waiting. That flag differs between versions of nc: the one on macOS uses `-G` (it's in `man nc` on a Mac), OpenBSD's uses `-w` [@openbsd-nc], and other versions vary, so `man nc` is the place to check. Windows has `Test-NetConnection` instead [@ms-test-netconnection].
+
+```bash tab="macOS"
+nc -vz -G 5 203.0.113.10 443
+```
+
+```bash tab="Linux (OpenBSD nc)"
+nc -vz -w 5 203.0.113.10 443
+```
+
+```powershell tab="Windows (PowerShell)"
+Test-NetConnection 203.0.113.10 -Port 443
+```
+
+On a Mac you'll get one of three answers:
+
+```
+Connection to 203.0.113.10 port 443 [tcp/https] succeeded!
+nc: connectx to 203.0.113.10 port 443 (tcp) failed: Connection refused
+nc: connectx to 203.0.113.10 port 443 (tcp) failed: Operation timed out
+```
+
+A timeout and a refusal point at different layers:
+
+| nc says | What happened | Where to look |
+|---|---|---|
+| `succeeded!` | The TCP handshake finished, so something is listening and nothing in between blocked it | Layer 4 is fine, move up to TLS and the app |
+| `Connection refused` | The machine answered the SYN with a reset, which TCP sends when nothing is listening on that port [@rfc9293] | The network is fine, the service is the problem |
+| `Operation timed out` (after the `-G` seconds) | Nothing came back at all | A firewall dropped the traffic, or there's no route (layers 3–4) |
+
+On Windows, look for `TcpTestSucceeded : True` in the output, which means the same as `succeeded!` [@ms-test-netconnection].
 
 UDP gets less of this help, since it has no connection to set up and no delivery checks [@rfc768]. A UDP request that gets no answer looks the same whether it was blocked, lost, or ignored.
