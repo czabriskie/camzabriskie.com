@@ -309,6 +309,12 @@ export const references = {
   'aws-rds-postgres-ssl': { ...aws('Using SSL with a PostgreSQL DB instance', 'Amazon RDS User Guide', 'https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/PostgreSQL.Concepts.General.SSL.html'), accessed: '2026-10-08' },
   'socat-manual': { authors: 'G. Rieger', title: 'socat - Multipurpose relay', container: 'socat documentation', url: 'http://www.dest-unreach.org/socat/doc/socat.html', accessed: CHECKED },
 
+  // Kubernetes object size limits
+  'k8s-configmap': { authors: 'The Kubernetes Authors', title: 'ConfigMaps', container: 'Kubernetes Documentation', url: 'https://kubernetes.io/docs/concepts/configuration/configmap/', accessed: '2026-10-09' },
+  'k8s-secret': { authors: 'The Kubernetes Authors', title: 'Secrets', container: 'Kubernetes Documentation', url: 'https://kubernetes.io/docs/concepts/configuration/secret/', accessed: '2026-10-09' },
+  'etcd-limits': { authors: 'The etcd Authors', title: 'System limits', container: 'etcd v3.5 Documentation', url: 'https://etcd.io/docs/v3.5/dev-guide/limit/', accessed: '2026-10-09' },
+  'helm-storage-backends': { authors: 'The Helm Authors', title: 'Storage backends', container: 'Helm Documentation, Advanced Helm Techniques', url: 'https://helm.sh/docs/topics/advanced/', accessed: '2026-10-09' },
+
   // Philosophy: the Presocratics
   'pt-001': { authors: ['S. West'], title: 'Episode #001 - Transcript', container: 'Philosophize This!', note: 'transcript of "Ionian Pre-Socratic Philosophy"', url: 'https://www.philosophizethis.org/transcript/episode-001-transcript', accessed: PHIL },
   'pt-002': { authors: ['S. West'], title: 'Episode #002 - Transcript', container: 'Philosophize This!', note: 'transcript of "Italian Pre-Socratic Philosophy"', url: 'https://www.philosophizethis.org/transcript/episode-2-transcript', accessed: PHIL },
