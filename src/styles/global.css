@@ -501,6 +501,16 @@ ul.references .cited-in { display: block; color: var(--muted); margin-top: 0.2re
 /* TLS handshake message diagram (src/scripts/tls-handshake.ts) */
 .tls-walk { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 1rem 1.1rem; margin: 1.2rem 0 1.8rem; font-size: 0.92rem; }
 .tls-walk:empty { display: none; }
+.air-flow { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+.air-flow svg { display: block; width: 100%; height: auto; }
+.air-flow .air-box { fill: var(--surface); stroke: var(--muted); stroke-width: 1; }
+.air-flow .air-input { stroke: var(--ink); }
+.air-flow .air-pass { stroke: var(--tech); stroke-width: 1.8; }
+.air-flow .air-person { fill: var(--line); stroke: var(--tech); stroke-width: 1.8; }
+.air-flow .air-name { font: 600 10px 'Bricolage Grotesque', sans-serif; text-anchor: middle; fill: var(--ink); }
+.air-flow .air-small { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; text-anchor: middle; fill: var(--muted); }
+.air-flow .air-arrow { stroke: var(--muted); stroke-width: 1.2; }
+.air-flow .air-arrowhead { fill: var(--muted); }
 .paint-mix { max-width: 30rem; margin: 1.2rem auto 0.5rem; }
 .paint-mix svg { display: block; width: 100%; height: auto; }
 .paint-mix .pm-wire { fill: none; stroke: var(--line); stroke-width: 1.5; stroke-dasharray: 4 3; }
