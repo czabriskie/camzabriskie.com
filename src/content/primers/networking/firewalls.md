@@ -3,6 +3,7 @@ title: Firewalls on AWS, and sharing them across accounts
 description: What packet filters, stateful firewalls, and web application firewalls each look at, how security groups, network ACLs, AWS Network Firewall, and AWS WAF compare, and the ways to put one set of firewall rules in front of several AWS accounts.
 order: 10
 updated: 2026-10-08
+only: AWS
 ---
 
 A firewall looks at traffic and decides, rule by rule, whether to let it through. Firewalls differ mostly in how much of the traffic they read before deciding. Some only read the addresses and ports on the outside of each packet, and some read the whole web request. AWS has four of its own, reading at different depths and attached to different things, and that second part starts to matter as soon as there's more than one AWS account, because a firewall's rules live in one account.
