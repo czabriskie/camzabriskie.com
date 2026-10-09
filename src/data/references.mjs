@@ -87,6 +87,14 @@ export const references = {
   'diffie-hellman-1976': { authors: ['W. Diffie', 'M. E. Hellman'], title: 'New Directions in Cryptography', container: 'IEEE Transactions on Information Theory', note: 'vol. IT-22, no. 6, pp. 644-654', date: 'Nov. 1976', url: 'https://ee.stanford.edu/~hellman/publications/24.pdf', accessed: '2026-10-06' },
 
   // Other standards and announcements
+  rfc6335: { ...rfc(6335, ['M. Cotton', 'L. Eggert', 'J. Touch', 'M. Westerlund', 'S. Cheshire'], 'Internet Assigned Numbers Authority (IANA) Procedures for the Management of the Service Name and Transport Protocol Port Number Registry', 'Aug. 2011'), accessed: '2026-10-08' },
+  rfc4301: { ...rfc(4301, ['S. Kent', 'K. Seo'], 'Security Architecture for the Internet Protocol', 'Dec. 2005'), accessed: '2026-10-08' },
+  'aws-vpc-sg-rules': { ...aws('Security group rules', VPC_GUIDE, 'https://docs.aws.amazon.com/vpc/latest/userguide/security-group-rules.html'), accessed: '2026-10-08' },
+  'openbsd-nc': { authors: 'OpenBSD', title: 'nc(1): arbitrary TCP and UDP connections and listens', container: 'OpenBSD manual pages', url: 'https://man.openbsd.org/nc.1', accessed: '2026-10-08' },
+  'ms-test-netconnection': { authors: 'Microsoft', title: 'Test-NetConnection', container: 'PowerShell NetTCPIP module reference', url: 'https://learn.microsoft.com/en-us/powershell/module/nettcpip/test-netconnection', accessed: '2026-10-08' },
+  'linux-ip-address': { authors: 'iproute2 project', title: 'ip-address(8): protocol address management', container: 'Linux manual pages', url: 'https://man7.org/linux/man-pages/man8/ip-address.8.html', accessed: '2026-10-08' },
+  'iproute2-ipaddress-c': { authors: 'iproute2 project', title: 'ip/ipaddress.c', container: 'iproute2 source code', url: 'https://github.com/iproute2/iproute2/blob/main/ip/ipaddress.c', accessed: '2026-10-08' },
+  'linux-fib-frontend': { authors: 'The Linux kernel developers', title: 'net/ipv4/fib_frontend.c', container: 'Linux kernel source code', url: 'https://github.com/torvalds/linux/blob/master/net/ipv4/fib_frontend.c', accessed: '2026-10-08' },
   'iana-ports': {
     authors: 'Internet Assigned Numbers Authority',
     title: 'Service Name and Transport Protocol Port Number Registry',
