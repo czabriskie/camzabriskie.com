@@ -190,7 +190,7 @@ Dynamic content, built per request, is harder, but a CDN still helps. Short TTLs
 
 CloudFront can also run small functions at the edge that change requests and responses on the way through ([Running code at the edge](#running-code-at-the-edge)).
 
-## HTTPS with CloudFront
+## HTTPS with CloudFront {only: AWS}
 
 There are two separate TLS connections, one on each side of the edge. That's [TLS termination](/primers/networking/load-balancers-and-tls/#terminating-tls): the edge holds the certificate, decrypts what the browser sends, and opens its own connection onward. A **certificate** is a small file that ties a public key to a name like `www.example.com`, signed by someone browsers trust [@rfc5280] ([Certificates and trust](/primers/networking/certificates-and-trust/) covers them), and AWS's service for getting one is AWS Certificate Manager, ACM ([more on ACM](/primers/networking/certificates-and-trust/#aws-certificate-manager)) [@aws-acm-faq].
 
@@ -225,7 +225,7 @@ Then the domain itself points at the distribution, usually with a Route 53 alias
 
 Once a CDN is in front of your site, the origin should only take requests from the CDN. Otherwise anyone who finds the origin can skip the cache, a WAF (web application firewall) if you've attached one, and whatever else the CDN does. Origins aren't hard to find. An internet-facing load balancer has a public DNS name [@aws-cloudfront-restrict-alb], and scanners can sweep the entire IPv4 address space in under an hour [@zmap-2013].
 
-### S3 origins: keep the bucket private
+### S3 origins: keep the bucket private {only: AWS}
 
 An S3 bucket has two kinds of hostname, and the difference matters here:
 
@@ -240,14 +240,14 @@ The older way to host a static site on S3, which plenty of tutorials still teach
 
 The current way is to use the bucket's REST endpoint as the origin and turn on **origin access control (OAC)**. CloudFront signs its requests to S3, the bucket policy only allows requests signed by your distribution, and the bucket stays completely private [@aws-cloudfront-s3-oac]. OAC doesn't work with website endpoints, which is one more reason to leave them behind. Without the website endpoint, nothing serves a default `index.html` in every folder anymore, because only the website endpoint returns index documents [@aws-s3-website-endpoints], so a request for `/blog/` finds nothing.
 
-### Running code at the edge
+### Running code at the edge {only: AWS}
 
 The fix for that `index.html` problem is a rewrite: someone visits `/blog/`, and a small function changes the request to `/blog/index.html` on its way in, so the edge looks up and fetches the file that actually exists [@aws-cloudfront-add-index]. CloudFront has two kinds of edge code [@aws-cloudfront-faq]:
 
 - **CloudFront Functions** are for small, fast changes to requests and responses: rewriting a URL like that, adding a header, normalizing the cache key.
 - **Lambda@Edge** is for heavier work that takes longer, needs libraries, or calls other services.
 
-### Load balancer and server origins
+### Load balancer and server origins {only: AWS}
 
 There are two ways to make sure only CloudFront reaches a load balancer or server:
 
