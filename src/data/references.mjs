@@ -303,6 +303,10 @@ export const references = {
   'coderabbit-pr-validation': { authors: 'CodeRabbit', title: 'PR validation using linked issues', container: 'CodeRabbit Documentation', url: 'https://docs.coderabbit.ai/issues/pr-validation', accessed: '2026-10-08' },
   'qodo-ticketing': { authors: 'Qodo', title: 'Use ticket context in code reviews', container: 'Qodo Documentation', url: 'https://docs.qodo.ai/integrations/ticketing-integrations', accessed: '2026-10-08' },
   'conventional-comments': { authors: 'Conventional Comments', title: 'Conventional Comments', url: 'https://conventionalcomments.io', accessed: '2026-10-08' },
+  'braz-2022': { authors: ['L. Braz', 'C. Aeberhard', 'G. Çalikli', 'A. Bacchelli'], title: 'Less is More: Supporting Developers in Vulnerability Detection during Code Review', container: 'Proc. 44th Int. Conf. Software Engineering (ICSE)', date: 'May 2022', url: 'https://arxiv.org/abs/2202.04586', accessed: '2026-10-08' },
+  'bacchelli-bird-2013': { authors: ['A. Bacchelli', 'C. Bird'], title: 'Expectations, Outcomes, and Challenges of Modern Code Review', container: 'Proc. 35th Int. Conf. Software Engineering (ICSE)', date: 'May 2013', url: 'https://www.microsoft.com/en-us/research/publication/expectations-outcomes-and-challenges-of-modern-code-review/', accessed: '2026-10-08' },
+  'owasp-file-upload': { authors: 'OWASP', title: 'File Upload Cheat Sheet', container: 'OWASP Cheat Sheet Series', url: 'https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html', accessed: '2026-10-08' },
+  'owasp-llm01': { authors: 'OWASP', title: 'LLM01:2025 Prompt Injection', container: 'OWASP Top 10 for LLM Applications', url: 'https://genai.owasp.org/llmrisk/llm01-prompt-injection/', accessed: '2026-10-08' },
 };
 
 const MONTHS = ['Jan.', 'Feb.', 'Mar.', 'Apr.', 'May', 'Jun.', 'Jul.', 'Aug.', 'Sep.', 'Oct.', 'Nov.', 'Dec.'];
