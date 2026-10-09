@@ -1,6 +1,6 @@
 ---
 title: Reviewing code with an AI, against a ticket
-description: How to set up an AI code review so it checks the change against the ticket's requirements, then for security, then for code health, and why it should run the code instead of only reading it.
+description: How to set up an AI code review so it checks the change against the ticket's requirements, then for security, then for code health, adds reliability and infrastructure passes when a change needs them, and why it should run the code instead of only reading it.
 order: 0
 updated: 2026-10-09
 ---
@@ -17,11 +17,14 @@ A code review answers three different questions. Does this change do what was as
 - **Worktree**: a second working directory attached to the same Git repository, so a branch can be checked out without touching the one you're working in [@git-worktree].
 - **Scope creep**: changes that no requirement asked for.
 - **Vulnerability**: a flaw that lets someone make the software do something it shouldn't, like read another user's files.
+- **Infrastructure as code**: servers, networks, databases, and permissions described in files (Terraform, AWS CDK, Helm charts) that a tool turns into real resources, so changing them goes through a pull request like any other code.
+- **IAM**: AWS Identity and Access Management, which decides what each person and service may do in an AWS account. A **policy** is the document listing those permissions, and a **role** is an identity a service uses to get them.
+- **Blast radius**: how much breaks, or how much is exposed, if a change goes wrong.
 - **Reviewer**: in this primer, a separate model session (or at least a separate prompt) with its own instructions and one job. Three passes means three reviewers.
 
 ## Three questions, three passes
 
-The examples in this primer follow one made-up app: a small photo-sharing site written in Python. It has two **endpoints** (URLs the app answers requests on) that take files. People add photos to their albums through `/upload` and set their profile picture through `/avatar`. Both save the file to a folder on the server's disk, and the code for `/upload` lives in `upload.py`. On a developer's laptop the app runs at `localhost:8000`.
+The examples in this primer follow one made-up app: a small photo-sharing site written in Python. It has two **endpoints** (URLs the app answers requests on) that take files. People add photos to their albums through `/upload` and set their profile picture through `/avatar`. Both save the file to a folder on the server's disk, and the code for `/upload` lives in `upload.py`. On a developer's laptop the app runs at `localhost:8000`. In production it runs on AWS, behind an nginx server that passes requests on to it.
 
 A ticket for that app reads:
 
@@ -46,6 +49,8 @@ Running them as three separate reviewers with different instructions keeps each 
 - **Pass one:** "For each numbered requirement, give a verdict of Met, Partially met, Not met, or Unverifiable, with a file and line or an observed result as evidence. Do not comment on style."
 - **Pass two:** "Review this diff as someone trying to misuse it: who can reach the changed code, what input it trusts, and what it exposes. Label each finding and cite a file and line."
 - **Pass three:** "Review this diff for correctness, simplicity, tests, and consistency with the repo. Label each finding, cite a file and line, and do not judge whether the ticket is satisfied."
+
+Every change gets those three. Two more, for reliability and for infrastructure, only run when a change touches their area, and they come [after pass three](#passes-that-only-run-when-they-apply).
 
 ## Before any pass: run the code
 
@@ -216,9 +221,69 @@ issue (blocking): a file of exactly 10 MB is rejected
 
 Cap nitpicks at something like three per review, so the one real bug doesn't sit under a dozen style remarks.
 
+## Passes that only run when they apply
+
+Some questions only matter for some changes. How a change behaves under load, when something it depends on fails, and while it's being deployed matters a lot for a change to request handling and not at all for a CSS fix. The effect on the cloud account matters for a Terraform file and not for a test. Two more reviewers cover those, and each runs only when the change touches its area.
+
+There are two ways to decide when. One is to match file paths, the way GitHub's CODEOWNERS file automatically requests a review from the owners of whatever files a pull request changes [@github-codeowners]: `*.tf`, `cdk/`, `charts/`, and IAM policy files go to the infrastructure reviewer, and changes to request handlers, database code, or deploy config go to the reliability reviewer. The other is to run both on every change and let each answer "nothing to review here" in a line. Path matching is cheaper, and letting the reviewer decide catches the change that touches a risky area from a file nobody listed. Either way, a pass that didn't run says so in the report, so "not reviewed" never looks like "reviewed and fine".
+
+### Reliability: load, failure, and rollout
+
+Google's code review guide mentions only one operational concern, that parallel code is done safely [@google-review-looking-for]. Google's SRE practice keeps the rest in a separate launch checklist, with sections on capacity, failure modes, client behavior, and rollout planning [@sre-book-launches]. Those questions apply to ordinary changes too, because changes are where outages come from: Google's SRE book puts the share of outages caused by changes to a live system at roughly 70% [@sre-book-intro]. The case for a separate reviewer is the same as for security, that a reviewer finds what it's told to look for, though the experiment behind that was about security [@braz-2022] and nobody has run the same one for reliability.
+
+This reviewer runs when a change touches request handling, calls to other services, database queries or migrations, queues, caches, retries or timeouts, or deploy config. Its questions, applied to the upload change:
+
+- **What happens under load?** If each upload is held in memory while it's checked, 50 uploads at once can hold 500 MB. The question is how much one request costs and what multiplies it.
+- **What happens when something it depends on is slow or down?** Every call to another service needs a timeout, because a request that waits holds its memory and connections the whole time. Retries need a limit too. In AWS's example, a request passes through five layers of services on its way to a database, and with three retries at each layer, a database under strain gets 243 times the load [@aws-builders-retries].
+- **Can it be rolled back?** Rolling back a change is the usual fix when a deploy goes wrong, so a change that can't be rolled back needs a plan before it ships. A change to a stored format is the usual trap: once new servers have written the new format, old servers can't read it. The safe way is two deploys, the first teaching every server to read both formats and the second starting to write the new one [@aws-builders-rollback].
+- **Would anyone notice if it went wrong?** A count of 413 responses shows whether the limit turns away real users or only the occasional huge file. Without it, the first sign is a support ticket.
+- **Does another layer already set a limit?** nginx has its own limit on request size, 1 MB unless configured otherwise, and answers with its own 413 before the app ever sees the request [@nginx-client-max-body-size]. The execution log above talked to the app directly on `localhost:8000`, so it couldn't have caught this.
+
+That last question turns into a finding the other passes had no way to reach:
+
+```text
+issue (blocking): nginx rejects uploads over 8 MB before the app sees them
+  severity: high   confidence: 0.9   deploy/nginx.conf:14
+  why: `client_max_body_size 8m;` is unchanged by this diff, so in production a
+       9 MB file gets nginx's 413 page, not the app's message, and the app's
+       10 MB limit is never reached.
+  fix: raise the nginx limit a little above 10 MB and leave the exact check to the app.
+```
+
+### Infrastructure and IAM: what changes in the cloud, and who gets in
+
+Infrastructure as code has a property application code doesn't: the diff and the effect can be far apart. A one-line change to a Terraform file can replace a database, and a changed default in a Helm chart reaches every service that uses the chart. So this reviewer reads what the tool says will happen, not only the source:
+
+| Tool | Command | What it shows |
+|---|---|---|
+| Terraform | `terraform plan` | Every resource it would create (`+`), change in place (`~`), destroy (`-`), or destroy and recreate (`-/+`), without changing anything [@terraform-plan] |
+| AWS CDK | `cdk diff` | The difference between the deployed stack and the new one. `cdk deploy` also stops for approval by default when a change widens IAM permissions or security group rules [@cdk-deploy] |
+| Helm | `helm template` | The Kubernetes manifests the chart produces, rendered locally [@helm-template] |
+
+A plan or diff has to read the real account to compare against it, so this reviewer needs credentials, and they should be a read-only role. That fits the rule from the run step: nothing in the review can change a shared or production system.
+
+Say a later ticket for the photo app reads "Back up uploaded photos to S3 every night", and part of the plan for the change looks like this:
+
+```text
+  # aws_iam_role_policy.app_backup will be created
+  + resource "aws_iam_role_policy" "app_backup" {
+      + policy = jsonencode({ Statement = [{ Effect = "Allow", Action = "s3:*", Resource = "*" }] })
+    }
+
+  # aws_s3_bucket.photos must be replaced
+-/+ resource "aws_s3_bucket" "photos" {
+```
+
+Two findings come straight off that plan:
+
+- **The new policy is far wider than the job.** The backup needs to write objects into one bucket. `s3:*` on `*` lets the app's role read, change, or delete anything in every bucket in the account. AWS's guidance is to grant only the actions a task needs, on the specific resources it needs them on [@aws-iam-best-practices]. If the app is ever compromised, this policy decides how much else goes with it, which is the blast radius in one line.
+- **The photos bucket would be destroyed and recreated.** Nothing in the ticket asked for that, and the diff that caused it may be as small as a renamed resource. For anything that holds data, Terraform's `prevent_destroy` setting makes a plan like this fail instead of going through [@terraform-lifecycle].
+
+Some of this can be checked mechanically, and like the linters, the mechanical checks should run first and hand their results to the reviewer. IAM Access Analyzer's `check-no-new-access` compares an edited policy with the current one and reports whether it grants anything new [@aws-access-analyzer-checks]. The reviewer's job is then the part a tool can't judge: whether the new access is what the ticket needs, and what else the change reaches. A module used by thirty stacks, a security group several services share, or a chart default every release inherits all have a blast radius much larger than the diff suggests, and the reviewer should name everything the change touches, not just the file that changed.
+
 ## After the passes
 
-The three passes then get merged into one report: duplicates removed (the 10 MB boundary shows up in both pass one and pass three), every requirement checked for a verdict, and every cited file and line checked by a script rather than by another model. Models can cite lines that don't exist or quote code that isn't there, and a mechanical check catches that cheaply, so a finding whose citation fails gets dropped. A finding with no evidence behind it gets deleted too.
+The passes then get merged into one report: duplicates removed (the 10 MB boundary shows up in both pass one and pass three), every requirement checked for a verdict, and every cited file and line checked by a script rather than by another model. Models can cite lines that don't exist or quote code that isn't there, and a mechanical check catches that cheaply, so a finding whose citation fails gets dropped. A finding with no evidence behind it gets deleted too.
 
 The result works best as advice. The reviewer reports and a person decides, and the review itself never approves the change or edits the code.
 
