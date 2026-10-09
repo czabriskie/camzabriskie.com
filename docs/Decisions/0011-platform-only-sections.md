@@ -1,6 +1,6 @@
 # 0011. Marking sections that only apply to one platform
 
-**Status:** Accepted
+**Status:** Superseded by 0012
 **Date:** 2026-10-09
 
 ## Context

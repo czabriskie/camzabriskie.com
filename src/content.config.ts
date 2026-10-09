@@ -16,6 +16,8 @@ const primerSchema = z.object({
   order: z.number().int().nonnegative(),
   updated: z.coerce.date(),
   draft: z.boolean().default(false),
+  /** A primer that's only about one platform, such as 'AWS' (Decision 0012). */
+  only: z.string().optional(),
 });
 
 export const collections = {

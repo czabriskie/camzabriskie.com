@@ -33,10 +33,10 @@ Read the draft as someone who has never used the tool, and fix every place they'
   into it.
 - **Trim.** Detail most readers don't need goes in `<details class="aside">` with a
   `<summary>`.
-- **Mark platform-only sections.** A section that only explains how one vendor does it
-  (Route 53, ACM, CloudFront) gets `{only: AWS}` at the end of its heading (Decision 0011),
-  so readers who don't use AWS can see what to skip. General explanations that just use
-  AWS as the example aren't tagged.
+- **Mark platform-only content** (Decision 0012). A section that only explains how one
+  vendor does it (Route 53, ACM, CloudFront) gets `{only: AWS}` at the end of its heading.
+  A primer that's only about AWS gets `only: AWS` in its frontmatter instead. General
+  explanations that just use AWS as the example aren't tagged.
 
 ## 3. Look for visuals
 
