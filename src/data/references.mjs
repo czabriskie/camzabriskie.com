@@ -266,7 +266,6 @@ export const references = {
   'aws-multivpc-privatelink': { ...aws('AWS PrivateLink', 'Building a Scalable and Secure Multi-VPC AWS Network Infrastructure (AWS Whitepaper)', 'https://docs.aws.amazon.com/whitepapers/latest/building-scalable-secure-multi-vpc-network-infrastructure/aws-privatelink.html'), accessed: '2026-10-07' },
   'aws-nat-gateway-scenarios': { ...aws('NAT gateway use cases', 'Amazon VPC User Guide', 'https://docs.aws.amazon.com/vpc/latest/userguide/nat-gateway-scenarios.html'), accessed: '2026-10-07' },
   'aws-vpc-peering-routing': { ...aws('Update your route tables for a VPC peering connection', 'Amazon VPC Peering Guide', 'https://docs.aws.amazon.com/vpc/latest/peering/vpc-peering-routing.html'), accessed: '2026-10-07' },
-  'aws-ec2-eni': { ...aws('Elastic network interfaces', 'Amazon EC2 User Guide', 'https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-eni.html'), accessed: '2026-10-07' },
   'aws-s2s-vpn-static-dynamic': { ...aws('Static and dynamic routing in AWS Site-to-Site VPN', 'AWS Site-to-Site VPN User Guide', 'https://docs.aws.amazon.com/vpn/latest/s2svpn/vpn-static-dynamic.html'), accessed: '2026-10-07' },
   'aws-dx-what-is': { ...aws('What is Direct Connect?', 'AWS Direct Connect User Guide', 'https://docs.aws.amazon.com/directconnect/latest/UserGuide/Welcome.html'), accessed: '2026-10-07' },
   'aws-dx-macsec': { ...aws('MAC Security in Direct Connect', 'AWS Direct Connect User Guide', 'https://docs.aws.amazon.com/directconnect/latest/UserGuide/MACsec.html'), accessed: '2026-10-07' },
