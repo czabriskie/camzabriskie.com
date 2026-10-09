@@ -392,6 +392,29 @@ nav.note-nav .mono { color: var(--tech); font-weight: 400; }
 .code-copy { position: absolute; top: 0.45rem; right: 0.45rem; font: 0.7rem 'IBM Plex Mono', ui-monospace, monospace; color: #c9d1d9; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 5px; padding: 0.2rem 0.5rem; cursor: pointer; opacity: 0.75; }
 .code-copy:hover, .code-copy:focus-visible { opacity: 1; }
 .code-copy-wrap pre { padding-right: 4.5rem; }
+/* EBS vs EFS across zones diagram (EBS vs EFS primer), static SVG */
+.stg-zones { max-width: 34rem; margin: 1.2rem auto 0.5rem; }
+.stg-zones svg { display: block; width: 100%; height: auto; }
+.stg-zones .stg-region { fill: none; stroke: var(--line); stroke-width: 1.5; }
+.stg-zones .stg-zone { fill: none; stroke: var(--muted); stroke-width: 1; stroke-dasharray: 4 3; }
+.stg-zones .stg-label { font: 8px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.stg-zones .stg-mid { text-anchor: middle; }
+.stg-zones .stg-end { text-anchor: end; }
+.stg-zones .stg-box rect { fill: var(--surface); stroke: var(--line); stroke-width: 1; }
+.stg-zones .stg-ebs rect { stroke: var(--tech); stroke-width: 1.5; }
+.stg-zones .stg-efs rect { stroke: var(--life); stroke-width: 1.5; }
+.stg-zones .stg-snap rect { stroke: var(--tech); stroke-dasharray: 3 2; }
+.stg-zones .stg-box text { text-anchor: middle; fill: var(--ink); }
+.stg-zones .stg-kind { font: 8px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.stg-zones .stg-box .stg-kind { fill: var(--muted); }
+.stg-zones .stg-name { font: 600 10px 'Bricolage Grotesque', sans-serif; }
+.stg-zones .stg-attach { stroke: var(--tech); stroke-width: 2; }
+.stg-zones .stg-mount { stroke: var(--life); stroke-width: 1.5; }
+.stg-zones .stg-copy { stroke: var(--tech); stroke-width: 1.2; stroke-dasharray: 3 2; }
+.stg-zones .stg-arrow { fill: var(--tech); }
+.stg-zones .stg-no { stroke: var(--muted); stroke-width: 1.2; stroke-dasharray: 3 3; }
+.stg-zones .stg-x-ring { fill: var(--surface); stroke: var(--muted); stroke-width: 1; }
+.stg-zones .stg-x { stroke: var(--ink); stroke-width: 1.5; fill: none; }
 @media (hover: none) { .code-copy { padding: 0.45rem 0.75rem; opacity: 1; } .code-copy-wrap pre { padding-right: 5.5rem; } }
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .cmd-builder:empty { display: none; }
