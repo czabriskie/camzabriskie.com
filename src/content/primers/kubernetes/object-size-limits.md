@@ -126,9 +126,11 @@ For release records that really are that large, Helm documents a beta `sql` stor
 Moving the data to a Secret doesn't help. Kubernetes doesn't compress Secrets, and the base64 you see in a Secret's YAML is only how the bytes are written down: the check counts the decoded bytes under `data`, against the same 1,048,576 [@k8s-validation-secret-size]. Helm's release record is smaller than its contents only because Helm compresses it before saving it.
 
 <details class="aside">
-<summary>An untested idea: compress the data yourself</summary>
+<summary>Compressing the data yourself</summary>
 
-Helm gets its release record under the limit by compressing it, and in principle an app could do the same with its own data: gzip it, store the compressed bytes under the ConfigMap's `binaryData`, which holds raw bytes rather than text [@k8s-configmap], and have the app or a startup step decompress it. I haven't tried this, so treat it as an idea and not a fix. It only helps if the data compresses well, every reader of the ConfigMap has to know to decompress it, and diffs of the compressed bytes stop being readable in review.
+Helm gets its release record under the limit by compressing it, and an app can do the same with its own data: gzip it, store the compressed bytes under the ConfigMap's `binaryData`, which holds raw bytes rather than text [@k8s-configmap], and decompress it when it's read. At least one product documents this as its answer to the limit. Airlock Microgateway accepts zstd, gzip, or zip files as `binaryData` in its ConfigMaps, warns that decompressing costs extra resources, and recommends it only for a ConfigMap that would otherwise be over the limit [@airlock-configmap-size].
+
+That works there because the gateway was built to decompress its own config. For your own app, nothing in Kubernetes decompresses anything, so the app or a startup step has to do it, and I haven't found a source covering that in general. It also only helps if the data compresses well, and diffs of compressed bytes stop being readable in review.
 
 </details>
 
