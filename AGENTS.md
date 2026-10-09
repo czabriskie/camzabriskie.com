@@ -106,6 +106,9 @@ of it: the post can stay vague about the job while the document carries the subs
   and set `accessed` to the date you checked it. Unknown keys fail the build. After
   changing the citation plugin or formatter, `rm -rf .astro node_modules/.astro` before
   building locally, or you'll see cached output.
+- **Mark platform-only sections** (Decision 0011). A section that's only about how one
+  vendor does it (Route 53, ACM, ALBs) gets `{only: AWS}` at the end of its heading, which
+  adds an "AWS only" tag under it. Whole AWS primers don't need it.
 - **Commands get a PowerShell tab where they differ** (Decision 0008). Write the
   macOS/Linux version and the Windows version as consecutive fenced blocks with
   `tab="macOS / Linux"` and `tab="Windows (PowerShell)"` in the meta; the build groups
