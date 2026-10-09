@@ -208,6 +208,40 @@ On many Linux systems `/etc/resolv.conf` lists only `127.0.0.53`. That's an addr
 
 That configuration can include more than one resolver, and some only apply to certain domains. A machine on a VPN might send `*.corp.example.com` to the company's resolver and everything else to the normal one. That's **split DNS**, and it's why a name can resolve with the VPN up and fail without it, or resolve to a different address depending on which resolver answered. It's also step 7 in the [checklist for reaching private resources](/primers/networking/reaching-private-resources/#connected-but-cant-reach-it).
 
+<details class="aside">
+<summary>Why <code>scutil --dns</code> lists so many resolvers</summary>
+
+On a Mac at home, `scutil --dns` often prints seven or more numbered resolvers, which looks like far too many. Usually only the first does ordinary lookups. A shortened example:
+
+```text
+resolver #1
+  nameserver[0] : 2001:db8::53
+  nameserver[1] : 192.0.2.53
+  if_index : 14 (en0)
+  reach    : 0x00000002 (Reachable)
+resolver #2
+  domain   : local
+  options  : mdns
+  reach    : 0x00000000 (Not Reachable)
+resolver #3
+  domain   : 254.169.in-addr.arpa
+  options  : mdns
+resolver #4
+  domain   : 8.e.f.ip6.arpa
+  options  : mdns
+  ... (#5 to #7 are 9.e.f, a.e.f, and b.e.f.ip6.arpa)
+```
+
+- **Resolver #1 is the default.** It has the server addresses from your network settings, often two IPv6 and two IPv4 so there's a backup of each, and no `domain` line. The manual page for `scutil` says the first one listed is the default, and the ones after it that name a `domain` are only used for names in that domain [@scutil-man].
+- **The rest send local names to multicast DNS.** `options : mdns` means "don't ask a server, ask the devices on this network directly," which is **multicast DNS (mDNS)**, the protocol behind finding printers and other computers by name [@rfc6762]. They have no server addresses, so `reach` says Not Reachable, and that's expected.
+- **`local`** covers names like `my-printer.local`, which mDNS owns [@rfc6762].
+- **`254.169.in-addr.arpa`** covers reverse lookups for **link-local** IPv4 addresses, the `169.254/16` range a device gives itself when nothing on the network hands it one [@rfc3927]. Names for those addresses only mean something on the local network, so the mDNS standard sends their lookups there too [@rfc6762].
+- **`8.e.f` through `b.e.f.ip6.arpa`** do the same for IPv6 link-local addresses, `fe80::/10` [@rfc4291, @rfc6762]. It takes four entries because reverse DNS writes an IPv6 address one hex digit at a time, backwards [@rfc3596]. A `/10` fixes the first two digits, `fe`, and only half of the third, which leaves four possible third digits, `8`, `9`, `a`, and `b`. Each gets its own entry, written backwards as `8.e.f` and so on.
+
+A second list underneath, headed "for scoped queries", repeats the servers once for each network interface, such as `en0` for Wi-Fi and another `en` number for a wired adapter. A VPN or a domain-specific setting adds entries of its own, like the `*.corp.example.com` example above.
+
+</details>
+
 ## Watching it happen
 
 `dig` shows a single lookup in detail, including the TTL on each record [@bind9-dig]. On Windows, `Resolve-DnsName` does the same job [@ms-resolve-dnsname]:
