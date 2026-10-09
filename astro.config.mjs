@@ -8,7 +8,7 @@ export default defineConfig({
   markdown: {
     // [@key] citations in primers become IEEE-numbered references (Decision 0007), and
     // consecutive code blocks with tab="..." become a tab group (Decision 0008), and a
-    // heading tagged {only: AWS} marks a platform-specific section (Decision 0011).
+    // heading tagged {only: AWS} marks a platform-specific section (Decision 0012).
     remarkPlugins: [remarkCitations, remarkCodeTabs, remarkOnlySections],
   },
 });
