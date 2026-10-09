@@ -5,7 +5,7 @@ order: 0
 updated: 2026-10-09
 ---
 
-Western philosophy usually gets started with a group of Greek thinkers who lived between roughly 600 and 400 BCE ("before the common era," the same years as BC), before and alongside Socrates. None of their books survive whole. We know them from **fragments**, short passages that later writers quoted, and from summaries by people like Aristotle, so scholars still argue over what some of them meant [@sep-presocratics]. Many of the colorful stories about their lives were made up later, too [@sep-heraclitus, @sep-pythagoras]. This primer follows the first two episodes of the *Philosophize This!* podcast [@pt-001, @pt-002] and checks them against two scholarly encyclopedias, flagging the places where the popular version and the scholarship disagree. The next section explains why the encyclopedias win when they do.
+Western philosophy usually gets started with a group of Greek thinkers who lived between roughly 600 and 400 BCE ("before the common era," the same years as BC), before and alongside Socrates. None of their books survive whole. We know them from **fragments**, short passages that later writers quoted, and from summaries by people like Aristotle, so scholars still argue over what some of them meant [@sep-presocratics]. Many of the colorful stories about their lives were made up later, too [@sep-heraclitus, @sep-pythagoras]. This primer follows the first two episodes of the *Philosophize This!* podcast [@pt-001, @pt-002] and checks them against two scholarly encyclopedias, flagging the places where the popular version and the scholarship disagree.
 
 Two questions run through all of them:
 
@@ -21,9 +21,11 @@ Each thinker's answer creates a problem for the next one, so they read best in o
 <p class="bitgrid-caption">Roughly when each one lived. Solid bars are life spans the sources give. Dashed lines are estimates from a single date, like a birth year or a year someone was active around. Filled marks are the Ionians, hollow ones the Italians, and grey the atomists. The shaded band is Socrates.</p>
 
 
-## The podcast and the encyclopedias
+## Which source to trust
 
-*Philosophize This!* is a podcast by Stephen West that walks through the history of philosophy one episode at a time. It's one person retelling the story, built to be entertaining, with jokes and pop-culture comparisons that make the ideas stick. That makes it a good way in, but it also passes along legends because they're good stories. The episode on Pythagoras keeps the blacksmith story because every source the host read tells it, so "there has to be some merit to the story" [@pt-002]. A story showing up everywhere only shows it got copied a lot. The host says as much himself at one point: "Don't quote me on anything specific" [@pt-002].
+The podcast and the encyclopedias tell the same story but don't always agree on the facts. The podcast says Pythagoras worked out musical harmony by listening to blacksmiths' hammers [@pt-002], and the Stanford encyclopedia says that couldn't have happened [@sep-pythagoras]. Disagreements like that come up all through this primer, and each time it sides with the encyclopedias, because of how each source gets made.
+
+*Philosophize This!* is a podcast by Stephen West that walks through the history of philosophy one episode at a time. It's one person retelling the story, built to be entertaining, with jokes and pop-culture comparisons that make the ideas stick. That makes it a good way in, but it also passes along legends because they're good stories. The host keeps the blacksmith story because every source the host read tells it, so "there has to be some merit to the story" [@pt-002]. A story showing up everywhere only shows it got copied a lot. The host says as much himself at one point: "Don't quote me on anything specific" [@pt-002].
 
 The **Stanford Encyclopedia of Philosophy** (SEP) is a free online reference published by the Metaphysics Research Lab in Stanford University's philosophy department [@sep-editorial]. Each entry is written and kept up to date by a specialist in that topic. Authors are invited, they need a PhD and published, peer-reviewed work on the subject, and every entry and every major revision is checked by an editorial board before it goes up [@sep-about, @sep-editorial]. The **Internet Encyclopedia of Philosophy** (IEP) works the same way on a smaller scale. It's free, peer-reviewed, written by professional philosophers, and edited by professors [@iep-about].
 
