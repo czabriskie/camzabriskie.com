@@ -124,7 +124,7 @@ Here's one request from a laptop at `198.51.100.7` to `app.example.com`, through
 
 <p class="bitgrid-caption">An ALB makes two connections, client to node and node to target, so the target has to read the client's address from a header. An NLB with client IP preservation hands the target the client's own connection.</p>
 
-### Security groups on both sides
+### Security groups on both sides {only: AWS}
 
 A **security group** is AWS's per-resource firewall: a list of what's allowed in and out of one load balancer or server, with everything else dropped. An ALB and its targets each have one, and they have to agree. AWS recommends letting clients reach the load balancer's listener port, and letting only the load balancer's security group reach the targets, on both the traffic port and the health check port [@aws-alb-security-groups]:
 
@@ -173,7 +173,7 @@ The WAF column follows from where AWS WAF can attach: ALBs, CloudFront, and API 
 
 One load balancer often serves several hostnames, each with its own certificate. The client says which hostname it wants at the very start of the TLS handshake, before anything is encrypted, using an extension called **SNI** (Server Name Indication) [@rfc6066]. The load balancer uses that to pick the right certificate. Without SNI, every hostname on an address would need to share one certificate.
 
-### SNI on an ALB or NLB
+### SNI on an ALB or NLB {only: AWS}
 
 There's no SNI setting to turn on. A secure listener (HTTPS on an ALB, TLS on an NLB) has two places for certificates, and SNI happens automatically as soon as the second one is used [@aws-alb-certificates, @aws-nlb-certificates]:
 
