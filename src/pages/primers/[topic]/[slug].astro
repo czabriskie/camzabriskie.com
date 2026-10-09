@@ -37,6 +37,7 @@ for (const h of headings) {
     <div class="meta">
       <span class="byte-badge"><b>{pos(i)}</b> / {pos(total - 1)}</span>
       <span class="mono">updated {fmtDate(note.data.updated)}</span>
+      {note.data.only && <span class="only-tag">{note.data.only} only</span>}
     </div>
     {toc.length >= 3 && (
       <details class="toc" open>
