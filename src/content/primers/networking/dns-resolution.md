@@ -509,6 +509,47 @@ The PTR record isn't in the `example.com` zone from earlier. It lives in a zone 
 10.113.0.203.in-addr.arpa.  3600  PTR  example.com.
 ```
 
+Reverse names use the same tree as forward ones, under their own TLD, `arpa`. Writing the address backwards is what makes that work: read right to left, the name goes from the biggest block of addresses down to one address, so each level can be delegated to whoever holds that part of the address space [@rfc1035]. The `in-addr.arpa` zone itself is served by its own set of name servers [@rfc5855], and the registries that hand out address blocks delegate reverse DNS for each block to the organization that holds it, which can delegate it on to its own customers [@arin-reverse-dns].
+
+<div class="dns-tree" role="img" aria-label="The reverse tree for 203.0.113.10, read from the top down. The root zone, answered by the root servers, delegates arpa. The arpa zone, answered by the arpa TLD servers, delegates in-addr.arpa. The in-addr.arpa zone, answered by dedicated reverse-DNS servers, delegates 203.in-addr.arpa. 203 and 0 sit in zones run by the registry that allocated the block, and exactly where those levels are split varies by block. 0 delegates 113.0.203.in-addr.arpa, the zone run by whoever holds 203.0.113.0/24, such as an ISP, a cloud provider, or you. Inside it, 10 holds the PTR record pointing to example.com.">
+<svg viewBox="0 0 400 304" aria-hidden="true" focusable="false">
+<rect class="dt-zone" x="58" y="5" width="104" height="36" rx="6"/>
+<text class="dt-zname" x="172" y="20">root zone</text>
+<text class="dt-who" x="172" y="31">root servers</text>
+<rect class="dt-zone" x="58" y="49" width="104" height="36" rx="6"/>
+<text class="dt-zname" x="172" y="64">arpa zone</text>
+<text class="dt-who" x="172" y="75">arpa TLD servers</text>
+<rect class="dt-zone" x="58" y="93" width="104" height="36" rx="6"/>
+<text class="dt-zname" x="172" y="108">in-addr.arpa zone</text>
+<text class="dt-who" x="172" y="119">reverse-DNS servers</text>
+<rect class="dt-zone dt-zone-other" x="58" y="139" width="104" height="72" rx="6"/>
+<text class="dt-zname" x="172" y="160">203 and 0</text>
+<text class="dt-who" x="172" y="171">the registry that allocated</text>
+<text class="dt-who" x="172" y="181">the block; where these levels</text>
+<text class="dt-who" x="172" y="191">split varies by block</text>
+<rect class="dt-zone" x="58" y="225" width="104" height="72" rx="6"/>
+<text class="dt-zname" x="172" y="240">113.0.203.in-addr.arpa zone</text>
+<text class="dt-who" x="172" y="251">whoever holds 203.0.113.0/24:</text>
+<text class="dt-who" x="172" y="261">ISP, cloud provider, or you</text>
+<text class="dt-ns" x="172" y="283">10  PTR  example.com.</text>
+<line class="dt-deleg" x1="110" y1="34" x2="110" y2="56"/>
+<line class="dt-deleg" x1="110" y1="78" x2="110" y2="100"/>
+<line class="dt-deleg" x1="110" y1="122" x2="110" y2="146"/>
+<line class="dt-edge" x1="110" y1="168" x2="110" y2="182"/>
+<line class="dt-deleg" x1="110" y1="204" x2="110" y2="232"/>
+<line class="dt-edge" x1="110" y1="254" x2="110" y2="268"/>
+<g class="dt-node"><rect x="64" y="12" width="92" height="22" rx="4"/><text x="110" y="27">. (root)</text></g>
+<g class="dt-node"><rect x="64" y="56" width="92" height="22" rx="4"/><text x="110" y="71">arpa</text></g>
+<g class="dt-node"><rect x="64" y="100" width="92" height="22" rx="4"/><text x="110" y="115">in-addr.arpa</text></g>
+<g class="dt-node"><rect x="64" y="146" width="92" height="22" rx="4"/><text x="110" y="161">203</text></g>
+<g class="dt-node"><rect x="64" y="182" width="92" height="22" rx="4"/><text x="110" y="197">0</text></g>
+<g class="dt-node"><rect x="64" y="232" width="92" height="22" rx="4"/><text x="110" y="247">113</text></g>
+<g class="dt-node"><rect x="64" y="268" width="92" height="22" rx="4"/><text x="110" y="283">10</text></g>
+</svg>
+</div>
+
+<p class="bitgrid-caption">The same shape as the forward tree, read top down: <code>10.113.0.203.in-addr.arpa.</code> from right to left. The teal lines are delegations. The <code>arpa</code> servers only point the way down, like the <code>com</code> servers do, and the PTR record sits at the bottom with whoever holds the address.</p>
+
 It's a quick way to see who runs a resolver or server, when the owner has set one up.
 
 ### Email

@@ -64,6 +64,8 @@ export const references = {
   rfc4255: rfc(4255, ['J. Schlyter', 'W. Griffin'], 'Using DNS to Securely Publish Secure Shell (SSH) Key Fingerprints', 'Jan. 2006'),
   rfc4291: rfc(4291, ['R. Hinden', 'S. Deering'], 'IP Version 6 Addressing Architecture', 'Feb. 2006'),
   rfc6762: { ...rfc(6762, ['S. Cheshire', 'M. Krochmal'], 'Multicast DNS', 'Feb. 2013'), accessed: '2026-10-09' },
+  rfc5855: { ...rfc(5855, ['J. Abley', 'T. Manderson'], 'Nameservers for IPv4 and IPv6 Reverse Zones', 'May 2010'), accessed: '2026-10-09' },
+  'arin-reverse-dns': { authors: 'ARIN', title: 'Reverse DNS', container: 'American Registry for Internet Numbers', url: 'https://www.arin.net/resources/manage/reverse/', accessed: '2026-10-09' },
   rfc3927: { ...rfc(3927, ['S. Cheshire', 'B. Aboba', 'E. Guttman'], 'Dynamic Configuration of IPv4 Link-Local Addresses', 'May 2005'), accessed: '2026-10-09' },
   'scutil-man': { authors: 'Apple', title: 'scutil(8)', container: 'macOS manual pages', note: 'online copy of the Xcode man pages', url: 'https://keith.github.io/xcode-man-pages/scutil.8.html', accessed: '2026-10-09' },
   rfc4861: rfc(4861, ['T. Narten', 'E. Nordmark', 'W. Simpson', 'H. Soliman'], 'Neighbor Discovery for IP version 6 (IPv6)', 'Sep. 2007'),
