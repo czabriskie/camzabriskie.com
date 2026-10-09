@@ -23,6 +23,11 @@ export const topics = [
     blurb: 'The history of ideas, starting with the first people to ask what everything is made of.',
   },
   {
+    slug: 'containers',
+    title: 'Containers',
+    blurb: 'What runs your containers, and how to choose the tooling around them.',
+  },
+  {
     slug: 'practices',
     title: 'Practices',
     blurb: 'How engineering work gets done well, and how to check that it was.',

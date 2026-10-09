@@ -418,6 +418,20 @@ nav.note-nav .mono { color: var(--tech); font-weight: 400; }
 .cert-walk:empty { display: none; }
 .cw-controls { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.6rem; margin-bottom: 0.9rem; }
 .cw-controls label { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; }
+.ctr-layers { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+.ctr-layers svg { display: block; width: 100%; height: auto; }
+.ctr-layers .ctr-host { fill: none; stroke: var(--line); stroke-width: 1.5; }
+.ctr-layers .ctr-vm { fill: none; stroke: var(--tech); stroke-width: 1.5; stroke-dasharray: 5 3; }
+.ctr-layers .ctr-box { fill: var(--surface); stroke: var(--muted); stroke-width: 1; }
+.ctr-layers .ctr-engine { stroke: var(--tech); stroke-width: 1.8; }
+.ctr-layers .ctr-kernel { fill: var(--line); stroke: none; }
+.ctr-layers .ctr-zone { font: 600 11px 'Bricolage Grotesque', sans-serif; fill: var(--ink); }
+.ctr-layers .ctr-name { font: 600 10px 'Bricolage Grotesque', sans-serif; text-anchor: middle; fill: var(--ink); }
+.ctr-layers .ctr-small { font: 9px 'IBM Plex Mono', ui-monospace, monospace; text-anchor: middle; fill: var(--muted); }
+.ctr-layers .ctr-note { font: 9px 'Bricolage Grotesque', sans-serif; fill: var(--muted); }
+.ctr-layers .ctr-mono { font-family: 'IBM Plex Mono', ui-monospace, monospace; fill: var(--ink); }
+.ctr-layers .ctr-arrow { stroke: var(--muted); stroke-width: 1.2; }
+.ctr-layers .ctr-arrowhead { fill: var(--muted); }
 .cw-controls select, .cw-controls button { font: inherit; font-size: 0.88rem; color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: 4px; padding: 0.2rem 0.55rem; }
 .cw-controls button { cursor: pointer; }
 .cw-controls button:disabled { opacity: 0.45; cursor: default; }
