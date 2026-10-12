@@ -5,23 +5,23 @@ order: 11
 updated: 2026-10-12
 ---
 
-A lab instrument's PC saves a results file every time a run finishes, and an application somewhere else needs those files. The usual answer is a **network file share**: the PC writes into a shared folder on a storage box in the same building, and a separate collector service on another machine watches that folder, picks up each new file, and sends it on to the application, maybe in the cloud over a VPN. Nothing in that chain copies files by hand, and every hop is a network connection with a port and a direction, which is what decides whether the firewalls let it happen.
+A Windows PC exports a report file every night, and an application somewhere else needs those files. The usual answer is a **network file share**: the PC writes into a shared folder on a storage box in the same building, and a separate collector service on another machine watches that folder, picks up each new file, and sends it on to the application, maybe in the cloud over a VPN. Nothing in that chain copies files by hand, and every hop is a network connection with a port and a direction, which is what decides whether the firewalls let it happen.
 
 The example below follows one setup through the whole primer:
 
-- `lab-pc-07`, a Windows PC attached to the instrument, writes results to `\\nas01.example.com\results`.
-- `nas01.example.com`, a storage box on the lab network, holds the shared folder.
+- `pc01`, a Windows PC, writes reports to `\\nas01.example.com\reports`.
+- `nas01.example.com`, a storage box on the office network, holds the shared folder.
 - `collector01`, a Linux server, reads new files from the same share and uploads them to the application over HTTPS.
 
 ## A few terms
 
 - **Share**: a folder that one machine makes available to others over the network.
-- **Mount**: attach a share so it appears as part of the local file system, as a drive letter like `R:` on Windows or a folder like `/mnt/results` on Linux.
+- **Mount**: attach a share so it appears as part of the local file system, as a drive letter like `R:` on Windows or a folder like `/mnt/reports` on Linux.
 - **File system**: the part of an operating system that turns raw disk space into files and folders, with names, sizes, and permissions.
 - **SMB** (Server Message Block): the file-sharing protocol Windows uses [@ms-smb-overview].
 - **NFS** (Network File System): the file-sharing protocol most Linux and Unix machines use [@rfc7530].
 - **NAS** (network-attached storage): a storage device that connects to a network and provides file access to clients [@snia-nas], usually over SMB, NFS, or both.
-- **Client and server**: the **client** is the machine that opens the connection and asks for files, and the **server** is the one that holds them and answers [@ms-smb-overview]. In the example, `lab-pc-07` and `collector01` are both clients, and `nas01` is the server.
+- **Client and server**: the **client** is the machine that opens the connection and asks for files, and the **server** is the one that holds them and answers [@ms-smb-overview]. In the example, `pc01` and `collector01` are both clients, and `nas01` is the server.
 
 ## Where the file system lives: NAS, SAN, and local disks
 
@@ -38,7 +38,7 @@ Storage comes in three broad shapes, and the useful difference between them is w
 
 Sources for the table: TechTarget's comparison of the three [@techtarget-nas-san-das] and SNIA's definition of a NAS [@snia-nas].
 
-A SAN hands out raw disk space, called **block storage**, and the server that uses it formats it with its own file system, so to that server it looks like a local disk. A NAS keeps the file system to itself and hands out files. That's why a NAS is the one to reach for when several machines need the same folder: they all send requests like "open `run-0412.csv`" to the NAS, and the NAS sorts out names and permissions in one place. The rest of this primer is about NAS-style sharing, SMB and NFS.
+A SAN hands out raw disk space, called **block storage**, and the server that uses it formats it with its own file system, so to that server it looks like a local disk. A NAS keeps the file system to itself and hands out files. That's why a NAS is the one to reach for when several machines need the same folder: they all send requests like "open `report-0412.csv`" to the NAS, and the NAS sorts out names and permissions in one place. The rest of this primer is about NAS-style sharing, SMB and NFS.
 
 ## SMB
 
@@ -58,7 +58,7 @@ In 2017 the WannaCry ransomware spread between machines by connecting to TCP por
 NFS is the Unix side's equivalent. A Linux machine **mounts** an **export**, a folder the NFS server shares, into a local folder, and from then on programs use it like any other directory. The line in `/etc/fstab` that mounts one at boot looks like this [@linux-nfs-man]:
 
 ```text
-nas01.example.com:/exports/results  /mnt/results  nfs  defaults  0 0
+nas01.example.com:/exports/reports  /mnt/reports  nfs  defaults  0 0
 ```
 
 - **Port**: NFS uses TCP port 2049. With NFS version 4 on that standard port, the client doesn't need a separate lookup service to find the server's NFS port, which is what lets it pass through a firewall with a single rule [@rfc7530].
@@ -67,14 +67,14 @@ nas01.example.com:/exports/results  /mnt/results  nfs  defaults  0 0
 
 ## Which way the connections go
 
-<div class="share-flow" role="img" aria-label="The example's connections. Inside the lab network, lab-pc-07 opens an SMB connection on TCP 445 to nas01 and writes result files. collector01 also opens a connection to nas01, on TCP 445 for SMB or TCP 2049 for NFS, and reads the new files. Then collector01 opens an HTTPS connection on port 443 out through the firewall and a VPN to the application in the cloud. nas01 never opens a connection to anything, and nothing outside opens a connection in.">
+<div class="share-flow" role="img" aria-label="The example's connections. Inside the office network, pc01 opens an SMB connection on TCP 445 to nas01 and writes report files. collector01 also opens a connection to nas01, on TCP 445 for SMB or TCP 2049 for NFS, and reads the new files. Then collector01 opens an HTTPS connection on port 443 out through the firewall and a VPN to the application in the cloud. nas01 never opens a connection to anything, and nothing outside opens a connection in.">
 <svg viewBox="0 0 400 200" aria-hidden="true" focusable="false">
 <defs><marker id="sf-head" viewBox="0 0 8 8" refX="7" refY="4" markerUnits="userSpaceOnUse" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="sf-arrowhead" d="M0,0 L8,4 L0,8 z"/></marker></defs>
 <rect class="sf-zone" x="4" y="22" width="268" height="172" rx="6"/>
-<text class="sf-zone-label" x="12" y="15">lab network</text>
+<text class="sf-zone-label" x="12" y="15">office network</text>
 <text class="sf-zone-label sf-end" x="396" y="15">elsewhere</text>
 <rect class="sf-box" x="16" y="38" width="96" height="40" rx="4"/>
-<text class="sf-name" x="64" y="55">lab-pc-07</text>
+<text class="sf-name" x="64" y="55">pc01</text>
 <text class="sf-small" x="64" y="68">Windows, writes</text>
 <rect class="sf-box sf-nas" x="160" y="84" width="100" height="44" rx="4"/>
 <text class="sf-name" x="210" y="102">nas01</text>
@@ -97,17 +97,17 @@ nas01.example.com:/exports/results  /mnt/results  nfs  defaults  0 0
 </svg>
 </div>
 
-<p class="bitgrid-caption">Arrows point from the machine that opens each connection. Both clients connect to the NAS, the NAS never connects to anything, and only the collector reaches outside the lab network.</p>
+<p class="bitgrid-caption">Arrows point from the machine that opens each connection. Both clients connect to the NAS, the NAS never connects to anything, and only the collector reaches outside the office network.</p>
 
 Each arrow is one rule a firewall has to allow, from the machine that opens the connection to the port on the other end. The replies travel back over the same connection, and a **stateful** firewall, one that tracks open connections, lets them through without rules of their own. A stateless one, like an AWS network ACL, needs rules for the replies too ([more on that](/primers/networking/aws-vpc-subnets/#security-groups-and-network-acls)). For the example, the whole list is short:
 
 | From | To | Port | Why |
 |---|---|---|---|
-| `lab-pc-07` | `nas01` | TCP 445 | Write results over SMB |
+| `pc01` | `nas01` | TCP 445 | Write reports over SMB |
 | `collector01` | `nas01` | TCP 445, or TCP 2049 for NFS | Read new files |
 | `collector01` | The application | TCP 443, through the VPN | Upload |
 
-Nothing outside the lab connects in to `nas01`, and port 445 never crosses the lab's firewall. Writing the flows down this way, one row per connection with its direction, is also what a firewall team needs before it will open anything.
+Nothing outside the office connects in to `nas01`, and port 445 never crosses the office firewall. Writing the flows down this way, one row per connection with its direction, is also what a firewall team needs before it will open anything.
 
 ## Checking it from a client
 
@@ -124,11 +124,11 @@ Test-NetConnection nas01.example.com -CommonTCPPort SMB
 Then mount the share. On Linux, `mount -t cifs` mounts an SMB share and `username=` sets the account [@linux-mount-cifs]. On Windows, `New-SmbMapping` maps it to a drive letter, and `-RequirePrivacy $true` insists on SMB encryption [@ms-new-smbmapping, @ms-smb-security]:
 
 ```bash tab="Linux"
-sudo mount -t cifs //nas01.example.com/results /mnt/results -o username=collector
+sudo mount -t cifs //nas01.example.com/reports /mnt/reports -o username=collector
 ```
 
 ```powershell tab="Windows (PowerShell)"
-New-SmbMapping -LocalPath R: -RemotePath \\nas01.example.com\results -RequirePrivacy $true
+New-SmbMapping -LocalPath R: -RemotePath \\nas01.example.com\reports -RequirePrivacy $true
 ```
 
 To see which shares a server offers before mounting anything, `smbclient -L` lists them, with `-U` for the account to ask as [@smbclient-man]:
