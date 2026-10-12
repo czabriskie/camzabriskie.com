@@ -437,6 +437,9 @@ export const references = {
   'snia-nas': { authors: 'SNIA', title: 'Network attached storage (NAS)', container: 'SNIA Online Dictionary', url: 'https://www.snia.org/education/online-dictionary/term/network-attached-storage', accessed: '2026-10-12' },
   'techtarget-nas-san-das': { authors: 'R. Castagna', title: 'NAS vs. SAN vs. DAS: Key differences and best use cases', container: 'TechTarget', date: 'May 2026', url: 'https://www.techtarget.com/searchstorage/answer/The-difference-between-SAN-and-NAS', accessed: '2026-10-12' },
   'openbsd-nc': { authors: 'OpenBSD', title: 'nc(1)', container: 'OpenBSD manual pages', url: 'https://man.openbsd.org/nc.1', accessed: '2026-10-12' },
+  // Shared by the OSI/CIDR and network file shares primers
+  'openbsd-nc': { authors: 'OpenBSD', title: 'nc(1): arbitrary TCP and UDP connections and listens', container: 'OpenBSD manual pages', url: 'https://man.openbsd.org/nc.1', accessed: '2026-10-12' },
+  'ms-test-netconnection': { authors: 'Microsoft', title: 'Test-NetConnection', container: 'PowerShell NetTCPIP module reference', url: 'https://learn.microsoft.com/en-us/powershell/module/nettcpip/test-netconnection', accessed: '2026-10-12' },
 };
 
 const MONTHS = ['Jan.', 'Feb.', 'Mar.', 'Apr.', 'May', 'Jun.', 'Jul.', 'Aug.', 'Sep.', 'Oct.', 'Nov.', 'Dec.'];
