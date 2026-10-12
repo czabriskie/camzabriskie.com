@@ -5,18 +5,18 @@ order: 11
 updated: 2026-10-12
 ---
 
-A Windows PC exports a report file every night, and another machine needs to read those files. The usual answer is a **network file share**: the PC writes into a shared folder on a storage box on the same network, and the other machine reads from that same folder. Nobody copies files by hand, and each machine's access to the folder is a network connection with a port and a direction.
+Two colleagues on the same team need the same files: one saves a spreadsheet, and the other opens it a minute later from a different computer. The usual answer is a **network file share**, a shared folder on a storage box on the office network that both of their computers can open. Nobody emails attachments back and forth, and each computer's access to the folder is a network connection with a port and a direction.
 
 The example below follows one setup through the whole primer:
 
-- `pc01`, a Windows PC, writes reports to `\\nas01.example.com\reports`.
+- `pc01`, one colleague's Windows PC, opens the team folder as `\\nas01.example.com\team`.
+- `pc02`, the other colleague's Linux PC, opens the same folder.
 - `nas01.example.com`, a storage box on the office network, holds the shared folder.
-- `pc02`, a Linux machine, reads the new files from the same share.
 
 ## A few terms
 
 - **Share**: a folder that one machine makes available to others over the network.
-- **Mount**: attach a share so it appears as part of the local file system, as a drive letter like `R:` on Windows or a folder like `/mnt/reports` on Linux.
+- **Mount**: attach a share so it appears as part of the local file system, as a drive letter like `R:` on Windows or a folder like `/mnt/team` on Linux.
 - **File system**: the part of an operating system that turns raw disk space into files and folders, with names, sizes, and permissions.
 - **SMB** (Server Message Block): the file-sharing protocol Windows uses [@ms-smb-overview].
 - **NFS** (Network File System): the file-sharing protocol most Linux and Unix machines use [@rfc7530].
@@ -38,7 +38,7 @@ Storage comes in three broad shapes, and the useful difference between them is w
 
 Sources for the table: TechTarget's comparison of the three [@techtarget-nas-san-das] and SNIA's definition of a NAS [@snia-nas].
 
-A SAN hands out raw disk space, called **block storage**, and the server that uses it formats it with its own file system, so to that server it looks like a local disk. A NAS keeps the file system to itself and hands out files. That's why a NAS is the one to reach for when several machines need the same folder: they all send requests like "open `report-0412.csv`" to the NAS, and the NAS sorts out names and permissions in one place. The rest of this primer is about NAS-style sharing, SMB and NFS.
+A SAN hands out raw disk space, called **block storage**, and the server that uses it formats it with its own file system, so to that server it looks like a local disk. A NAS keeps the file system to itself and hands out files. That's why a NAS is the one to reach for when several machines need the same folder: they all send requests like "open `budget.xlsx`" to the NAS, and the NAS sorts out names and permissions in one place. The rest of this primer is about NAS-style sharing, SMB and NFS.
 
 ## SMB
 
@@ -58,7 +58,7 @@ In 2017 the WannaCry ransomware spread between machines by connecting to TCP por
 NFS is the Unix side's equivalent. A Linux machine **mounts** an **export**, a folder the NFS server shares, into a local folder, and from then on programs use it like any other directory. The line in `/etc/fstab` that mounts one at boot looks like this [@linux-nfs-man]:
 
 ```text
-nas01.example.com:/exports/reports  /mnt/reports  nfs  defaults  0 0
+nas01.example.com:/exports/team  /mnt/team  nfs  defaults  0 0
 ```
 
 - **Port**: NFS uses TCP port 2049. With NFS version 4 on that standard port, the client doesn't need a separate lookup service to find the server's NFS port, which is what lets it pass through a firewall with a single rule [@rfc7530].
@@ -67,18 +67,18 @@ nas01.example.com:/exports/reports  /mnt/reports  nfs  defaults  0 0
 
 ## Which way the connections go
 
-<div class="share-flow" role="img" aria-label="The example's connections. pc01, a Windows PC, opens an SMB connection on TCP port 445 to nas01 and writes report files. pc02, a Linux machine, also opens a connection to nas01, on TCP 445 for SMB or TCP 2049 for NFS, and reads the files. nas01 never opens a connection to either of them.">
+<div class="share-flow" role="img" aria-label="The example's connections. pc01, a Windows PC, opens an SMB connection on TCP port 445 to nas01 to save and open files in the team folder. pc02, a Linux PC, also opens a connection to nas01, on TCP 445 for SMB or TCP 2049 for NFS, to work with the same files. nas01 never opens a connection to either of them.">
 <svg viewBox="0 0 400 150" aria-hidden="true" focusable="false">
 <defs><marker id="sf-head" viewBox="0 0 8 8" refX="7" refY="4" markerUnits="userSpaceOnUse" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="sf-arrowhead" d="M0,0 L8,4 L0,8 z"/></marker></defs>
 <rect class="sf-box" x="30" y="16" width="110" height="40" rx="4"/>
 <text class="sf-name" x="85" y="33">pc01</text>
-<text class="sf-small" x="85" y="46">Windows, writes</text>
+<text class="sf-small" x="85" y="46">Windows</text>
 <rect class="sf-box" x="30" y="94" width="110" height="40" rx="4"/>
 <text class="sf-name" x="85" y="111">pc02</text>
-<text class="sf-small" x="85" y="124">Linux, reads</text>
+<text class="sf-small" x="85" y="124">Linux</text>
 <rect class="sf-box sf-nas" x="260" y="53" width="110" height="44" rx="4"/>
 <text class="sf-name" x="315" y="71">nas01</text>
-<text class="sf-small" x="315" y="85">the share</text>
+<text class="sf-small" x="315" y="85">the team folder</text>
 <line class="sf-arrow" x1="141" y1="40" x2="258" y2="68" marker-end="url(#sf-head)"/>
 <text class="sf-label" x="200" y="42">SMB 445</text>
 <line class="sf-arrow" x1="141" y1="110" x2="258" y2="82" marker-end="url(#sf-head)"/>
@@ -93,8 +93,8 @@ Each arrow is one connection, opened by the machine at its tail to a port on the
 
 | From | To | Port | Why |
 |---|---|---|---|
-| `pc01` | `nas01` | TCP 445 | Write reports over SMB |
-| `pc02` | `nas01` | TCP 445, or TCP 2049 for NFS | Read the reports |
+| `pc01` | `nas01` | TCP 445 | Save and open files over SMB |
+| `pc02` | `nas01` | TCP 445, or TCP 2049 for NFS | Save and open the same files |
 
 The NAS only ever answers. If anything sits between these machines that filters traffic, those two rows are all it needs to allow.
 
@@ -113,17 +113,17 @@ Test-NetConnection nas01.example.com -CommonTCPPort SMB
 Then mount the share. On Linux, `mount -t cifs` mounts an SMB share and `username=` sets the account [@linux-mount-cifs]. On Windows, `New-SmbMapping` maps it to a drive letter, and `-RequirePrivacy $true` insists on SMB encryption [@ms-new-smbmapping, @ms-smb-security]:
 
 ```bash tab="Linux"
-sudo mount -t cifs //nas01.example.com/reports /mnt/reports -o username=reader
+sudo mount -t cifs //nas01.example.com/team /mnt/team -o username=pc02user
 ```
 
 ```powershell tab="Windows (PowerShell)"
-New-SmbMapping -LocalPath R: -RemotePath \\nas01.example.com\reports -RequirePrivacy $true
+New-SmbMapping -LocalPath R: -RemotePath \\nas01.example.com\team -RequirePrivacy $true
 ```
 
 To see which shares a server offers before mounting anything, `smbclient -L` lists them, with `-U` for the account to ask as [@smbclient-man]:
 
 ```bash
-smbclient -L nas01.example.com -U reader
+smbclient -L nas01.example.com -U pc02user
 ```
 
 If the port check fails, the problem is the network path, or something on it blocking the port. If it succeeds and mounting fails, the problem is the account, its permissions on the share, or an encryption or version setting the two ends can't agree on.
