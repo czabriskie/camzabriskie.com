@@ -616,6 +616,25 @@ ul.references .cited-in { display: block; color: var(--muted); margin-top: 0.2re
 .air-flow .air-arrow { stroke: var(--muted); stroke-width: 1.2; }
 .air-flow .air-arrowhead { fill: var(--muted); }
 
+/* Deploying to on-prem Windows: which machine opens the connection */
+.conn-dir { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+.conn-dir svg { display: block; width: 100%; height: auto; }
+.conn-dir text { text-anchor: middle; }
+.conn-dir .cd-zone { font: 600 9px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.conn-dir .cd-wall { fill: color-mix(in srgb, var(--muted) 25%, transparent); stroke: var(--muted); stroke-width: 0.8; }
+.conn-dir .cd-wall-label { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.conn-dir .cd-box { fill: var(--surface); stroke: var(--muted); stroke-width: 1; }
+.conn-dir .cd-server { stroke: var(--ink); }
+.conn-dir .cd-name { font: 600 10px 'Bricolage Grotesque', sans-serif; fill: var(--ink); }
+.conn-dir .cd-small { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.conn-dir .cd-label { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.conn-dir .cd-in-label { fill: var(--tech); }
+.conn-dir .cd-start { text-anchor: start; }
+.conn-dir .cd-arrow { stroke: var(--muted); stroke-width: 1.4; }
+.conn-dir .cd-in { stroke: var(--tech); stroke-width: 1.8; }
+.conn-dir .cd-arrowhead { fill: var(--muted); }
+.conn-dir .cd-arrowhead-in { fill: var(--tech); }
+
 /* Kubernetes object size limits: where the check happens, and how a loop multiplies size */
 .k8s-path, .k8s-size { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
 .k8s-path svg, .k8s-size svg { display: block; width: 100%; height: auto; }

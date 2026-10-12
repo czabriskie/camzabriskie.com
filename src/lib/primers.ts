@@ -18,6 +18,11 @@ export const topics = [
     blurb: 'The limits and rules the cluster enforces, and what to do when a deploy hits one.',
   },
   {
+    slug: 'deployment',
+    title: 'Deployment',
+    blurb: 'How software gets onto servers you do not fully control, and what each approach needs from the network.',
+  },
+  {
     slug: 'philosophy',
     title: 'Philosophy',
     blurb: 'The history of ideas, starting with the first people to ask what everything is made of.',
