@@ -5,13 +5,13 @@ order: 11
 updated: 2026-10-12
 ---
 
-A Windows PC exports a report file every night, and an application somewhere else needs those files. The usual answer is a **network file share**: the PC writes into a shared folder on a storage box in the same building, and a separate collector service on another machine watches that folder, picks up each new file, and sends it on to the application, maybe in the cloud over a VPN. Nothing in that chain copies files by hand, and every hop is a network connection with a port and a direction, which is what decides whether the firewalls let it happen.
+A Windows PC exports a report file every night, and another machine needs to read those files. The usual answer is a **network file share**: the PC writes into a shared folder on a storage box on the same network, and the other machine reads from that same folder. Nobody copies files by hand, and each machine's access to the folder is a network connection with a port and a direction.
 
 The example below follows one setup through the whole primer:
 
 - `pc01`, a Windows PC, writes reports to `\\nas01.example.com\reports`.
 - `nas01.example.com`, a storage box on the office network, holds the shared folder.
-- `collector01`, a Linux server, reads new files from the same share and uploads them to the application over HTTPS.
+- `pc02`, a Linux machine, reads the new files from the same share.
 
 ## A few terms
 
@@ -21,7 +21,7 @@ The example below follows one setup through the whole primer:
 - **SMB** (Server Message Block): the file-sharing protocol Windows uses [@ms-smb-overview].
 - **NFS** (Network File System): the file-sharing protocol most Linux and Unix machines use [@rfc7530].
 - **NAS** (network-attached storage): a storage device that connects to a network and provides file access to clients [@snia-nas], usually over SMB, NFS, or both.
-- **Client and server**: the **client** is the machine that opens the connection and asks for files, and the **server** is the one that holds them and answers [@ms-smb-overview]. In the example, `pc01` and `collector01` are both clients, and `nas01` is the server.
+- **Client and server**: the **client** is the machine that opens the connection and asks for files, and the **server** is the one that holds them and answers [@ms-smb-overview]. In the example, `pc01` and `pc02` are both clients, and `nas01` is the server.
 
 ## Where the file system lives: NAS, SAN, and local disks
 
@@ -67,51 +67,40 @@ nas01.example.com:/exports/reports  /mnt/reports  nfs  defaults  0 0
 
 ## Which way the connections go
 
-<div class="share-flow" role="img" aria-label="The example's connections. Inside the office network, pc01 opens an SMB connection on TCP 445 to nas01 and writes report files. collector01 also opens a connection to nas01, on TCP 445 for SMB or TCP 2049 for NFS, and reads the new files. Then collector01 opens an HTTPS connection on port 443 out through the firewall and a VPN to the application in the cloud. nas01 never opens a connection to anything, and nothing outside opens a connection in.">
-<svg viewBox="0 0 400 200" aria-hidden="true" focusable="false">
+<div class="share-flow" role="img" aria-label="The example's connections. pc01, a Windows PC, opens an SMB connection on TCP port 445 to nas01 and writes report files. pc02, a Linux machine, also opens a connection to nas01, on TCP 445 for SMB or TCP 2049 for NFS, and reads the files. nas01 never opens a connection to either of them.">
+<svg viewBox="0 0 400 150" aria-hidden="true" focusable="false">
 <defs><marker id="sf-head" viewBox="0 0 8 8" refX="7" refY="4" markerUnits="userSpaceOnUse" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="sf-arrowhead" d="M0,0 L8,4 L0,8 z"/></marker></defs>
-<rect class="sf-zone" x="4" y="22" width="268" height="172" rx="6"/>
-<text class="sf-zone-label" x="12" y="15">office network</text>
-<text class="sf-zone-label sf-end" x="396" y="15">elsewhere</text>
-<rect class="sf-box" x="16" y="38" width="96" height="40" rx="4"/>
-<text class="sf-name" x="64" y="55">pc01</text>
-<text class="sf-small" x="64" y="68">Windows, writes</text>
-<rect class="sf-box sf-nas" x="160" y="84" width="100" height="44" rx="4"/>
-<text class="sf-name" x="210" y="102">nas01</text>
-<text class="sf-small" x="210" y="116">the share</text>
-<rect class="sf-box" x="16" y="140" width="96" height="40" rx="4"/>
-<text class="sf-name" x="64" y="157">collector01</text>
-<text class="sf-small" x="64" y="170">Linux, reads</text>
-<line class="sf-arrow" x1="112" y1="64" x2="158" y2="94" marker-end="url(#sf-head)"/>
-<text class="sf-label sf-start" x="142" y="64">SMB 445</text>
-<line class="sf-arrow" x1="112" y1="154" x2="158" y2="120" marker-end="url(#sf-head)"/>
-<text class="sf-label sf-start" x="168" y="142">SMB 445 or</text>
-<text class="sf-label sf-start" x="168" y="152">NFS 2049</text>
-<rect class="sf-wall" x="278" y="22" width="8" height="172" rx="2"/>
-<text class="sf-zone-label sf-mid" x="282" y="15">firewall</text>
-<rect class="sf-box" x="300" y="140" width="94" height="40" rx="4"/>
-<text class="sf-name" x="347" y="157">application</text>
-<text class="sf-small" x="347" y="170">in the cloud</text>
-<line class="sf-arrow sf-out" x1="112" y1="168" x2="298" y2="168" marker-end="url(#sf-head)"/>
-<text class="sf-label sf-out-label" x="205" y="182">HTTPS 443 over a VPN</text>
+<rect class="sf-box" x="30" y="16" width="110" height="40" rx="4"/>
+<text class="sf-name" x="85" y="33">pc01</text>
+<text class="sf-small" x="85" y="46">Windows, writes</text>
+<rect class="sf-box" x="30" y="94" width="110" height="40" rx="4"/>
+<text class="sf-name" x="85" y="111">pc02</text>
+<text class="sf-small" x="85" y="124">Linux, reads</text>
+<rect class="sf-box sf-nas" x="260" y="53" width="110" height="44" rx="4"/>
+<text class="sf-name" x="315" y="71">nas01</text>
+<text class="sf-small" x="315" y="85">the share</text>
+<line class="sf-arrow" x1="141" y1="40" x2="258" y2="68" marker-end="url(#sf-head)"/>
+<text class="sf-label" x="200" y="42">SMB 445</text>
+<line class="sf-arrow" x1="141" y1="110" x2="258" y2="82" marker-end="url(#sf-head)"/>
+<text class="sf-label" x="200" y="114">SMB 445 or</text>
+<text class="sf-label" x="200" y="124">NFS 2049</text>
 </svg>
 </div>
 
-<p class="bitgrid-caption">Arrows point from the machine that opens each connection. Both clients connect to the NAS, the NAS never connects to anything, and only the collector reaches outside the office network.</p>
+<p class="bitgrid-caption">Arrows point from the machine that opens each connection. Both PCs connect to the NAS, and the NAS never connects to either of them.</p>
 
-Each arrow is one rule a firewall has to allow, from the machine that opens the connection to the port on the other end. The replies travel back over the same connection, and a **stateful** firewall, one that tracks open connections, lets them through without rules of their own. A stateless one, like an AWS network ACL, needs rules for the replies too ([more on that](/primers/networking/aws-vpc-subnets/#security-groups-and-network-acls)). For the example, the whole list is short:
+Each arrow is one connection, opened by the machine at its tail to a port on the machine at its head, and the replies come back over that same connection. Written out one row per connection:
 
 | From | To | Port | Why |
 |---|---|---|---|
 | `pc01` | `nas01` | TCP 445 | Write reports over SMB |
-| `collector01` | `nas01` | TCP 445, or TCP 2049 for NFS | Read new files |
-| `collector01` | The application | TCP 443, through the VPN | Upload |
+| `pc02` | `nas01` | TCP 445, or TCP 2049 for NFS | Read the reports |
 
-Nothing outside the office connects in to `nas01`, and port 445 never crosses the office firewall. Writing the flows down this way, one row per connection with its direction, is also what a firewall team needs before it will open anything.
+The NAS only ever answers. If anything sits between these machines that filters traffic, those two rows are all it needs to allow.
 
 ## Checking it from a client
 
-First check that the port is reachable at all, before worrying about permissions. On `collector01`, `nc -z` tries to connect without sending anything [@openbsd-nc]. On Windows, `Test-NetConnection` has a shortcut for the SMB port [@ms-test-netconnection]:
+First check that the port is reachable at all, before worrying about permissions. On `pc02`, `nc -z` tries to connect without sending anything [@openbsd-nc]. On Windows, `Test-NetConnection` has a shortcut for the SMB port [@ms-test-netconnection]:
 
 ```bash tab="macOS / Linux"
 nc -vz nas01.example.com 445
@@ -124,7 +113,7 @@ Test-NetConnection nas01.example.com -CommonTCPPort SMB
 Then mount the share. On Linux, `mount -t cifs` mounts an SMB share and `username=` sets the account [@linux-mount-cifs]. On Windows, `New-SmbMapping` maps it to a drive letter, and `-RequirePrivacy $true` insists on SMB encryption [@ms-new-smbmapping, @ms-smb-security]:
 
 ```bash tab="Linux"
-sudo mount -t cifs //nas01.example.com/reports /mnt/reports -o username=collector
+sudo mount -t cifs //nas01.example.com/reports /mnt/reports -o username=reader
 ```
 
 ```powershell tab="Windows (PowerShell)"
@@ -134,7 +123,7 @@ New-SmbMapping -LocalPath R: -RemotePath \\nas01.example.com\reports -RequirePri
 To see which shares a server offers before mounting anything, `smbclient -L` lists them, with `-U` for the account to ask as [@smbclient-man]:
 
 ```bash
-smbclient -L nas01.example.com -U collector
+smbclient -L nas01.example.com -U reader
 ```
 
-If the port check fails, the problem is the network path or a firewall. If it succeeds and mounting fails, the problem is the account, its permissions on the share, or an encryption or version setting the two ends can't agree on.
+If the port check fails, the problem is the network path, or something on it blocking the port. If it succeeds and mounting fails, the problem is the account, its permissions on the share, or an encryption or version setting the two ends can't agree on.
