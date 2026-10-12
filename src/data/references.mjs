@@ -414,6 +414,14 @@ export const references = {
   'ansible-windows-winrm': { authors: 'Ansible project contributors', title: 'Windows Remote Management', container: 'Ansible Community Documentation', url: 'https://docs.ansible.com/projects/ansible/latest/os_guide/windows_winrm.html', accessed: '2026-10-12' },
   'ansible-intro-windows': { authors: 'Ansible project contributors', title: 'Managing Windows hosts with Ansible', container: 'Ansible Community Documentation', url: 'https://docs.ansible.com/projects/ansible/latest/os_guide/intro_windows.html', accessed: '2026-10-12' },
   'ansible-install': { authors: 'Ansible project contributors', title: 'Installing Ansible', container: 'Ansible Community Documentation', url: 'https://docs.ansible.com/projects/ansible/latest/installation_guide/intro_installation.html', accessed: '2026-10-12' },
+  'ansible-win-ping': { authors: 'Ansible project contributors', title: 'ansible.windows.win_ping module', container: 'Ansible Community Documentation', url: 'https://docs.ansible.com/projects/ansible/latest/collections/ansible/windows/win_ping_module.html', accessed: '2026-10-12' },
+  'aws-ssm-hybrid-activation': { ...aws('Create a hybrid activation to register nodes with Systems Manager', 'AWS Systems Manager User Guide', 'https://docs.aws.amazon.com/systems-manager/latest/userguide/hybrid-activation-managed-nodes.html'), accessed: '2026-10-12' },
+  'aws-ssm-vpc-endpoints': { ...aws('Improve the security of EC2 instances by using VPC endpoints for Systems Manager', 'AWS Systems Manager User Guide', 'https://docs.aws.amazon.com/systems-manager/latest/userguide/setup-create-vpc.html'), accessed: '2026-10-12' },
+  'aws-ssm-ansible': { ...aws('Creating associations that run Ansible playbooks', 'AWS Systems Manager User Guide', 'https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-state-manager-ansible.html'), accessed: '2026-10-12' },
+  'aws-ssm-pricing': { authors: 'Amazon Web Services', title: 'AWS Systems Manager pricing', url: 'https://aws.amazon.com/systems-manager/pricing/', accessed: '2026-10-12' },
+  'ms-msiexec': { authors: 'Microsoft', title: 'msiexec', container: 'Windows Server Documentation', url: 'https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/msiexec', accessed: '2026-10-12' },
+  'ms-msi-error-codes': { authors: 'Microsoft', title: 'MsiExec.exe and InstMsi.exe error messages', container: 'Windows Installer Documentation', url: 'https://learn.microsoft.com/en-us/windows/win32/msi/error-codes', accessed: '2026-10-12' },
+  'ms-start-process': { authors: 'Microsoft', title: 'Start-Process', container: 'PowerShell 7.6 Documentation', url: 'https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.management/start-process', accessed: '2026-10-12' },
 };
 
 const MONTHS = ['Jan.', 'Feb.', 'Mar.', 'Apr.', 'May', 'Jun.', 'Jul.', 'Aug.', 'Sep.', 'Oct.', 'Nov.', 'Dec.'];
