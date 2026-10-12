@@ -403,6 +403,17 @@ export const references = {
   'helm-template': { authors: 'The Helm Authors', title: 'helm template', container: 'Helm Documentation', url: 'https://helm.sh/docs/helm/helm_template/', accessed: '2026-10-09' },
   'aws-iam-best-practices': { ...aws('Security best practices in IAM', 'AWS Identity and Access Management User Guide', 'https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html'), accessed: '2026-10-09' },
   'aws-access-analyzer-checks': { ...aws('Validate policies with IAM Access Analyzer custom policy checks', 'AWS Identity and Access Management User Guide', 'https://docs.aws.amazon.com/IAM/latest/UserGuide/access-analyzer-custom-policy-checks.html'), accessed: '2026-10-09' },
+  'aws-codedeploy-onprem': { ...aws('Working with on-premises instances for CodeDeploy', 'AWS CodeDeploy User Guide', 'https://docs.aws.amazon.com/codedeploy/latest/userguide/instances-on-premises.html'), accessed: '2026-10-12' },
+  'aws-codedeploy-onprem-prereqs': { ...aws('Prerequisites for configuring an on-premises instance', 'AWS CodeDeploy User Guide', 'https://docs.aws.amazon.com/codedeploy/latest/userguide/instances-on-premises-prerequisites.html'), accessed: '2026-10-12' },
+  'aws-codedeploy-onprem-register': { ...aws('Register an on-premises instance', 'AWS CodeDeploy User Guide', 'https://docs.aws.amazon.com/codedeploy/latest/userguide/on-premises-instances-register.html'), accessed: '2026-10-12' },
+  'aws-codedeploy-session-arn': { ...aws('Use the register-on-premises-instance command (IAM session ARN)', 'AWS CodeDeploy User Guide', 'https://docs.aws.amazon.com/codedeploy/latest/userguide/register-on-premises-instance-iam-session-arn.html'), accessed: '2026-10-12' },
+  'aws-codedeploy-agent': { ...aws('Working with the CodeDeploy agent', 'AWS CodeDeploy User Guide', 'https://docs.aws.amazon.com/codedeploy/latest/userguide/codedeploy-agent.html'), accessed: '2026-10-12' },
+  'aws-codedeploy-hooks': { ...aws('AppSpec "hooks" section', 'AWS CodeDeploy User Guide', 'https://docs.aws.amazon.com/codedeploy/latest/userguide/reference-appspec-file-structure-hooks.html'), accessed: '2026-10-12' },
+  'aws-codedeploy-appspec-example': { ...aws('AppSpec file example', 'AWS CodeDeploy User Guide', 'https://docs.aws.amazon.com/codedeploy/latest/userguide/reference-appspec-file-example.html'), accessed: '2026-10-12' },
+  'aws-ssm-run-command': { ...aws('AWS Systems Manager Run Command', 'AWS Systems Manager User Guide', 'https://docs.aws.amazon.com/systems-manager/latest/userguide/run-command.html'), accessed: '2026-10-12' },
+  'ansible-windows-winrm': { authors: 'Ansible project contributors', title: 'Windows Remote Management', container: 'Ansible Community Documentation', url: 'https://docs.ansible.com/projects/ansible/latest/os_guide/windows_winrm.html', accessed: '2026-10-12' },
+  'ansible-intro-windows': { authors: 'Ansible project contributors', title: 'Managing Windows hosts with Ansible', container: 'Ansible Community Documentation', url: 'https://docs.ansible.com/projects/ansible/latest/os_guide/intro_windows.html', accessed: '2026-10-12' },
+  'ansible-install': { authors: 'Ansible project contributors', title: 'Installing Ansible', container: 'Ansible Community Documentation', url: 'https://docs.ansible.com/projects/ansible/latest/installation_guide/intro_installation.html', accessed: '2026-10-12' },
 };
 
 const MONTHS = ['Jan.', 'Feb.', 'Mar.', 'Apr.', 'May', 'Jun.', 'Jul.', 'Aug.', 'Sep.', 'Oct.', 'Nov.', 'Dec.'];
