@@ -422,6 +422,9 @@ export const references = {
   'ms-msiexec': { authors: 'Microsoft', title: 'msiexec', container: 'Windows Server Documentation', url: 'https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/msiexec', accessed: '2026-10-12' },
   'ms-msi-error-codes': { authors: 'Microsoft', title: 'MsiExec.exe and InstMsi.exe error messages', container: 'Windows Installer Documentation', url: 'https://learn.microsoft.com/en-us/windows/win32/msi/error-codes', accessed: '2026-10-12' },
   'ms-start-process': { authors: 'Microsoft', title: 'Start-Process', container: 'PowerShell 7.6 Documentation', url: 'https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.management/start-process', accessed: '2026-10-12' },
+  // Shared by the OSI/CIDR and network file shares primers
+  'openbsd-nc': { authors: 'OpenBSD', title: 'nc(1): arbitrary TCP and UDP connections and listens', container: 'OpenBSD manual pages', url: 'https://man.openbsd.org/nc.1', accessed: '2026-10-12' },
+  'ms-test-netconnection': { authors: 'Microsoft', title: 'Test-NetConnection', container: 'PowerShell NetTCPIP module reference', url: 'https://learn.microsoft.com/en-us/powershell/module/nettcpip/test-netconnection', accessed: '2026-10-12' },
 };
 
 const MONTHS = ['Jan.', 'Feb.', 'Mar.', 'Apr.', 'May', 'Jun.', 'Jul.', 'Aug.', 'Sep.', 'Oct.', 'Nov.', 'Dec.'];
