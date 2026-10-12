@@ -422,6 +422,21 @@ export const references = {
   'ms-msiexec': { authors: 'Microsoft', title: 'msiexec', container: 'Windows Server Documentation', url: 'https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/msiexec', accessed: '2026-10-12' },
   'ms-msi-error-codes': { authors: 'Microsoft', title: 'MsiExec.exe and InstMsi.exe error messages', container: 'Windows Installer Documentation', url: 'https://learn.microsoft.com/en-us/windows/win32/msi/error-codes', accessed: '2026-10-12' },
   'ms-start-process': { authors: 'Microsoft', title: 'Start-Process', container: 'PowerShell 7.6 Documentation', url: 'https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.management/start-process', accessed: '2026-10-12' },
+  // Network file shares
+  'ms-smb-overview': { authors: 'Microsoft', title: 'What is SMB file sharing for Windows and Windows Server?', container: 'Windows Server Documentation', url: 'https://learn.microsoft.com/en-us/windows-server/storage/file-server/file-server-smb-overview', accessed: '2026-10-12' },
+  'ms-smb-secure-traffic': { authors: 'Microsoft', title: 'Secure SMB traffic in Windows Server', container: 'Windows Server Documentation', url: 'https://learn.microsoft.com/en-us/windows-server/storage/file-server/smb-secure-traffic', accessed: '2026-10-12' },
+  'ms-smb-security': { authors: 'Microsoft', title: 'SMB security enhancements', container: 'Windows Server Documentation', url: 'https://learn.microsoft.com/en-us/windows-server/storage/file-server/smb-security', accessed: '2026-10-12' },
+  'ms-new-smbmapping': { authors: 'Microsoft', title: 'New-SmbMapping', container: 'Windows PowerShell Documentation (SmbShare)', url: 'https://learn.microsoft.com/en-us/powershell/module/smbshare/new-smbmapping', accessed: '2026-10-12' },
+  'ms-test-netconnection': { authors: 'Microsoft', title: 'Test-NetConnection', container: 'Windows PowerShell Documentation (NetTCPIP)', url: 'https://learn.microsoft.com/en-us/powershell/module/nettcpip/test-netconnection', accessed: '2026-10-12' },
+  'cisa-wannacry': { authors: 'CISA', title: 'Indicators Associated With WannaCry Ransomware', container: 'Cybersecurity and Infrastructure Security Agency Alerts', date: 'May 2017', url: 'https://www.cisa.gov/news-events/alerts/2017/05/12/indicators-associated-wannacry-ransomware', accessed: '2026-10-12' },
+  rfc7530: { ...rfc(7530, ['T. Haynes', 'D. Noveck'], 'Network File System (NFS) Version 4 Protocol', 'Mar. 2015'), accessed: '2026-10-12' },
+  'linux-nfs-man': { authors: 'The Linux man-pages project', title: 'nfs(5)', container: 'Linux manual pages', url: 'https://man7.org/linux/man-pages/man5/nfs.5.html', accessed: '2026-10-12' },
+  'linux-mount-cifs': { authors: 'The Linux man-pages project', title: 'mount.cifs(8)', container: 'Linux manual pages', url: 'https://man7.org/linux/man-pages/man8/mount.cifs.8.html', accessed: '2026-10-12' },
+  samba: { authors: 'The Samba Team', title: 'Samba: Opening Windows to a Wider World', url: 'https://www.samba.org/', accessed: '2026-10-12' },
+  'smbclient-man': { authors: 'The Samba Team', title: 'smbclient(1)', container: 'Samba manual pages', url: 'https://www.samba.org/samba/docs/current/man-html/smbclient.1.html', accessed: '2026-10-12' },
+  'snia-nas': { authors: 'SNIA', title: 'Network attached storage (NAS)', container: 'SNIA Online Dictionary', url: 'https://www.snia.org/education/online-dictionary/term/network-attached-storage', accessed: '2026-10-12' },
+  'techtarget-nas-san-das': { authors: 'R. Castagna', title: 'NAS vs. SAN vs. DAS: Key differences and best use cases', container: 'TechTarget', date: 'May 2026', url: 'https://www.techtarget.com/searchstorage/answer/The-difference-between-SAN-and-NAS', accessed: '2026-10-12' },
+  'openbsd-nc': { authors: 'OpenBSD', title: 'nc(1)', container: 'OpenBSD manual pages', url: 'https://man.openbsd.org/nc.1', accessed: '2026-10-12' },
 };
 
 const MONTHS = ['Jan.', 'Feb.', 'Mar.', 'Apr.', 'May', 'Jun.', 'Jul.', 'Aug.', 'Sep.', 'Oct.', 'Nov.', 'Dec.'];

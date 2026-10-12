@@ -92,6 +92,11 @@ export const sections: Record<string, { title: string; blurb?: string; notes: st
       blurb: "The same ideas inside AWS: VPCs, reaching private resources, and firewalls. Skip this part if you don't use AWS.",
       notes: ['aws-vpc-subnets', 'reaching-private-resources', 'firewalls'],
     },
+    {
+      title: 'Files on the network',
+      blurb: 'How machines share folders: SMB, NFS, and the storage behind them.',
+      notes: ['network-file-shares'],
+    },
   ],
 };
 
