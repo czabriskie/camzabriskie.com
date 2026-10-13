@@ -16,7 +16,7 @@ An MCP server gives an AI assistant tools it doesn't have on its own, such as qu
 - **Subprocess**: a program started by another program, which can then read its output and write to its input.
 - **stdin, stdout, stderr**: the three text streams every process on macOS, Linux, and Windows has. A program reads **stdin** (standard input), writes results to **stdout** (standard output), and writes diagnostics to **stderr** (standard error).
 
-## What stdio means
+## How stdio works
 
 The examples in this primer use one made-up server called `notes-server`, a Python program that lets an assistant search a folder of notes. It lives in `/Users/example/projects/notes-server`.
 
