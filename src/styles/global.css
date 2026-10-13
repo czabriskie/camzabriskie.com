@@ -891,3 +891,19 @@ details.aside[open] summary { margin-bottom: 0.4rem; }
 .jvm-budget .jb-name { font: 600 9.5px 'Bricolage Grotesque', sans-serif; text-anchor: middle; fill: var(--ink); }
 .jvm-budget .jb-small { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; text-anchor: middle; fill: var(--muted); }
 .jvm-budget .jb-edge { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--ink); }
+
+/* Why a pod keeps restarting: liveness probe timeline */
+.probe-timeline { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+.probe-timeline svg { display: block; width: 100%; height: auto; }
+.probe-timeline text { text-anchor: middle; }
+.probe-timeline .pt-axis { stroke: var(--muted); stroke-width: 1.2; }
+.probe-timeline .pt-arrowhead { fill: var(--muted); }
+.probe-timeline .pt-mark { stroke: var(--ink); stroke-width: 1.2; }
+.probe-timeline .pt-fail { fill: color-mix(in srgb, var(--muted) 30%, transparent); stroke: var(--muted); stroke-width: 1; }
+.probe-timeline .pt-signal { stroke: var(--tech); stroke-width: 1.6; }
+.probe-timeline .pt-span { stroke: var(--tech); stroke-width: 1; stroke-dasharray: 3 2; }
+.probe-timeline .pt-tick, .probe-timeline .pt-small { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.probe-timeline .pt-label { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--ink); }
+.probe-timeline .pt-hot { fill: var(--tech); }
+.probe-timeline .pt-start { text-anchor: start; }
+.probe-timeline .pt-end { text-anchor: end; }
