@@ -219,7 +219,11 @@ Socrates' answer takes the rest of the book. Justice is easier to see in somethi
 
 ### Justice in the city and in the soul
 
-The ideal city has three classes of people, and Plato says a person's soul has three matching parts [@sep-plato-ethics-politics, @pt-004]:
+The ideal city has three classes of people, and Plato says a person's soul has three matching parts [@sep-plato-ethics-politics, @pt-004].
+
+**Guardians** is Plato's word for the people who look after the city, and he uses it two ways. Broadly, it means the two upper classes together, the rulers and the soldiers: the people the city chooses, raises, and trains for the job. Strictly, Plato saves "guardian" for the rulers alone and renames the young soldiers **auxiliaries**, "supporters of the principles of the rulers" [@plato-republic]. The podcast uses the broad sense and has the rulers picked from the best of the guardians [@pt-004], and so does this primer from here on. Either way, guardians are a minority. The farmers, craftspeople, and traders, most of the city, are not guardians.
+
+The three classes side by side:
 
 | In the city | Their job | In the soul | What it wants | In the noble lie |
 |---|---|---|---|---|
