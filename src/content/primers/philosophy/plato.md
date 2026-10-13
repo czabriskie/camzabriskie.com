@@ -156,7 +156,15 @@ Socrates explains the picture himself: the cave is the world we see, the fire is
 | The sun | The Form of the Good, which makes everything else knowable |
 | The climb out | The soul rising from what the senses show to what only thought can reach, slowly and painfully |
 
-The podcast compares it to watching football next to a pro player [@pt-004]. You're watching the same game, but the player sees what's really going on. Plato thought the philosopher who has left the cave sees everyday life that way. Coming back down, he has to argue in courtrooms "about the images or the shadows of images of justice" with people "who have never yet seen absolute justice" [@plato-republic].
+### After the climb
+
+The podcast says Plato thought a philosopher's job is to work out the Forms of as many things as they can in their lifetime [@pt-004]. Each one changes how you see the everyday version. The podcast compares it to watching football next to a pro player. You're both watching the same game, but the player sees the strategy and the small details that you miss completely [@pt-004]. Plato thought the philosopher who has left the cave sees everyday life that way.
+
+That also makes him hard to talk to. The prisoners only know the shadows, so when he talks about what's outside, they have nothing to compare it to. Plato puts him in court, still "blinking" and not used to the dark again, forced to argue "about the images or the shadows of images of justice" with people "who have never yet seen absolute justice" [@plato-republic]. He knows what justice really is and they don't, so they argue past each other, and he comes off looking ridiculous. Plato says that shouldn't surprise anyone. Laughing at someone whose eyes are still adjusting after coming down from the light makes less sense, he says, than laughing at someone who has never left the dark [@plato-republic].
+
+Plato still doesn't let him stay outside. Later in Book VII, Socrates says the people who have made the climb can't be allowed to stay up there, however much they'd like to. They "must be made to descend again among the prisoners." Once their eyes adjust to the dark, they "will see ten thousand times better than the inhabitants of the den," because they know what each shadow is a shadow of [@plato-republic]. In the *Republic*, those people go back down to rule the city. The podcast calls that kind of ruler a philosopher king. It belongs to Plato's politics, which this primer leaves for another time [@pt-004].
+
+So the duty runs both ways. Climb as high as you can, all the way to the Form of the Good, and then come back down and help the people who are still watching shadows, even if they don't want your help.
 
 ## How would anyone know a Form?
 
