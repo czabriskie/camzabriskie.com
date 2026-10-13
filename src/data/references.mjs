@@ -447,6 +447,9 @@ export const references = {
   // Shared by the OSI/CIDR and network file shares primers
   'openbsd-nc': { authors: 'OpenBSD', title: 'nc(1): arbitrary TCP and UDP connections and listens', container: 'OpenBSD manual pages', url: 'https://man.openbsd.org/nc.1', accessed: '2026-10-12' },
   'ms-test-netconnection': { authors: 'Microsoft', title: 'Test-NetConnection', container: 'PowerShell NetTCPIP module reference', url: 'https://learn.microsoft.com/en-us/powershell/module/nettcpip/test-netconnection', accessed: '2026-10-12' },
+  'mcp-transports': { authors: 'Model Context Protocol project', title: 'Transports', container: 'Model Context Protocol Specification (2025-06-18)', url: 'https://modelcontextprotocol.io/specification/2025-06-18/basic/transports', accessed: '2026-10-13' },
+  'mcp-inspector': { authors: 'Model Context Protocol project', title: 'MCP Inspector', container: 'Model Context Protocol Documentation', url: 'https://modelcontextprotocol.io/docs/tools/inspector', accessed: '2026-10-13' },
+  'vscode-mcp-servers': { authors: 'Microsoft', title: 'Add and manage MCP servers in VS Code', container: 'Visual Studio Code Documentation', url: 'https://code.visualstudio.com/docs/agent-customization/mcp-servers', accessed: '2026-10-13' },
 };
 
 const MONTHS = ['Jan.', 'Feb.', 'Mar.', 'Apr.', 'May', 'Jun.', 'Jul.', 'Aug.', 'Sep.', 'Oct.', 'Nov.', 'Dec.'];

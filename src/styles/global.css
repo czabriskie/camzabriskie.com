@@ -605,6 +605,15 @@ ul.references .cited-in { display: block; color: var(--muted); margin-top: 0.2re
 /* TLS handshake message diagram (src/scripts/tls-handshake.ts) */
 .tls-walk { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 1rem 1.1rem; margin: 1.2rem 0 1.8rem; font-size: 0.92rem; }
 .tls-walk:empty { display: none; }
+.mcp-stdio { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+.mcp-stdio svg { display: block; width: 100%; height: auto; }
+.mcp-stdio .mcp-box { fill: var(--surface); stroke: var(--muted); stroke-width: 1; }
+.mcp-stdio .mcp-server { stroke: var(--tech); stroke-width: 1.8; }
+.mcp-stdio .mcp-name { font: 600 10px 'Bricolage Grotesque', sans-serif; text-anchor: middle; fill: var(--ink); }
+.mcp-stdio .mcp-small { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; text-anchor: middle; fill: var(--muted); }
+.mcp-stdio .mcp-arrow { stroke: var(--muted); stroke-width: 1.2; }
+.mcp-stdio .mcp-dashed { stroke-dasharray: 4 3; }
+.mcp-stdio .mcp-arrowhead { fill: var(--muted); }
 .air-flow { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
 .air-flow svg { display: block; width: 100%; height: auto; }
 .air-flow .air-box { fill: var(--surface); stroke: var(--muted); stroke-width: 1; }
