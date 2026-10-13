@@ -1,7 +1,7 @@
 ---
 title: RAG, and keeping it fed from shared notes
 description: What retrieval-augmented generation is and how one question flows through it, how the search finds the right notes, and how to keep the index up to date automatically from a shared notes folder without leaking notes people shouldn't see.
-order: 1
+order: 2
 updated: 2026-10-13
 ---
 
