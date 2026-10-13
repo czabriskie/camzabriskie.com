@@ -9,10 +9,12 @@ An MCP server gives an AI assistant tools it doesn't have on its own, such as qu
 
 ## A few terms
 
-- **MCP (Model Context Protocol)**: an open standard for connecting AI applications to tools and data. Messages are encoded as JSON-RPC [@mcp-transports].
-- **Client**: the AI application, such as an editor or a command-line assistant. It decides which servers to talk to.
+- **MCP (Model Context Protocol)**: an open standard for connecting AI applications to tools and data [@mcp-spec].
+- **JSON-RPC**: the message format MCP uses. Each message is a small JSON object that names a method, like `tools/call`, and carries its arguments or its result [@mcp-spec].
+- **Client**: the AI application, such as an editor or a command-line assistant (a **CLI**, a program you run in a terminal). It decides which servers to talk to.
 - **Server**: the program that offers the tools. In this primer, a server you run or are building.
 - **Transport**: how the messages travel between the two. The spec defines two standard ones, stdio and Streamable HTTP [@mcp-transports].
+- **uv**: a Python project and package manager. `uv run` runs a command inside a project's environment, which is how the example server below is started [@uv-run].
 - **Subprocess**: a program started by another program, which can then read its output and write to its input.
 - **stdin, stdout, stderr**: the three text streams every process on macOS, Linux, and Windows has. A program reads **stdin** (standard input), writes results to **stdout** (standard output), and writes diagnostics to **stderr** (standard error).
 
@@ -40,17 +42,17 @@ With stdio, you never start `notes-server` yourself. You tell the client the com
 <line class="mcp-arrow mcp-dashed" x1="265" y1="155" x2="135" y2="155" marker-end="url(#mcp-head)"/>
 <text class="mcp-small" x="200" y="150">4 logs on stderr</text>
 </svg>
-<p class="bitgrid-caption">Replies and logs travel on separate streams. Only valid MCP messages may go on stdout.</p>
 </div>
 
-The spec adds a few rules that matter in practice [@mcp-transports]:
+<p class="bitgrid-caption">Replies and logs travel on separate streams. Only valid MCP messages may go on stdout.</p>
+
+The spec's rules for stdio [@mcp-transports]:
 
 - Each message is one line of JSON, with no line breaks inside it.
 - The server must not write anything to stdout that isn't a valid MCP message.
 - The client must not write anything to the server's stdin that isn't a valid MCP message.
-- Clients should support stdio whenever possible.
 
-The first rule explains the most common stdio bug. A stray `print("starting up")` in the server lands on stdout, the client reads it as a message, and the connection fails. Logging belongs on stderr.
+The second rule explains the most common stdio bug. A stray `print("starting up")` in the server lands on stdout, the client reads it as a message, and the connection fails. Logging belongs on stderr.
 
 ## Registering a server with a client
 
@@ -72,7 +74,7 @@ VS Code reads the same entry from `.vscode/mcp.json`, where the top-level key is
 
 Three details in that entry prevent most "it works in my terminal but not in the client" problems:
 
-- **Use an absolute directory.** The client's working directory is whatever it was launched from, not your project. The `--directory` flag tells `uv` where the project is. Other runners have an equivalent, or you can give the full path to the script.
+- **Use an absolute directory.** The client's working directory is whatever it was launched from, not your project. The `--directory` flag makes `uv` change to the project's directory before running anything [@uv-cli]. Other runners have an equivalent, or you can give the full path to the script.
 - **Put secrets in `env`, or use the client's input prompts, and keep them out of the file you commit.** VS Code's docs warn against hardcoding API keys in `mcp.json` [@vscode-mcp-servers].
 - **Check where the config applies.** A workspace file applies to one project, and a user-level file applies everywhere. Registering the same server in both can show every tool twice.
 
@@ -86,14 +88,14 @@ A stdio server is a program running on your machine with your permissions. VS Co
 
 ## The edit, restart, test loop
 
-The client starts the server when a session begins and ends it when the session closes, so a running server never sees edits made after it started. The loop for changing a server is:
+The client starts the server when a session begins and ends it when the session closes: it closes the server's stdin, waits for it to exit, and stops it by force only if it doesn't. A server should exit promptly when its stdin closes [@mcp-transports]. Either way, a running server never sees edits made after it started. The loop for changing a server is:
 
 1. Edit the server's code.
 2. Restart the client session, or use the client's restart command for that one server.
 3. Call the changed tool from the assistant.
 4. Run the project's own tests before committing.
 
-Step 4 matters because a session with an assistant exercises one path once. A unit test exercises the tool's logic every time, without needing the client at all.
+A session with an assistant exercises one path once, while a unit test exercises the tool's logic every time, without needing the client at all.
 
 ## Testing without a client
 
@@ -124,7 +126,7 @@ If a tool works in the Inspector but not in the client, the problem is in the cl
 
 ## Trying the HTTP transport on your own machine
 
-Streamable HTTP runs the server as an independent process that clients connect to by URL [@mcp-transports]. To test that path locally, start the server yourself and register `http://localhost:8000/mcp` as a `url` entry (port and path depend on the server). The spec says a server running locally should bind to `127.0.0.1` and not `0.0.0.0`, and that it must validate the `Origin` header, because otherwise a web page could reach it through DNS rebinding [@mcp-transports].
+Streamable HTTP runs the server as an independent process that clients connect to by URL [@mcp-streamable-http]. To test that path locally, start the server yourself and register `http://localhost:8000/mcp` as a `url` entry (port and path depend on the server). The spec says a server running locally should bind to `127.0.0.1` and not `0.0.0.0`, and that it must validate the `Origin` header, because otherwise a web page could reach it through DNS rebinding [@mcp-streamable-http].
 
 ## Quick reference
 
@@ -135,5 +137,3 @@ Streamable HTTP runs the server as an independent process that clients connect t
 | Poke at it without a client | `npx @modelcontextprotocol/inspector <command> <args>` |
 | Load an edit | restart the client session |
 | Go shared | switch to the HTTP transport and a `url` entry |
-
-**One rule to remember:** the client runs your command and talks to it over stdin and stdout, so restart the client to load edits and keep stdout for protocol messages only.
