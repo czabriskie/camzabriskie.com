@@ -1,25 +1,24 @@
 ---
 title: Plato
-description: Socrates' student, the writer who turned him into a character so nobody would forget him, and three of his best-known ideas, which are the ladder of love, the allegory of the cave, and the world of Forms.
+description: Socrates' student, the writer who turned him into a character so nobody would forget him, his best-known ideas (the ladder of love, the allegory of the cave, and the world of Forms), and the ideal city of the Republic, with philosopher kings at the top and tyranny at the bottom.
 order: 2
 updated: 2026-10-13
 ---
 
 Plato lived in Athens from about 428 to 347 BCE. He was Socrates' student and Aristotle's teacher [@iep-plato]. The [last primer](/primers/philosophy/sophists-and-socrates/) ended with Socrates drinking hemlock in 399 BCE. Plato watched that happen, and most of what we know about Socrates comes from what Plato wrote afterward [@pt-004, @sep-plato].
 
-This primer follows episode 4 of *Philosophize This!* [@pt-004] and checks it against the Stanford and Internet Encyclopedias of Philosophy and against Plato's own text, the same way the [Presocratics primer](/primers/philosophy/presocratics/#which-source-to-trust) does. It covers four things:
+This primer follows episode 4 of *Philosophize This!* [@pt-004] and checks it against the Stanford and Internet Encyclopedias of Philosophy and against Plato's own text, the same way the [Presocratics primer](/primers/philosophy/presocratics/#which-source-to-trust) does. It covers five things:
 
 1. **Why Plato is so well known.** He was a great writer, and that matters as much as his ideas.
 2. **Why Socrates is in almost everything he wrote.**
 3. **Platonic love.** Two speeches from the same dinner party: one says love is looking for the other half you lost, and the other says love is a climb toward beauty itself.
 4. **The allegory of the cave and the world of Forms.** Plato's picture of what's really real and how we could ever know it.
-
-The episode also gets into Plato's politics, which this primer leaves for another time.
+5. **Plato's ideal city.** How he'd raise good citizens, why philosophers should rule, and his ranking of governments from best to worst.
 
 A few terms come up throughout:
 
 - **Dialogue.** Plato wrote philosophy as conversations between characters, like scripts. Each one is called a dialogue and usually named after a character, like the *Meno* or the *Phaedo* [@sep-plato].
-- **The *Symposium*** and **the *Republic*** are the two dialogues this primer leans on most. The *Symposium* is about love. The *Republic* is about justice, and the cave is in it [@sep-plato, @iep-plato].
+- **The *Symposium*** and **the *Republic*** are the two dialogues this primer leans on most. The *Symposium* is about love. The *Republic* is about justice, in a person and in a whole city, and the cave is in it [@sep-plato, @iep-plato].
 - **Form** (capital F, also translated **Idea**). Plato's name for the single perfect, unchanging thing that many imperfect things have in common. Lots of things are beautiful, and the Form of Beauty is beauty itself, the thing they all share [@sep-plato]. A Form is not a shape here. The section on [the world of Forms](#the-world-of-forms) explains it properly.
 - ***Eros*** is the Greek word for passionate or romantic love, usually translated "love." It's where "erotic" comes from [@sep-plato-friendship].
 
@@ -162,7 +161,7 @@ The podcast says Plato thought a philosopher's job is to work out the Forms of a
 
 That also makes him hard to talk to. The prisoners only know the shadows, so when he talks about what's outside, they have nothing to compare it to. Plato puts him in court, still "blinking" and not used to the dark again, forced to argue "about the images or the shadows of images of justice" with people "who have never yet seen absolute justice" [@plato-republic]. He knows what justice really is and they don't, so they argue past each other, and he comes off looking ridiculous. Plato says that shouldn't surprise anyone. Laughing at someone whose eyes are still adjusting after coming down from the light makes less sense, he says, than laughing at someone who has never left the dark [@plato-republic].
 
-Plato still doesn't let him stay outside. Later in Book VII, Socrates says the people who have made the climb can't be allowed to stay up there, however much they'd like to. They "must be made to descend again among the prisoners." Once their eyes adjust to the dark, they "will see ten thousand times better than the inhabitants of the den," because they know what each shadow is a shadow of [@plato-republic]. In the *Republic*, those people go back down to rule the city. The podcast calls that kind of ruler a philosopher king. It belongs to Plato's politics, which this primer leaves for another time [@pt-004].
+Plato still doesn't let him stay outside. Later in Book VII, Socrates says the people who have made the climb can't be allowed to stay up there, however much they'd like to. They "must be made to descend again among the prisoners." Once their eyes adjust to the dark, they "will see ten thousand times better than the inhabitants of the den," because they know what each shadow is a shadow of [@plato-republic]. In the *Republic*, those people go back down to rule the city. The podcast calls that kind of ruler a philosopher king [@pt-004], and [Plato's ideal city](#platos-ideal-city) at the end of this primer covers why he thought they should rule.
 
 So the duty runs both ways. Climb as high as you can, all the way to the Form of the Good, and then come back down and help the people who are still watching shadows, even if they don't want your help.
 
@@ -207,3 +206,71 @@ The podcast mentions that a lot of smart people doubt Plato really believed in a
 The scholarship doesn't settle it. Aristotle, who studied with Plato, reported that Plato "separated" the Forms. Scholars still argue about what that means. It might mean only that you can't *define* Beauty by pointing at beautiful things, or it might mean the Forms really *exist* apart from everything else [@sep-plato-metaphysics]. Plato kept testing the theory himself. Another dialogue, the *Parmenides*, raises hard objections to the Forms and doesn't answer them, and the *Republic* calls the Form of the Good a mystery that nobody yet fully understands [@sep-plato].
 
 Courage isn't the same thing as any one brave act, and you can be wrong about what's really beautiful or just, which means there's something there to be wrong about. Plato's answer to the Sophists' "man is the measure" was that the measure is outside us [@pt-004].
+
+## Plato's ideal city
+
+The *Republic* is a book about justice, and the city it designs is there to answer one question: is it actually better to be just, or only better to look just [@sep-plato-ethics-politics]?
+
+### The ring of Gyges
+
+Early on, Plato's brother Glaucon makes the case for the other side with a story. A shepherd named Gyges finds a gold ring that makes him invisible when he turns it on his finger. He uses it to get into the king's court, seduce the queen, kill the king, and take the kingdom [@plato-republic]. Glaucon's point is that anyone with that ring, a just person included, would do the same, because people only behave justly out of fear of getting caught [@plato-republic]. He and his brother challenge Socrates to show that justice is worth having for its own sake, even for someone who is just and is punished for it while an unjust person is rewarded [@sep-plato-ethics-politics].
+
+Socrates' answer takes the rest of the book. Justice is easier to see in something big, he says, so he imagines a whole city, finds justice there, and then looks for the same thing inside a single person [@sep-plato-ethics-politics].
+
+### Justice in the city and in the soul
+
+The ideal city has three classes of people, and Plato says a person's soul has three matching parts [@sep-plato-ethics-politics, @pt-004]:
+
+| In the city | Their job | In the soul | What it wants | In the noble lie |
+|---|---|---|---|---|
+| **Rulers**, chosen from the best guardians | Decide what's good for the whole city | **Reason** | Truth and what's good | Gold |
+| **Auxiliaries**, the soldiers and police | Defend the city and enforce the rulers' decisions | **Spirit**, the part that gets angry and wants honor | Honor | Silver |
+| **Producers**, farmers, craftspeople, and traders | Make and sell everything the city needs | **Appetite** | Food, drink, sex, money | Bronze and iron |
+
+Justice, in the city and in a person, is each part doing its own job: reason in charge, spirit backing it up, and appetite kept in its place [@sep-plato-ethics-politics]. A just person isn't just someone who follows rules. Their soul is in order, and Socrates spends the last books arguing that this order makes the just person happier than the unjust one, whatever happens to them [@sep-plato-ethics-politics].
+
+The last column is the **noble lie**, a story the founders would tell every citizen. Everyone is born from the same earth, so they're all siblings, but the god mixed gold into the rulers, silver into the auxiliaries, and bronze and iron into everyone else. Children usually take after their parents, but not always, and a golden child born to bronze parents has to be raised up, just as a bronze child of gold parents has to move down [@plato-republic]. Plato calls it a lie himself. Its job is to make people accept where they stand and feel loyal to the city as a whole [@sep-plato-ethics-politics].
+
+### Raising good citizens: stories and heroes
+
+Plato thought character is shaped young and mostly by what children are exposed to, so the city controls it. The guardians' children would have their diet, their exercise, and even the songs and poems they heard strictly regulated, and every story would have its hero act the way the city would want its leaders to act [@pt-004].
+
+In the *Republic* this starts with the stories mothers and nurses tell. Socrates says the first thing the city needs is "a censorship of the writers of fiction": keep the good tales, throw out the bad ones, and let children hear only the approved ones, since stories shape a child's mind the way hands shape their body [@plato-republic]. That rules out much of Homer, because his gods lie, fight, and behave badly, and his heroes despair and lose control. The young should only imitate characters who are "courageous, temperate, holy, free," because imitation that starts young and goes on for years turns into "a second nature" [@plato-republic]. The goal is a person who learns to love what's good before they're old enough to understand why, and then recognizes it when reason arrives [@sep-plato-ethics-politics].
+
+Music and physical training round out the education. Too much of either makes a person soft or harsh, and the point of both together is a soul in harmony, courageous and self-controlled, rather than a performer or an athlete [@plato-republic]. The podcast describes the aim as getting young people out of their egos, building a moral compass, and teaching them to think rationally [@pt-004].
+
+### Philosopher kings
+
+The rulers are philosophers, people who have made the climb out of the cave and know what justice and goodness really are. Socrates admits it sounds absurd, and says it anyway [@plato-republic]:
+
+> Until philosophers are kings, or the kings and princes of this world have the spirit and power of philosophy, … cities will never have rest from their evils.
+
+The podcast's version of the reason: who better to rule than someone who knows exactly what justice and fairness are, instead of flawed people imposing their own biased and often corrupt views [@pt-004]? The encyclopedia adds a second reason. Philosophers make good rulers because they know what's good *and* don't want to rule. They'd rather keep thinking, so they have to be made to take their turn, which is the trip back down into the cave from earlier [@sep-plato-ethics-politics]. Someone who wants power is exactly who shouldn't have it.
+
+Plato makes the case with a picture of a ship. The owner is big and strong but half deaf and short-sighted and doesn't know much about sailing. The crew fight over who gets to steer, none of them have learned navigation, and they claim it can't be taught. They drug the owner, take over the ship, and treat the real navigator, the one who studies the stars and winds, as a useless stargazer [@plato-republic]. The ship is the city, the crew are the people competing for power, and the navigator is the philosopher.
+
+The guardians would also live together with no private property, no gold or silver, and no private families, with children raised in common [@pt-004]. And women could be guardians and rulers on the same terms as men. Socrates says being a man or a woman matters for these jobs about as much as having long hair or short hair [@sep-plato-ethics-politics]. The podcast calls this unprecedented for its time [@pt-004]. The encyclopedia is more careful: Socrates' reasons are about what's good for the city, not for women, and the *Republic* also makes disparaging remarks about women [@sep-plato-ethics-politics].
+
+### From best to worst: five governments
+
+In Books VIII and IX, Plato ranks five kinds of government, and pairs each one with a kind of person whose soul is run the same way [@plato-republic, @sep-plato-ethics-politics]. Each one decays into the next.
+
+<div class="phil-fig phil-decline" role="img" aria-label="A staircase of five steps going down from left to right. Aristocracy, ruled by philosophers and valuing wisdom, is the tallest, on the left. Then timocracy, ruled by soldiers and valuing honor. Then oligarchy, ruled by the rich and valuing wealth. Then democracy, ruled by the many and valuing freedom. Then tyranny, ruled by one man's appetite, the lowest step, on the right. An arrow along the top runs from best to worst.">
+<svg viewBox="0 0 400 190" aria-hidden="true" focusable="false"><text class="lv-top" x="200" y="12">Plato's five governments, best to worst</text><path class="lv-arrow" d="M 70 28 H 340"/><path class="lv-head" d="M 346 28 l -6 -3.5 v 7 z"/><text class="lv-cap lv-l" x="8" y="31">best</text><text class="lv-cap lv-r" x="392" y="31">worst</text><g class="lv-step lv-hot"><rect x="6" y="40" width="74" height="140" rx="3"/><text class="lv-n" x="44" y="52">1</text><text class="lv-name" x="44" y="64">Aristocracy</text><text class="lv-sub" x="44" y="75">wisdom</text><text class="lv-sub" x="44" y="86">philosophers</text></g><g class="lv-step"><rect x="84" y="62" width="74" height="118" rx="3"/><text class="lv-n" x="122" y="74">2</text><text class="lv-name" x="122" y="86">Timocracy</text><text class="lv-sub" x="122" y="97">honor</text><text class="lv-sub" x="122" y="108">soldiers</text></g><g class="lv-step"><rect x="162" y="84" width="74" height="96" rx="3"/><text class="lv-n" x="200" y="96">3</text><text class="lv-name" x="200" y="108">Oligarchy</text><text class="lv-sub" x="200" y="119">wealth</text><text class="lv-sub" x="200" y="130">the rich</text></g><g class="lv-step"><rect x="240" y="106" width="74" height="74" rx="3"/><text class="lv-n" x="278" y="118">4</text><text class="lv-name" x="278" y="130">Democracy</text><text class="lv-sub" x="278" y="141">freedom</text><text class="lv-sub" x="278" y="152">the many</text></g><g class="lv-step"><rect x="318" y="128" width="74" height="52" rx="3"/><text class="lv-n" x="356" y="140">5</text><text class="lv-name" x="356" y="152">Tyranny</text><text class="lv-sub" x="356" y="163">appetite</text><text class="lv-sub" x="356" y="174">one man</text></g></svg>
+</div>
+
+<p class="bitgrid-caption">Each government grows out of the one to its left as the thing its rulers care about slides further from wisdom.</p>
+
+1. **Aristocracy**, rule by the best, meaning the philosopher kings. Wisdom is in charge, the way reason is in charge of a just soul [@pt-004, @sep-plato-ethics-politics].
+2. **Timocracy**, rule by people who love honor. It starts when the rulers come to value honor and victory over knowledge. Plato's examples are Sparta and Crete [@plato-republic]. The podcast calls it a military dictatorship [@pt-004], which is close, though Plato's point is less about the army than about honor replacing wisdom as the thing the rulers want. Over time the honor-lovers also start wanting money [@sep-plato-ethics-politics].
+3. **Oligarchy**, rule by the rich. Wealth becomes the measure of a person, a property requirement decides who can hold office, and the city splits into the rich and a growing class of poor [@plato-republic, @sep-plato-ethics-politics, @pt-004].
+4. **Democracy**, rule by the many. The poor overthrow the rich, and freedom becomes the highest good [@pt-004]. Plato's description is half compliment and half warning: "a charming form of government, full of variety and disorder, and dispensing a sort of equality to equals and unequals alike" [@plato-republic]. The democratic person treats every desire as equally worth satisfying, so no part of the soul is really in charge [@sep-plato-ethics-politics]. The podcast says Plato hated democracy, and pictures it ending in undisciplined pandemonium [@pt-004]. It was also a democracy that had put Socrates to death [@iep-plato].
+5. **Tyranny**, rule by one man's lawless appetite. Too much freedom, Plato says, turns into its opposite: "the excess of liberty … seems only to pass into excess of slavery" [@plato-republic]. The people's favorite champion, set up as their protector, takes power and turns into a tyrant [@plato-republic]. The podcast puts it as all the self-indulgence of democracy with no laws left at all [@pt-004]. Plato thought the tyrant was the unhappiest person there is, a slave to his own desires and never satisfied [@sep-plato-ethics-politics].
+
+So democracy isn't last on Plato's list, but it's next to last, and he saw it as the step right before the worst.
+
+### A good city, or a frightening one?
+
+Read today, a lot of this sounds alarming: rulers who decide which stories children can hear, a lie told to keep everyone in their place, and no vote. In the twentieth century the philosopher Karl Popper charged the *Republic* with being a blueprint for totalitarianism [@sep-plato-ethics-politics].
+
+The encyclopedia lays out both sides. The rulers do control the culture and spread a useful myth, and they aim at the unity of the city as a whole. But they rule for the benefit of the ruled rather than their own, they don't want power in the first place, and the city is supposed to hold together because citizens agree about who should rule, not because they're forced [@sep-plato-ethics-politics]. The objections that remain are the ones most modern readers would raise anyway: that nobody can be trusted with that much power however much they know, and that people have a right to govern themselves even when they'd govern badly [@sep-plato-ethics-politics].

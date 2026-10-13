@@ -384,9 +384,10 @@ export const references = {
   'sep-plato': { ...sep(['R. Kraut'], 'Plato', 'rev. Apr. 24, 2026', 'plato'), accessed: '2026-10-13' },
   'sep-plato-friendship': { ...sep(['C. D. C. Reeve'], 'Plato on Friendship and Eros', 'rev. Jun. 14, 2023', 'plato-friendship'), accessed: '2026-10-13' },
   'sep-plato-metaphysics': { ...sep(['A. Silverman'], "Plato's Middle Period Metaphysics and Epistemology", 'rev. Jul. 14, 2014', 'plato-metaphysics'), accessed: '2026-10-13' },
+  'sep-plato-ethics-politics': { ...sep(['E. Brown'], "Plato's Ethics and Politics in The Republic", 'rev. Sep. 12, 2017', 'plato-ethics-politics'), accessed: '2026-10-13' },
   'iep-plato': { authors: ['T. Brickhouse', 'N. D. Smith'], title: 'Plato', container: IEP, url: 'https://iep.utm.edu/plato/', accessed: '2026-10-13' },
   'plato-symposium': { authors: 'Plato', title: 'Symposium', note: 'trans. B. Jowett, Project Gutenberg eBook #1600', url: 'https://www.gutenberg.org/ebooks/1600', accessed: '2026-10-13' },
-  'plato-republic': { authors: 'Plato', title: 'The Republic', note: 'trans. B. Jowett, Project Gutenberg eBook #1497, Book VII', url: 'https://www.gutenberg.org/ebooks/1497', accessed: '2026-10-13' },
+  'plato-republic': { authors: 'Plato', title: 'The Republic', note: 'trans. B. Jowett, Project Gutenberg eBook #1497', url: 'https://www.gutenberg.org/ebooks/1497', accessed: '2026-10-13' },
   'plato-meno': { authors: 'Plato', title: 'Meno', note: 'trans. B. Jowett, Project Gutenberg eBook #1643', url: 'https://www.gutenberg.org/ebooks/1643', accessed: '2026-10-13' },
   'mw-platonic-love': { authors: 'Merriam-Webster', title: 'platonic love', container: 'Merriam-Webster.com Dictionary', url: 'https://www.merriam-webster.com/dictionary/platonic%20love', accessed: '2026-10-13' },
   // Code review
