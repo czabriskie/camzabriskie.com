@@ -387,6 +387,7 @@ export const references = {
   'iep-plato': { authors: ['T. Brickhouse', 'N. D. Smith'], title: 'Plato', container: IEP, url: 'https://iep.utm.edu/plato/', accessed: '2026-10-13' },
   'plato-symposium': { authors: 'Plato', title: 'Symposium', note: 'trans. B. Jowett, Project Gutenberg eBook #1600', url: 'https://www.gutenberg.org/ebooks/1600', accessed: '2026-10-13' },
   'plato-republic': { authors: 'Plato', title: 'The Republic', note: 'trans. B. Jowett, Project Gutenberg eBook #1497, Book VII', url: 'https://www.gutenberg.org/ebooks/1497', accessed: '2026-10-13' },
+  'plato-meno': { authors: 'Plato', title: 'Meno', note: 'trans. B. Jowett, Project Gutenberg eBook #1643', url: 'https://www.gutenberg.org/ebooks/1643', accessed: '2026-10-13' },
   'mw-platonic-love': { authors: 'Merriam-Webster', title: 'platonic love', container: 'Merriam-Webster.com Dictionary', url: 'https://www.merriam-webster.com/dictionary/platonic%20love', accessed: '2026-10-13' },
   // Code review
   rfc7231: { ...rfc(7231, ['R. Fielding, Ed.', 'J. Reschke, Ed.'], 'Hypertext Transfer Protocol (HTTP/1.1): Semantics and Content', 'Jun. 2014'), accessed: '2026-10-08' },
