@@ -52,6 +52,19 @@ The spec adds a few rules that matter in practice [@mcp-transports]:
 
 The first rule explains the most common stdio bug. A stray `print("starting up")` in the server lands on stdout, the client reads it as a message, and the connection fails. Logging belongs on stderr.
 
+## Getting the server's code
+
+If the server's code isn't on your machine yet, clone it with Git first. **Cloning** copies a repository, with its full history, to a folder on your computer. The URL below is a placeholder for your server's real repository:
+
+```bash
+mkdir -p ~/projects && cd ~/projects
+git clone https://git.example.com/team/notes-server.git
+cd notes-server
+git checkout -b my-change
+```
+
+The `git checkout -b` line creates a branch for your edits, so the main branch stays clean. If you already have a clone, run `git checkout main && git pull` to bring it up to date. Then install the server's dependencies with whatever its README says; for `notes-server` that is `uv sync`.
+
 ## Registering a server with a client
 
 A client needs three things to start a stdio server: the **command**, its **arguments**, and any **environment variables**. The same server looks like this in a portable config file, which is the `mcpServers` format that several clients read [@vscode-mcp-servers]:
