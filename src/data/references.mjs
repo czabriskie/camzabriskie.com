@@ -466,6 +466,14 @@ export const references = {
   'linux-inotify': { authors: 'The Linux man-pages project', title: 'inotify(7)', container: 'Linux manual pages', url: 'https://man7.org/linux/man-pages/man7/inotify.7.html', accessed: '2026-10-13' },
   'python-hashlib': { authors: 'Python Software Foundation', title: 'hashlib: Secure hashes and message digests', container: 'Python 3 Documentation', url: 'https://docs.python.org/3/library/hashlib.html', accessed: '2026-10-13' },
   'owasp-llm08': { authors: 'OWASP', title: 'LLM08:2025 Vector and Embedding Weaknesses', container: 'OWASP Top 10 for LLM Applications', url: 'https://genai.owasp.org/llmrisk/llm082025-vector-and-embedding-weaknesses/', accessed: '2026-10-13' },
+  'jdk-ergonomics': { authors: 'Oracle', title: 'Ergonomics', container: 'Java SE 21 HotSpot Virtual Machine Garbage Collection Tuning Guide', url: 'https://docs.oracle.com/en/java/javase/21/gctuning/ergonomics.html', accessed: '2026-10-13' },
+  'jdk-java-man': { authors: 'Oracle', title: 'The java Command', container: 'Java SE 21 Tool Specifications', url: 'https://docs.oracle.com/en/java/javase/21/docs/specs/man/java.html', accessed: '2026-10-13' },
+  'jdk-other-considerations': { authors: 'Oracle', title: 'Other Considerations', container: 'Java SE 21 HotSpot Virtual Machine Garbage Collection Tuning Guide', url: 'https://docs.oracle.com/en/java/javase/21/gctuning/other-considerations.html', accessed: '2026-10-13' },
+  'jdk-collectors': { authors: 'Oracle', title: 'Available Collectors', container: 'Java SE 21 HotSpot Virtual Machine Garbage Collection Tuning Guide', url: 'https://docs.oracle.com/en/java/javase/21/gctuning/available-collectors.html', accessed: '2026-10-13' },
+  'k8s-manage-resources': { authors: 'The Kubernetes Authors', title: 'Resource Management for Pods and Containers', container: 'Kubernetes Documentation', url: 'https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/', accessed: '2026-10-13' },
+  'k8s-probes': { authors: 'The Kubernetes Authors', title: 'Liveness, Readiness, and Startup Probes', container: 'Kubernetes Documentation', url: 'https://kubernetes.io/docs/concepts/configuration/liveness-readiness-startup-probes/', accessed: '2026-10-13' },
+  'bash-exit-status': { authors: 'Free Software Foundation', title: 'Exit Status', container: 'Bash Reference Manual', url: 'https://www.gnu.org/software/bash/manual/html_node/Exit-Status.html', accessed: '2026-10-13' },
+  'linux-signal': { authors: 'The Linux man-pages project', title: 'signal(7)', container: 'Linux manual pages', url: 'https://man7.org/linux/man-pages/man7/signal.7.html', accessed: '2026-10-13' },
 };
 
 const MONTHS = ['Jan.', 'Feb.', 'Mar.', 'Apr.', 'May', 'Jun.', 'Jul.', 'Aug.', 'Sep.', 'Oct.', 'Nov.', 'Dec.'];
