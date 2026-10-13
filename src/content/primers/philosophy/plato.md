@@ -170,7 +170,33 @@ So the duty runs both ways. Climb as high as you can, all the way to the Form of
 
 You can't see a Form, so how would you know when you'd reached one? Plato's answer, mainly in the *Meno*, is that you already knew it before you were born. The soul is immortal and saw the Forms before birth, and learning is really **recollection**, remembering what the soul already knew [@sep-plato, @iep-plato].
 
-His evidence is a scene where Socrates questions a slave boy who has never studied geometry [@iep-plato]. Socrates draws a square and asks how to draw one with twice the area. The boy says to double the sides, which is wrong. Socrates never tells him the answer. He only asks questions, and the boy reaches new conclusions on his own [@pt-004]. For Plato, if nobody taught him, the boy must have been remembering.
+His evidence is a scene where Socrates questions a slave boy who has never studied geometry [@iep-plato]. Socrates never tells him the answer. He only asks questions, and the boy reaches new conclusions on his own [@pt-004]. For Plato, if nobody taught him, the boy must have been remembering.
+
+### The doubled square
+
+The problem is easy to state. Socrates draws a square 2 feet on a side, so its area is 4 square feet, and asks the boy how long the side of a square with double the area, 8 square feet, would have to be [@plato-meno].
+
+1. **Double the side?** The boy says 4 feet, confidently. Socrates has him draw it. A 4-foot square holds four of the original squares, 16 square feet, which is four times the area, not twice.
+2. **Something between 2 and 4, then?** The boy tries 3 feet. That gives 3 × 3 = 9 square feet, still too big.
+3. **"I do not know."** The boy gives up. Socrates tells Meno that this is progress. Before, the boy thought he knew and didn't. Now he knows he doesn't know, which makes him ready to look [@plato-meno]. That's the elenchus from the [last primer](/primers/philosophy/sophists-and-socrates/#3-knowledge-comes-from-thinking-things-through), working the way Socrates hoped it would.
+4. **The diagonal.** Socrates draws four of the original squares together, the same 16-square-foot square as the first guess, and draws a line from corner to corner across each one. Those four lines make a tilted square in the middle. Each line cuts a small square exactly in half, and the tilted square is made of four of those halves. Four halves of 4 is 8. So the answer is to build the new square on the **diagonal** of the old one [@plato-meno].
+
+<div class="phil-fig phil-square" role="img" aria-label="Two drawings of a 4 by 4 foot square split into four 2 by 2 squares of 4 square feet each. On the left, the boy's guess: doubling the side gives the whole big square, 16 square feet, four times the original. On the right, Socrates' answer: a tilted square drawn corner to corner through the four small squares, using each one's diagonal as a side. It covers half of each small square, four halves of 2 square feet, so 8 square feet, twice the original.">
+<svg viewBox="0 0 400 218" aria-hidden="true" focusable="false"><text class="sq-title" x="100" y="14">the boy's guess</text><text class="sq-title" x="300" y="14">Socrates' answer</text><rect class="sq-big" x="30" y="30" width="140" height="140"/><path class="sq-grid" d="M 100 30 V 170 M 30 100 H 170"/><rect class="sq-orig" x="30" y="30" width="70" height="70"/><text class="sq-n" x="65" y="69">4</text><text class="sq-n" x="135" y="69">4</text><text class="sq-n" x="65" y="139">4</text><text class="sq-n" x="135" y="139">4</text><text class="sq-cap" x="100" y="190">side 4 ft</text><text class="sq-cap" x="100" y="204">area 16, four times too big</text><rect class="sq-big" x="230" y="30" width="140" height="140"/><path class="sq-grid" d="M 300 30 V 170 M 230 100 H 370"/><path class="sq-tilt" d="M 300 30 L 370 100 L 300 170 L 230 100 z"/><rect class="sq-orig" x="230" y="30" width="70" height="70"/><text class="sq-n" x="277" y="80">2</text><text class="sq-n" x="323" y="80">2</text><text class="sq-n" x="277" y="126">2</text><text class="sq-n" x="323" y="126">2</text><text class="sq-cap" x="300" y="190">side = the diagonal</text><text class="sq-cap" x="300" y="204">area 8, exactly double</text></svg>
+</div>
+
+<p class="bitgrid-caption">The original square is the outlined one in the top-left corner, 2 feet on a side and 4 square feet. Each diagonal cuts a small square in half, and the tilted square is made of four of those halves, so it holds 8.</p>
+
+The boy never names a number for the side, and Socrates doesn't ask for one. They show the answer with a drawing. The number is easy to work out with algebra, though. Call the old side *l* and the new side *L*. The old area is *l*², and the new area has to be double that:
+
+```text
+L² = 2 × l²
+L  = √2 × l  ≈ 1.414 × l
+```
+
+So the new side is √2 times the old one, about 41% longer. For the 2-foot square that's 2√2, about 2.83 feet, which is why 3 was close but too big. The √2 multiplies the side, not the area.
+
+The diagonal comes out to the same length. A diagonal cuts a square into two right triangles whose two short sides are both *l*, so by the Pythagorean theorem the diagonal is √(*l*² + *l*²) = √(2*l*²) = √2 × *l*. The drawing and the algebra land in the same place, which is the kind of answer Plato thought you could reach by thinking alone.
 
 The podcast calls this a breakthrough in **epistemology**, the study of what we know and how we know it, and credits Plato with laying the groundwork for the 17th-century rationalists, who also trusted reason over the senses [@pt-004].
 
