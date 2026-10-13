@@ -455,6 +455,16 @@ export const references = {
   'uv-cli': { authors: 'Astral', title: 'Commands', container: 'uv Documentation (CLI reference)', url: 'https://docs.astral.sh/uv/reference/cli/', accessed: '2026-10-13' },
   'mcp-inspector': { authors: 'Model Context Protocol project', title: 'MCP Inspector', container: 'Model Context Protocol Documentation', url: 'https://modelcontextprotocol.io/docs/tools/inspector', accessed: '2026-10-13' },
   'vscode-mcp-servers': { authors: 'Microsoft', title: 'Add and manage MCP servers in VS Code', container: 'Visual Studio Code Documentation', url: 'https://code.visualstudio.com/docs/agent-customization/mcp-servers', accessed: '2026-10-13' },
+  // RAG from shared notes
+  'lewis-2020-rag': { authors: ['P. Lewis', 'E. Perez', 'A. Piktus', 'et al.'], title: 'Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks', container: 'Advances in Neural Information Processing Systems (NeurIPS)', date: '2020', url: 'https://arxiv.org/abs/2005.11401', accessed: '2026-10-13' },
+  'anthropic-contextual-retrieval': { authors: 'Anthropic', title: 'Introducing Contextual Retrieval', container: 'Anthropic News', date: 'Sep. 19, 2024', url: 'https://www.anthropic.com/news/contextual-retrieval', accessed: '2026-10-13' },
+  'anthropic-embeddings': { authors: 'Anthropic', title: 'Embeddings', container: 'Claude Developer Platform Documentation', url: 'https://platform.claude.com/docs/en/build-with-claude/embeddings', accessed: '2026-10-13' },
+  pgvector: { authors: 'pgvector contributors', title: 'pgvector: Open-source vector similarity search for Postgres', container: 'GitHub', url: 'https://github.com/pgvector/pgvector', accessed: '2026-10-13' },
+  'postgres-arrays': { authors: 'The PostgreSQL Global Development Group', title: 'Array Functions and Operators', container: 'PostgreSQL Documentation', url: 'https://www.postgresql.org/docs/current/functions-array.html', accessed: '2026-10-13' },
+  'elastic-bm25': { authors: 'Elastic', title: 'Practical BM25, Part 2: The BM25 Algorithm and its Variables', container: 'Elastic Blog', url: 'https://www.elastic.co/blog/practical-bm25-part-2-the-bm25-algorithm-and-its-variables', accessed: '2026-10-13' },
+  'linux-inotify': { authors: 'The Linux man-pages project', title: 'inotify(7)', container: 'Linux manual pages', url: 'https://man7.org/linux/man-pages/man7/inotify.7.html', accessed: '2026-10-13' },
+  'python-hashlib': { authors: 'Python Software Foundation', title: 'hashlib: Secure hashes and message digests', container: 'Python 3 Documentation', url: 'https://docs.python.org/3/library/hashlib.html', accessed: '2026-10-13' },
+  'owasp-llm08': { authors: 'OWASP', title: 'LLM08:2025 Vector and Embedding Weaknesses', container: 'OWASP Top 10 for LLM Applications', url: 'https://genai.owasp.org/llmrisk/llm082025-vector-and-embedding-weaknesses/', accessed: '2026-10-13' },
 };
 
 const MONTHS = ['Jan.', 'Feb.', 'Mar.', 'Apr.', 'May', 'Jun.', 'Jul.', 'Aug.', 'Sep.', 'Oct.', 'Nov.', 'Dec.'];

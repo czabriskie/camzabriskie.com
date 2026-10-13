@@ -851,3 +851,18 @@ details.aside[open] summary { margin-bottom: 0.4rem; }
 .share-flow .sf-small, .share-flow .sf-label { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
 .share-flow .sf-arrow { stroke: var(--muted); stroke-width: 1.4; }
 .share-flow .sf-arrowhead { fill: var(--muted); }
+
+/* RAG: indexing and answering */
+.rag-flow { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+.rag-flow svg { display: block; width: 100%; height: auto; }
+.rag-flow text { text-anchor: middle; }
+.rag-flow .rf-phase { font: 600 9px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); text-anchor: start; }
+.rag-flow .rf-box { fill: var(--surface); stroke: var(--muted); stroke-width: 1; }
+.rag-flow .rf-store { stroke: var(--tech); stroke-width: 1.8; }
+.rag-flow .rf-model { stroke: var(--ink); }
+.rag-flow .rf-name { font: 600 10px 'Bricolage Grotesque', sans-serif; fill: var(--ink); }
+.rag-flow .rf-small, .rag-flow .rf-label { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.rag-flow .rf-hit-label { fill: var(--tech); }
+.rag-flow .rf-arrow { stroke: var(--muted); stroke-width: 1.3; }
+.rag-flow .rf-hit { stroke: var(--tech); stroke-width: 1.6; }
+.rag-flow .rf-arrowhead { fill: var(--muted); }
