@@ -799,6 +799,30 @@ details.aside[open] summary { margin-bottom: 0.4rem; }
 .phil-fig .el-sub, .phil-fig .el-loop, .phil-fig .el-top { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
 .el-arrow { fill: none; stroke: var(--muted); stroke-width: 1.2; }
 .el-head { fill: var(--muted); }
+/* ladder of love (Plato primer) */
+.lv-step rect { fill: var(--surface); stroke: var(--line); stroke-width: 1.2; }
+.lv-hot rect { stroke: var(--tech); stroke-width: 2; }
+.phil-fig .lv-n { font: 600 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--tech); }
+.phil-fig .lv-name { font: 600 10px 'Bricolage Grotesque', sans-serif; }
+.phil-fig .lv-sub, .phil-fig .lv-top, .phil-fig .lv-cap { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.phil-fig .lv-l { text-anchor: start; }
+.phil-fig .lv-r { text-anchor: end; }
+.lv-arrow { fill: none; stroke: var(--muted); stroke-width: 1.2; }
+.lv-head { fill: var(--muted); }
+/* allegory of the cave (Plato primer) */
+.cv-rock { fill: none; stroke: var(--muted); stroke-width: 1.5; }
+.cv-wall, .cv-lowwall { fill: var(--line); }
+.cv-ray { stroke: var(--tech); stroke-width: 1; stroke-dasharray: 3 3; opacity: 0.7; }
+.cv-shadow { fill: var(--ink); opacity: 0.55; }
+.cv-person circle { fill: var(--surface); stroke: var(--ink); stroke-width: 1.2; }
+.cv-person path { fill: none; stroke: var(--ink); stroke-width: 1.2; }
+.cv-chain { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 2 2; }
+.cv-figure { fill: var(--ink); }
+.cv-fire { fill: var(--tech); }
+.cv-sun { fill: var(--surface); stroke: var(--tech); stroke-width: 2; }
+.phil-fig .cv-lab { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.phil-fig .cv-l { text-anchor: start; }
+.phil-fig .cv-r { text-anchor: end; }
 
 /* Network file shares: which machine opens each connection */
 .share-flow { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
