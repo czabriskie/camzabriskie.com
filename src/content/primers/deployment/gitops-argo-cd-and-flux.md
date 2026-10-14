@@ -83,6 +83,37 @@ The shop's chart lives in the team's repository at `charts/shop`, with productio
 4. It renders the chart with the new values and compares the result with the live state. The Deployment's replica count differs, so the app shows as out of sync.
 5. It applies the difference, and Kubernetes starts a third copy.
 
+<div class="gitops-flow" role="img" aria-label="The shop change as a loop. 1: someone edits replicaCount to 3 and the change is reviewed. 2: it's merged into the git repository, which holds the desired state. Inside the cluster, an agent 3: fetches from git, 4: renders the chart and compares it with the live state, and 5: applies the difference, so the Deployment goes from 2 copies to 3. 6: it keeps watching the live state for anything that drifts.">
+<svg viewBox="0 0 400 180" aria-hidden="true" focusable="false">
+<defs><marker id="gl-head" viewBox="0 0 8 8" refX="7" refY="4" markerUnits="userSpaceOnUse" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="go-arrowhead" d="M0,0 L8,4 L0,8 z"/></marker></defs>
+<rect class="go-box" x="8" y="58" width="84" height="40" rx="3"/>
+<text class="go-name" x="50.0" y="76.0">pull request</text>
+<text class="go-small" x="50.0" y="87.0">replicaCount: 3</text>
+<rect class="go-box" x="116" y="58" width="84" height="40" rx="3"/>
+<text class="go-name" x="158.0" y="76.0">git repo</text>
+<text class="go-small" x="158.0" y="87.0">desired state</text>
+<rect class="go-cluster" x="222" y="6" width="172" height="166" rx="3"/>
+<text class="go-name" x="308" y="164">cluster</text>
+<rect class="go-box go-agent" x="236" y="20" width="144" height="42" rx="3"/>
+<text class="go-name" x="308.0" y="39.0">agent</text>
+<text class="go-small" x="308.0" y="50.0">4 render, compare</text>
+<rect class="go-box" x="236" y="104" width="144" height="40" rx="3"/>
+<text class="go-name" x="308.0" y="122.0">live state</text>
+<text class="go-small" x="308.0" y="133.0">Deployment: 2 → 3 copies</text>
+<line class="go-arrow" x1="93" y1="78" x2="114" y2="78" marker-end="url(#gl-head)"/>
+<text class="go-small go-start" x="96" y="72">2</text>
+<text class="go-small go-start" x="8" y="112">1 edit, review</text>
+<line class="go-arrow go-hot" x1="235" y1="41" x2="201" y2="70" marker-end="url(#gl-head)"/>
+<text class="go-small go-start go-hotlabel" x="150" y="50">3 fetch</text>
+<line class="go-arrow go-hot" x1="286" y1="63" x2="286" y2="102" marker-end="url(#gl-head)"/>
+<text class="go-small go-hotlabel go-end" x="266" y="88">5 apply</text>
+<line class="go-arrow" x1="330" y1="103" x2="330" y2="64" marker-end="url(#gl-head)"/>
+<text class="go-small go-start" x="336" y="88">6 watch</text>
+</svg>
+</div>
+
+<p class="bitgrid-caption">The numbers match the steps above. Steps 3 to 6 repeat on a schedule, not only when someone commits.</p>
+
 Neither tool knows about the repository until something in the cluster tells it where to look. That link is itself a Kubernetes object, usually kept in git too:
 
 | | Argo CD | Flux |
@@ -93,7 +124,46 @@ Neither tool knows about the repository until something in the cluster tells it 
 
 ## Argo CD
 
-Argo CD runs as three main parts: an **API server** behind its web UI and `argocd` command line, a **repository server** that keeps a copy of the git repository and renders manifests from it, and an **application controller** that keeps comparing live state with desired state and reports when they differ [@argocd-architecture]. For the shop, the link is one `Application` [@argocd-declarative, @argocd-helm]:
+Argo CD runs as three main parts: an **API server** behind its web UI and `argocd` command line, a **repository server** that keeps a copy of the git repository and renders manifests from it, and an **application controller** that keeps comparing live state with desired state and reports when they differ [@argocd-architecture]. The application controller is also what connects to other clusters, using the credentials Argo CD stores for them [@argocd-architecture, @argocd-cluster-generator].
+
+<div class="gitops-flow" role="img" aria-label="Argo CD's parts. You use the UI or CLI, which talk to the API server. The repository server fetches from the git repository and renders manifests. The application controller asks the repository server for manifests, compares them with the live state, and applies changes to the cluster Argo CD runs in and to other clusters, whose credentials Argo CD stores as Secrets.">
+<svg viewBox="0 0 400 186" aria-hidden="true" focusable="false">
+<defs><marker id="ga-head" viewBox="0 0 8 8" refX="7" refY="4" markerUnits="userSpaceOnUse" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="go-arrowhead" d="M0,0 L8,4 L0,8 z"/></marker></defs>
+<text class="go-small go-start" x="8" y="24">you: UI, CLI</text>
+<rect class="go-box" x="8" y="92" width="70" height="32" rx="3"/>
+<text class="go-name" x="43.0" y="111.5">git repo</text>
+<rect class="go-cluster" x="96" y="6" width="170" height="174" rx="3"/>
+<text class="go-small" x="181" y="174">Argo CD</text>
+<rect class="go-box" x="108" y="16" width="146" height="40" rx="3"/>
+<text class="go-name" x="181.0" y="34.0">API server</text>
+<text class="go-small" x="181.0" y="45.0">UI, CLI, webhooks</text>
+<rect class="go-box" x="108" y="72" width="146" height="40" rx="3"/>
+<text class="go-name" x="181.0" y="90.0">repository server</text>
+<text class="go-small" x="181.0" y="101.0">fetches git, renders</text>
+<rect class="go-box go-agent" x="108" y="128" width="146" height="40" rx="3"/>
+<text class="go-name" x="181.0" y="146.0">application controller</text>
+<text class="go-small" x="181.0" y="157.0">compares, syncs</text>
+<line class="go-arrow" x1="64" y1="30" x2="106" y2="34" marker-end="url(#ga-head)"/>
+<line class="go-arrow go-hot" x1="107" y1="92" x2="79" y2="104" marker-end="url(#ga-head)"/>
+<text class="go-small go-hotlabel go-end" x="104" y="86">fetch</text>
+<line class="go-arrow" x1="181" y1="127" x2="181" y2="113" marker-end="url(#ga-head)"/>
+<text class="go-small go-start" x="186" y="123">manifests</text>
+<rect class="go-box" x="296" y="52" width="98" height="40" rx="3"/>
+<text class="go-name" x="345.0" y="70.0">this cluster</text>
+<text class="go-small" x="345.0" y="81.0">where Argo CD runs</text>
+<rect class="go-box" x="296" y="120" width="98" height="48" rx="3"/>
+<text class="go-name" x="345.0" y="136.5">other clusters</text>
+<text class="go-small" x="345.0" y="147.5">credentials stored</text>
+<text class="go-small" x="345.0" y="158.5">as Secrets</text>
+<line class="go-arrow go-hot" x1="255" y1="140" x2="294" y2="76" marker-end="url(#ga-head)"/>
+<line class="go-arrow go-hot" x1="255" y1="148" x2="294" y2="144" marker-end="url(#ga-head)"/>
+<text class="go-small go-start go-hotlabel" x="268" y="164">apply</text>
+</svg>
+</div>
+
+<p class="bitgrid-caption">One Argo CD, three parts. The application controller does the syncing, to its own cluster and to any other cluster whose credentials it holds.</p>
+
+For the shop, the link is one `Application` [@argocd-declarative, @argocd-helm]:
 
 ```yaml
 apiVersion: argoproj.io/v1alpha1
@@ -154,6 +224,37 @@ Flux is a set of controllers, called the GitOps Toolkit, each with its own objec
 - The **source controller** fetches from git (`GitRepository`), OCI registries (`OCIRepository`), Helm repositories (`HelmRepository`), and storage buckets.
 - The **kustomize controller** applies a folder of manifests (`Kustomization`).
 - The **helm controller** installs and upgrades Helm charts (`HelmRelease`).
+
+The source controller packages what it fetches as an **artifact**, and the other two controllers fetch that artifact from it rather than from git [@flux-helm-controller, @flux-kustomization].
+
+<div class="gitops-flow" role="img" aria-label="Flux's controllers inside one cluster. The source controller fetches the git repository named in a GitRepository and packages it as an artifact. The kustomize controller applies manifests from that artifact for each Kustomization, and the helm controller runs Helm installs and upgrades for each HelmRelease. Each cluster usually runs its own Flux.">
+<svg viewBox="0 0 400 186" aria-hidden="true" focusable="false">
+<defs><marker id="gf-head" viewBox="0 0 8 8" refX="7" refY="4" markerUnits="userSpaceOnUse" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="go-arrowhead" d="M0,0 L8,4 L0,8 z"/></marker></defs>
+<rect class="go-box" x="8" y="74" width="70" height="32" rx="3"/>
+<text class="go-name" x="43.0" y="93.5">git repo</text>
+<rect class="go-cluster" x="96" y="6" width="298" height="174" rx="3"/>
+<text class="go-small" x="245" y="174">one cluster, with its own Flux</text>
+<rect class="go-box go-agent" x="108" y="64" width="108" height="52" rx="3"/>
+<text class="go-name" x="162.0" y="82.5">source controller</text>
+<text class="go-small" x="162.0" y="93.5">GitRepository</text>
+<text class="go-small" x="162.0" y="104.5">fetches, packages</text>
+<rect class="go-box go-agent" x="254" y="16" width="128" height="52" rx="3"/>
+<text class="go-name" x="318.0" y="34.5">kustomize controller</text>
+<text class="go-small" x="318.0" y="45.5">Kustomization</text>
+<text class="go-small" x="318.0" y="56.5">applies manifests</text>
+<rect class="go-box go-agent" x="254" y="100" width="128" height="52" rx="3"/>
+<text class="go-name" x="318.0" y="118.5">helm controller</text>
+<text class="go-small" x="318.0" y="129.5">HelmRelease</text>
+<text class="go-small" x="318.0" y="140.5">Helm install, upgrade</text>
+<line class="go-arrow go-hot" x1="107" y1="90" x2="79" y2="90" marker-end="url(#gf-head)"/>
+<text class="go-small go-hotlabel go-end" x="104" y="82">fetch</text>
+<line class="go-arrow" x1="217" y1="80" x2="252" y2="48" marker-end="url(#gf-head)"/>
+<line class="go-arrow" x1="217" y1="100" x2="252" y2="122" marker-end="url(#gf-head)"/>
+<text class="go-small go-start" x="222" y="94">artifact</text>
+</svg>
+</div>
+
+<p class="bitgrid-caption">Flux splits the work across controllers that pass an artifact along. There's no central server, and each cluster usually runs its own copy.</p>
 
 The Flux project doesn't ship a web UI of its own. You work with it through `kubectl` and the `flux` command line, and separate projects provide UIs [@flux-faq].
 

@@ -937,3 +937,4 @@ details.aside[open] summary { margin-bottom: 0.4rem; }
 .gitops-flow .go-hot { stroke: var(--tech); }
 .gitops-flow .go-hotlabel { fill: var(--tech); }
 .gitops-flow .go-arrowhead { fill: context-stroke; }
+.gitops-flow .go-end { text-anchor: end; }
