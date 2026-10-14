@@ -124,7 +124,119 @@ Neither tool knows about the repository until something in the cluster tells it 
 
 ## Argo CD
 
-Argo CD runs as three main parts: an **API server** behind its web UI and `argocd` command line, a **repository server** that keeps a copy of the git repository and renders manifests from it, and an **application controller** that keeps comparing live state with desired state and reports when they differ [@argocd-architecture]. The web UI and the `argocd` command line only talk to the API server, which also handles logins and permissions [@argocd-architecture, @argocd-components]. The API server never calls the application controller. Both work through the Kubernetes API of the cluster Argo CD runs in: the API server creates and updates `Application` objects there, and the controller watches those objects and does the syncing [@argocd-components]. Clicking Sync in the UI writes a sync request onto the `Application`, which is also how you can sync with plain `kubectl` [@argocd-sync-kubectl]. For other clusters, the controller connects with the credentials Argo CD stores for them [@argocd-cluster-generator].
+Argo CD works with two separate sets of YAML, and they live in different places:
+
+| | The app's manifests | The `Application` |
+|---|---|---|
+| What it describes | The shop itself: its Deployment, Service, and settings, here as a Helm chart and a values file | A deployment job: where the shop's manifests are, and where to deploy them |
+| Where it's kept | The git repository | The cluster Argo CD runs in, in Argo CD's namespace (`argocd` by default) [@argocd-declarative] |
+| Who writes it | The team, through pull requests | Whoever sets the app up: in the web UI, with the `argocd` CLI, or with `kubectl` |
+| What Argo CD does with it | Fetches and renders it, but never edits it | Reads it to learn what to fetch and where to put the result |
+
+### What an `Application` is
+
+An `Application` is a Kubernetes object, stored by the cluster like a Deployment or a Service is. A Deployment describes containers to run. An `Application` describes a link between a place in git and a place in a cluster. Argo CD's docs define it by two pieces of information: a **source**, the repository, revision, and path of the desired state, and a **destination**, the cluster and namespace to deploy into [@argocd-declarative]. On its own it runs nothing. Argo CD's application controller reads it, gets the manifests from the source, compares them with what's running at the destination, and syncs the difference [@argocd-architecture].
+
+Here's the shop's `Application`, with what each part means [@argocd-declarative, @argocd-helm, @argocd-getting-started]:
+
+```yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: shop               # the name Argo CD shows in its UI and CLI
+  namespace: argocd        # where this object itself is stored
+spec:
+  project: default         # the Argo CD project it belongs to
+  source:                  # where the desired state is
+    repoURL: https://git.example.com/platform/deploy.git
+    targetRevision: main   # branch, tag, or commit to follow
+    path: charts/shop      # folder in that repository
+    helm:
+      valueFiles:
+        - values-production.yaml
+  destination:             # where to deploy it
+    server: https://kubernetes.default.svc   # the cluster Argo CD runs in
+    namespace: shop
+  syncPolicy:              # optional: apply changes without anyone clicking Sync
+    automated:
+      prune: true
+      selfHeal: true
+```
+
+Nothing about the shop's containers is in there. Those are in the chart, in git. Putting the two together:
+
+<div class="gitops-flow" role="img" aria-label="Where each piece lives. On the left, the git repository holds the shop's chart: charts/shop with Chart.yaml, values-production.yaml, and templates for a Deployment and a Service. On the right, the cluster Argo CD runs in. In its argocd namespace is the Application named shop, made in the web UI, the CLI, or with kubectl. Its source points at charts/shop on the main branch, and its destination is the shop namespace. Argo CD fetches the chart, renders it, and applies the result into the shop namespace, where the Deployment with 3 copies and the Service are created.">
+<svg viewBox="0 0 400 226" aria-hidden="true" focusable="false">
+<defs><marker id="gw-head" viewBox="0 0 8 8" refX="7" refY="4" markerUnits="userSpaceOnUse" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="go-arrowhead" d="M0,0 L8,4 L0,8 z"/></marker></defs>
+<text class="go-title" x="77" y="14">git repo</text>
+<text class="go-title" x="283" y="14">cluster Argo CD runs in</text>
+<rect class="go-box" x="4" y="24" width="146" height="128" rx="3"/>
+<text class="go-small go-start" x="12" y="42">deploy.git/</text>
+<text class="go-small go-start go-file" x="21" y="57">charts/shop/</text>
+<text class="go-small go-start go-file" x="30" y="72">Chart.yaml</text>
+<text class="go-small go-start go-file" x="30" y="87">values-production.yaml</text>
+<text class="go-small go-start go-file" x="30" y="102">templates/</text>
+<text class="go-small go-start go-file" x="39" y="117">deployment.yaml</text>
+<text class="go-small go-start go-file" x="39" y="132">service.yaml</text>
+<rect class="go-cluster" x="168" y="24" width="228" height="196" rx="3"/>
+<text class="go-small go-start" x="178" y="40">namespace argocd</text>
+<rect class="go-box go-agent" x="178" y="46" width="208" height="58" rx="3"/>
+<text class="go-name" x="282.0" y="62.0">Application: shop</text>
+<text class="go-small" x="282.0" y="73.0">source: charts/shop @ main</text>
+<text class="go-small" x="282.0" y="84.0">destination: namespace shop</text>
+<text class="go-small" x="282.0" y="95.0">made in UI, CLI, or kubectl</text>
+<text class="go-small go-start" x="178" y="146">namespace shop</text>
+<rect class="go-box" x="178" y="152" width="208" height="58" rx="3"/>
+<text class="go-name" x="282.0" y="168.0">Deployment: shop, 3 copies</text>
+<text class="go-small" x="282.0" y="179.0">Service: shop</text>
+<text class="go-small" x="282.0" y="190.0">created by Argo CD from</text>
+<text class="go-small" x="282.0" y="201.0">the rendered chart</text>
+<line class="go-arrow go-hot" x1="177" y1="62" x2="82" y2="58" marker-end="url(#gw-head)"/>
+<text class="go-small go-start go-hotlabel" x="112" y="53">source</text>
+<line class="go-arrow" x1="300" y1="105" x2="300" y2="150" marker-end="url(#gw-head)"/>
+<text class="go-small go-start" x="305" y="131">destination</text>
+<line class="go-arrow go-hot" x1="120" y1="153" x2="176" y2="182" marker-end="url(#gw-head)"/>
+<text class="go-small go-start go-hotlabel" x="60" y="176">fetched,</text>
+<text class="go-small go-start go-hotlabel" x="60" y="186">rendered, applied</text>
+</svg>
+</div>
+
+<p class="bitgrid-caption">The chart stays in git. The `Application` lives in Argo CD's namespace and only points at it. Argo CD does the fetching, and creates the real objects in the destination namespace.</p>
+
+### Three ways to create an `Application`
+
+Each of these creates the same kind of object in the same place. The web UI and the CLI send it through Argo CD's API server, and `kubectl` writes it straight to the cluster [@argocd-architecture, @argocd-declarative].
+
+- **The web UI.** Click **+ New App** and fill in the same fields as the YAML: name, project, sync policy, repository URL, revision, path, and the destination cluster and namespace. Then click **Create** [@argocd-getting-started].
+- **The `argocd` CLI** [@argocd-app-create]:
+
+  ```bash
+  argocd app create shop \
+    --repo https://git.example.com/platform/deploy.git \
+    --revision main \
+    --path charts/shop \
+    --values values-production.yaml \
+    --dest-server https://kubernetes.default.svc \
+    --dest-namespace shop
+  ```
+
+- **`kubectl`**, with the YAML above saved as a file. Argo CD supports managing `Application`s this way without touching the `argocd` CLI [@argocd-declarative]:
+
+  ```bash
+  kubectl apply -f shop-application.yaml
+  ```
+
+None of these write anything to git. The `Application` only points at the repository.
+
+### Keeping the `Application` in git too
+
+An `Application` made in the web UI or with the CLI exists only in the cluster. The shop's chart is versioned, but the pointer to it isn't, which is the opening problem one level up: if someone changes or deletes the `Application` by hand, git has no record of it.
+
+Argo CD's docs say you can create `Application`s by hand or with a script, but recommend generating them with an `ApplicationSet` (below), with a pattern called **app of apps** as the alternative [@argocd-bootstrapping]. In app of apps, one parent `Application` is created by hand, once, and its source is a folder in git full of other `Application` files. From then on, adding an app to the cluster means committing an `Application` file. Argo CD warns that this is an admin-level tool, because whoever can push to that folder can create `Application`s in any project, so only admins should have push access to it and changes to it should be reviewed [@argocd-bootstrapping].
+
+### How Argo CD's parts fit together
+
+Argo CD runs as three main parts: an **API server** behind its web UI and CLI, a **repo server** that keeps a copy of the git repository and renders manifests from it, and an **application controller** that keeps comparing live state with desired state [@argocd-architecture]. The web UI and the CLI only talk to the API server, which also handles logins and permissions [@argocd-architecture, @argocd-components]. The API server never calls the application controller. Both work through the Kubernetes API of the cluster Argo CD runs in: the API server creates and updates `Application` objects there, and the controller watches those objects and does the syncing [@argocd-components]. Clicking Sync in the UI writes a sync request onto the `Application`, which is also how you can sync with plain `kubectl` [@argocd-sync-kubectl]. For other clusters, the controller connects with the credentials Argo CD stores for them [@argocd-cluster-generator].
 
 <div class="gitops-flow" role="img" aria-label="Argo CD's parts. The web UI and the argocd CLI talk only to the API server, which handles logins and permissions. The API server writes Application objects to the Kubernetes API. The application controller watches those Application objects, asks the repo server for manifests, and applies changes, through the Kubernetes API for its own cluster and with stored credentials for other clusters. The repo server fetches from the git repository and renders manifests, for both the API server and the controller.">
 <svg viewBox="0 0 400 258" aria-hidden="true" focusable="false">
@@ -173,31 +285,7 @@ Argo CD runs as three main parts: an **API server** behind its web UI and `argoc
 
 <p class="bitgrid-caption">The UI and CLI never reach the controller directly. The API server writes `Application` objects, the controller watches them, and the Kubernetes API sits between the two.</p>
 
-For the shop, the link is one `Application` [@argocd-declarative, @argocd-helm]:
-
-```yaml
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: shop
-  namespace: argocd
-spec:
-  project: default
-  source:
-    repoURL: https://git.example.com/platform/deploy.git
-    targetRevision: main
-    path: charts/shop
-    helm:
-      valueFiles:
-        - values-production.yaml
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: shop
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-```
+### Watching the shop change
 
 Each `Application` has a **sync status**, whether the live state matches git, and a separate **health status**, whether the app is running and able to serve requests [@argocd-concepts]. Just after the replica change is merged, `argocd app get shop` would show something like this (the format follows the Argo CD getting-started guide [@argocd-getting-started]):
 
