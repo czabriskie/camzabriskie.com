@@ -1,8 +1,8 @@
 ---
 title: The TLS handshake
 description: The first few messages of every HTTPS connection, where the browser checks who it's talking to and the two sides agree on a secret key in public, plus what's different in TLS 1.2, what someone watching can still see, and how to watch it happen.
-order: 5
-updated: 2026-10-06
+order: 7
+updated: 2026-10-08
 ---
 
 Every new HTTPS connection starts with a short exchange called the **TLS handshake**, before a single byte of the web page moves. It has two jobs:
@@ -13,16 +13,16 @@ Every new HTTPS connection starts with a short exchange called the **TLS handsha
 ## The ideas behind it
 
 ### Two kinds of keys
-The handshake involves two different kinds of keys, and keeping them apart makes the rest of this page much easier to follow.
+The handshake involves two different kinds of keys, used in three places, and keeping them apart makes the rest of this page much easier to follow.
 
-| | The certificate's key pair | The session key |
-|---|---|---|
-| What it is | A public key, in the certificate, and its matching private key, kept on the server | One secret key that both sides end up knowing |
-| Kind of encryption | **Asymmetric:** what one key does, only the other can undo | **Symmetric:** the same key locks and unlocks |
-| How long it lasts | As long as the certificate, usually months | One connection, then it's thrown away |
-| What it's for | Proving who the server is, by signing | Encrypting the actual traffic |
+| | The certificate's key pair | The key exchange key pairs | The session key |
+|---|---|---|---|
+| What it is | A public key, in the certificate, and its matching private key, kept on the server | A fresh key pair on each side, made just for this connection ([below](#agreeing-on-a-secret-in-public)) | One secret key that both sides end up knowing |
+| Kind of key | **Asymmetric:** what one key does, only the other can undo | **Asymmetric** | **Symmetric:** the same key locks and unlocks |
+| How long it lasts | As long as the certificate, usually months | One handshake, then it's thrown away | One connection, then it's thrown away |
+| What it's for | Proving who the server is, by signing | Agreeing on the session key | Encrypting the actual traffic |
 
-Why not use the certificate's keys for everything? Asymmetric math is much slower than symmetric, so it's kept for small, one-off jobs like signing and never used to encrypt a whole web page [@nist-sp-800-175b]. The handshake uses the slow kind briefly to set up the fast kind, and the fast kind does the rest. [Certificates and Trust](/primers/networking/certificates-and-trust/#keys-and-signatures) covers how key pairs and signatures work.
+Why not use asymmetric keys for everything? Asymmetric math is much slower than symmetric, so it's kept for small, one-off jobs like signing and never used to encrypt a whole web page [@nist-sp-800-175b]. The handshake uses the slow kind briefly to set up the fast kind, and the fast kind does the rest. [Certificates and Trust](/primers/networking/certificates-and-trust/#keys-and-signatures) covers how key pairs and signatures work.
 
 ### Agreeing on a secret in public
 The second job sounds impossible. Two computers that have never met need to end up with the same secret key, while anyone in between can read everything they send. They do it with a **key exchange**, and the classic way to picture it is mixing paint:
@@ -31,6 +31,8 @@ The second job sounds impossible. Two computers that have never met need to end 
 2. Each side picks a secret color of its own and never shares it. The client picks red, the server picks blue.
 3. Each side mixes its secret color into the yellow and sends the mixture across. The client sends orange (yellow + red), and the server sends green (yellow + blue). That mixture is each side's **key share**.
 4. Each side adds its own secret color to the mixture it received. The client adds red to the green, the server adds blue to the orange, and both end up with the same brown (yellow + red + blue).
+
+In the real handshake, each secret color is a throwaway **private key** and each key share is its matching **public key**. That's a second key pair on each side, separate from the certificate's, made fresh for every connection and used only to agree on the secret [@rfc9846].
 
 <div class="paint-mix" role="img" aria-label="The paint example step by step. 1: Both sides agree in public on yellow. 2: The browser secretly picks red and the server secretly picks blue. 3: The browser mixes yellow and red into orange and sends it; the server mixes yellow and blue into green and sends it. Both mixtures cross the wire where anyone can see them. 4: The browser mixes the green it received with its red and gets brown. The server mixes the orange it received with its blue and gets the same brown. 5: Someone watching has only orange and green. Mixing those gives yellow, red, yellow and blue: a brown with twice the yellow, which is the wrong color.">
 <svg viewBox="0 0 400 412" aria-hidden="true" focusable="false">
@@ -92,12 +94,12 @@ Making the brown in step 4 takes one mixture plus one *unmixed* secret color, an
 
 In the handshake, the client's key share rides in its very first message and the server's in its reply, so both sides can make the brown after one exchange. The brown becomes the session key that encrypts the rest of the conversation [@rfc9846].
 
-Real TLS does this with math instead of paint, where the "un-mixing" step is what's impractical. For years the usual method was an elliptic curve one called X25519 [@rfc7748]. Newer browsers and servers now use **X25519MLKEM768**, which runs X25519 together with ML-KEM, a newer method designed to hold up against future quantum computers, and stays secure as long as either one does [@rfc10024]. Chrome has offered it since version 131 [@google-kyber-blog], and a connection to this site from a current OpenSSL picks it.
+Real TLS does this with math instead of paint, where the "un-mixing" step is what's impractical. For years the usual method has been one called X25519 [@rfc7748], and newer browsers now pair it with a second method built to resist future quantum computers [@google-kyber-blog].
 
 <details class="aside">
-<summary>The same trick with numbers</summary>
+<summary>The same idea with numbers</summary>
 
-The paint stands in for math. The original version, from Diffie and Hellman in 1976, uses ordinary numbers [@diffie-hellman-1976], and every step lines up with a step of the paint example. "Mixing" a secret into a number means multiplying that number by itself the secret number of times, then keeping only the remainder after dividing by 23. For example, mixing 6 into 5 means 5⁶ = 15,625, and 15,625 ÷ 23 is 679 with **8** left over, so the result is 8.
+The paint stands in for math. The original version, from Diffie and Hellman in 1976, uses ordinary numbers [@diffie-hellman-1976], and every step lines up with a step of the paint example. "Mixing" a secret into a number means multiplying the secret number of copies of it together, then keeping only the remainder after dividing by 23. For example, mixing 6 into 5 means multiplying six 5s together, 5⁶ = 15,625, and 15,625 ÷ 23 is 679 with **8** left over, so the result is 8.
 
 | Step | With paint | With numbers |
 |---|---|---|
@@ -113,6 +115,8 @@ The paint stands in for math. The original version, from Diffie and Hellman in 1
 
 Both sides end up with 2, the brown. The watcher's question is easy here, since they can just try every power until one leaves 8. Real key exchanges use numbers hundreds of digits long, where nobody knows a practical way to answer it, and the whole method depends on that staying true [@diffie-hellman-1976]. X25519 does the same thing with a different kind of math (elliptic curves) that gets the same protection from much shorter numbers [@rfc7748].
 
+The post-quantum pairing is called **X25519MLKEM768**. It runs X25519 together with ML-KEM, a newer method designed to hold up against future quantum computers, and stays secure as long as either one does [@rfc10024]. Chrome has offered it since version 131 [@google-kyber-blog], and a connection to this site from a current OpenSSL picks it.
+
 </details>
 
 ### Forward secrecy
@@ -127,7 +131,7 @@ A browser opening `https://app.example.com` sends and receives these messages [@
    - **SNI** (Server Name Indication): the hostname it wants, so a server hosting many sites can pick the right certificate [@rfc6066].
    - **ALPN** (Application-Layer Protocol Negotiation): which protocols it can speak on top, like `h2` (HTTP/2) or `http/1.1` [@rfc7301].
    - The TLS versions and **cipher suites** (sets of encryption algorithms, [covered below](#versions-and-cipher-suites)) it supports.
-   - Its **key share**, the orange paint, sent right away for the method it guesses the server will pick. Browsers guess the method nearly every server supports, and Chrome now guesses the post-quantum hybrid [@google-kyber-blog].
+   - Its **key share**, the orange paint, sent right away for the method it guesses the server will pick. Browsers guess the method nearly every server supports, and Chrome now guesses the pairing with the quantum-resistant method [@google-kyber-blog].
 2. **ServerHello** (server → client, not encrypted). The server's choices from those lists, and its key share. Both sides can now compute the shared secret, and **everything after this message is encrypted** [@rfc9846].
 3. **EncryptedExtensions.** The rest of the server's choices, like which protocol from the ALPN list it picked.
 4. **Certificate.** The server's certificate chain.
@@ -135,9 +139,9 @@ A browser opening `https://app.example.com` sends and receives these messages [@
 6. **Finished** (server). A checksum of every handshake message, made with the new session key so only the two real ends could produce it, so both sides can confirm nobody altered anything on the way [@rfc9846].
 7. **Finished** (client). The same confirmation from the client's side, and the client can send its HTTP request right behind it.
 
-That's one **round trip**, a message out and the reply back, before the request can go. If the client guessed wrong about the key exchange method, the server sends a **HelloRetryRequest** asking for a different one, which costs an extra round trip [@rfc9846].
-
 The Finished checksums matter because the first two messages aren't encrypted, so someone in the middle could edit them. Picture an attacker deleting the strongest options from the ClientHello on its way past, hoping the two sides settle on something weaker. The server would answer the edited version, but the client still has the original. Their records of the handshake no longer match, so the server's CertificateVerify signature and Finished checksum won't check out on the client's side, and the handshake fails with a `decrypt_error` alert instead of quietly carrying on [@rfc9846].
+
+The whole handshake takes one **round trip**, a message out and the reply back, before the request can go. If the client guessed wrong about the key exchange method, the server sends a **HelloRetryRequest** asking for a different one, which costs an extra round trip [@rfc9846].
 
 Step through it here, and switch to TLS 1.2 to compare:
 
@@ -156,7 +160,7 @@ TLS 1.0 and 1.1 are formally deprecated and shouldn't be used at all [@rfc8996].
 A **cipher suite** is the set of algorithms a connection uses. In TLS 1.2, a suite's name lists everything at once: the key exchange, how the server proves its identity, the encryption, and the hash, which is why 1.2 suite names get long. TLS 1.3 simplified it. Key exchange and signatures are negotiated separately, and the cipher suite only names the encryption and the hash, so there are just five of them, like `TLS_AES_128_GCM_SHA256` and `TLS_CHACHA20_POLY1305_SHA256` [@rfc9846].
 
 ### Coming back: resumption and 0-RTT
-After a full handshake, the server can hand the client a **session ticket**. Next time, the client presents the ticket and the two sides skip the certificate part, because they've already been through it [@rfc9846].
+After a full handshake, the server can hand the client a **session ticket**. Next time, the client presents the ticket and the two sides skip the certificate part, because they've already been through it. A resumed handshake still takes one round trip, though. The server proves who it is with the key saved from last time instead of sending its Certificate and CertificateVerify, but the ClientHello still goes out and the ServerHello and Finished still come back before the request can follow [@rfc9846].
 
 With a ticket, TLS 1.3 also allows **0-RTT** ("zero round trip"): the client sends its request alongside its very first message, before the handshake finishes. It's fast, but it comes with a catch: that early data has no protection against being **replayed**, so someone who captures it can send it again [@rfc9846]. It's only safe for requests where doing the same thing twice is harmless, like loading a page, and never for something like "place an order."
 
@@ -205,7 +209,7 @@ TCP has its own handshake before TLS starts, and the page can't arrive until the
 
 <p class="bitgrid-caption">Time runs downward. Three round trips pass before the first byte of the page arrives, and everything in teal is encrypted.</p>
 
-Round trips are what make a first connection slow, because each one costs the full travel time to the server and back no matter how small the messages are. If a round trip takes 50 milliseconds, the page starts arriving about 150 milliseconds after the browser starts connecting. TLS 1.2 adds one more round trip, to 200, and a [returning client](#coming-back-resumption-and-0-rtt) can save one.
+Round trips are what make a first connection slow, because each one costs the full travel time to the server and back no matter how small the messages are. If a round trip takes 50 milliseconds, the page starts arriving about 150 milliseconds after the browser starts connecting. TLS 1.2 adds one more round trip, to 200, and a [returning client using 0-RTT](#coming-back-resumption-and-0-rtt) can save one.
 
 ### What someone watching can still see
 TLS hides the contents of the conversation, but not everything:
@@ -239,6 +243,8 @@ curl.exe --tls-max 1.1 https://camzabriskie.com/   # an old TLS version
 curl.exe https://expired.badssl.com/               # an expired certificate
 curl.exe https://wrong.host.badssl.com/            # a certificate for a different name
 ```
+
+The first one may not get as far as the server. Recent versions of OpenSSL (3.2 and later) turn TLS 1.0 and 1.1 off by default [@openssl-security-level], so a curl built on one refuses on your side and prints an error of its own instead of the server's `protocol_version` alert. The curl that ships with macOS gets through and shows `tlsv1 alert protocol version`.
 
 ## Going further
 
@@ -278,4 +284,9 @@ curl only reports how the handshake turned out. To see each message from the wal
 
 Both of those show the handshake from the client's side, after it has decrypted everything. To see it the way [someone watching](#what-someone-watching-can-still-see) sees it, use **Wireshark**, a free app that records the packets crossing your network connection and decodes them. Start a capture, load a site, and type `tls` into the filter bar to show only TLS traffic [@wireshark-tls]. The ClientHello is there in full, site name included, and so is the ServerHello, and everything after that shows up only as encrypted data.
 
+<details class="aside">
+<summary>Decrypting your own capture</summary>
+
 Wireshark can also show the encrypted part, which is useful for debugging your own traffic. Browsers and curl write out their session keys to a file when the `SSLKEYLOGFILE` environment variable is set, and Wireshark can use that file to decrypt the capture [@wireshark-tls]. Delete the file afterward, since anyone who has it can decrypt that traffic.
+
+</details>

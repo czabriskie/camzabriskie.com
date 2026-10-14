@@ -1,8 +1,8 @@
 ---
 title: Certificates and Trust
 description: What a TLS certificate is, how keys and signatures make it trustworthy, what root, intermediate, and leaf certificates are for, how you get one, and what to do when a client refuses to trust it.
-order: 4
-updated: 2026-10-06
+order: 6
+updated: 2026-10-08
 ---
 
 When you open `https://app.example.com`, your browser needs answers to two questions before it sends anything: is this really `app.example.com`, and not someone sitting in the middle pretending to be it? And can anyone else read what we're about to say to each other? A **TLS certificate** answers the first question, and the same exchange sets up the encryption that answers the second.
@@ -109,7 +109,7 @@ A passport is a useful comparison. A country's national seal is the root: every 
 
 The root's private key is the most valuable thing a CA has. If it ever leaked, anyone could sign a certificate for any website, and the only fix would be removing that root from every trust store in the world, which takes years of software updates. So the root key is kept offline and used rarely, mostly to sign intermediates. Let's Encrypt puts it plainly: its root keys are "kept safely offline," and it issues website certificates from its intermediates [@letsencrypt-chains]. The industry rules go further: a root's private key isn't allowed to sign website certificates directly at all, only intermediates and a few special cases [@cabf-baseline-requirements].
 
-The intermediates do the daily signing. If one is ever compromised, the CA can revoke it and issue a new one, and nobody's trust store has to change.
+The intermediates do the daily signing. If one is ever compromised, the CA can **revoke** it, which means publishing a signed notice that the certificate shouldn't be trusted anymore even though it hasn't expired [@rfc5280], and then issue a new one, and nobody's trust store has to change.
 
 A root also signs its own certificate, which sounds circular, because it is. A root's self-signature proves nothing. A root is trusted for exactly one reason: it's already in your trust store.
 
@@ -141,6 +141,8 @@ When the server shows its certificate during the handshake, the client checks fo
 3. **It chains to a trusted root.** Each signature checks out with the public key of the certificate above it, up to a root in the trust store [@rfc5280].
 4. **The server holds the private key.** Certificates are public, so anyone can send a copy of yours. During the handshake the server also signs the conversation with the certificate's private key (the [CertificateVerify](/primers/networking/tls-handshake/#the-tls-13-handshake-message-by-message) message), which an impostor can't do [@rfc9846].
 
+Clients can also check whether a certificate has been [revoked](#why-theres-a-middle-step), but that check is patchy. Let's Encrypt says plainly that revocation "doesn't work very well," so a certificate with a leaked key can keep being accepted until it expires [@letsencrypt-short-lived]. That's part of why [certificate lifetimes keep getting shorter](#certificates-keep-getting-shorter-lived).
+
 ### Watching a browser check a certificate
 
 Step through what a browser does with the certificates a server sends, or pick a scenario to see where each kind of problem gets caught. Real clients don't always run the checks in this order, but every one of them has to pass. The error messages are the ones OpenSSL reports [@openssl-verify-errors], with the browser's or Java's wording in parentheses where it's different, and a copied certificate without its key gets the handshake aborted with a `decrypt_error` alert [@rfc9846].
@@ -169,7 +171,7 @@ The rules every public CA follows cap how long a website's certificate can last,
 | March 15, 2027 | 100 days |
 | March 15, 2029 | 47 days |
 
-Let's Encrypt's certificates are already well under that (this site's lasts 90 days). Shorter lifetimes limit the damage if a private key leaks, but they mean renewal has to be automatic. A certificate that someone renews by hand eventually gets forgotten.
+Let's Encrypt's certificates are already well under that (this site's lasts 90 days). Shorter lifetimes limit the damage if a private key leaks, since an expiry date works even when revocation doesn't [@letsencrypt-short-lived], but they mean renewal has to be automatic. A certificate that someone renews by hand eventually gets forgotten.
 
 ### Every certificate is public: Certificate Transparency
 
@@ -190,11 +192,14 @@ Left to right, that's the domain, the record type, a flags field (`0` is the nor
 
 CAs are required to check it before issuing [@rfc8659, @cabf-baseline-requirements]. If the domain's CAA record only lists Amazon's CAs, for example, Let's Encrypt will refuse with a CAA error no matter how the challenge is set up, and retrying won't help. The only ways around it are changing the CAA record (a policy decision for the whole domain) or using a CA that's on the list. If a domain has no CAA record, any CA can issue.
 
-### AWS Certificate Manager
+### AWS Certificate Manager {only: AWS}
 
 **ACM** is AWS's certificate service. Its public certificates are free to use with AWS's own services (load balancers, CloudFront, API Gateway). They can be validated through DNS, and ACM renews a DNS-validated certificate automatically as long as it's in use and the validation record stays in place [@aws-acm-faq, @aws-acm-dns-renewal]. ACM keeps the private key itself [@aws-acm-faq]: you never see it, and ACM attaches the certificate to the load balancer for you.
 
 ACM checks CAA records too. If a domain has one, it has to list `amazon.com`, `amazontrust.com`, `awstrust.com`, or `amazonaws.com` [@aws-acm-caa].
+
+<details class="aside">
+<summary>Using an ACM certificate outside AWS's own services</summary>
 
 To use an ACM certificate somewhere ACM can't attach it, like a reverse proxy on an EC2 instance, there are two options. The first is an **exportable** certificate:
 
@@ -203,6 +208,8 @@ To use an ACM certificate somewhere ACM can't attach it, like a reverse proxy on
 - ACM renews the certificate on its side, but the copy you exported to a server doesn't update itself [@aws-acm-exportable]. Something has to re-export it and reload the server on a schedule, and that job is the first thing to check if HTTPS stops working months later.
 
 The second is ACM's **ACME** support: an ACME client such as certbot runs on the server and requests and renews certificates from ACM itself, the same way it would with Let's Encrypt. Those certificates last at most 45 days and are also charged per name [@aws-acm-acme, @aws-acm-pricing].
+
+</details>
 
 ## Self-signed certificates and your own CA
 
@@ -318,7 +325,11 @@ The server gets `app.crt` and `app.key`. Clients get `ca.crt`, installed the way
 
 ## Trusting a private CA
 
-Companies often run their own internal CA for internal services, and corporate networks sometimes inspect TLS traffic with a [proxy](/primers/networking/proxies-and-bastions/#forward-proxies) that re-signs every certificate with a company CA. Either way, it's the same chain of trust with a different root: clients only trust those certificates if the company's root certificate is in their trust store. And different tools have different trust stores:
+Companies often run their own internal CA for internal services, and corporate networks sometimes inspect TLS traffic with a [proxy](/primers/networking/proxies-and-bastions/#forward-proxies) that re-signs every certificate with a company CA. Either way, it's the same chain of trust with a different root: clients only trust those certificates if the company's root certificate is in their trust store.
+
+Certificates usually travel as **PEM** files. PEM is a format, not a count: each certificate is its binary data written out in base64 (a way of turning binary data into plain letters and digits) between a `-----BEGIN CERTIFICATE-----` and an `-----END CERTIFICATE-----` line, and one file can hold one of those blocks or many. A **CA bundle** is a PEM file holding several CA certificates one after another, such as a company's root and its intermediates, so that one file can be handed to a tool as everything it should trust. Most tools take a bundle directly. Java doesn't.
+
+Different tools look in different trust stores, though:
 
 | Client | Where it looks | How to add a CA |
 |---|---|---|
@@ -330,15 +341,14 @@ Companies often run their own internal CA for internal services, and corporate n
 
 So a site can work in a browser and fail from Python or Java on the same laptop, because the browser trusts the company CA and the runtime has never heard of it.
 
-### PEM files and bundles
-
-Certificates usually travel as **PEM** files. PEM is a format, not a count: each certificate is its binary data written out in base64 (a way of turning binary data into plain letters and digits) between a `-----BEGIN CERTIFICATE-----` and an `-----END CERTIFICATE-----` line, and one file can hold one of those blocks or many. A **CA bundle** is a PEM file holding several CA certificates one after another, such as a company's root and its intermediates, so that one file can be handed to a tool as everything it should trust. Most tools take a bundle directly. Java doesn't.
-
 ### Building a Java truststore from a bundle
 
-Java keeps two kinds of file that are easy to mix up. A **keystore** holds your own private key and certificate, the credentials Java sends when it has to prove who *it* is. A **truststore** holds the CA certificates Java believes, the ones it uses to decide whether to trust the *other* side [@oracle-jsse]. Trusting a private CA means adding its root to the truststore.
+Java keeps two kinds of file that are easy to mix up. A **keystore** holds your own private key and certificate, the credentials Java sends when it has to prove who *it* is. A **truststore** holds the CA certificates Java believes, the ones it uses to decide whether to trust the *other* side [@oracle-jsse]. Trusting a private CA means adding its root to the truststore. `keytool` does the importing, one certificate at a time, so a bundle has to be split into its separate certificates first.
 
-`keytool` imports one certificate at a time, each under its own name (alias), so for a bundle, split it first and import each piece. Both versions name them `company-cert1`, `company-cert2`, and so on:
+<details class="aside">
+<summary>Splitting a bundle and importing each certificate</summary>
+
+Both versions name the pieces `company-cert1`, `company-cert2`, and so on:
 
 ```bash tab="macOS / Linux"
 mkdir -p /tmp/certs && cd /tmp/certs
@@ -373,7 +383,9 @@ keytool -list -keystore "$HOME\truststore.p12" -storetype PKCS12 -storepass chan
 
 (`changeit` is the starting password of the truststore that ships with Java, `cacerts`, so it's the usual choice for these files and not a secret [@java-keytool]. Use your own if it matters. And yes, `keytool` calls the file a `-keystore` even when you're using it as a truststore, which doesn't help with the confusion.)
 
-Then point Java at it. The standard way is three system properties, set with `-D` when starting the program, for the truststore's path, its password, and its type [@oracle-jsse]:
+</details>
+
+Then point Java at the truststore. The standard way is three system properties, set with `-D` when starting the program, for the truststore's path, its password, and its type [@oracle-jsse]:
 
 ```bash tab="macOS / Linux"
 java -Djavax.net.ssl.trustStore=$HOME/truststore.p12 \
@@ -389,7 +401,14 @@ java "-Djavax.net.ssl.trustStore=$HOME\truststore.p12" `
   -jar app.jar
 ```
 
-PowerShell needs the quotes. Without them it splits each `-D` argument at the first dot, and Java gets `-Djavax` and `.net.ssl…` as two separate arguments. Some libraries, database drivers especially, have their own settings for a truststore path and password instead, so check the documentation for the one you're using.
+Some libraries, database drivers especially, have their own settings for a truststore path and password instead, so check the documentation for the one you're using.
+
+<details class="aside">
+<summary>Why the PowerShell version needs quotes</summary>
+
+Without the quotes, PowerShell splits each `-D` argument at the first dot, and Java gets `-Djavax` and `.net.ssl…` as two separate arguments.
+
+</details>
 
 ## Reading the errors
 
@@ -397,11 +416,12 @@ PowerShell needs the quotes. Without them it splits each `-D` argument at the fi
 |---|---|
 | `PKIX path building failed` (Java) | Java couldn't chain the certificate to anything in its truststore. The CA is missing, or the truststore path or password is wrong. |
 | `CERTIFICATE_VERIFY_FAILED` (Python) | The same thing in Python: the CA isn't in the bundle it's using. |
-| `unable to get local issuer certificate` | The chain can't be completed, usually because the server didn't send its intermediate. |
+| `unable to get local issuer certificate` | The client couldn't find the certificate that signed one in the chain, either among what the server sent or in its own trust store [@openssl-verify-errors]. Either the server left out its intermediate, or the root at the top, often a company's own CA, isn't in the trust store this client uses [@curl-ssl-certs]. |
+| `self signed certificate in certificate chain` | The server sent a complete chain, root included, but that root isn't in the client's trust store [@openssl-verify-errors]. It's how a missing company CA shows up when the server sends its root along. |
 | Hostname mismatch / `certificate is not valid for` | The name you connected to isn't on the certificate. Often you connected by IP address or by an internal name instead of the name on the certificate. |
 | `certificate has expired` | It has. Check whether something was supposed to renew it. |
-| `Connect timed out` | Not a certificate problem. Nothing answered on that address and port: wrong port, a firewall, or a VPN that isn't connected. Internal ports (like `8080` inside a Kubernetes cluster) usually aren't reachable from outside, so connect through the ingress or load balancer on 443 instead. |
-| "requires SSL" / "credentials need TLS" | The server refuses to accept passwords over an unencrypted connection. Turn TLS on in the client. |
+
+A timeout, or a server saying it requires TLS, isn't a certificate problem at all. Those are connection problems: nothing answered on that address and port, or the client connected without turning TLS on.
 
 To see what a server is actually sending, `openssl` will show you the whole chain:
 
