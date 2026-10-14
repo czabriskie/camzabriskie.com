@@ -111,12 +111,8 @@ The two ways of running out look different:
 
 The command most people reach for first starts a brand new JVM:
 
-```bash tab="macOS / Linux"
+```bash
 kubectl exec <pod> -- java -XX:+PrintFlagsFinal -version | grep -E 'MaxHeapSize|InitialHeapSize'
-```
-
-```powershell tab="Windows (PowerShell)"
-kubectl exec <pod> -- java -XX:+PrintFlagsFinal -version | Select-String 'MaxHeapSize|InitialHeapSize'
 ```
 
 That prints what a *fresh* JVM would choose in this container, and ignores any flags the running service was started with. To ask the running service itself, use `jcmd`, which comes with the JDK. It takes the process ID, and when Java is the container's main process, that's PID 1 [@jdk-jcmd]:
