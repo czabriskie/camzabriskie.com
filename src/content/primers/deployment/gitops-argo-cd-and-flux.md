@@ -317,13 +317,136 @@ An **`ApplicationSet`** generates many `Application`s from one template. A gener
 
 ## Flux
 
-Flux is a set of controllers, called the GitOps Toolkit, each with its own object types [@flux-components]:
+Flux works with the same two sets of YAML as Argo CD, the app's manifests and the objects that tell the tool what to do with them. The difference is where the second set lives:
 
-- The **source controller** fetches from git (`GitRepository`), OCI registries (`OCIRepository`), Helm repositories (`HelmRepository`), and storage buckets.
-- The **kustomize controller** applies a folder of manifests (`Kustomization`).
-- The **helm controller** installs and upgrades Helm charts (`HelmRelease`).
+| | The app's manifests | Flux's objects |
+|---|---|---|
+| What it describes | The shop itself: its chart and values file | What Flux should fetch, and what to apply or install from it |
+| Where it's kept | The git repository | Usually the same git repository, in the cluster's folder, such as `clusters/production` [@flux-get-started, @flux-repo-structure] |
+| Who writes it | The team, through pull requests | The team, through pull requests. `flux create` can generate the YAML |
+| What Flux does with it | Fetches it, and applies or installs it, but never edits it | Applies it to the cluster from git, then follows it |
 
-The source controller packages what it fetches as an **artifact**, and the other two controllers fetch that artifact from it rather than from git [@flux-helm-controller, @flux-kustomization].
+Argo CD's `Application` normally starts life in the cluster, from the web UI or the CLI. Flux has no web UI of its own [@flux-faq], and its objects normally start life as files in git that Flux applies to itself.
+
+### Flux's three objects
+
+Each object is a Kubernetes object, like Argo CD's `Application`, and each one is handled by a different Flux controller [@flux-components]:
+
+- **`GitRepository`**: where a repository is, which branch to follow, and how often to check it. The source controller fetches it and packages the files as an **artifact** for the other controllers [@flux-helmreleases, @flux-helm-controller].
+- **`Kustomization`**: a folder in a source to apply to the cluster, how often, and whether to delete what's been removed from git [@flux-kustomization]. This isn't Kustomize's own `kustomization.yaml` file, despite the name. Flux's FAQ confirms there are two different types called Kustomization: Flux's is a Kubernetes object that points at a folder, and Kustomize's is the file inside that folder that lists what to build [@flux-faq].
+- **`HelmRelease`**: a Helm chart from a source, with its values. The helm controller turns it into a real Helm release [@flux-helm-controller].
+
+Here's the shop's `HelmRelease`, saved as `clusters/production/shop.yaml` in the repository [@flux-helmreleases, @flux-kustomization]:
+
+```yaml
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: shop
+  namespace: shop
+spec:
+  interval: 10m              # how often to check the release against git
+  chart:
+    spec:
+      chart: ./charts/shop   # path to the chart inside the source
+      reconcileStrategy: Revision   # upgrade on any new commit (see below)
+      sourceRef:             # which source the chart comes from
+        kind: GitRepository
+        name: flux-system    # the repository bootstrap already set up
+        namespace: flux-system
+      valuesFiles:
+        - ./charts/shop/values-production.yaml
+```
+
+Like an `Application`, it says nothing about the shop's containers. It points at the chart, and the chart describes the containers.
+
+The `reconcileStrategy` line matters for a chart kept in git. By default Flux only builds a new copy of the chart when the `version` in `Chart.yaml` goes up, so a commit that only changes `values-production.yaml` wouldn't reach the cluster. `Revision` makes every new commit count [@flux-helmchart, @flux-helmrelease-api].
+
+### How Flux finds the shop
+
+Neither the `HelmRelease` nor the chart does anything until Flux is reading the folder they're in. That starts with bootstrap, and the rest follows in a chain:
+
+1. **`flux bootstrap`**, run once per cluster, installs Flux's controllers, commits Flux's own manifests to the repository under `clusters/production/flux-system`, and sets Flux to keep the cluster in sync with that folder of the repository. From then on, any change to the cluster, Flux upgrades included, can be made with a git push [@flux-installation, @flux-get-started].
+2. Bootstrap leaves a `GitRepository` for the repository and a `Kustomization` for the cluster's folder, both called `flux-system`. Flux's docs build on that `GitRepository` in their own examples [@flux-get-started, @flux-kustomization].
+3. The team commits `shop.yaml` to `clusters/production`. The `flux-system` `Kustomization` applies everything in that folder on its next check, so the `HelmRelease` appears in the cluster [@flux-kustomization].
+4. The helm controller sees the new `HelmRelease`, gets the chart from the source's artifact, and runs a Helm install. The Deployment and Service appear in the `shop` namespace [@flux-helm-controller].
+
+<div class="gitops-flow" role="img" aria-label="How Flux finds the shop. On the left, the git repository: clusters/production holds a flux-system folder written by bootstrap, and the team's shop.yaml. charts/shop holds the chart. On the right, inside the cluster, a chain: the GitRepository named flux-system fetches the repository and hands an artifact to the Kustomization named flux-system, which applies everything in clusters/production, including shop.yaml. That creates the HelmRelease named shop, whose chart is ./charts/shop. The helm controller runs Helm install or upgrade, creating the Deployment and Service in the shop namespace as a Helm release. Dashed lines connect each object to the file in git it comes from.">
+<svg viewBox="0 0 400 256" aria-hidden="true" focusable="false">
+<defs><marker id="gc-head" viewBox="0 0 8 8" refX="7" refY="4" markerUnits="userSpaceOnUse" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="go-arrowhead" d="M0,0 L8,4 L0,8 z"/></marker></defs>
+<text class="go-title" x="82" y="14">git repo</text>
+<text class="go-title" x="286" y="14">cluster</text>
+<rect class="go-box" x="4" y="24" width="156" height="132" rx="3"/>
+<text class="go-small go-start" x="12" y="42">deploy.git/</text>
+<text class="go-small go-start go-file" x="21" y="57">clusters/production/</text>
+<text class="go-small go-start go-file" x="30" y="72">flux-system/</text>
+<text class="go-small go-start go-file" x="30" y="87">shop.yaml</text>
+<text class="go-small go-start go-file" x="21" y="102">charts/shop/</text>
+<text class="go-small go-start go-file" x="30" y="117">Chart.yaml</text>
+<text class="go-small go-start go-file" x="30" y="132">values-production.yaml</text>
+<text class="go-small go-start go-file" x="30" y="147">templates/</text>
+<rect class="go-cluster" x="176" y="24" width="220" height="226" rx="3"/>
+<rect class="go-box go-agent" x="186" y="30" width="200" height="34" rx="3"/>
+<text class="go-name" x="286.0" y="45.0">GitRepository: flux-system</text>
+<text class="go-small" x="286.0" y="56.0">fetches deploy.git</text>
+<rect class="go-box go-agent" x="186" y="84" width="200" height="34" rx="3"/>
+<text class="go-name" x="286.0" y="99.0">Kustomization: flux-system</text>
+<text class="go-small" x="286.0" y="110.0">applies clusters/production/</text>
+<rect class="go-box go-agent" x="186" y="138" width="200" height="34" rx="3"/>
+<text class="go-name" x="286.0" y="153.0">HelmRelease: shop</text>
+<text class="go-small" x="286.0" y="164.0">chart: ./charts/shop</text>
+<rect class="go-box" x="186" y="192" width="200" height="48" rx="3"/>
+<text class="go-name" x="286.0" y="208.5">namespace shop</text>
+<text class="go-small" x="286.0" y="219.5">Deployment and Service,</text>
+<text class="go-small" x="286.0" y="230.5">installed as a Helm release</text>
+<line class="go-arrow go-hot" x1="286" y1="65" x2="286" y2="82" marker-end="url(#gc-head)"/>
+<text class="go-small go-start go-hotlabel" x="291" y="76.5">artifact</text>
+<line class="go-arrow go-hot" x1="286" y1="119" x2="286" y2="136" marker-end="url(#gc-head)"/>
+<text class="go-small go-start go-hotlabel" x="291" y="130.5">applies shop.yaml</text>
+<line class="go-arrow go-hot" x1="286" y1="173" x2="286" y2="190" marker-end="url(#gc-head)"/>
+<text class="go-small go-start go-hotlabel" x="291" y="184.5">helm install, upgrade</text>
+<polyline class="go-link" points="95,69 152,69 185,47"/>
+<polyline class="go-link" points="152,69 185,101"/>
+<polyline class="go-link" points="80,84 152,84 185,155"/>
+<polyline class="go-link" points="86,99 152,99 185,214"/>
+</svg>
+</div>
+
+<p class="bitgrid-caption">Dashed lines show which files in git each object comes from. Bootstrap writes the first two, the team commits <code>shop.yaml</code>, and everything below the first object is applied by Flux itself.</p>
+
+Raising the shop to 3 copies is then the change from earlier: edit `values-production.yaml` and merge. Because of `reconcileStrategy: Revision`, the new commit produces a new chart artifact, and the helm controller upgrades the release [@flux-helmchart, @flux-helm-controller].
+
+If the chart lived in a separate repository, the team would commit a second `GitRepository` next to `shop.yaml` and point `sourceRef` at it instead [@flux-helmreleases]:
+
+```yaml
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: shop-chart
+  namespace: flux-system
+spec:
+  interval: 1m               # how often to check for new commits
+  url: https://git.example.com/team/shop-chart.git
+  ref:
+    branch: main
+```
+
+### Creating Flux's objects
+
+- **Commit the YAML** to the cluster's folder. That's the normal way, and the only one that keeps git a full record.
+- **Generate it with `flux create ... --export`**, which prints the YAML instead of applying it, then commit the file [@flux-create-helmrelease, @flux-get-started]. The generated `HelmRelease` still needs the `valuesFiles` and `reconcileStrategy` lines added by hand:
+
+  ```bash
+  flux create helmrelease shop \
+    --namespace=shop \
+    --source=GitRepository/flux-system.flux-system \
+    --chart=./charts/shop \
+    --export > clusters/production/shop.yaml
+  ```
+
+- **`flux create` without `--export`**, or `kubectl apply`, creates the object straight in the cluster [@flux-create-source-git]. That works, but then the cluster has something git doesn't, the same problem as an Argo CD `Application` made in the web UI.
+
+### How Flux's controllers fit together
 
 <div class="gitops-flow" role="img" aria-label="Flux's controllers inside one cluster. The source controller fetches the git repository named in a GitRepository and packages it as an artifact. The kustomize controller applies manifests from that artifact for each Kustomization, and the helm controller runs Helm installs and upgrades for each HelmRelease. Each cluster usually runs its own Flux.">
 <svg viewBox="0 0 400 186" aria-hidden="true" focusable="false">
@@ -354,41 +477,7 @@ The source controller packages what it fetches as an **artifact**, and the other
 
 <p class="bitgrid-caption">Flux splits the work across controllers that pass an artifact along. There's no central server, and each cluster usually runs its own copy.</p>
 
-The Flux project doesn't ship a web UI of its own. You work with it through `kubectl` and the `flux` command line, and separate projects provide UIs [@flux-faq].
-
-For the shop, the repository is a `GitRepository`, and the chart is a `HelmRelease` pointing at it [@flux-helmreleases]:
-
-```yaml
-apiVersion: source.toolkit.fluxcd.io/v1
-kind: GitRepository
-metadata:
-  name: deploy
-  namespace: flux-system
-spec:
-  interval: 1m
-  url: https://git.example.com/platform/deploy.git
-  ref:
-    branch: main
----
-apiVersion: helm.toolkit.fluxcd.io/v2
-kind: HelmRelease
-metadata:
-  name: shop
-  namespace: shop
-spec:
-  interval: 10m
-  chart:
-    spec:
-      chart: ./charts/shop
-      sourceRef:
-        kind: GitRepository
-        name: deploy
-        namespace: flux-system
-      valuesFiles:
-        - ./charts/shop/values-production.yaml
-```
-
-These two objects live in git too. `flux bootstrap` installs Flux in the cluster, commits Flux's own manifests to the repository, and points Flux at a folder such as `clusters/production`. From then on, anything committed to that folder is applied [@flux-get-started].
+### Watching the shop change
 
 Some behavior to know:
 

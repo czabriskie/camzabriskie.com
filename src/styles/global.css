@@ -939,3 +939,4 @@ details.aside[open] summary { margin-bottom: 0.4rem; }
 .gitops-flow .go-arrowhead { fill: context-stroke; }
 .gitops-flow .go-end { text-anchor: end; }
 .gitops-flow .go-file { fill: var(--ink); }
+.gitops-flow .go-link { fill: none; stroke: var(--muted); stroke-width: 1; stroke-dasharray: 3 2; }

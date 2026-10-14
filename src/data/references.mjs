@@ -533,6 +533,11 @@ export const references = {
   'flux-helm-controller': { authors: 'The Flux Project', title: 'Helm Controller', container: 'Flux Documentation', url: 'https://fluxcd.io/flux/components/helm/', accessed: '2026-10-14' },
   'flux-helmrelease-spec': { authors: 'The Flux Project', title: 'Helm Releases', container: 'Flux Documentation', url: 'https://fluxcd.io/flux/components/helm/helmreleases/', accessed: '2026-10-14' },
   'flux-helmreleases': { authors: 'The Flux Project', title: 'Manage Helm Releases', container: 'Flux Documentation', url: 'https://fluxcd.io/flux/guides/helmreleases/', accessed: '2026-10-14' },
+  'flux-installation': { authors: 'The Flux Project', title: 'Installation', container: 'Flux Documentation', url: 'https://fluxcd.io/flux/installation/', accessed: '2026-10-14' },
+  'flux-create-helmrelease': { authors: 'The Flux Project', title: 'flux create helmrelease', container: 'Flux CLI Documentation', url: 'https://fluxcd.io/flux/cmd/flux_create_helmrelease/', accessed: '2026-10-14' },
+  'flux-create-source-git': { authors: 'The Flux Project', title: 'flux create source git', container: 'Flux CLI Documentation', url: 'https://fluxcd.io/flux/cmd/flux_create_source_git/', accessed: '2026-10-14' },
+  'flux-helmchart': { authors: 'The Flux Project', title: 'Helm Charts', container: 'Flux Documentation', url: 'https://fluxcd.io/flux/components/source/helmcharts/', accessed: '2026-10-14' },
+  'flux-helmrelease-api': { authors: 'The Flux Project', title: 'Helm API reference v2', container: 'Flux Documentation', url: 'https://fluxcd.io/flux/components/helm/api/v2/', accessed: '2026-10-14' },
   'flux-repo-structure': { authors: 'The Flux Project', title: 'Ways of structuring your repositories', container: 'Flux Documentation', url: 'https://fluxcd.io/flux/guides/repository-structure/', accessed: '2026-10-14' },
 };
 
