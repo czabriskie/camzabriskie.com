@@ -203,6 +203,21 @@ Nothing about the shop's containers is in there. Those are in the chart, in git.
 
 <p class="bitgrid-caption">The chart stays in git. The `Application` lives in Argo CD's namespace and only points at it. Argo CD does the fetching, and creates the real objects in the destination namespace.</p>
 
+### What the folder in git has to contain
+
+The `Application` can point at any folder, but Argo CD has to be able to turn what's in it into Kubernetes objects. Its repo server knows how to build from a few formats [@argocd-tools]:
+
+| What's in the folder | How Argo CD recognizes it | What it does with it |
+|---|---|---|
+| A Helm chart | A `Chart.yaml` file | Renders it with `helm template` [@argocd-helm] |
+| A Kustomize setup | A `kustomization.yaml` file | Builds it with Kustomize |
+| Plain manifests | Neither of those | Reads every `.yaml`, `.yml`, and `.json` file as a Kubernetes manifest, also Jsonnet [@argocd-directory] |
+| Anything else | Only through a **config management plugin**, a tool you add to the repo server | Runs the plugin, which has to print Kubernetes YAML [@argocd-cmp] |
+
+Argo CD checks in that order unless the `Application` names a tool, so a folder with a `Chart.yaml` is always treated as a Helm chart [@argocd-tool-detection]. Whichever way it's built, the result has to be valid Kubernetes objects. A folder of plain manifests is read only at its top level unless the `Application` sets `directory.recurse: true`. Plain-manifest mode is only for plain files: if the `Application` forces it and Argo CD finds Helm, Kustomize, or Jsonnet files there, rendering fails [@argocd-directory].
+
+`Application` files follow the same rule when they're in git. They only need to be there if Argo CD reads them from git, which is what app of apps does: the parent `Application`'s folder holds the child `Application`s, and it's just another source, so it can be plain `Application` YAML files or a Helm chart that produces them [@argocd-bootstrapping]. An `ApplicationSet` keeps one file in git, and the `Application`s it generates never exist as files at all.
+
 ### Three ways to create an `Application`
 
 Each of these creates the same kind of object in the same place. The web UI and the CLI send it through Argo CD's API server, and `kubectl` writes it straight to the cluster [@argocd-architecture, @argocd-declarative].
@@ -475,6 +490,8 @@ spec:
 Like an `Application`, it says nothing about the shop's containers. It points at the chart, and the chart describes the containers.
 
 The `reconcileStrategy` line matters for a chart kept in git. By default Flux only builds a new copy of the chart when the `version` in `Chart.yaml` goes up, so a commit that only changes `values-production.yaml` wouldn't reach the cluster. `Revision` makes every new commit count [@flux-helmchart, @flux-helmrelease-api].
+
+The folders Flux reads have rules too. A `HelmRelease` needs a Helm chart. A `Kustomization` reads a folder of Kubernetes manifests: if there's no `kustomization.yaml`, Flux generates one covering every YAML file under the path, so every one of them has to be a valid Kubernetes manifest unless it's excluded with a `.sourceignore` file or the source's `ignore` field. Flux recommends committing your own `kustomization.yaml` so CI can check it [@flux-kustomization].
 
 ### How Flux finds the shop
 
