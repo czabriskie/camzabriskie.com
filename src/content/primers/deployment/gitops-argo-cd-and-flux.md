@@ -232,7 +232,122 @@ None of these write anything to git. The `Application` only points at the reposi
 
 An `Application` made in the web UI or with the CLI exists only in the cluster. The shop's chart is versioned, but the pointer to it isn't, which is the opening problem one level up: if someone changes or deletes the `Application` by hand, git has no record of it.
 
-Argo CD's docs say you can create `Application`s by hand or with a script, but recommend generating them with an `ApplicationSet` (below), with a pattern called **app of apps** as the alternative [@argocd-bootstrapping]. In app of apps, one parent `Application` is created by hand, once, and its source is a folder in git full of other `Application` files. From then on, adding an app to the cluster means committing an `Application` file. Argo CD warns that this is an admin-level tool, because whoever can push to that folder can create `Application`s in any project, so only admins should have push access to it and changes to it should be reviewed [@argocd-bootstrapping].
+Argo CD's docs say you can create `Application`s by hand or with a script, but recommend generating them with an `ApplicationSet`, with a pattern called **app of apps** as the alternative [@argocd-bootstrapping]. Both work the same way at heart: one object you write once and keep in git produces the `Application`s, so nobody makes them by hand. In app of apps, one parent `Application` is created by hand, once, and its source is a folder in git full of other `Application` files. From then on, adding an app to the cluster means committing an `Application` file. Argo CD warns that this is an admin-level tool, because whoever can push to that folder can create `Application`s in any project, so only admins should have push access to it and changes to it should be reviewed [@argocd-bootstrapping].
+
+### Generating `Application`s with an `ApplicationSet`
+
+An **`ApplicationSet`** is a recipe for `Application`s. It's another Argo CD object with two parts [@argocd-appset, @argocd-generators]:
+
+- a **generator**, which produces a list of parameter sets, such as one per cluster, one per folder in a repository, or one per item in a list you write;
+- a **template**, an `Application` with blanks in it. For each parameter set, Argo CD's ApplicationSet controller fills in the blanks and creates that `Application`.
+
+Say the shop now runs on two clusters, staging and production, and the team wants it on any future cluster that should have it. Each cluster Argo CD manages is registered as a Secret in Argo CD's namespace, and those Secrets can carry labels [@argocd-cluster-generator]. The team labels each cluster with its environment, and labels the ones that should run the shop with `shop: "enabled"`. Then, instead of one `Application` per cluster, they write one `ApplicationSet` [@argocd-cluster-generator]:
+
+```yaml
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: shop
+  namespace: argocd
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+    - clusters:                  # one parameter set per registered cluster...
+        selector:
+          matchLabels:
+            shop: "enabled"      # ...but only clusters with this label
+  template:                      # an Application, with blanks
+    metadata:
+      name: 'shop-{{.name}}'     # the cluster's name
+    spec:
+      project: default
+      source:
+        repoURL: https://git.example.com/platform/deploy.git
+        targetRevision: main
+        path: charts/shop
+        helm:
+          valueFiles:
+            - 'values-{{.metadata.labels.env}}.yaml'   # the cluster's env label
+      destination:
+        server: '{{.server}}'      # the cluster's API address
+        namespace: shop
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+```
+
+For every cluster with `shop: "enabled"`, the cluster generator hands the template that cluster's `name`, its `server` address, and its labels [@argocd-cluster-generator]. With three clusters registered, the result looks like this:
+
+<div class="gitops-flow" role="img" aria-label="An ApplicationSet named shop and the Applications it generates. On the left, three clusters registered in Argo CD: staging, labeled env=staging and shop=enabled; production, labeled env=production and shop=enabled; and dev, labeled env=dev with no shop label. The ApplicationSet selects clusters labeled shop=enabled and fills in a template named shop-{{.name}}. It generates two Applications: shop-staging, using values-staging.yaml and deploying to the staging cluster, and shop-production, using values-production.yaml and deploying to the production cluster. Dev isn't selected, so it gets no shop.">
+<svg viewBox="0 0 400 186" aria-hidden="true" focusable="false">
+<defs><marker id="gs-head" viewBox="0 0 8 8" refX="7" refY="4" markerUnits="userSpaceOnUse" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="go-arrowhead" d="M0,0 L8,4 L0,8 z"/></marker></defs>
+<text class="go-title" x="61" y="14">registered clusters</text>
+<text class="go-title" x="204" y="14">ApplicationSet</text>
+<text class="go-title" x="337" y="14">generated Applications</text>
+<rect class="go-box" x="4" y="26" width="114" height="42" rx="3"/>
+<text class="go-name" x="61.0" y="39.5">staging</text>
+<text class="go-small" x="61.0" y="50.5">env=staging</text>
+<text class="go-small" x="61.0" y="61.5">shop=enabled</text>
+<rect class="go-box" x="4" y="80" width="114" height="42" rx="3"/>
+<text class="go-name" x="61.0" y="93.5">production</text>
+<text class="go-small" x="61.0" y="104.5">env=production</text>
+<text class="go-small" x="61.0" y="115.5">shop=enabled</text>
+<rect class="go-cluster" x="4" y="134" width="114" height="42" rx="3"/>
+<text class="go-name" x="61.0" y="147.5">dev</text>
+<text class="go-small" x="61.0" y="158.5">env=dev</text>
+<text class="go-small" x="61.0" y="169.5">no shop label</text>
+<rect class="go-box go-agent" x="144" y="62" width="120" height="64" rx="3"/>
+<text class="go-name" x="204.0" y="81.0">ApplicationSet: shop</text>
+<text class="go-small" x="204.0" y="92.0">selects</text>
+<text class="go-small" x="204.0" y="103.0">shop=enabled</text>
+<text class="go-small" x="204.0" y="114.0">name: shop-{{.name}}</text>
+<rect class="go-box" x="278" y="30" width="118" height="48" rx="3"/>
+<text class="go-name" x="337.0" y="46.5">shop-staging</text>
+<text class="go-small" x="337.0" y="57.5">values-staging.yaml</text>
+<text class="go-small" x="337.0" y="68.5">to: staging</text>
+<rect class="go-box" x="278" y="110" width="118" height="48" rx="3"/>
+<text class="go-name" x="337.0" y="126.5">shop-production</text>
+<text class="go-small" x="337.0" y="137.5">values-production.yaml</text>
+<text class="go-small" x="337.0" y="148.5">to: production</text>
+<line class="go-arrow go-hot" x1="119" y1="50" x2="142" y2="82" marker-end="url(#gs-head)"/>
+<line class="go-arrow go-hot" x1="119" y1="101" x2="142" y2="101" marker-end="url(#gs-head)"/>
+<line class="go-arrow go-hot" x1="265" y1="86" x2="276" y2="58" marker-end="url(#gs-head)"/>
+<line class="go-arrow go-hot" x1="265" y1="104" x2="276" y2="132" marker-end="url(#gs-head)"/>
+<text class="go-small" x="204" y="166">dev isn't selected,</text>
+<text class="go-small" x="204" y="177">so it gets no shop</text>
+</svg>
+</div>
+
+<p class="bitgrid-caption">The generator decides how many <code>Application</code>s there are, one per selected cluster. The template decides what each one looks like.</p>
+
+| Cluster | Labels | Generated `Application` | Values file | Deploys to |
+|---|---|---|---|---|
+| staging | `env=staging`, `shop=enabled` | `shop-staging` | `values-staging.yaml` | the staging cluster's `shop` namespace |
+| production | `env=production`, `shop=enabled` | `shop-production` | `values-production.yaml` | the production cluster's `shop` namespace |
+| dev | `env=dev` | none | | |
+
+Each generated `Application` is an ordinary `Application`, the same kind of object as the one in the previous section. It shows up in the web UI and syncs the same way. The difference is who made it.
+
+From then on, the controller keeps the `Application`s matching the clusters:
+
+- **A new cluster gets the shop by being labeled.** Register a fourth cluster with `env=staging` and `shop=enabled`, and the controller creates `shop-<name>` for it. Nobody writes an `Application`. The cluster generator responds to clusters being added and removed [@argocd-generators].
+- **Removing the label removes the shop.** Under the controller's default policy, `sync`, it creates, updates, and deletes `Application`s to match what the generator produces [@argocd-appset-modification]. Generated `Application`s carry a finalizer that, by default, makes Argo CD delete what they deployed when they go away [@argocd-appset-deletion].
+- **Hand edits to a generated `Application` don't stick.** The same `sync` policy updates them back to what the template says. A policy such as `create-only` or `create-update` limits what the controller may change [@argocd-appset-modification].
+- **Deleting the `ApplicationSet` deletes everything it made:** the `Application`s, and the Deployments and Services they deployed, unless `syncPolicy.preserveResourcesOnDeletion` is `true` [@argocd-appset-deletion]. Be careful with `kubectl delete` on one.
+
+Argo CD's bootstrapping guide recommends exactly this pattern, cluster labels plus `ApplicationSet`s, for getting apps onto new clusters [@argocd-bootstrapping]. The `ApplicationSet` itself still has to be created once, for example with `kubectl apply`, but it's one file to keep in git instead of one per app per cluster, and every `Application` it makes follows from that file.
+
+The cluster generator is one of nine. A few others that come up often [@argocd-generators]:
+
+| Generator | One parameter set per… |
+|---|---|
+| List | item in a list written into the `ApplicationSet` itself |
+| Cluster | cluster Argo CD manages, optionally filtered by label |
+| Git | file, or folder, in a git repository, such as one folder per app |
+| Matrix | combination of two other generators, such as every app folder on every cluster |
+| Pull Request | open pull request in a repository, for short-lived preview environments |
 
 ### How Argo CD's parts fit together
 
@@ -313,7 +428,6 @@ Some behavior to know before relying on it:
 - **Helm is only used to render.** Argo CD runs `helm template` and applies the result itself, instead of `helm install`. So `helm list` doesn't show the release, and Helm's own commands can't inspect or roll it back. Argo CD keeps its own history and rollback instead [@argocd-faq, @argocd-helm].
 - **Values come from several places, in a fixed order.** From lowest to highest priority: the chart's own `values.yaml`, then `valueFiles`, then inline `values`, then `valuesObject`, then individual `parameters` [@argocd-helm]. Since version 2.6, values files can live in a different repository from the chart [@argocd-helm].
 
-An **`ApplicationSet`** generates many `Application`s from one template. A generator produces a list of parameter sets, and each one becomes an `Application` [@argocd-appset]. The cluster generator, for example, produces one set per cluster Argo CD manages, and a label selector picks which clusters get the app [@argocd-cluster-generator]. Labeling a cluster `staging: "true"` is then enough to give it every app aimed at staging.
 
 ## Flux
 
