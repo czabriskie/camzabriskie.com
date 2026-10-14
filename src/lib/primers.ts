@@ -18,6 +18,11 @@ export const topics = [
     blurb: 'The limits and rules the cluster enforces, and what to do when a deploy hits one.',
   },
   {
+    slug: 'java',
+    title: 'Java',
+    blurb: 'How the JVM uses memory, and how that fits inside a container.',
+  },
+  {
     slug: 'deployment',
     title: 'Deployment',
     blurb: 'How software gets onto servers you do not fully control, and what each approach needs from the network.',
