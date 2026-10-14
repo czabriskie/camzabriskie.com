@@ -17,6 +17,24 @@ This primer covers how the JVM picks its heap size inside a container, where the
 - **Container limit**: a ceiling on how much memory a container may use, enforced by the Linux kernel. A container that goes over it can be killed [@k8s-manage-resources].
 - **MiB and MB**: a mebibyte (MiB) is 1,048,576 bytes and a megabyte (MB) is 1,000,000. In Kubernetes a limit written `2G` is 2,000,000,000 bytes and `2Gi` is 2,147,483,648, so the suffix matters [@k8s-manage-resources].
 
+<details class="aside">
+<summary>Why there are two kinds of megabyte</summary>
+
+Neither one is rounded. They're two exact sizes with similar names. Memory is addressed in binary, so its sizes come in powers of two, and 1,024 is close enough to 1,000 that the metric names got borrowed for it: a "kilobyte" of memory was often 1,024 bytes and a "megabyte" 1,048,576. Disk makers, network speeds, and the metric system itself use powers of ten instead. The official rules for metric prefixes say they mean powers of ten only, so a kilobit is 1,000 bits and not 1,024 [@si-brochure].
+
+To end the confusion, the International Electrotechnical Commission approved separate binary prefixes in December 1998: kibi (Ki), mebi (Mi), gibi (Gi), and tebi (Ti), where the "bi" stands for binary [@nist-binary]. The gap between the two kinds grows with each step up:
+
+| Prefix | Powers of ten | Powers of two | Difference |
+|---|---|---|---|
+| kilo / kibi | 1,000 | 1,024 | 2.4% |
+| mega / mebi | 1,000,000 | 1,048,576 | 4.9% |
+| giga / gibi | 1,000,000,000 | 1,073,741,824 | 7.4% |
+| tera / tebi | 1,000,000,000,000 | 1,099,511,627,776 | 10% |
+
+Not everything adopted the new names. Kubernetes did, which is why `2G` and `2Gi` are different limits. The JVM's size flags didn't: `-Xmx80m` means 80 × 1,048,576 bytes, the same as `-Xmx83886080`, even though it's written with a plain `m` [@jdk-java-man].
+
+</details>
+
 ## Where you run into a JVM
 
 The JVM doesn't run Java source code. It runs **class files**, a compiled format, and doesn't care which language produced them, so other languages compile to it too [@jvm-spec]. Kotlin is one: it targets the JVM, and Kotlin services can use Java frameworks like Spring Boot [@kotlin-faq]. Anything built in Java or another JVM language brings a JVM with it when it runs. Some common examples:
