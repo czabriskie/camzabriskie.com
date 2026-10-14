@@ -27,6 +27,7 @@ const aws = (title, container, url) => ({ authors: AWS, title, container, url, a
 // Philosophy sources: the Stanford Encyclopedia of Philosophy (dated by its last
 // substantive revision) and the Internet Encyclopedia of Philosophy.
 const PHIL = '2026-10-08';
+const NT = '2026-10-13';
 const IEP = 'Internet Encyclopedia of Philosophy';
 const sep = (authors, title, date, slug) => ({
   authors,
@@ -492,6 +493,22 @@ export const references = {
   'k8s-pod-lifecycle': { authors: 'The Kubernetes Authors', title: 'Pod Lifecycle', container: 'Kubernetes Documentation', url: 'https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/', accessed: '2026-10-13' },
   'k8s-apiserver': { authors: 'The Kubernetes Authors', title: 'kube-apiserver', container: 'Kubernetes Documentation (command line tools reference)', url: 'https://kubernetes.io/docs/reference/command-line-tools-reference/kube-apiserver/', accessed: '2026-10-13' },
   'kernel-cgroup-v2': { authors: 'The Linux Kernel documentation', title: 'Control Group v2', container: 'The Linux Kernel Admin Guide', url: 'https://docs.kernel.org/admin-guide/cgroup-v2.html', accessed: '2026-10-13' },
+  // Theology: the original language of the New Testament
+  'bo-original-language': { authors: ['N. Denzey Lewis'], title: 'What Was the Original Language of the Bible?', container: 'Bible Odyssey, Society of Biblical Literature', date: 'Dec. 14, 2022', url: 'https://www.bibleodyssey.org/articles/what-was-the-original-language-of-the-bible/', accessed: NT },
+  'bo-langs-palestine': { authors: ['S. Thomas'], title: 'Languages of First-Century Palestine', container: 'Bible Odyssey, Society of Biblical Literature', date: 'Dec. 14, 2022', url: 'https://www.bibleodyssey.org/articles/languages-of-first-century-palestine/', accessed: NT },
+  'bo-versions': { authors: ['B. Breed'], title: 'What Are the Earliest Versions and Translations of the Bible?', container: 'Bible Odyssey, Society of Biblical Literature', date: 'Dec. 14, 2022', url: 'https://www.bibleodyssey.org/articles/what-are-the-earliest-versions-and-translations-of-the-bible/', accessed: NT },
+  'bo-english-translations': { authors: ['M. W. Holmes'], title: 'What Are English Translations of the Christian Bible Based On?', container: 'Bible Odyssey, Society of Biblical Literature', date: 'Dec. 14, 2022', url: 'https://www.bibleodyssey.org/articles/what-are-english-translations-of-the-christian-bible-based-on/', accessed: NT },
+  'bo-matthew-date': { authors: ['D. Sim'], title: 'When Was the Gospel of Matthew Written?', container: 'Bible Odyssey, Society of Biblical Literature', date: 'Dec. 14, 2022', url: 'https://www.bibleodyssey.org/articles/when-was-the-gospel-of-matthew-written/', accessed: NT },
+  'bo-paul': { authors: ['D. C. Lopez'], title: 'Paul', container: 'Bible Odyssey, Society of Biblical Literature', url: 'https://www.bibleodyssey.org/articles/paul/', accessed: NT },
+  'bo-dict-aramaic': { authors: 'HarperCollins Bible Dictionary', title: 'Aramaic', container: 'Bible Odyssey, Society of Biblical Literature', url: 'https://www.bibleodyssey.org/dictionary/aramaic/', accessed: NT },
+  'bo-dict-abba': { authors: 'HarperCollins Bible Dictionary', title: 'Abba', container: 'Bible Odyssey, Society of Biblical Literature', url: 'https://www.bibleodyssey.org/dictionary/abba/', accessed: NT },
+  'bo-dict-maranatha': { authors: 'HarperCollins Bible Dictionary', title: 'Maranatha', container: 'Bible Odyssey, Society of Biblical Literature', url: 'https://www.bibleodyssey.org/dictionary/maranatha/', accessed: NT },
+  'nrsvue': { authors: 'National Council of the Churches of Christ in the USA', title: 'New Revised Standard Version Updated Edition', container: 'Bible Gateway', date: '2021', url: 'https://www.biblegateway.com/versions/New-Revised-Standard-Version-Updated-Edition-NRSVue-Bible/', accessed: NT },
+  'eusebius-he-3': { authors: ['Eusebius of Caesarea'], title: 'Church History, Book III', note: 'trans. A. C. McGiffert, ch. 39', container: 'New Advent', url: 'https://www.newadvent.org/fathers/250103.htm', accessed: NT },
+  'gedsh-peshitta': { authors: ['B. ter Haar Romeny', 'C. E. Morrison'], title: 'Peshitta', container: 'Gorgias Encyclopedic Dictionary of the Syriac Heritage: Electronic Edition', url: 'https://gedsh.bethmardutho.org/Peshitta', accessed: NT },
+  'gedsh-lamsa': { authors: ['J. F. Coakley'], title: 'Lamsa, George', container: 'Gorgias Encyclopedic Dictionary of the Syriac Heritage: Electronic Edition', url: 'https://gedsh.bethmardutho.org/Lamsa-George', accessed: NT },
+  'codex-sinaiticus': { authors: 'The Codex Sinaiticus Project', title: 'About Codex Sinaiticus', url: 'https://www.codexsinaiticus.org/en/codex/', accessed: NT },
+  'rylands-p52': { authors: 'The University of Manchester Library', title: 'Papyri: Greek P 457 (St John Fragment)', container: 'Manchester Digital Collections', url: 'https://www.digitalcollections.manchester.ac.uk/view/MS-GREEK-P-00457', accessed: NT },
 };
 
 const MONTHS = ['Jan.', 'Feb.', 'Mar.', 'Apr.', 'May', 'Jun.', 'Jul.', 'Aug.', 'Sep.', 'Oct.', 'Nov.', 'Dec.'];
