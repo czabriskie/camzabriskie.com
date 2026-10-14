@@ -27,7 +27,7 @@ Each one gets a section below, in that order (PrivateLink is covered under [VPCs
 
 These connect one network to another, so everything on one side can reach (whatever the firewalls allow on) the other side. Peering and Transit Gateway also work between VPCs that belong to [different AWS accounts](#vpcs-in-different-aws-accounts).
 
-### VPC peering
+### VPC peering {only: AWS}
 
 A **peering connection** links two VPCs directly. It doesn't route anything by itself: each side adds a route for the other's range with the peering connection as the target [@aws-vpc-peering-routing]. With VPC A on `10.0.0.0/16` and VPC B on `10.1.0.0/16`, peered through a connection AWS names something like `pcx-…`:
 
@@ -71,7 +71,7 @@ Peering is simple, with two limits that shape bigger designs:
 
 <p class="bitgrid-caption">Peering only connects the two VPCs at its ends, so a full mesh needs a connection for every pair. A Transit Gateway needs one attachment per VPC.</p>
 
-### Transit Gateway
+### Transit Gateway {only: AWS}
 
 A **Transit Gateway** is a hub that VPCs, VPNs, and Direct Connect links all attach to, so instead of wiring every pair together, each network connects once to the hub. AWS describes it as a virtual router for the region, and it has its own route tables deciding which attachments can reach which [@aws-tgw-how-it-works].
 
@@ -117,13 +117,13 @@ AWS's site-to-site VPN uses **IPsec** for the tunnel [@aws-s2s-vpn-what-is]. IPs
 
 In AWS, the far end is described by a **customer gateway** (the office's VPN device), and the AWS end is a **virtual private gateway** on one VPC or a Transit Gateway. Each VPN connection comes with two tunnels that end in different availability zones, and the office device should have both up, because AWS takes one down from time to time for maintenance [@aws-s2s-vpn-what-is, @aws-s2s-vpn-resilience]. The routes for the office's ranges are either typed in as static routes or learned over BGP (Border Gateway Protocol, which lets the office device announce its ranges itself), and AWS recommends BGP when the device supports it because its checks help traffic fail over to the second tunnel [@aws-s2s-vpn-static-dynamic].
 
-### Direct Connect
+### Direct Connect {only: AWS}
 
 **Direct Connect** is a dedicated physical connection into AWS instead of a tunnel over the internet: a fiber-optic Ethernet cable with your router on one end and an AWS Direct Connect router on the other, at a Direct Connect location. To use one, your equipment is either in that facility already (colocated) or you reach it through a Direct Connect partner or another network provider [@aws-dx-what-is].
 
 It costs more and takes longer to set up, and in return you get more bandwidth and much steadier latency. It isn't encrypted by default. The traffic is private, but if it needs to be encrypted you add MACsec (on supported connections) or run a site-to-site VPN over the Direct Connect link [@aws-dx-encryption-in-transit]. **MACsec** is an IEEE standard that encrypts at layer 2, one Ethernet link at a time: here, between your router and AWS's device at the Direct Connect location. It protects that cable, not the whole path end to end [@aws-dx-macsec]. Large setups often use Direct Connect as the main path with a VPN as the backup.
 
-## VPCs in different AWS accounts
+## VPCs in different AWS accounts {only: AWS}
 
 Companies often give each team or environment its own AWS account, so the VPCs that need to talk end up in different accounts. Peering and Transit Gateway both work across accounts, and the difference from the single-account case is mostly about who has to agree to what.
 
