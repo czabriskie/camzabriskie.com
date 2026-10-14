@@ -920,3 +920,20 @@ details.aside[open] summary { margin-bottom: 0.4rem; }
 .nt-order .nt-small { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
 .nt-order .nt-arrow { stroke: var(--tech); stroke-width: 1.2; }
 .nt-order .nt-arrowhead { fill: var(--tech); }
+
+/* GitOps primer: push vs pull */
+.gitops-flow { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+.gitops-flow svg { display: block; width: 100%; height: auto; }
+.gitops-flow text { text-anchor: middle; }
+.gitops-flow .go-title { font: 600 10px 'Bricolage Grotesque', system-ui, sans-serif; fill: var(--muted); }
+.gitops-flow .go-divider { stroke: var(--line); stroke-width: 1; }
+.gitops-flow .go-box { fill: var(--surface); stroke: var(--muted); stroke-width: 1; }
+.gitops-flow .go-agent { fill: color-mix(in srgb, var(--tech) 14%, var(--surface)); stroke: var(--tech); }
+.gitops-flow .go-cluster { fill: color-mix(in srgb, var(--muted) 8%, transparent); stroke: var(--line); stroke-width: 1; }
+.gitops-flow .go-name { font: 600 10px 'Bricolage Grotesque', system-ui, sans-serif; fill: var(--ink); }
+.gitops-flow .go-small { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.gitops-flow .go-start { text-anchor: start; }
+.gitops-flow .go-arrow { stroke: var(--muted); stroke-width: 1.2; }
+.gitops-flow .go-hot { stroke: var(--tech); }
+.gitops-flow .go-hotlabel { fill: var(--tech); }
+.gitops-flow .go-arrowhead { fill: context-stroke; }
