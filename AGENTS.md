@@ -77,7 +77,8 @@ of it: the post can stay vague about the job while the document carries the subs
   cite the Stanford or Internet Encyclopedia of Philosophy over podcasts, and say where
   the popular version and the scholarship disagree.
 - **Use the `primer` skill** (`.claude/skills/primer/SKILL.md`) for writing or reviewing any
-  primer, including someone else's PR. It has the full checklist: scrub, beginner pass,
+  primer, including someone else's PR. Claude Code and GitHub Copilot both load it from
+  there, so it's the one copy of these rules. It has the full checklist: scrub, beginner pass,
   looking for visuals (diagrams wherever a picture beats the text), verifying claims, PowerShell
   tabs, voice, build.
 - Primers live in `src/content/primers/<topic>/<slug>.md` (Decision 0006);
@@ -110,7 +111,8 @@ of it: the post can stay vague about the job while the document carries the subs
   about how one vendor does it (Route 53, ACM, ALBs) gets `{only: AWS}` at the end of its
   heading; a primer that's only about AWS gets `only: AWS` in its frontmatter. Both show
   an "AWS only" tag.
-- **Commands get a PowerShell tab where they differ** (Decision 0008). Write the
+- **Commands get a PowerShell tab where they differ** (Decision 0008), but only for
+  commands a Windows reader would run themselves (Decision 0013). Write the
   macOS/Linux version and the Windows version as consecutive fenced blocks with
   `tab="macOS / Linux"` and `tab="Windows (PowerShell)"` in the meta; the build groups
   them into tabs. Commands that are identical everywhere stay a single block. Test
@@ -162,6 +164,13 @@ LinkedIn's free consumer API, moving each to `linkedin/posted/` as the publish r
   is. Open the PR, say what it is, and leave it. This is what the weekly drafting routine does, and it applies to any
   agent or session. For queue files the merge itself is the schedule step (Decision 0005),
   which makes this rule load-bearing twice over.
+- **After every merge, keep the other open PRs mergeable.** Wait for the deploy to
+  finish, then check every open PR's mergeability. Primer branches all append to the same
+  shared files (`src/data/references.mjs`, `src/lib/primers.ts`, `src/styles/global.css`),
+  so a merge often leaves others conflicting. Rebase those onto `main` keeping both sides,
+  make sure topic objects in `primers.ts` didn't get glued together, build, and push with
+  `--force-with-lease`. Before adding a reference key, check it isn't already defined on
+  `main` or another open branch, since duplicate keys break the build after both merge.
 - A push to `main` deploys to production (GitHub Pages). There is no staging site; that
   is a deliberate simplicity choice for a personal blog (Decision 0001). Preview locally
   with `npm run dev`.
