@@ -33,6 +33,11 @@ export const topics = [
     blurb: 'The history of ideas, starting with the first people to ask what everything is made of.',
   },
   {
+    slug: 'storage',
+    title: 'Storage',
+    blurb: 'Where data lives, and how to pick the right kind of disk for it.',
+  },
+  {
     slug: 'theology',
     title: 'Theology',
     blurb: 'The Bible and Christian history, read the way historians and scholars of religion read them.',
@@ -46,6 +51,11 @@ export const topics = [
     slug: 'working-with-ai',
     title: 'Working with AI',
     blurb: 'How to set up AI assistants so their work can be trusted and checked.',
+  },
+  {
+    slug: 'observability',
+    title: 'Observability',
+    blurb: 'Watching systems as they run: metrics, logs, and the tools that keep them.',
   },
 ];
 
