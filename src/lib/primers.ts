@@ -85,7 +85,7 @@ export const sections: Record<string, { title: string; blurb?: string; notes: st
     {
       title: 'Foundations',
       blurb: 'How a request finds its way: layers, addresses, and names.',
-      notes: ['osi-model', 'ip-addresses-and-cidr', 'dns-resolution'],
+      notes: ['osi-model', 'ip-addresses-and-cidr', 'dns-resolution', 'naming-hosts-locally'],
     },
     {
       title: 'Getting traffic to an app',

@@ -167,6 +167,7 @@ export const references = {
   // Amazon VPC
   'aws-vpc-subnet-sizing': aws('Subnet CIDR blocks', VPC_GUIDE, 'https://docs.aws.amazon.com/vpc/latest/userguide/subnet-sizing.html'),
   'aws-vpc-cidr-blocks': aws('VPC CIDR blocks', VPC_GUIDE, 'https://docs.aws.amazon.com/vpc/latest/userguide/vpc-cidr-blocks.html'),
+  'aws-ec2-addressing': aws('Amazon EC2 instance IP addressing', 'Amazon EC2 User Guide', 'https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-instance-addressing.html'),
   'aws-vpc-subnets': aws('Subnets for your VPC', VPC_GUIDE, 'https://docs.aws.amazon.com/vpc/latest/userguide/configure-subnets.html'),
   'aws-vpc-route-priority': aws('How route priority works', VPC_GUIDE, 'https://docs.aws.amazon.com/vpc/latest/userguide/route-tables-priority.html'),
   'aws-vpc-routing-options': aws('Example routing options', VPC_GUIDE, 'https://docs.aws.amazon.com/vpc/latest/userguide/route-table-options.html'),
@@ -336,6 +337,10 @@ export const references = {
   'aws-ssm-start-session': aws('Start a session', 'AWS Systems Manager User Guide', 'https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-sessions-start.html'),
   'aws-ec2-instance-connect-endpoint': aws('Connect to your instances using a private IP address and EC2 Instance Connect Endpoint', 'Amazon EC2 User Guide', 'https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/connect-with-ec2-instance-connect-endpoint.html'),
   'openssh-ssh': { authors: 'OpenBSD', title: 'ssh(1)', container: 'OpenBSD manual pages', url: 'https://man.openbsd.org/ssh', accessed: CHECKED },
+  'openssh-ssh-config': { authors: 'OpenBSD', title: 'ssh_config(5)', container: 'OpenBSD manual pages', url: 'https://man.openbsd.org/ssh_config', accessed: '2026-10-14' },
+  'man-hosts': { authors: 'The Linux man-pages project', title: 'hosts(5)', container: 'Linux manual pages', url: 'https://man7.org/linux/man-pages/man5/hosts.5.html', accessed: '2026-10-14' },
+  'man-nsswitch': { authors: 'The Linux man-pages project', title: 'nsswitch.conf(5)', container: 'Linux manual pages', url: 'https://man7.org/linux/man-pages/man5/nsswitch.conf.5.html', accessed: '2026-10-14' },
+  'ms-hosts-file': { authors: 'Microsoft', title: 'How to reset the Hosts file back to the default', container: 'Microsoft Support', url: 'https://support.microsoft.com/en-us/windows/experience/how-to-reset-the-hosts-file-back-to-the-default', accessed: '2026-10-14' },
   'k8s-port-forward': { authors: 'The Kubernetes Authors', title: 'Use Port Forwarding to Access Applications in a Cluster', container: 'Kubernetes Documentation', url: 'https://kubernetes.io/docs/tasks/access-application-cluster/port-forward-access-application-cluster/', accessed: CHECKED },
   'k8s-control-plane-comms': { authors: 'The Kubernetes Authors', title: 'Communication between Nodes and the Control Plane', container: 'Kubernetes Documentation', url: 'https://kubernetes.io/docs/concepts/architecture/control-plane-node-communication/', accessed: CHECKED },
   'k8s-network-policies': { authors: 'The Kubernetes Authors', title: 'Network Policies', container: 'Kubernetes Documentation', url: 'https://kubernetes.io/docs/concepts/services-networking/network-policies/', accessed: '2026-10-08' },
