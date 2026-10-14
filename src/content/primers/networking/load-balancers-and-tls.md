@@ -135,7 +135,7 @@ A few details that matter in practice:
 
 ## WAFs only work on HTTP
 
-A **web application firewall (WAF)** inspects HTTP requests for attacks: SQL injection, cross-site scripting, bad bots, too many requests from one address. To see a request it has to be able to read it, so a WAF sits where TLS has already been terminated, on an ALB or in front of the site at a [CDN](/primers/networking/cdns-and-cloudfront/). AWS WAF, for example, attaches to ALBs, CloudFront, and API Gateway, but not to NLBs [@aws-waf-resources].
+A **web application firewall (WAF)** inspects HTTP requests for attacks: SQL injection, cross-site scripting, bad bots, too many requests from one address. To see a request it has to be able to read it, so a WAF sits where TLS has already been terminated, on an ALB or in front of the site at a [CDN](/primers/networking/cdns-and-cloudfront/). AWS WAF, for example, attaches to ALBs, CloudFront, and API Gateway, but not to NLBs [@aws-waf-resources]. [Firewalls on AWS](/primers/networking/firewalls/) compares WAF with the other AWS firewalls and covers sharing one across accounts.
 
 That means a WAF can't protect anything that isn't HTTP. A database connection or a message broker's protocol can't go through one, so non-HTTP traffic needs a different path: an NLB passing it through to a firewall, or a private connection like a VPN where it never touches the public internet at all. Designs with both kinds of traffic often end up splitting by protocol, with HTTP through the WAF and everything else through a separate path.
 
