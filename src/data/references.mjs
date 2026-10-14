@@ -517,6 +517,8 @@ export const references = {
   'argocd-helm': { authors: 'The Argo Project', title: 'Helm', container: 'Argo CD Documentation', url: 'https://argo-cd.readthedocs.io/en/stable/user-guide/helm/', accessed: '2026-10-14' },
   'argocd-auto-sync': { authors: 'The Argo Project', title: 'Automated Sync Policy', container: 'Argo CD Documentation', url: 'https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/', accessed: '2026-10-14' },
   'argocd-architecture': { authors: 'The Argo Project', title: 'Architectural Overview', container: 'Argo CD Documentation', url: 'https://argo-cd.readthedocs.io/en/stable/operator-manual/architecture/', accessed: '2026-10-14' },
+  'argocd-components': { authors: 'The Argo Project', title: 'Component Architecture', container: 'Argo CD Documentation', url: 'https://argo-cd.readthedocs.io/en/stable/developer-guide/architecture/components/', accessed: '2026-10-14' },
+  'argocd-sync-kubectl': { authors: 'The Argo Project', title: 'Sync Applications with Kubectl', container: 'Argo CD Documentation', url: 'https://argo-cd.readthedocs.io/en/stable/user-guide/sync-kubectl/', accessed: '2026-10-14' },
   'argocd-declarative': { authors: 'The Argo Project', title: 'Declarative Setup', container: 'Argo CD Documentation', url: 'https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/', accessed: '2026-10-14' },
   'argocd-getting-started': { authors: 'The Argo Project', title: 'Getting Started', container: 'Argo CD Documentation', url: 'https://argo-cd.readthedocs.io/en/stable/getting_started/', accessed: '2026-10-14' },
   'argocd-faq': { authors: 'The Argo Project', title: 'FAQ', container: 'Argo CD Documentation', url: 'https://argo-cd.readthedocs.io/en/stable/faq/', accessed: '2026-10-14' },

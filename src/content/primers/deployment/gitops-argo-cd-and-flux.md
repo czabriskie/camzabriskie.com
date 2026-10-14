@@ -124,44 +124,54 @@ Neither tool knows about the repository until something in the cluster tells it 
 
 ## Argo CD
 
-Argo CD runs as three main parts: an **API server** behind its web UI and `argocd` command line, a **repository server** that keeps a copy of the git repository and renders manifests from it, and an **application controller** that keeps comparing live state with desired state and reports when they differ [@argocd-architecture]. The application controller is also what connects to other clusters, using the credentials Argo CD stores for them [@argocd-architecture, @argocd-cluster-generator].
+Argo CD runs as three main parts: an **API server** behind its web UI and `argocd` command line, a **repository server** that keeps a copy of the git repository and renders manifests from it, and an **application controller** that keeps comparing live state with desired state and reports when they differ [@argocd-architecture]. The web UI and the `argocd` command line only talk to the API server, which also handles logins and permissions [@argocd-architecture, @argocd-components]. The API server never calls the application controller. Both work through the Kubernetes API of the cluster Argo CD runs in: the API server creates and updates `Application` objects there, and the controller watches those objects and does the syncing [@argocd-components]. Clicking Sync in the UI writes a sync request onto the `Application`, which is also how you can sync with plain `kubectl` [@argocd-sync-kubectl]. For other clusters, the controller connects with the credentials Argo CD stores for them [@argocd-cluster-generator].
 
-<div class="gitops-flow" role="img" aria-label="Argo CD's parts. You use the UI or CLI, which talk to the API server. The repository server fetches from the git repository and renders manifests. The application controller asks the repository server for manifests, compares them with the live state, and applies changes to the cluster Argo CD runs in and to other clusters, whose credentials Argo CD stores as Secrets.">
-<svg viewBox="0 0 400 186" aria-hidden="true" focusable="false">
+<div class="gitops-flow" role="img" aria-label="Argo CD's parts. The web UI and the argocd CLI talk only to the API server, which handles logins and permissions. The API server writes Application objects to the Kubernetes API. The application controller watches those Application objects, asks the repo server for manifests, and applies changes, through the Kubernetes API for its own cluster and with stored credentials for other clusters. The repo server fetches from the git repository and renders manifests, for both the API server and the controller.">
+<svg viewBox="0 0 400 258" aria-hidden="true" focusable="false">
 <defs><marker id="ga-head" viewBox="0 0 8 8" refX="7" refY="4" markerUnits="userSpaceOnUse" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="go-arrowhead" d="M0,0 L8,4 L0,8 z"/></marker></defs>
-<text class="go-small go-start" x="8" y="24">you: UI, CLI</text>
-<rect class="go-box" x="8" y="92" width="70" height="32" rx="3"/>
-<text class="go-name" x="43.0" y="111.5">git repo</text>
-<rect class="go-cluster" x="96" y="6" width="170" height="174" rx="3"/>
-<text class="go-small" x="181" y="174">Argo CD</text>
-<rect class="go-box" x="108" y="16" width="146" height="40" rx="3"/>
-<text class="go-name" x="181.0" y="34.0">API server</text>
-<text class="go-small" x="181.0" y="45.0">UI, CLI, webhooks</text>
-<rect class="go-box" x="108" y="72" width="146" height="40" rx="3"/>
-<text class="go-name" x="181.0" y="90.0">repository server</text>
-<text class="go-small" x="181.0" y="101.0">fetches git, renders</text>
-<rect class="go-box go-agent" x="108" y="128" width="146" height="40" rx="3"/>
-<text class="go-name" x="181.0" y="146.0">application controller</text>
-<text class="go-small" x="181.0" y="157.0">compares, syncs</text>
-<line class="go-arrow" x1="64" y1="30" x2="106" y2="34" marker-end="url(#ga-head)"/>
-<line class="go-arrow go-hot" x1="107" y1="92" x2="79" y2="104" marker-end="url(#ga-head)"/>
-<text class="go-small go-hotlabel go-end" x="104" y="86">fetch</text>
-<line class="go-arrow" x1="181" y1="127" x2="181" y2="113" marker-end="url(#ga-head)"/>
-<text class="go-small go-start" x="186" y="123">manifests</text>
-<rect class="go-box" x="296" y="52" width="98" height="40" rx="3"/>
-<text class="go-name" x="345.0" y="70.0">this cluster</text>
-<text class="go-small" x="345.0" y="81.0">where Argo CD runs</text>
-<rect class="go-box" x="296" y="120" width="98" height="48" rx="3"/>
-<text class="go-name" x="345.0" y="136.5">other clusters</text>
-<text class="go-small" x="345.0" y="147.5">credentials stored</text>
-<text class="go-small" x="345.0" y="158.5">as Secrets</text>
-<line class="go-arrow go-hot" x1="255" y1="140" x2="294" y2="76" marker-end="url(#ga-head)"/>
-<line class="go-arrow go-hot" x1="255" y1="148" x2="294" y2="144" marker-end="url(#ga-head)"/>
-<text class="go-small go-start go-hotlabel" x="268" y="164">apply</text>
+<rect class="go-box" x="100" y="6" width="76" height="24" rx="3"/>
+<text class="go-name" x="138.0" y="21.5">web UI</text>
+<rect class="go-box" x="186" y="6" width="82" height="24" rx="3"/>
+<text class="go-name" x="227.0" y="21.5">argocd CLI</text>
+<rect class="go-cluster" x="96" y="40" width="176" height="214" rx="3"/>
+<text class="go-small" x="184" y="249">Argo CD</text>
+<rect class="go-box" x="106" y="50" width="156" height="36" rx="3"/>
+<text class="go-name" x="184.0" y="66.0">API server</text>
+<text class="go-small" x="184.0" y="77.0">logins, permissions</text>
+<rect class="go-box" x="106" y="124" width="156" height="36" rx="3"/>
+<text class="go-name" x="184.0" y="140.0">repo server</text>
+<text class="go-small" x="184.0" y="151.0">fetches git, renders</text>
+<rect class="go-box go-agent" x="106" y="196" width="156" height="36" rx="3"/>
+<text class="go-name" x="184.0" y="212.0">application controller</text>
+<text class="go-small" x="184.0" y="223.0">compares, syncs</text>
+<rect class="go-box" x="4" y="126" width="60" height="32" rx="3"/>
+<text class="go-name" x="34.0" y="145.5">git repo</text>
+<rect class="go-box" x="292" y="64" width="100" height="60" rx="3"/>
+<text class="go-name" x="342.0" y="86.5">Kubernetes API</text>
+<text class="go-small" x="342.0" y="97.5">Application</text>
+<text class="go-small" x="342.0" y="108.5">objects</text>
+<rect class="go-box" x="292" y="184" width="100" height="48" rx="3"/>
+<text class="go-name" x="342.0" y="200.5">other clusters</text>
+<text class="go-small" x="342.0" y="211.5">stored</text>
+<text class="go-small" x="342.0" y="222.5">credentials</text>
+<line class="go-arrow" x1="138" y1="31" x2="138" y2="48" marker-end="url(#ga-head)"/>
+<line class="go-arrow" x1="227" y1="31" x2="227" y2="48" marker-end="url(#ga-head)"/>
+<line class="go-arrow" x1="150" y1="87" x2="150" y2="122" marker-end="url(#ga-head)"/>
+<text class="go-small go-start" x="155" y="108">manifests</text>
+<line class="go-arrow" x1="218" y1="195" x2="218" y2="162" marker-end="url(#ga-head)"/>
+<text class="go-small go-start" x="223" y="182">manifests</text>
+<line class="go-arrow go-hot" x1="105" y1="142" x2="66" y2="142" marker-end="url(#ga-head)"/>
+<text class="go-small go-hotlabel go-end" x="93" y="136">fetch</text>
+<line class="go-arrow" x1="263" y1="72" x2="290" y2="82" marker-end="url(#ga-head)"/>
+<text class="go-small go-start" x="277" y="60">writes</text>
+<line class="go-arrow go-hot" x1="263" y1="204" x2="300" y2="126" marker-end="url(#ga-head)"/>
+<text class="go-small go-start go-hotlabel" x="298" y="146">watches,</text>
+<text class="go-small go-start go-hotlabel" x="298" y="156">applies</text>
+<line class="go-arrow go-hot" x1="263" y1="220" x2="290" y2="212" marker-end="url(#ga-head)"/>
 </svg>
 </div>
 
-<p class="bitgrid-caption">One Argo CD, three parts. The application controller does the syncing, to its own cluster and to any other cluster whose credentials it holds.</p>
+<p class="bitgrid-caption">The UI and CLI never reach the controller directly. The API server writes `Application` objects, the controller watches them, and the Kubernetes API sits between the two.</p>
 
 For the shop, the link is one `Application` [@argocd-declarative, @argocd-helm]:
 
