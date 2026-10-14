@@ -1,11 +1,11 @@
 ---
 title: Java heap size and container memory
-description: 'What the JVM heap is, how its default maximum is chosen inside a container, why it is only a quarter of the limit, how to read the value a running service actually uses, and which garbage collector a small container gets.'
+description: 'What the JVM heap is, how its default maximum is chosen inside a container, why it is only a quarter of the limit, how that plays out in a container, a pod, or on a server, how to read the value a running service uses, and which garbage collector a small container gets.'
 order: 0
 updated: 2026-10-13
 ---
 
-A Java service runs in a container with a 2 GiB memory limit. Someone checks its heap and finds a maximum of about 512 MiB. That looks like a quarter of what was asked for, and it's natural to wonder whether the service is starved of memory. It isn't, or at least that number doesn't show it. The 512 MiB is a default with a rule behind it, and the other three quarters are spoken for.
+A web service written in Java runs in a container with a 4 GiB memory limit. Someone checks its heap and finds a maximum of 1 GiB, a quarter of what the container was given, and wonders whether the other 3 GiB are going to waste. They aren't, or not all of them. The 1 GiB is a default with a rule behind it, and most of the rest is spoken for.
 
 This primer covers how the JVM picks its heap size inside a container, where the rest of the memory goes, and how to read what a running service is really using. When a Java pod keeps restarting, [why a pod keeps restarting](/primers/kubernetes/pod-restarts/) covers telling a memory problem from the other causes.
 
@@ -17,19 +17,39 @@ This primer covers how the JVM picks its heap size inside a container, where the
 - **Container limit**: a ceiling on how much memory a container may use, enforced by the Linux kernel. A container that goes over it can be killed [@k8s-manage-resources].
 - **MiB and MB**: a mebibyte (MiB) is 1,048,576 bytes and a megabyte (MB) is 1,000,000. In Kubernetes a limit written `2G` is 2,000,000,000 bytes and `2Gi` is 2,147,483,648, so the suffix matters [@k8s-manage-resources].
 
+## Where you run into a JVM
+
+The JVM doesn't run Java source code. It runs **class files**, a compiled format, and doesn't care which language produced them, so other languages compile to it too [@jvm-spec]. Kotlin is one: it targets the JVM, and Kotlin services can use Java frameworks like Spring Boot [@kotlin-faq]. Anything built in Java or another JVM language brings a JVM with it when it runs. Some common examples:
+
+- **Web services and APIs**, often built with Spring Boot, a Java framework for standalone services [@spring-boot-requirements]. These are the services most teams write themselves and package into containers.
+- **Jenkins**, the build server. Its controller is a Java program, and it won't start on a Java version it doesn't support [@jenkins-java].
+- **Elasticsearch**, the search engine. It ships with its own copy of Java and sizes its own heap, which comes up again below [@elastic-jvm].
+
 ## Where the default heap comes from
 
 The heap needs an upper bound, and the JVM picks one when nobody sets it. By default it takes an **initial heap of 1/64** of the available memory and a **maximum heap of 1/4** [@jdk-ergonomics]. The flag behind the maximum is `-XX:MaxRAMPercentage`, whose default is 25 percent [@jdk-java-man].
 
 Inside a container, "available memory" means the container's limit, not the machine's. That's because of **container support**, which is on by default on Linux and lets the JVM read the container's memory and CPU limits [@jdk-java-man]. Without it, a JVM on a 64 GiB node would size its heap as if it had the whole node.
 
-For the 2 GiB container:
+For the 4 GiB container:
 
-1. Memory the JVM sees: 2,048 MiB.
-2. Initial heap: 2,048 ÷ 64 = **32 MiB**.
-3. Maximum heap: 2,048 × 0.25 = **512 MiB**.
+1. Memory the JVM sees: 4,096 MiB.
+2. Initial heap: 4,096 ÷ 64 = **64 MiB**.
+3. Maximum heap: 4,096 × 0.25 = **1,024 MiB**, or 1 GiB.
 
-An explicit setting wins over the default. `-Xmx512m` sets the maximum heap directly, and `-XX:MaxRAMPercentage=60` changes the fraction [@jdk-java-man]. The percentage is usually the better choice in a container, because if someone later raises the container limit, the heap grows with it. A fixed `-Xmx` stays where it was.
+An explicit setting wins over the default. `-Xmx2g` sets the maximum heap directly, and `-XX:MaxRAMPercentage=60` changes the fraction [@jdk-java-man]. The percentage is usually the better choice in a container, because if someone later raises the container limit, the heap grows with it. A fixed `-Xmx` stays where it was.
+
+## In a container, a pod, or on its own server
+
+The same JVM runs in all three places. Two things differ between them: what "available memory" means to the JVM, and how many other programs share that memory:
+
+| Where it runs | Memory the JVM sizes from | Usually shared with |
+|---|---|---|
+| **A container** (Docker, for example) | The container's memory limit [@jdk-java-man] | Nothing. Docker recommends one service per container [@docker-one-service], so one JVM per container is the normal setup. |
+| **A Kubernetes pod** | Its own container's limit, set per container in the pod spec [@k8s-manage-resources] | Usually nothing. One container per pod is the most common way pods are used [@k8s-pods], though a pod can add helper containers with limits of their own. |
+| **A server or virtual machine** | All the machine's memory [@jdk-ergonomics] | The operating system and anything else installed on it |
+
+Containers and pods are the common case for services written today, and they suit the default well: the JVM is alone with its limit, and the limit was chosen for it. On a server of its own, the default is less of a fit. A JVM that's the only real program on a 64 GiB server takes 16 GiB of heap and leaves most of the machine idle, and four JVMs on one server would each claim 16 GiB with nothing left between them. On servers, the heap is usually set explicitly instead. Elasticsearch, for example, sizes its heap automatically and says that anyone overriding it should keep the heap to no more than half of the memory available, with all the Elasticsearch processes on one host or in one container counted together, because it needs the rest for memory outside the heap [@elastic-jvm].
 
 ## Why only a quarter
 
@@ -41,20 +61,20 @@ The heap is only part of what a JVM uses. The container limit has to cover all o
 - **one stack per thread**
 - **direct buffers and other native memory**
 
-<div class="jvm-budget" role="img" aria-label="A bar representing a 2 GiB container limit. The first quarter, 512 MiB, is the maximum heap. The next part holds metaspace, the code cache, thread stacks, and native buffers. The rest is free headroom. A solid line at the right end marks the container limit, where the kernel can kill the process.">
+<div class="jvm-budget" role="img" aria-label="A bar representing a 4 GiB container limit. The first quarter, 1 GiB, is the maximum heap. The next part holds metaspace, the code cache, thread stacks, and native buffers. The rest is free headroom. A solid line at the right end marks the container limit, where the kernel can kill the process.">
 <svg viewBox="0 0 400 96" aria-hidden="true" focusable="false">
 <rect class="jb-heap" x="20" y="22" width="90" height="36"/>
 <rect class="jb-other" x="110" y="22" width="130" height="36"/>
 <rect class="jb-free" x="240" y="22" width="140" height="36"/>
 <line class="jb-limit" x1="380" y1="14" x2="380" y2="66"/>
 <text class="jb-name" x="65" y="38">max heap</text>
-<text class="jb-small" x="65" y="50">512 MiB</text>
+<text class="jb-small" x="65" y="50">1 GiB</text>
 <text class="jb-name" x="175" y="38">non-heap</text>
 <text class="jb-small" x="175" y="50">metaspace, code, stacks</text>
 <text class="jb-name" x="310" y="38">headroom</text>
 <text class="jb-small" x="310" y="50">unused</text>
 <text class="jb-edge" x="20" y="82">0</text>
-<text class="jb-edge" x="380" y="82" text-anchor="end">2 GiB limit</text>
+<text class="jb-edge" x="380" y="82" text-anchor="end">4 GiB limit</text>
 </svg>
 </div>
 
@@ -88,7 +108,7 @@ kubectl exec <pod> -- jcmd 1 VM.flags
 kubectl exec <pod> -- jcmd 1 GC.heap_info
 ```
 
-`VM.flags` prints the flags in effect and their values, including `MaxHeapSize` and which collector is in use. `GC.heap_info` shows how much of the heap is in use right now [@jdk-jcmd]. Compare the two before blaming the heap: a heap that's 36 percent full has plenty of room.
+`VM.flags` prints the flags in effect and their values, including `MaxHeapSize` and which collector is in use. `GC.heap_info` shows how much of the heap is in use right now [@jdk-jcmd]. Compare the two before blaming the heap: a service using 300 MiB of a 1 GiB heap has plenty of room left.
 
 Flags are often set through the `JAVA_TOOL_OPTIONS` environment variable instead of the command line. The JVM prints that variable's whole value to its error output every time it starts, as `Picked up JAVA_TOOL_OPTIONS: …` [@jdk-source-picked-up], so anything secret put there, like a trust store password, ends up in the logs.
 
