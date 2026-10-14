@@ -18,11 +18,32 @@ A service in Kubernetes restarts every few hours. Its logs end in a normal-looki
 
 ## Read the exit code first
 
-`kubectl describe pod` shows, for each container, its **Last State**: why the previous run ended and with what exit code. That one field narrows things down a lot:
+`kubectl describe pod` shows the state of each container in the pod:
 
 ```bash
 kubectl describe pod <pod>
 ```
+
+For a container that has restarted, that part of the output looks something like this:
+
+```text
+    State:          Running
+      Started:      Tue, 06 Oct 2026 14:02:11 +0000
+    Last State:     Terminated
+      Reason:       Error
+      Exit Code:    143
+      Started:      Tue, 06 Oct 2026 10:15:40 +0000
+      Finished:     Tue, 06 Oct 2026 14:02:09 +0000
+    Restart Count:  4
+```
+
+- **State** is the run going on now.
+- **Last State** is how the run before it ended: the reason, the exit code, and when it started and finished.
+- **Restart Count** is how many times the container has been restarted [@k8s-api-pod].
+
+Last State only goes back one run. Kubernetes keeps the last termination and nothing older, and it's empty for a container that has never restarted [@k8s-api-pod]. A container that restarted four times shows why the fourth run ended, not the three before it. To see whether every restart ends the same way, read it again after each one. `describe` has no flag for older runs. The logs do: `kubectl logs <pod> --previous` prints the logs of the run before the current one, and only that one [@kubectl-logs].
+
+Last State narrows things down a lot:
 
 | Last State shows | What happened | Where to look |
 |---|---|---|
