@@ -126,6 +126,19 @@ kubectl exec <pod> -- jcmd 1 GC.heap_info
 
 Flags are often set through the `JAVA_TOOL_OPTIONS` environment variable instead of the command line. The JVM prints that variable's whole value to its error output every time it starts, as `Picked up JAVA_TOOL_OPTIONS: …` [@jdk-source-picked-up], so anything secret put there, like a trust store password, ends up in the logs.
 
+To see what the variable is set to, print it from inside the container [@k8s-env-vars]:
+
+```bash
+kubectl exec <pod> -- printenv JAVA_TOOL_OPTIONS
+```
+
+That shows the value the container was given. A startup script can still change it before launching Java, so the JVM's own line in the logs is the surer record of what it used. `--previous` reads the logs of the run before the last restart [@kubectl-logs]:
+
+```bash
+kubectl logs <pod> | grep 'Picked up JAVA_TOOL_OPTIONS'
+kubectl logs <pod> --previous | grep 'Picked up JAVA_TOOL_OPTIONS'
+```
+
 ## Which garbage collector you get
 
 When nobody chooses a collector, the JVM picks one based on the machine. It treats a machine as **server-class** if it sees two or more processors and at least 1,792 MB of memory, and gives server-class machines the **G1** collector. Everything else gets the **Serial** collector [@jdk-ergonomics].
