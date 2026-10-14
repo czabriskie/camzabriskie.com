@@ -512,6 +512,13 @@ export const references = {
   'gedsh-lamsa': { authors: ['J. F. Coakley'], title: 'Lamsa, George', container: 'Gorgias Encyclopedic Dictionary of the Syriac Heritage: Electronic Edition', url: 'https://gedsh.bethmardutho.org/Lamsa-George', accessed: NT },
   'codex-sinaiticus': { authors: 'The Codex Sinaiticus Project', title: 'About Codex Sinaiticus', url: 'https://www.codexsinaiticus.org/en/codex/', accessed: NT },
   'rylands-p52': { authors: 'The University of Manchester Library', title: 'Papyri: Greek P 457 (St John Fragment)', container: 'Manchester Digital Collections', url: 'https://www.digitalcollections.manchester.ac.uk/view/MS-GREEK-P-00457', accessed: NT },
+  'opengitops-principles': { authors: 'OpenGitOps', title: 'GitOps Principles', container: 'open-gitops/documents', url: 'https://github.com/open-gitops/documents/blob/main/PRINCIPLES.md', accessed: '2026-10-14' },
+  'argocd-concepts': { authors: 'The Argo Project', title: 'Core Concepts', container: 'Argo CD Documentation', url: 'https://argo-cd.readthedocs.io/en/stable/core_concepts/', accessed: '2026-10-14' },
+  'argocd-helm': { authors: 'The Argo Project', title: 'Helm', container: 'Argo CD Documentation', url: 'https://argo-cd.readthedocs.io/en/stable/user-guide/helm/', accessed: '2026-10-14' },
+  'argocd-auto-sync': { authors: 'The Argo Project', title: 'Automated Sync Policy', container: 'Argo CD Documentation', url: 'https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/', accessed: '2026-10-14' },
+  'argocd-bootstrapping': { authors: 'The Argo Project', title: 'Cluster Bootstrapping', container: 'Argo CD Documentation', url: 'https://argo-cd.readthedocs.io/en/stable/operator-manual/cluster-bootstrapping/', accessed: '2026-10-14' },
+  'flux-components': { authors: 'The Flux Project', title: 'GitOps Toolkit components', container: 'Flux Documentation', url: 'https://fluxcd.io/flux/components/', accessed: '2026-10-14' },
+  'flux-repo-structure': { authors: 'The Flux Project', title: 'Ways of structuring your repositories', container: 'Flux Documentation', url: 'https://fluxcd.io/flux/guides/repository-structure/', accessed: '2026-10-14' },
 };
 
 const MONTHS = ['Jan.', 'Feb.', 'Mar.', 'Apr.', 'May', 'Jun.', 'Jul.', 'Aug.', 'Sep.', 'Oct.', 'Nov.', 'Dec.'];
