@@ -58,4 +58,4 @@ Tech Bytes will be posts specifically on software and tools. My background is in
 
 I am very excited to get this project started. For many years I have thought about creating a platform where I can unload my thoughts, and I believe a blog is the way to do that.
 
-I hope these posts can be a help to some of you out there, and I look forward to discussing ideas with you on social media or in the comment section!
+I hope these posts can be a help to some of you out there, and I look forward to discussing ideas with you on social media!
