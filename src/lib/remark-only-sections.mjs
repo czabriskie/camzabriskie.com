@@ -1,4 +1,4 @@
-// Remark plugin for sections that only apply to one platform, such as AWS (Decision 0011).
+// Remark plugin for sections that only apply to one platform, such as AWS (Decision 0012).
 // Tag the heading with {only: AWS}:
 //
 //   ## Where Route 53 fits {only: AWS}

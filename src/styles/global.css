@@ -153,11 +153,25 @@ article.byte img { max-width: 100%; border-radius: 8px; }
 article.byte table { border-collapse: collapse; display: block; overflow-x: auto; }
 article.byte th, article.byte td { border: 1px solid var(--line); padding: 0.4rem 0.7rem; text-align: left; }
 
-/* Home */
-.intro { margin-bottom: 3rem; }
+/* Home: an index of what's on the site, then one Latest feed */
+.intro { margin-bottom: 1.8rem; }
 .intro .lede { font-size: 1.15rem; color: var(--muted); }
-.streams { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; }
-@media (max-width: 40rem) { .streams { grid-template-columns: 1fr; } }
+.home-index { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.7rem; margin-bottom: 2.6rem; }
+@media (max-width: 48rem) { .home-index { grid-template-columns: 1fr 1fr; } }
+.home-card {
+  display: flex; flex-direction: column; gap: 0.2rem; min-width: 0;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+  padding: 0.8rem 0.9rem; text-decoration: none;
+}
+.home-card:hover { border-color: var(--muted); }
+.home-card .name { display: flex; align-items: center; gap: 0.5rem; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 1.02rem; }
+.home-card .count { color: var(--muted); font-variant-numeric: tabular-nums; }
+.home-card .blurb { color: var(--muted); font-size: 0.88rem; line-height: 1.45; }
+/* Primers and projects get an outlined square: two accent hues only (teal, ochre). */
+.tick { width: 0.85rem; height: 0.85rem; border-radius: 3px; flex: none; }
+.tick-open { border: 2px solid var(--ink); }
+.latest h2 { margin-top: 0; }
+.byte-badge.kind-badge { color: var(--ink); text-transform: uppercase; letter-spacing: 0.08em; }
 
 /* Resume */
 .resume section { margin-bottom: 2rem; }
@@ -497,6 +511,47 @@ nav.note-nav .mono { color: var(--tech); font-weight: 400; }
 /* CIDR calculator (src/scripts/cidr-calc.ts) */
 .cidr-calc { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 1rem 1.2rem; margin: 1.2rem 0 1.6rem; }
 .cidr-calc:empty { display: none; }
+
+/* DNS primer diagrams: one lookup (.dns-walk) and the name tree with its zones (.dns-tree) */
+.dns-walk, .dns-tree { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+.dns-walk svg, .dns-tree svg { display: block; width: 100%; height: auto; }
+.dns-walk .dw-actor { font: 600 10px 'Bricolage Grotesque', sans-serif; text-anchor: middle; fill: var(--ink); }
+.dns-walk .dw-role { font: 8px 'IBM Plex Mono', ui-monospace, monospace; text-anchor: middle; fill: var(--muted); }
+.dns-walk .dw-life { stroke: var(--line); stroke-width: 2; }
+.dns-walk .dw-msg { stroke: var(--muted); stroke-width: 1.2; }
+.dns-walk .dw-ref { stroke-dasharray: 4 3; }
+.dns-walk .dw-ans { stroke: var(--tech); stroke-width: 1.8; }
+.dns-walk .dw-head { fill: var(--muted); }
+.dns-walk .dw-head-ans { fill: var(--tech); }
+.dns-walk .dw-label { font: 8px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--ink); paint-order: stroke; stroke: var(--paper); stroke-width: 3px; stroke-linejoin: round; }
+.dns-walk .dw-mid { text-anchor: middle; }
+.dns-walk .dw-ref-text { fill: var(--muted); }
+.dns-walk .dw-ans-text { fill: var(--tech); font-weight: 600; }
+.dns-tree .dt-zone { fill: none; stroke: var(--tech); stroke-width: 1; stroke-dasharray: 4 3; }
+.dns-tree .dt-zone-other { stroke: var(--muted); opacity: 0.6; }
+.dns-tree .dt-node rect { fill: var(--surface); stroke: var(--muted); stroke-width: 0.8; }
+.dns-tree .dt-node text { font: 10px 'IBM Plex Mono', ui-monospace, monospace; text-anchor: middle; fill: var(--ink); }
+.dns-tree .dt-edge { stroke: var(--muted); stroke-width: 1; }
+.root-why { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+.root-why svg { display: block; width: 100%; height: auto; }
+.root-why text { text-anchor: middle; }
+.root-why .rt-title { font: 600 10px 'Bricolage Grotesque', sans-serif; fill: var(--muted); }
+.root-why .rt-box { fill: var(--surface); stroke: var(--muted); stroke-width: 1; }
+.root-why .rt-root { stroke: var(--tech); stroke-width: 1.8; }
+.root-why .rt-name { font: 600 10px 'Bricolage Grotesque', sans-serif; fill: var(--ink); }
+.root-why .rt-small { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.root-why .rt-node rect { fill: var(--surface); stroke: var(--muted); stroke-width: 0.8; }
+.root-why .rt-node text { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--ink); }
+.root-why .rt-edge { stroke: var(--muted); stroke-width: 0.8; opacity: 0.7; }
+.root-why .rt-arrow { stroke: var(--muted); stroke-width: 1.2; }
+.root-why .rt-arrowhead { fill: var(--muted); }
+.root-why .rt-divider { stroke: var(--line); stroke-width: 1; }
+.dns-tree .dt-deleg { stroke: var(--tech); stroke-width: 1.5; }
+.dns-tree .dt-zname { font: 600 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--tech); }
+.dns-tree .dt-who { font: 8px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.dns-tree .dt-ns { font: 8px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--tech); }
+.dns-tree .dt-end { text-anchor: end; }
+.dns-tree .dt-mid { text-anchor: middle; }
 .cidr-calc .controls { display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap; }
 .cidr-calc label { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; }
 .cidr-calc input[type=number], .cidr-calc input.ip {
@@ -560,6 +615,7 @@ ul.references .cited-in { display: block; color: var(--muted); margin-top: 0.2re
 
 /* Platform-specific sections: a heading tagged {only: AWS} (src/lib/remark-only-sections.mjs) */
 .only-banner { margin: -0.2rem 0 1.1rem; line-height: 1; }
+.only-tag.in-list { font-size: 0.62rem; padding: 0 0.35rem; margin-left: 0.5rem; vertical-align: 0.15em; }
 .only-tag { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink); border: 1px solid var(--muted); border-radius: 4px; padding: 0.05rem 0.45rem; white-space: nowrap; }
 .references-toggle > summary { cursor: pointer; color: var(--tech); font-size: 0.92rem; margin: 0.4rem 0 0.6rem; }
 .references-toggle > summary:focus-visible { outline: 2px solid var(--tech); outline-offset: 2px; border-radius: 2px; }
@@ -595,6 +651,53 @@ ul.references .cited-in { display: block; color: var(--muted); margin-top: 0.2re
 /* TLS handshake message diagram (src/scripts/tls-handshake.ts) */
 .tls-walk { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 1rem 1.1rem; margin: 1.2rem 0 1.8rem; font-size: 0.92rem; }
 .tls-walk:empty { display: none; }
+.mcp-stdio { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+.mcp-stdio svg { display: block; width: 100%; height: auto; }
+.mcp-stdio .mcp-box { fill: var(--surface); stroke: var(--muted); stroke-width: 1; }
+.mcp-stdio .mcp-server { stroke: var(--tech); stroke-width: 1.8; }
+.mcp-stdio .mcp-name { font: 600 10px 'Bricolage Grotesque', sans-serif; text-anchor: middle; fill: var(--ink); }
+.mcp-stdio .mcp-small { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; text-anchor: middle; fill: var(--muted); }
+.mcp-stdio .mcp-arrow { stroke: var(--muted); stroke-width: 1.2; }
+.mcp-stdio .mcp-dashed { stroke-dasharray: 4 3; }
+.mcp-stdio .mcp-arrowhead { fill: var(--muted); }
+.agh-loop { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+.agh-loop svg { display: block; width: 100%; height: auto; }
+.agh-loop .agh-box { fill: var(--surface); stroke: var(--muted); stroke-width: 1; }
+.agh-loop .agh-harness { stroke: var(--tech); stroke-width: 1.8; }
+.agh-loop .agh-name { font: 600 10px 'Bricolage Grotesque', sans-serif; text-anchor: middle; fill: var(--ink); }
+.agh-loop .agh-small { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; text-anchor: middle; fill: var(--muted); }
+.agh-loop .agh-arrow { stroke: var(--muted); stroke-width: 1.2; }
+.agh-loop .agh-dashed { stroke-dasharray: 4 3; }
+.agh-loop .agh-arrowhead { fill: var(--muted); }
+.agw-grid { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+.agw-grid svg { display: block; width: 100%; height: auto; }
+.agw-grid .agw-head { font: 600 10px 'Bricolage Grotesque', sans-serif; text-anchor: middle; fill: var(--ink); }
+.agw-grid .agw-name { font: 600 10px 'Bricolage Grotesque', sans-serif; fill: var(--ink); }
+.agw-grid .agw-small { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.agw-grid .agw-label { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; text-anchor: middle; fill: var(--ink); }
+.agw-grid .agw-chip { fill: var(--surface); stroke: var(--muted); stroke-width: 1; }
+.agw-grid .agw-tools { stroke: var(--tech); stroke-width: 1.6; }
+.agw-grid .agw-rule { stroke: var(--muted); stroke-width: 1.2; stroke-dasharray: 4 3; }
+.agw-grid .agw-row { stroke: var(--line); stroke-width: 1; }
+.agv-paths { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+.agv-paths svg { display: block; width: 100%; height: auto; }
+.agv-paths .agv-box { fill: var(--surface); stroke: var(--muted); stroke-width: 1; }
+.agv-paths .agv-client { stroke: var(--tech); stroke-width: 1.8; }
+.agv-paths .agv-title, .agv-paths .agv-name { font: 600 10px 'Bricolage Grotesque', sans-serif; text-anchor: middle; fill: var(--ink); }
+.agv-paths .agv-small { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; text-anchor: middle; fill: var(--muted); }
+.agv-paths .agv-note { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.agv-paths .agv-arrow { stroke: var(--muted); stroke-width: 1.2; }
+.agv-paths .agv-ok { stroke: var(--tech); }
+.agv-paths .agv-dashed { stroke-dasharray: 4 3; }
+.agv-paths .agv-arrowhead { fill: var(--muted); }
+.agv-paths .agv-x { stroke: var(--ink); stroke-width: 2; fill: none; }
+.agv-paths .agv-divider { stroke: var(--line); stroke-width: 1; }
+.pcb-bars { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+.pcb-bars svg { display: block; width: 100%; height: auto; }
+.pcb-bars .pcb-name { font: 600 10px 'Bricolage Grotesque', sans-serif; fill: var(--ink); }
+.pcb-bars .pcb-small, .pcb-bars .pcb-legend { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.pcb-bars .pcb-read { fill: var(--tech); }
+.pcb-bars .pcb-write { fill: var(--surface); stroke: var(--ink); stroke-width: 1; }
 .air-flow { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
 .air-flow svg { display: block; width: 100%; height: auto; }
 .air-flow .air-box { fill: var(--surface); stroke: var(--muted); stroke-width: 1; }
@@ -605,6 +708,25 @@ ul.references .cited-in { display: block; color: var(--muted); margin-top: 0.2re
 .air-flow .air-small { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; text-anchor: middle; fill: var(--muted); }
 .air-flow .air-arrow { stroke: var(--muted); stroke-width: 1.2; }
 .air-flow .air-arrowhead { fill: var(--muted); }
+
+/* Deploying to on-prem Windows: which machine opens the connection */
+.conn-dir { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+.conn-dir svg { display: block; width: 100%; height: auto; }
+.conn-dir text { text-anchor: middle; }
+.conn-dir .cd-zone { font: 600 9px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.conn-dir .cd-wall { fill: color-mix(in srgb, var(--muted) 25%, transparent); stroke: var(--muted); stroke-width: 0.8; }
+.conn-dir .cd-wall-label { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.conn-dir .cd-box { fill: var(--surface); stroke: var(--muted); stroke-width: 1; }
+.conn-dir .cd-server { stroke: var(--ink); }
+.conn-dir .cd-name { font: 600 10px 'Bricolage Grotesque', sans-serif; fill: var(--ink); }
+.conn-dir .cd-small { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.conn-dir .cd-label { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.conn-dir .cd-in-label { fill: var(--tech); }
+.conn-dir .cd-start { text-anchor: start; }
+.conn-dir .cd-arrow { stroke: var(--muted); stroke-width: 1.4; }
+.conn-dir .cd-in { stroke: var(--tech); stroke-width: 1.8; }
+.conn-dir .cd-arrowhead { fill: var(--muted); }
+.conn-dir .cd-arrowhead-in { fill: var(--tech); }
 
 /* Kubernetes object size limits: where the check happens, and how a loop multiplies size */
 .k8s-path, .k8s-size { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
@@ -762,3 +884,129 @@ details.aside[open] summary { margin-bottom: 0.4rem; }
 .cl-box rect { fill: var(--surface); stroke: var(--tech); stroke-width: 1.2; }
 .phil-fig .cl-school { font: 500 7.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--tech); letter-spacing: 0.06em; text-transform: uppercase; }
 .phil-fig .cl-name { font-weight: 600; font-size: 10px; }
+/* elenchus loop (Sophists and Socrates primer) */
+.el-box rect { fill: var(--surface); stroke: var(--line); stroke-width: 1.2; }
+.el-hot rect { stroke: var(--tech); stroke-width: 2; }
+.phil-fig .el-n { font: 600 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--tech); }
+.phil-fig .el-name { font: 600 10px 'Bricolage Grotesque', sans-serif; }
+.phil-fig .el-sub, .phil-fig .el-loop, .phil-fig .el-top { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.el-arrow { fill: none; stroke: var(--muted); stroke-width: 1.2; }
+.el-head { fill: var(--muted); }
+/* ladder of love (Plato primer) */
+.lv-step rect { fill: var(--surface); stroke: var(--line); stroke-width: 1.2; }
+.lv-hot rect { stroke: var(--tech); stroke-width: 2; }
+.phil-fig .lv-n { font: 600 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--tech); }
+.phil-fig .lv-name { font: 600 10px 'Bricolage Grotesque', sans-serif; }
+.phil-fig .lv-sub, .phil-fig .lv-top, .phil-fig .lv-cap { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.phil-fig .lv-l { text-anchor: start; }
+.phil-fig .lv-r { text-anchor: end; }
+.lv-arrow { fill: none; stroke: var(--muted); stroke-width: 1.2; }
+.lv-head { fill: var(--muted); }
+/* allegory of the cave (Plato primer) */
+.cv-rock { fill: none; stroke: var(--muted); stroke-width: 1.5; }
+.cv-wall, .cv-lowwall { fill: var(--line); }
+.cv-ray { stroke: var(--tech); stroke-width: 1; stroke-dasharray: 3 3; opacity: 0.7; }
+.cv-shadow { fill: var(--ink); opacity: 0.55; }
+.cv-person circle { fill: var(--surface); stroke: var(--ink); stroke-width: 1.2; }
+.cv-person path { fill: none; stroke: var(--ink); stroke-width: 1.2; }
+.cv-chain { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 2 2; }
+.cv-figure { fill: var(--ink); }
+.cv-fire { fill: var(--tech); }
+.cv-sun { fill: var(--surface); stroke: var(--tech); stroke-width: 2; }
+.phil-fig .cv-lab { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.phil-fig .cv-l { text-anchor: start; }
+.phil-fig .cv-r { text-anchor: end; }
+/* doubling the square (Plato primer) */
+.sq-big { fill: var(--surface); stroke: var(--muted); stroke-width: 1.2; }
+.sq-grid { fill: none; stroke: var(--line); stroke-width: 1.2; }
+.sq-orig { fill: none; stroke: var(--ink); stroke-width: 2; }
+.sq-tilt { fill: var(--tech); fill-opacity: 0.18; stroke: var(--tech); stroke-width: 2; }
+.phil-fig .sq-title { font: 600 10px 'Bricolage Grotesque', sans-serif; }
+.phil-fig .sq-n { font: 600 10px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.phil-fig .sq-cap { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+
+/* Network file shares: which machine opens each connection */
+.share-flow { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+.share-flow svg { display: block; width: 100%; height: auto; }
+.share-flow text { text-anchor: middle; }
+.share-flow .sf-box { fill: var(--surface); stroke: var(--muted); stroke-width: 1; }
+.share-flow .sf-nas { stroke: var(--ink); }
+.share-flow .sf-name { font: 600 10px 'Bricolage Grotesque', sans-serif; fill: var(--ink); }
+.share-flow .sf-small, .share-flow .sf-label { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.share-flow .sf-arrow { stroke: var(--muted); stroke-width: 1.4; }
+.share-flow .sf-arrowhead { fill: var(--muted); }
+
+/* RAG: indexing and answering */
+.rag-flow { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+.rag-flow svg { display: block; width: 100%; height: auto; }
+.rag-flow text { text-anchor: middle; }
+.rag-flow .rf-phase { font: 600 9px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); text-anchor: start; }
+.rag-flow .rf-box { fill: var(--surface); stroke: var(--muted); stroke-width: 1; }
+.rag-flow .rf-store { stroke: var(--tech); stroke-width: 1.8; }
+.rag-flow .rf-model { stroke: var(--ink); }
+.rag-flow .rf-name { font: 600 10px 'Bricolage Grotesque', sans-serif; fill: var(--ink); }
+.rag-flow .rf-small, .rag-flow .rf-label { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.rag-flow .rf-hit-label { fill: var(--tech); }
+.rag-flow .rf-arrow { stroke: var(--muted); stroke-width: 1.3; }
+.rag-flow .rf-hit { stroke: var(--tech); stroke-width: 1.6; }
+.rag-flow .rf-arrowhead { fill: var(--muted); }
+
+/* JVM memory in a container: the budget bar */
+.jvm-budget { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+.jvm-budget svg { display: block; width: 100%; height: auto; }
+.jvm-budget .jb-heap { fill: color-mix(in srgb, var(--tech) 22%, var(--surface)); stroke: var(--tech); stroke-width: 1.2; }
+.jvm-budget .jb-other { fill: var(--surface); stroke: var(--muted); stroke-width: 1; }
+.jvm-budget .jb-free { fill: none; stroke: var(--muted); stroke-width: 1; stroke-dasharray: 4 3; }
+.jvm-budget .jb-limit { stroke: var(--ink); stroke-width: 1.5; }
+.jvm-budget .jb-name { font: 600 9.5px 'Bricolage Grotesque', sans-serif; text-anchor: middle; fill: var(--ink); }
+.jvm-budget .jb-small { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; text-anchor: middle; fill: var(--muted); }
+.jvm-budget .jb-edge { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--ink); }
+
+/* Why a pod keeps restarting: liveness probe timeline */
+.probe-timeline { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+.probe-timeline svg { display: block; width: 100%; height: auto; }
+.probe-timeline text { text-anchor: middle; }
+.probe-timeline .pt-axis { stroke: var(--muted); stroke-width: 1.2; }
+.probe-timeline .pt-arrowhead { fill: var(--muted); }
+.probe-timeline .pt-mark { stroke: var(--ink); stroke-width: 1.2; }
+.probe-timeline .pt-fail { fill: color-mix(in srgb, var(--muted) 30%, transparent); stroke: var(--muted); stroke-width: 1; }
+.probe-timeline .pt-signal { stroke: var(--tech); stroke-width: 1.6; }
+.probe-timeline .pt-span { stroke: var(--tech); stroke-width: 1; stroke-dasharray: 3 2; }
+.probe-timeline .pt-tick, .probe-timeline .pt-small { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.probe-timeline .pt-label { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--ink); }
+.probe-timeline .pt-hot { fill: var(--tech); }
+.probe-timeline .pt-start { text-anchor: start; }
+.probe-timeline .pt-end { text-anchor: end; }
+
+/* New Testament primer: Greek and Syriac versions in date order */
+.nt-order { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+.nt-order svg { display: block; width: 100%; height: auto; }
+.nt-order text { text-anchor: middle; }
+.nt-order .nt-head { font: 600 10px 'Bricolage Grotesque', system-ui, sans-serif; fill: var(--muted); }
+.nt-order .nt-era { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); text-anchor: start; }
+.nt-order .nt-greek { fill: color-mix(in srgb, var(--tech) 14%, var(--surface)); stroke: var(--tech); stroke-width: 1; }
+.nt-order .nt-syr { fill: var(--surface); stroke: var(--muted); stroke-width: 1; }
+.nt-order .nt-name { font: 600 10px 'Bricolage Grotesque', system-ui, sans-serif; fill: var(--ink); }
+.nt-order .nt-small { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.nt-order .nt-arrow { stroke: var(--tech); stroke-width: 1.2; }
+.nt-order .nt-arrowhead { fill: var(--tech); }
+
+/* GitOps primer: push vs pull */
+.gitops-flow { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+.gitops-flow svg { display: block; width: 100%; height: auto; }
+.gitops-flow text { text-anchor: middle; }
+.gitops-flow .go-title { font: 600 10px 'Bricolage Grotesque', system-ui, sans-serif; fill: var(--muted); }
+.gitops-flow .go-divider { stroke: var(--line); stroke-width: 1; }
+.gitops-flow .go-box { fill: var(--surface); stroke: var(--muted); stroke-width: 1; }
+.gitops-flow .go-agent { fill: color-mix(in srgb, var(--tech) 14%, var(--surface)); stroke: var(--tech); }
+.gitops-flow .go-cluster { fill: color-mix(in srgb, var(--muted) 8%, transparent); stroke: var(--line); stroke-width: 1; }
+.gitops-flow .go-name { font: 600 10px 'Bricolage Grotesque', system-ui, sans-serif; fill: var(--ink); }
+.gitops-flow .go-small { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.gitops-flow .go-start { text-anchor: start; }
+.gitops-flow .go-arrow { stroke: var(--muted); stroke-width: 1.2; }
+.gitops-flow .go-hot { stroke: var(--tech); }
+.gitops-flow .go-hotlabel { fill: var(--tech); }
+.gitops-flow .go-arrowhead { fill: context-stroke; }
+.gitops-flow .go-end { text-anchor: end; }
+.gitops-flow .go-file { fill: var(--ink); }
+.gitops-flow .go-link { fill: none; stroke: var(--muted); stroke-width: 1; stroke-dasharray: 3 2; }

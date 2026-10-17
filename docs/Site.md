@@ -14,7 +14,7 @@
 
 ## Pages
 
-- `/` — intro + latest bytes from both streams
+- `/` — intro, an index of the four sections (Tech Bytes, Life Bytes, Primers, Projects) with counts from the build, and one Latest feed of the six newest items, at most two of them primers so revisions do not crowd out posts
 - `/tech-bytes/`, `/life-bytes/` — stream indexes
 - `/tech-bytes/<slug>/`, `/life-bytes/<slug>/` — posts
 - `/primers/`, `/primers/<topic>/`, `/primers/<topic>/<slug>/` — Primers:

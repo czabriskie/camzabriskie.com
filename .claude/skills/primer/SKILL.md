@@ -1,6 +1,6 @@
 ---
 name: primer
-description: Use when writing, revising, or reviewing a primer in src/content/primers/ (including reviewing someone else's primer PR before Cam approves it). Covers the beginner pass, looking for visuals, verifying every claim against its source, PowerShell tabs, voice, and the build and PR steps.
+description: Use when writing, revising, or reviewing a primer in src/content/primers/ (including reviewing someone else's primer PR before Cam approves it). Covers the scrub, the beginner pass, looking for visuals, verifying every claim against its source, PowerShell tabs, voice, and the build and PR steps.
 ---
 
 # Writing and reviewing primers
@@ -9,11 +9,20 @@ A primer explains one concept to someone who doesn't know it yet (AGENTS.md, "Pr
 These steps are the standard for every new primer and every review of one, whoever wrote
 it. Follow them in order and report what each step found.
 
+This one file serves every assistant working in the repo: Claude Code and GitHub Copilot
+both load skills from `.claude/skills/`, so edit the rules here rather than copying them
+somewhere else.
+
 ## 1. Scrub
 
 Nothing from work: no employer or customer names, hostnames, real IPs or CIDRs, network
 layouts, ticket links, or "on this project we…" framing. Example addresses come from RFC
 1918 / RFC 5737 / RFC 3849, names from `example.com`. Re-teach with generic examples.
+
+That includes the shape of a real incident, not just its names. When a primer grows out of
+something that happened, change the example's numbers and details (sizes, limits, counts,
+timings, the order things broke in) so a colleague couldn't match it to the real event.
+A 2 GiB container with a 512 MiB heap becomes a 4 GiB one with a 1 GiB heap.
 
 ## 2. Read it as a beginner
 
@@ -31,12 +40,19 @@ Read the draft as someone who has never used the tool, and fix every place they'
 - **Flow.** No forward references to things explained later, no point made twice, and
   every section follows from the one before. Each table or list gets a sentence leading
   into it.
+- **Say where the reader will meet it.** Give real examples of what the thing is used for
+  and the common setups it shows up in (a JVM: web services, Jenkins, Elasticsearch; in a
+  container, a pod, or on its own server), so the concept is attached to something the
+  reader has seen.
+- **Show what the output looks like.** When the text tells the reader to run a command and
+  read part of its result, include a short sample of that output and say what each part
+  means, before the table or rule that interprets it.
 - **Trim.** Detail most readers don't need goes in `<details class="aside">` with a
   `<summary>`.
-- **Mark platform-only sections.** A section that only explains how one vendor does it
-  (Route 53, ACM, CloudFront) gets `{only: AWS}` at the end of its heading (Decision 0011),
-  so readers who don't use AWS can see what to skip. General explanations that just use
-  AWS as the example aren't tagged.
+- **Mark platform-only content** (Decision 0012). A section that only explains how one
+  vendor does it (Route 53, ACM, CloudFront) gets `{only: AWS}` at the end of its heading.
+  A primer that's only about AWS gets `only: AWS` in its frontmatter instead. General
+  explanations that just use AWS as the example aren't tagged.
 
 ## 3. Look for visuals
 
@@ -74,6 +90,13 @@ Conventions for inline SVG diagrams:
 - Cite with `[@key]`, sources defined once in `src/data/references.mjs` (Decision 0007).
 - Only cite what you actually read and checked supports the claim; set `accessed` to the
   date you checked. If a source can't be reached, don't cite it, and say so.
+- Check against the page's own text, not a summary of it. Fetch the page (`curl`, then
+  strip the HTML) and search for the sentence the claim rests on. Tool-generated page
+  summaries have invented quotes in this repo before. A site that blocks automated reads
+  (Britannica does) can't be checked this way, so use another source whose text you can
+  read.
+- Cut or soften any sentence no source supports, rather than leaving it uncited. When a
+  source itself gets something wrong, follow the better source and say so in the PR.
 - For behavior the docs don't state (what order a tool does things in, how something is
   counted), read the source code and cite it pinned to a commit
   (`github.com/<org>/<repo>/blob/<full sha>/<path>#L<a>-L<b>`). Drafts often get this kind
@@ -88,6 +111,11 @@ macOS), stubbing external tools with a function if needed. Cite Microsoft docs f
 cmdlets and .NET APIs used. Commands that are identical everywhere stay one block. Give
 the measuring or checking command whenever the text tells the reader to measure or check
 something.
+
+Only add the tab where a Windows reader would plausibly run the command (Decision 0013).
+Commands aimed at Linux, like `kubectl exec` into a Linux container or anything run on a
+Linux server, stay a single Linux block, even when a local pipe such as `| grep` would
+technically differ in PowerShell.
 
 ## 6. Voice
 
