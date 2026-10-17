@@ -12,6 +12,41 @@ export const topics = [
     title: 'Networking',
     blurb: 'How networks are put together, starting from the addresses.',
   },
+  {
+    slug: 'kubernetes',
+    title: 'Kubernetes',
+    blurb: 'The limits and rules the cluster enforces, and what to do when a deploy hits one.',
+  },
+  {
+    slug: 'java',
+    title: 'Java',
+    blurb: 'How the JVM uses memory, and how that fits inside a container.',
+  },
+  {
+    slug: 'deployment',
+    title: 'Deployment',
+    blurb: 'How software gets onto servers you do not fully control, and what each approach needs from the network.',
+  },
+  {
+    slug: 'philosophy',
+    title: 'Philosophy',
+    blurb: 'The history of ideas, starting with the first people to ask what everything is made of.',
+  },
+  {
+    slug: 'theology',
+    title: 'Theology',
+    blurb: 'The Bible and Christian history, read the way historians and scholars of religion read them.',
+  },
+  {
+    slug: 'practices',
+    title: 'Practices',
+    blurb: 'How engineering work gets done well, and how to check that it was.',
+  },
+  {
+    slug: 'working-with-ai',
+    title: 'Working with AI',
+    blurb: 'How to set up AI assistants so their work can be trusted and checked.',
+  },
 ];
 
 export type Topic = (typeof topics)[number];
@@ -50,7 +85,7 @@ export const sections: Record<string, { title: string; blurb?: string; notes: st
     {
       title: 'Foundations',
       blurb: 'How a request finds its way: layers, addresses, and names.',
-      notes: ['osi-model', 'ip-addresses-and-cidr', 'dns-resolution'],
+      notes: ['osi-model', 'ip-addresses-and-cidr', 'dns-resolution', 'naming-hosts-locally'],
     },
     {
       title: 'Getting traffic to an app',
@@ -66,6 +101,11 @@ export const sections: Record<string, { title: string; blurb?: string; notes: st
       title: 'AWS networking',
       blurb: "The same ideas inside AWS: VPCs, reaching private resources, and firewalls. Skip this part if you don't use AWS.",
       notes: ['aws-vpc-subnets', 'reaching-private-resources', 'firewalls'],
+    },
+    {
+      title: 'Files on the network',
+      blurb: 'How machines share folders: SMB, NFS, and the storage behind them.',
+      notes: ['network-file-shares'],
     },
   ],
 };

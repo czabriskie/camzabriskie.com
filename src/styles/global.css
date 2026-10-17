@@ -17,6 +17,8 @@
     --life: #e0a45e;
     --line: #2a2e2a;
   }
+  /* macOS thickens light text on a dark background; grayscale smoothing keeps letters apart. */
+  body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 }
 
 * { box-sizing: border-box; }
@@ -28,6 +30,9 @@ body {
   font-family: 'Source Serif 4', Georgia, 'Times New Roman', serif;
   font-size: 1.05rem;
   line-height: 1.7;
+  /* Never fake a weight the page didn't load: a synthesized bold smears the letters
+     together. Bold uses the 600 weights loaded in Base.astro instead (see strong below). */
+  font-synthesis-weight: none;
 }
 
 .wrap { max-width: 48rem; margin: 0 auto; padding: 0 1.25rem; }
@@ -42,6 +47,7 @@ h2 { font-size: 1.45rem; font-weight: 600; margin: 2.2rem 0 0.7rem; }
 h3 { font-size: 1.15rem; font-weight: 600; margin: 1.8rem 0 0.5rem; }
 
 p { margin: 0 0 1.05rem; }
+strong, b { font-weight: 600; }
 a { color: inherit; text-decoration-color: var(--muted); text-underline-offset: 3px; }
 a:hover { text-decoration-color: currentColor; }
 a:focus-visible { outline: 2px solid var(--tech); outline-offset: 2px; border-radius: 2px; }
@@ -147,11 +153,25 @@ article.byte img { max-width: 100%; border-radius: 8px; }
 article.byte table { border-collapse: collapse; display: block; overflow-x: auto; }
 article.byte th, article.byte td { border: 1px solid var(--line); padding: 0.4rem 0.7rem; text-align: left; }
 
-/* Home */
-.intro { margin-bottom: 3rem; }
+/* Home: an index of what's on the site, then one Latest feed */
+.intro { margin-bottom: 1.8rem; }
 .intro .lede { font-size: 1.15rem; color: var(--muted); }
-.streams { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; }
-@media (max-width: 40rem) { .streams { grid-template-columns: 1fr; } }
+.home-index { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.7rem; margin-bottom: 2.6rem; }
+@media (max-width: 48rem) { .home-index { grid-template-columns: 1fr 1fr; } }
+.home-card {
+  display: flex; flex-direction: column; gap: 0.2rem; min-width: 0;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+  padding: 0.8rem 0.9rem; text-decoration: none;
+}
+.home-card:hover { border-color: var(--muted); }
+.home-card .name { display: flex; align-items: center; gap: 0.5rem; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 1.02rem; }
+.home-card .count { color: var(--muted); font-variant-numeric: tabular-nums; }
+.home-card .blurb { color: var(--muted); font-size: 0.88rem; line-height: 1.45; }
+/* Primers and projects get an outlined square: two accent hues only (teal, ochre). */
+.tick { width: 0.85rem; height: 0.85rem; border-radius: 3px; flex: none; }
+.tick-open { border: 2px solid var(--ink); }
+.latest h2 { margin-top: 0; }
+.byte-badge.kind-badge { color: var(--ink); text-transform: uppercase; letter-spacing: 0.08em; }
 
 /* Resume */
 .resume section { margin-bottom: 2rem; }
@@ -322,6 +342,54 @@ nav.note-nav .mono { color: var(--tech); font-weight: 400; }
 .encap-payload .encap-tag { display: block; margin-bottom: 0.2rem; }
 @media (max-width: 30rem) { .encap-layer { padding: 0.45rem 0.5rem 0.55rem; } }
 
+/* Reaching private resources primer: peering vs. Transit Gateway, VPN source addresses,
+   and the hops of a kubectl port forward. Teal marks the path that works. */
+.peer-mesh, .vpn-path, .relay-path { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+.peer-mesh svg, .vpn-path svg, .relay-path svg { display: block; width: 100%; height: auto; }
+.peer-mesh text, .vpn-path text, .relay-path text { text-anchor: middle; fill: var(--ink); }
+.peer-mesh .pe-title { font: 600 10px 'Bricolage Grotesque', sans-serif; }
+.peer-mesh .pe-link { stroke: var(--muted); stroke-width: 1.2; }
+.peer-mesh .pe-no { stroke: var(--life); stroke-width: 1.4; stroke-dasharray: 4 3; }
+.peer-mesh .pe-x { fill: none; stroke: var(--life); stroke-width: 2; stroke-linecap: round; }
+.peer-mesh .pe-spoke { stroke: var(--tech); stroke-width: 1.8; }
+.peer-mesh .pe-vpc { fill: var(--surface); stroke: var(--line); stroke-width: 1.2; }
+.peer-mesh .pe-name { font: 600 9px 'IBM Plex Mono', ui-monospace, monospace; }
+.peer-mesh .pe-hub { fill: var(--surface); stroke: var(--tech); stroke-width: 1.5; }
+.peer-mesh .pe-hub-name { font: 600 8px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--tech); }
+.peer-mesh .pe-note { font: 8px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.peer-mesh .pe-count { font: 600 8.5px 'IBM Plex Mono', ui-monospace, monospace; }
+.peer-mesh .pe-count-hub { fill: var(--tech); }
+.vpn-path .vp-title { font: 600 10.5px 'Bricolage Grotesque', sans-serif; text-anchor: start; }
+.vpn-path .vp-vpc { fill: none; stroke: var(--line); stroke-width: 1.2; stroke-dasharray: 5 3; }
+.vpn-path .vp-vpc-label { font: 8px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); text-anchor: end; }
+.vpn-path .vp-node { fill: var(--surface); stroke: var(--line); stroke-width: 1; }
+.vpn-path .vp-name { font: 600 9.5px 'Bricolage Grotesque', sans-serif; }
+.vpn-path .vp-addr { font: 8px 'IBM Plex Mono', ui-monospace, monospace; }
+.vpn-path .vp-sub { font: 8px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.vpn-path .vp-src { font: 600 8.5px 'IBM Plex Mono', ui-monospace, monospace; }
+.vpn-path .vp-msg { stroke: var(--muted); stroke-width: 1.2; }
+.vpn-path .vp-head { fill: var(--muted); }
+.vpn-path .vp-head-ok { fill: var(--tech); }
+.vpn-path .vp-reply { fill: none; stroke-width: 1.4; }
+.vpn-path .vp-ok { stroke: var(--tech); }
+.vpn-path .vp-miss { stroke: var(--muted); stroke-dasharray: 4 3; }
+.vpn-path .vp-note { font: 8px 'IBM Plex Mono', ui-monospace, monospace; }
+.vpn-path .vp-new { fill: var(--tech); }
+.vpn-path .vp-need { fill: var(--life); }
+.relay-path .rp-zone { fill: none; stroke: var(--line); stroke-width: 1.2; stroke-dasharray: 5 3; }
+.relay-path .rp-vpc { stroke: var(--tech); }
+.relay-path .rp-zone-label { font: 8px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); text-anchor: start; }
+.relay-path .rp-vpc-label { fill: var(--tech); text-anchor: end; }
+.relay-path .rp-node { fill: var(--surface); stroke: var(--line); stroke-width: 1; }
+.relay-path .rp-name { font: 600 9.5px 'Bricolage Grotesque', sans-serif; }
+.relay-path .rp-sub { font: 8px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.relay-path .rp-hop { font: 8px 'IBM Plex Mono', ui-monospace, monospace; text-anchor: start; }
+.relay-path .rp-enc-text { fill: var(--tech); text-anchor: middle; }
+.relay-path .rp-msg { stroke: var(--muted); stroke-width: 1.2; }
+.relay-path .rp-msg.rp-enc { stroke: var(--tech); stroke-width: 2; }
+.relay-path .rp-head { fill: var(--muted); }
+.relay-path .rp-head-enc { fill: var(--tech); }
+
 /* Code tabs, copy buttons, and command builders (Decision 0008, src/scripts/code-tabs.ts).
    Without JS every tab panel shows under its own label. */
 .code-tabs { margin: 1.2rem 0; }
@@ -411,6 +479,47 @@ nav.note-nav .mono { color: var(--tech); font-weight: 400; }
 /* CIDR calculator (src/scripts/cidr-calc.ts) */
 .cidr-calc { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 1rem 1.2rem; margin: 1.2rem 0 1.6rem; }
 .cidr-calc:empty { display: none; }
+
+/* DNS primer diagrams: one lookup (.dns-walk) and the name tree with its zones (.dns-tree) */
+.dns-walk, .dns-tree { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+.dns-walk svg, .dns-tree svg { display: block; width: 100%; height: auto; }
+.dns-walk .dw-actor { font: 600 10px 'Bricolage Grotesque', sans-serif; text-anchor: middle; fill: var(--ink); }
+.dns-walk .dw-role { font: 8px 'IBM Plex Mono', ui-monospace, monospace; text-anchor: middle; fill: var(--muted); }
+.dns-walk .dw-life { stroke: var(--line); stroke-width: 2; }
+.dns-walk .dw-msg { stroke: var(--muted); stroke-width: 1.2; }
+.dns-walk .dw-ref { stroke-dasharray: 4 3; }
+.dns-walk .dw-ans { stroke: var(--tech); stroke-width: 1.8; }
+.dns-walk .dw-head { fill: var(--muted); }
+.dns-walk .dw-head-ans { fill: var(--tech); }
+.dns-walk .dw-label { font: 8px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--ink); paint-order: stroke; stroke: var(--paper); stroke-width: 3px; stroke-linejoin: round; }
+.dns-walk .dw-mid { text-anchor: middle; }
+.dns-walk .dw-ref-text { fill: var(--muted); }
+.dns-walk .dw-ans-text { fill: var(--tech); font-weight: 600; }
+.dns-tree .dt-zone { fill: none; stroke: var(--tech); stroke-width: 1; stroke-dasharray: 4 3; }
+.dns-tree .dt-zone-other { stroke: var(--muted); opacity: 0.6; }
+.dns-tree .dt-node rect { fill: var(--surface); stroke: var(--muted); stroke-width: 0.8; }
+.dns-tree .dt-node text { font: 10px 'IBM Plex Mono', ui-monospace, monospace; text-anchor: middle; fill: var(--ink); }
+.dns-tree .dt-edge { stroke: var(--muted); stroke-width: 1; }
+.root-why { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+.root-why svg { display: block; width: 100%; height: auto; }
+.root-why text { text-anchor: middle; }
+.root-why .rt-title { font: 600 10px 'Bricolage Grotesque', sans-serif; fill: var(--muted); }
+.root-why .rt-box { fill: var(--surface); stroke: var(--muted); stroke-width: 1; }
+.root-why .rt-root { stroke: var(--tech); stroke-width: 1.8; }
+.root-why .rt-name { font: 600 10px 'Bricolage Grotesque', sans-serif; fill: var(--ink); }
+.root-why .rt-small { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.root-why .rt-node rect { fill: var(--surface); stroke: var(--muted); stroke-width: 0.8; }
+.root-why .rt-node text { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--ink); }
+.root-why .rt-edge { stroke: var(--muted); stroke-width: 0.8; opacity: 0.7; }
+.root-why .rt-arrow { stroke: var(--muted); stroke-width: 1.2; }
+.root-why .rt-arrowhead { fill: var(--muted); }
+.root-why .rt-divider { stroke: var(--line); stroke-width: 1; }
+.dns-tree .dt-deleg { stroke: var(--tech); stroke-width: 1.5; }
+.dns-tree .dt-zname { font: 600 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--tech); }
+.dns-tree .dt-who { font: 8px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.dns-tree .dt-ns { font: 8px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--tech); }
+.dns-tree .dt-end { text-anchor: end; }
+.dns-tree .dt-mid { text-anchor: middle; }
 .cidr-calc .controls { display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap; }
 .cidr-calc label { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; }
 .cidr-calc input[type=number], .cidr-calc input.ip {
@@ -472,6 +581,15 @@ ul.references.all li { margin-bottom: 1.1rem; scroll-margin-top: 1rem; }
 ul.references .cited-in { display: block; color: var(--muted); margin-top: 0.2rem; }
 .references-all { color: var(--muted); font-size: 0.9rem; }
 
+/* Platform-specific sections: a heading tagged {only: AWS} (src/lib/remark-only-sections.mjs) */
+.only-banner { margin: -0.2rem 0 1.1rem; line-height: 1; }
+.only-tag.in-list { font-size: 0.62rem; padding: 0 0.35rem; margin-left: 0.5rem; vertical-align: 0.15em; }
+.only-tag { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink); border: 1px solid var(--muted); border-radius: 4px; padding: 0.05rem 0.45rem; white-space: nowrap; }
+.references-toggle > summary { cursor: pointer; color: var(--tech); font-size: 0.92rem; margin: 0.4rem 0 0.6rem; }
+.references-toggle > summary:focus-visible { outline: 2px solid var(--tech); outline-offset: 2px; border-radius: 2px; }
+.references-toggle[open] > summary { color: var(--muted); }
+.references-toggle:not([open]) .when-open, .references-toggle[open] .when-closed { display: none; }
+
 /* Route table lookup (src/scripts/route-lookup.ts), sharing the calculator's box */
 .route-lookup { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 1rem 1.2rem; margin: 1.2rem 0 1.6rem; }
 .route-lookup:empty { display: none; }
@@ -501,6 +619,102 @@ ul.references .cited-in { display: block; color: var(--muted); margin-top: 0.2re
 /* TLS handshake message diagram (src/scripts/tls-handshake.ts) */
 .tls-walk { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 1rem 1.1rem; margin: 1.2rem 0 1.8rem; font-size: 0.92rem; }
 .tls-walk:empty { display: none; }
+.mcp-stdio { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+.mcp-stdio svg { display: block; width: 100%; height: auto; }
+.mcp-stdio .mcp-box { fill: var(--surface); stroke: var(--muted); stroke-width: 1; }
+.mcp-stdio .mcp-server { stroke: var(--tech); stroke-width: 1.8; }
+.mcp-stdio .mcp-name { font: 600 10px 'Bricolage Grotesque', sans-serif; text-anchor: middle; fill: var(--ink); }
+.mcp-stdio .mcp-small { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; text-anchor: middle; fill: var(--muted); }
+.mcp-stdio .mcp-arrow { stroke: var(--muted); stroke-width: 1.2; }
+.mcp-stdio .mcp-dashed { stroke-dasharray: 4 3; }
+.mcp-stdio .mcp-arrowhead { fill: var(--muted); }
+.agh-loop { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+.agh-loop svg { display: block; width: 100%; height: auto; }
+.agh-loop .agh-box { fill: var(--surface); stroke: var(--muted); stroke-width: 1; }
+.agh-loop .agh-harness { stroke: var(--tech); stroke-width: 1.8; }
+.agh-loop .agh-name { font: 600 10px 'Bricolage Grotesque', sans-serif; text-anchor: middle; fill: var(--ink); }
+.agh-loop .agh-small { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; text-anchor: middle; fill: var(--muted); }
+.agh-loop .agh-arrow { stroke: var(--muted); stroke-width: 1.2; }
+.agh-loop .agh-dashed { stroke-dasharray: 4 3; }
+.agh-loop .agh-arrowhead { fill: var(--muted); }
+.agw-grid { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+.agw-grid svg { display: block; width: 100%; height: auto; }
+.agw-grid .agw-head { font: 600 10px 'Bricolage Grotesque', sans-serif; text-anchor: middle; fill: var(--ink); }
+.agw-grid .agw-name { font: 600 10px 'Bricolage Grotesque', sans-serif; fill: var(--ink); }
+.agw-grid .agw-small { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.agw-grid .agw-label { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; text-anchor: middle; fill: var(--ink); }
+.agw-grid .agw-chip { fill: var(--surface); stroke: var(--muted); stroke-width: 1; }
+.agw-grid .agw-tools { stroke: var(--tech); stroke-width: 1.6; }
+.agw-grid .agw-rule { stroke: var(--muted); stroke-width: 1.2; stroke-dasharray: 4 3; }
+.agw-grid .agw-row { stroke: var(--line); stroke-width: 1; }
+.agv-paths { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+.agv-paths svg { display: block; width: 100%; height: auto; }
+.agv-paths .agv-box { fill: var(--surface); stroke: var(--muted); stroke-width: 1; }
+.agv-paths .agv-client { stroke: var(--tech); stroke-width: 1.8; }
+.agv-paths .agv-title, .agv-paths .agv-name { font: 600 10px 'Bricolage Grotesque', sans-serif; text-anchor: middle; fill: var(--ink); }
+.agv-paths .agv-small { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; text-anchor: middle; fill: var(--muted); }
+.agv-paths .agv-note { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.agv-paths .agv-arrow { stroke: var(--muted); stroke-width: 1.2; }
+.agv-paths .agv-ok { stroke: var(--tech); }
+.agv-paths .agv-dashed { stroke-dasharray: 4 3; }
+.agv-paths .agv-arrowhead { fill: var(--muted); }
+.agv-paths .agv-x { stroke: var(--ink); stroke-width: 2; fill: none; }
+.agv-paths .agv-divider { stroke: var(--line); stroke-width: 1; }
+.pcb-bars { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+.pcb-bars svg { display: block; width: 100%; height: auto; }
+.pcb-bars .pcb-name { font: 600 10px 'Bricolage Grotesque', sans-serif; fill: var(--ink); }
+.pcb-bars .pcb-small, .pcb-bars .pcb-legend { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.pcb-bars .pcb-read { fill: var(--tech); }
+.pcb-bars .pcb-write { fill: var(--surface); stroke: var(--ink); stroke-width: 1; }
+.air-flow { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+.air-flow svg { display: block; width: 100%; height: auto; }
+.air-flow .air-box { fill: var(--surface); stroke: var(--muted); stroke-width: 1; }
+.air-flow .air-input { stroke: var(--ink); }
+.air-flow .air-pass { stroke: var(--tech); stroke-width: 1.8; }
+.air-flow .air-person { fill: var(--line); stroke: var(--tech); stroke-width: 1.8; }
+.air-flow .air-name { font: 600 10px 'Bricolage Grotesque', sans-serif; text-anchor: middle; fill: var(--ink); }
+.air-flow .air-small { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; text-anchor: middle; fill: var(--muted); }
+.air-flow .air-arrow { stroke: var(--muted); stroke-width: 1.2; }
+.air-flow .air-arrowhead { fill: var(--muted); }
+
+/* Deploying to on-prem Windows: which machine opens the connection */
+.conn-dir { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+.conn-dir svg { display: block; width: 100%; height: auto; }
+.conn-dir text { text-anchor: middle; }
+.conn-dir .cd-zone { font: 600 9px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.conn-dir .cd-wall { fill: color-mix(in srgb, var(--muted) 25%, transparent); stroke: var(--muted); stroke-width: 0.8; }
+.conn-dir .cd-wall-label { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.conn-dir .cd-box { fill: var(--surface); stroke: var(--muted); stroke-width: 1; }
+.conn-dir .cd-server { stroke: var(--ink); }
+.conn-dir .cd-name { font: 600 10px 'Bricolage Grotesque', sans-serif; fill: var(--ink); }
+.conn-dir .cd-small { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.conn-dir .cd-label { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.conn-dir .cd-in-label { fill: var(--tech); }
+.conn-dir .cd-start { text-anchor: start; }
+.conn-dir .cd-arrow { stroke: var(--muted); stroke-width: 1.4; }
+.conn-dir .cd-in { stroke: var(--tech); stroke-width: 1.8; }
+.conn-dir .cd-arrowhead { fill: var(--muted); }
+.conn-dir .cd-arrowhead-in { fill: var(--tech); }
+
+/* Kubernetes object size limits: where the check happens, and how a loop multiplies size */
+.k8s-path, .k8s-size { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+.k8s-path svg, .k8s-size svg { display: block; width: 100%; height: auto; }
+.k8s-path .k8p-box { fill: var(--surface); stroke: var(--muted); stroke-width: 1; }
+.k8s-path .k8p-check { stroke: var(--tech); stroke-width: 1.8; }
+.k8s-path .k8p-reject { stroke: var(--ink); stroke-dasharray: 4 3; }
+.k8s-path .k8p-name { font: 600 10px 'Bricolage Grotesque', sans-serif; text-anchor: middle; fill: var(--ink); }
+.k8s-path .k8p-small { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; text-anchor: middle; fill: var(--muted); }
+.k8s-path .k8p-limit { fill: var(--tech); }
+.k8s-path .k8p-label { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.k8s-path .k8p-label-left { text-anchor: end; }
+.k8s-path .k8p-arrow { stroke: var(--muted); stroke-width: 1.2; }
+.k8s-path .k8p-arrowhead { fill: var(--muted); }
+.k8s-size .k8b-seg { fill: color-mix(in srgb, var(--tech) 18%, var(--surface)); stroke: var(--tech); stroke-width: 1; }
+.k8s-size .k8b-over { stroke: var(--ink); stroke-width: 1; }
+.k8s-size .k8b-hatch-line { stroke: var(--ink); stroke-width: 1.4; opacity: 0.55; }
+.k8s-size .k8b-limit { stroke: var(--ink); stroke-width: 1.5; stroke-dasharray: 4 3; }
+.k8s-size .k8b-text { font: 9px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.k8s-size .k8b-limit-text { fill: var(--ink); }
 .paint-mix { max-width: 30rem; margin: 1.2rem auto 0.5rem; }
 .paint-mix svg { display: block; width: 100%; height: auto; }
 .paint-mix .pm-wire { fill: none; stroke: var(--line); stroke-width: 1.5; stroke-dasharray: 4 3; }
@@ -604,3 +818,192 @@ details.aside[open] summary { margin-bottom: 0.4rem; }
 .tw-check-server { text-align: right; }
 .tw-explain { border-top: 1px solid var(--line); margin-top: 0.8rem; padding-top: 0.6rem; min-height: 3.2rem; }
 @media (prefers-reduced-motion: reduce) { .tw-msg { transition: none; } }
+
+/* Philosophy diagrams (Presocratics primer): static inline SVG, colored from the tokens */
+.phil-fig { max-width: 32rem; margin: 1.4rem auto 0.4rem; }
+.phil-fig svg { display: block; width: 100%; height: auto; }
+.phil-fig text { fill: var(--ink); font: 10px 'Bricolage Grotesque', sans-serif; text-anchor: middle; }
+/* timeline: Ionia solid teal, Italy hollow teal, atomists muted */
+.tl-tick { stroke: var(--line); stroke-width: 1; }
+.tl-axis { font: 8px 'IBM Plex Mono', ui-monospace, monospace !important; fill: var(--muted) !important; }
+.phil-fig .tl-left { text-anchor: start; }
+.phil-fig .tl-name { text-anchor: end; font-weight: 600; }
+.tl-soc { fill: var(--line); opacity: 0.7; }
+.phil-fig .tl-soc-label { font: 8px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.tl-bar.tl-io, .tl-dot.tl-io { fill: var(--tech); }
+.tl-bar.tl-it, .tl-dot.tl-it { fill: var(--surface); stroke: var(--tech); stroke-width: 1.5; }
+.tl-bar.tl-at, .tl-dot.tl-at { fill: var(--muted); }
+.tl-dash { stroke-width: 2; stroke-dasharray: 3 3; }
+.tl-dash.tl-io, .tl-dash.tl-it { stroke: var(--tech); }
+.tl-dash.tl-at { stroke: var(--muted); }
+/* Anaximenes' ladder */
+.lad-box rect { fill: var(--surface); stroke: var(--line); stroke-width: 1; }
+.lad-air rect { stroke: var(--tech); stroke-width: 2; }
+.phil-fig .lad-air text, .phil-fig .lad-note { fill: var(--tech); font-weight: 600; }
+.phil-fig .lad-arrow { fill: var(--muted); }
+.lad-axis { stroke: var(--muted); stroke-width: 1; }
+.lad-head { fill: var(--muted); }
+.phil-fig .lad-cap { font: 8px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.phil-fig .lad-l { text-anchor: start; }
+.phil-fig .lad-r { text-anchor: end; }
+/* vibrating strings */
+.phil-fig .st-name { text-anchor: end; font-weight: 600; }
+.st-ghost { stroke: var(--line); stroke-width: 2; }
+.st-line { stroke: var(--tech); stroke-width: 2.5; }
+.st-bridge { stroke: var(--muted); stroke-width: 1.5; }
+.phil-fig .st-frac { text-anchor: start; font: 8px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.phil-fig .st-ratio { text-anchor: end; font: 9px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--tech); }
+/* Zeno's dichotomy */
+.z-track { stroke: var(--line); stroke-width: 3; }
+.z-seg { stroke: var(--tech); stroke-width: 3; }
+.z-mark { stroke: var(--muted); stroke-width: 1; }
+.phil-fig .z-lab { font: 8px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.phil-fig .z-end { font-weight: 600; }
+.phil-fig .z-l { text-anchor: start; }
+.phil-fig .z-r { text-anchor: end; }
+.z-runner { fill: var(--tech); }
+/* the change debate */
+.ch-axis { stroke: var(--muted); stroke-width: 1.5; }
+.ch-end { fill: var(--surface); stroke: var(--tech); stroke-width: 2; }
+.ch-mid { fill: var(--tech); }
+.phil-fig .ch-who { font-weight: 700; font-size: 11px; }
+.phil-fig .ch-claim { fill: var(--muted); font: 9px 'Source Serif 4', Georgia, serif; }
+.phil-fig .ch-l { text-anchor: start; }
+.phil-fig .ch-r { text-anchor: end; }
+/* classification chart: region columns x answer rows */
+.cl-rule { stroke: var(--line); stroke-width: 1; }
+.phil-fig .cl-col { font-weight: 700; font-size: 11px; }
+.phil-fig .cl-colsub, .phil-fig .cl-time { font: 8px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.phil-fig .cl-time { text-anchor: start; }
+.cl-arrow { stroke: var(--line); stroke-width: 1.5; }
+.cl-head-arrow { fill: var(--line); }
+.phil-fig .cl-row { text-anchor: end; font: 9px 'Source Serif 4', Georgia, serif; fill: var(--muted); }
+.cl-box rect { fill: var(--surface); stroke: var(--tech); stroke-width: 1.2; }
+.phil-fig .cl-school { font: 500 7.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--tech); letter-spacing: 0.06em; text-transform: uppercase; }
+.phil-fig .cl-name { font-weight: 600; font-size: 10px; }
+/* elenchus loop (Sophists and Socrates primer) */
+.el-box rect { fill: var(--surface); stroke: var(--line); stroke-width: 1.2; }
+.el-hot rect { stroke: var(--tech); stroke-width: 2; }
+.phil-fig .el-n { font: 600 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--tech); }
+.phil-fig .el-name { font: 600 10px 'Bricolage Grotesque', sans-serif; }
+.phil-fig .el-sub, .phil-fig .el-loop, .phil-fig .el-top { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.el-arrow { fill: none; stroke: var(--muted); stroke-width: 1.2; }
+.el-head { fill: var(--muted); }
+/* ladder of love (Plato primer) */
+.lv-step rect { fill: var(--surface); stroke: var(--line); stroke-width: 1.2; }
+.lv-hot rect { stroke: var(--tech); stroke-width: 2; }
+.phil-fig .lv-n { font: 600 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--tech); }
+.phil-fig .lv-name { font: 600 10px 'Bricolage Grotesque', sans-serif; }
+.phil-fig .lv-sub, .phil-fig .lv-top, .phil-fig .lv-cap { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.phil-fig .lv-l { text-anchor: start; }
+.phil-fig .lv-r { text-anchor: end; }
+.lv-arrow { fill: none; stroke: var(--muted); stroke-width: 1.2; }
+.lv-head { fill: var(--muted); }
+/* allegory of the cave (Plato primer) */
+.cv-rock { fill: none; stroke: var(--muted); stroke-width: 1.5; }
+.cv-wall, .cv-lowwall { fill: var(--line); }
+.cv-ray { stroke: var(--tech); stroke-width: 1; stroke-dasharray: 3 3; opacity: 0.7; }
+.cv-shadow { fill: var(--ink); opacity: 0.55; }
+.cv-person circle { fill: var(--surface); stroke: var(--ink); stroke-width: 1.2; }
+.cv-person path { fill: none; stroke: var(--ink); stroke-width: 1.2; }
+.cv-chain { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 2 2; }
+.cv-figure { fill: var(--ink); }
+.cv-fire { fill: var(--tech); }
+.cv-sun { fill: var(--surface); stroke: var(--tech); stroke-width: 2; }
+.phil-fig .cv-lab { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.phil-fig .cv-l { text-anchor: start; }
+.phil-fig .cv-r { text-anchor: end; }
+/* doubling the square (Plato primer) */
+.sq-big { fill: var(--surface); stroke: var(--muted); stroke-width: 1.2; }
+.sq-grid { fill: none; stroke: var(--line); stroke-width: 1.2; }
+.sq-orig { fill: none; stroke: var(--ink); stroke-width: 2; }
+.sq-tilt { fill: var(--tech); fill-opacity: 0.18; stroke: var(--tech); stroke-width: 2; }
+.phil-fig .sq-title { font: 600 10px 'Bricolage Grotesque', sans-serif; }
+.phil-fig .sq-n { font: 600 10px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.phil-fig .sq-cap { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+
+/* Network file shares: which machine opens each connection */
+.share-flow { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+.share-flow svg { display: block; width: 100%; height: auto; }
+.share-flow text { text-anchor: middle; }
+.share-flow .sf-box { fill: var(--surface); stroke: var(--muted); stroke-width: 1; }
+.share-flow .sf-nas { stroke: var(--ink); }
+.share-flow .sf-name { font: 600 10px 'Bricolage Grotesque', sans-serif; fill: var(--ink); }
+.share-flow .sf-small, .share-flow .sf-label { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.share-flow .sf-arrow { stroke: var(--muted); stroke-width: 1.4; }
+.share-flow .sf-arrowhead { fill: var(--muted); }
+
+/* RAG: indexing and answering */
+.rag-flow { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+.rag-flow svg { display: block; width: 100%; height: auto; }
+.rag-flow text { text-anchor: middle; }
+.rag-flow .rf-phase { font: 600 9px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); text-anchor: start; }
+.rag-flow .rf-box { fill: var(--surface); stroke: var(--muted); stroke-width: 1; }
+.rag-flow .rf-store { stroke: var(--tech); stroke-width: 1.8; }
+.rag-flow .rf-model { stroke: var(--ink); }
+.rag-flow .rf-name { font: 600 10px 'Bricolage Grotesque', sans-serif; fill: var(--ink); }
+.rag-flow .rf-small, .rag-flow .rf-label { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.rag-flow .rf-hit-label { fill: var(--tech); }
+.rag-flow .rf-arrow { stroke: var(--muted); stroke-width: 1.3; }
+.rag-flow .rf-hit { stroke: var(--tech); stroke-width: 1.6; }
+.rag-flow .rf-arrowhead { fill: var(--muted); }
+
+/* JVM memory in a container: the budget bar */
+.jvm-budget { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+.jvm-budget svg { display: block; width: 100%; height: auto; }
+.jvm-budget .jb-heap { fill: color-mix(in srgb, var(--tech) 22%, var(--surface)); stroke: var(--tech); stroke-width: 1.2; }
+.jvm-budget .jb-other { fill: var(--surface); stroke: var(--muted); stroke-width: 1; }
+.jvm-budget .jb-free { fill: none; stroke: var(--muted); stroke-width: 1; stroke-dasharray: 4 3; }
+.jvm-budget .jb-limit { stroke: var(--ink); stroke-width: 1.5; }
+.jvm-budget .jb-name { font: 600 9.5px 'Bricolage Grotesque', sans-serif; text-anchor: middle; fill: var(--ink); }
+.jvm-budget .jb-small { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; text-anchor: middle; fill: var(--muted); }
+.jvm-budget .jb-edge { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--ink); }
+
+/* Why a pod keeps restarting: liveness probe timeline */
+.probe-timeline { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+.probe-timeline svg { display: block; width: 100%; height: auto; }
+.probe-timeline text { text-anchor: middle; }
+.probe-timeline .pt-axis { stroke: var(--muted); stroke-width: 1.2; }
+.probe-timeline .pt-arrowhead { fill: var(--muted); }
+.probe-timeline .pt-mark { stroke: var(--ink); stroke-width: 1.2; }
+.probe-timeline .pt-fail { fill: color-mix(in srgb, var(--muted) 30%, transparent); stroke: var(--muted); stroke-width: 1; }
+.probe-timeline .pt-signal { stroke: var(--tech); stroke-width: 1.6; }
+.probe-timeline .pt-span { stroke: var(--tech); stroke-width: 1; stroke-dasharray: 3 2; }
+.probe-timeline .pt-tick, .probe-timeline .pt-small { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.probe-timeline .pt-label { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--ink); }
+.probe-timeline .pt-hot { fill: var(--tech); }
+.probe-timeline .pt-start { text-anchor: start; }
+.probe-timeline .pt-end { text-anchor: end; }
+
+/* New Testament primer: Greek and Syriac versions in date order */
+.nt-order { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+.nt-order svg { display: block; width: 100%; height: auto; }
+.nt-order text { text-anchor: middle; }
+.nt-order .nt-head { font: 600 10px 'Bricolage Grotesque', system-ui, sans-serif; fill: var(--muted); }
+.nt-order .nt-era { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); text-anchor: start; }
+.nt-order .nt-greek { fill: color-mix(in srgb, var(--tech) 14%, var(--surface)); stroke: var(--tech); stroke-width: 1; }
+.nt-order .nt-syr { fill: var(--surface); stroke: var(--muted); stroke-width: 1; }
+.nt-order .nt-name { font: 600 10px 'Bricolage Grotesque', system-ui, sans-serif; fill: var(--ink); }
+.nt-order .nt-small { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.nt-order .nt-arrow { stroke: var(--tech); stroke-width: 1.2; }
+.nt-order .nt-arrowhead { fill: var(--tech); }
+
+/* GitOps primer: push vs pull */
+.gitops-flow { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+.gitops-flow svg { display: block; width: 100%; height: auto; }
+.gitops-flow text { text-anchor: middle; }
+.gitops-flow .go-title { font: 600 10px 'Bricolage Grotesque', system-ui, sans-serif; fill: var(--muted); }
+.gitops-flow .go-divider { stroke: var(--line); stroke-width: 1; }
+.gitops-flow .go-box { fill: var(--surface); stroke: var(--muted); stroke-width: 1; }
+.gitops-flow .go-agent { fill: color-mix(in srgb, var(--tech) 14%, var(--surface)); stroke: var(--tech); }
+.gitops-flow .go-cluster { fill: color-mix(in srgb, var(--muted) 8%, transparent); stroke: var(--line); stroke-width: 1; }
+.gitops-flow .go-name { font: 600 10px 'Bricolage Grotesque', system-ui, sans-serif; fill: var(--ink); }
+.gitops-flow .go-small { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.gitops-flow .go-start { text-anchor: start; }
+.gitops-flow .go-arrow { stroke: var(--muted); stroke-width: 1.2; }
+.gitops-flow .go-hot { stroke: var(--tech); }
+.gitops-flow .go-hotlabel { fill: var(--tech); }
+.gitops-flow .go-arrowhead { fill: context-stroke; }
+.gitops-flow .go-end { text-anchor: end; }
+.gitops-flow .go-file { fill: var(--ink); }
+.gitops-flow .go-link { fill: none; stroke: var(--muted); stroke-width: 1; stroke-dasharray: 3 2; }

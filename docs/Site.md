@@ -8,12 +8,13 @@
    (engineering) and **Life Bytes** (everything else).
 3. A public, print-friendly resume.
 4. Primers: explainer documents for things Cam has learned, kept separate from the
-   posts (Decision 0006 draws the line).
+   posts (Decision 0006 draws the line). Any subject, not just tech (Decision 0010):
+   Networking and Philosophy so far.
 5. Near-zero maintenance: static output, no database, no analytics, deploys on push.
 
 ## Pages
 
-- `/` — intro + latest bytes from both streams
+- `/` — intro, an index of the four sections (Tech Bytes, Life Bytes, Primers, Projects) with counts from the build, and one Latest feed of the six newest items, at most two of them primers so revisions do not crowd out posts
 - `/tech-bytes/`, `/life-bytes/` — stream indexes
 - `/tech-bytes/<slug>/`, `/life-bytes/<slug>/` — posts
 - `/primers/`, `/primers/<topic>/`, `/primers/<topic>/<slug>/` — Primers:

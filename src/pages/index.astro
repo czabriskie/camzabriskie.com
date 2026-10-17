@@ -1,35 +1,78 @@
 ---
 import Base from '../layouts/Base.astro';
-import ByteList from '../components/ByteList.astro';
-import { numberedBytes } from '../lib/bytes';
+import { numberedBytes, fmtDate } from '../lib/bytes';
+import { publishedTopics, recentlyUpdated, noteUrl } from '../lib/primers';
+import { tools, built, teaching } from '../lib/projects';
 
 const tech = await numberedBytes('tech-bytes');
 const life = await numberedBytes('life-bytes');
+const topics = await publishedTopics();
+const primerCount = topics.reduce((sum, t) => sum + t.notes.length, 0);
+const projectCount = tools.length + built.length + teaching.length;
+
+// One feed, newest first. Primers are revised often, so at most two of them
+// make the list; otherwise an editing spree would push every post off the page.
+const LATEST = 6;
+const PRIMERS_IN_LATEST = 2;
+const latest = [
+  ...tech.map(({ entry, bits }) => ({
+    kind: 'tech' as const, date: entry.data.date, title: entry.data.title, href: `/tech-bytes/${entry.id}/`, bits, label: 'Tech',
+  })),
+  ...life.map(({ entry, bits }) => ({
+    kind: 'life' as const, date: entry.data.date, title: entry.data.title, href: `/life-bytes/${entry.id}/`, bits, label: 'Life',
+  })),
+  ...(await recentlyUpdated(PRIMERS_IN_LATEST)).map(({ topic, note }) => ({
+    kind: 'primer' as const, date: note.data.updated, title: note.data.title, href: noteUrl(note), bits: '', label: topic.title,
+  })),
+]
+  .sort((a, b) => b.date.valueOf() - a.date.valueOf())
+  .slice(0, LATEST);
+
+const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
 ---
 <Base title="Cam Zabriskie">
   <section class="intro">
     <h1>I'm Cam. I build software and I write it down.</h1>
-    <p class="lede">
-      Senior DevOps engineer working on cloud infrastructure and reliability. I keep two small blogs
-      here: <a href="/tech-bytes/">Tech Bytes</a> for the engineering, <a href="/life-bytes/">Life
-      Bytes</a> for everything else. One byte at a time.
-    </p>
+    <p class="lede">Senior DevOps engineer working on cloud infrastructure and reliability.</p>
   </section>
 
-  <div class="streams">
-    <section class="stream-tech">
-      <div class="stream-head">
-        <span class="tick" aria-hidden="true"></span>
-        <h2><a href="/tech-bytes/" style="text-decoration:none">Tech Bytes</a></h2>
-      </div>
-      <ByteList stream="tech-bytes" items={tech} limit={4} />
-    </section>
-    <section class="stream-life">
-      <div class="stream-head">
-        <span class="tick" aria-hidden="true"></span>
-        <h2><a href="/life-bytes/" style="text-decoration:none">Life Bytes</a></h2>
-      </div>
-      <ByteList stream="life-bytes" items={life} limit={4} />
-    </section>
-  </div>
+  <nav class="home-index" aria-label="What's on this site">
+    <a class="home-card stream-tech" href="/tech-bytes/">
+      <span class="name"><span class="tick" aria-hidden="true"></span>Tech Bytes</span>
+      <span class="mono count">{plural(tech.length, 'byte')}</span>
+      <span class="blurb">The engineering, one post at a time.</span>
+    </a>
+    <a class="home-card stream-life" href="/life-bytes/">
+      <span class="name"><span class="tick" aria-hidden="true"></span>Life Bytes</span>
+      <span class="mono count">{plural(life.length, 'byte')}</span>
+      <span class="blurb">Everything else.</span>
+    </a>
+    <a class="home-card" href="/primers/">
+      <span class="name"><span class="tick tick-open" aria-hidden="true"></span>Primers</span>
+      <span class="mono count">{primerCount} in {plural(topics.length, 'topic')}</span>
+      <span class="blurb">Explainers, one idea at a time, kept up to date.</span>
+    </a>
+    <a class="home-card" href="/projects/">
+      <span class="name"><span class="tick tick-open" aria-hidden="true"></span>Projects</span>
+      <span class="mono count">{plural(projectCount, 'repo')}</span>
+      <span class="blurb">Tools, experiments, and teaching code.</span>
+    </a>
+  </nav>
+
+  <section class="latest">
+    <h2>Latest</h2>
+    <ul class="bytes">
+      {latest.map((item) => (
+        <li class={item.kind === 'primer' ? '' : `stream-${item.kind}`}>
+          <div class="meta">
+            {item.kind === 'primer'
+              ? <span class="byte-badge kind-badge">Primer</span>
+              : <span class="byte-badge"><b>{item.bits}</b></span>}
+            <span class="mono">{item.label} · {item.kind === 'primer' ? 'updated ' : ''}{fmtDate(item.date)}</span>
+          </div>
+          <a class="title" href={item.href}>{item.title}</a>
+        </li>
+      ))}
+    </ul>
+  </section>
 </Base>
