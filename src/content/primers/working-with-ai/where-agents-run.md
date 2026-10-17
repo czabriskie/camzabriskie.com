@@ -139,6 +139,77 @@ MCP servers follow their own rule. When Anthropic's side connects to an MCP serv
 With a self-hosted sandbox the files and processes stay on your worker, but the conversation and every tool result still go to Anthropic, because that's how the model sees what a tool returned [@managed-agents-choosing-environment]. If `npm test` prints a secret, the model sees the secret. Keeping data in your network means keeping it out of what the tools return, too.
 </details>
 
+### A private MCP server behind a VPN
+
+Say you've written an MCP server that speaks HTTP and runs at a private address, `http://10.0.8.25:8000/mcp`, on a network you reach through a VPN. With the VPN on, Claude Code on your laptop can use it. The API's MCP connector can't, and neither can a managed agent. Each one opens the connection from a different machine.
+
+The model never connects to an MCP server. It answers with a tool call, and the **MCP client**, which is part of the harness, sends the request. Register the server with Claude Code on your laptop [@claude-code-mcp]:
+
+```bash
+claude mcp add --transport http notes http://10.0.8.25:8000/mcp
+```
+
+Each call then goes like this:
+
+1. The model, on the provider's side, answers with a tool call: a tool name and its arguments.
+2. Claude Code on your laptop receives it and sends the MCP request to `10.0.8.25`.
+3. Your laptop has a route to that address through the VPN, so the request arrives.
+4. Claude Code sends the server's answer back to the model as a tool result.
+
+The provider sees the tool name, the arguments, and the result, but never connects to the address. Turn the VPN off and step 3 fails, the same way `curl` would.
+
+<div class="agv-paths" role="img" aria-label="Two diagrams side by side. Left, client on your laptop: the provider sends a tool call down to your laptop, the laptop's MCP client reaches the MCP server at 10.0.8.25 through the VPN, and the result goes back up to the provider. Right, client at the provider: the provider's MCP client tries to reach the same server directly and fails, because a private address has no route from the internet.">
+<svg viewBox="0 0 400 178" aria-hidden="true" focusable="false">
+<defs><marker id="agv-head" viewBox="0 0 8 8" refX="7" refY="4" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="agv-arrowhead" d="M0,0 L8,4 L0,8 z"/></marker></defs>
+<text class="agv-title" x="98" y="14">Client on your laptop</text>
+<rect class="agv-box" x="45" y="24" width="90" height="32" rx="5"/>
+<text class="agv-name" x="90" y="38">Provider</text>
+<text class="agv-small" x="90" y="50">model</text>
+<rect class="agv-box agv-client" x="45" y="82" width="90" height="32" rx="5"/>
+<text class="agv-name" x="90" y="96">Your laptop</text>
+<text class="agv-small" x="90" y="108">MCP client</text>
+<rect class="agv-box" x="45" y="140" width="90" height="32" rx="5"/>
+<text class="agv-name" x="90" y="154">MCP server</text>
+<text class="agv-small" x="90" y="166">10.0.8.25</text>
+<line class="agv-arrow" x1="80" y1="56" x2="80" y2="82" marker-start="url(#agv-head)" marker-end="url(#agv-head)"/>
+<text class="agv-note" x="88" y="70">tool call,</text>
+<text class="agv-note" x="88" y="80">result</text>
+<line class="agv-arrow agv-ok" x1="80" y1="114" x2="80" y2="140" marker-start="url(#agv-head)" marker-end="url(#agv-head)"/>
+<text class="agv-note" x="88" y="130">over the VPN</text>
+<line class="agv-divider" x1="200" y1="6" x2="200" y2="174"/>
+<text class="agv-title" x="300" y="14">Client at the provider</text>
+<rect class="agv-box agv-client" x="245" y="24" width="90" height="32" rx="5"/>
+<text class="agv-name" x="290" y="38">Provider</text>
+<text class="agv-small" x="290" y="50">model + client</text>
+<rect class="agv-box" x="245" y="140" width="90" height="32" rx="5"/>
+<text class="agv-name" x="290" y="154">MCP server</text>
+<text class="agv-small" x="290" y="166">10.0.8.25</text>
+<line class="agv-arrow agv-dashed" x1="280" y1="56" x2="280" y2="140" marker-end="url(#agv-head)"/>
+<path class="agv-x" d="M273,91 L287,105 M287,91 L273,105"/>
+<text class="agv-note" x="294" y="96">no route from</text>
+<text class="agv-note" x="294" y="106">the internet</text>
+</svg>
+</div>
+
+<p class="bitgrid-caption">The server and the model are the same in both pictures. Only the MCP client moved, and the client is the one that needs a route to 10.0.8.25.</p>
+
+Now point the same server at a harness whose MCP client runs on Anthropic's side:
+
+- **The API's MCP connector** connects from Anthropic's servers and only reaches servers exposed over HTTP from the internet [@claude-mcp-connector]. A private address isn't.
+- **A managed agent** has the same problem, even with a self-hosted sandbox inside your network, because Anthropic connects to the agent's MCP servers and the worker doesn't [@managed-agents-choosing-environment].
+- **MCP connectors enabled on a cloud session** also travel through Anthropic's servers, not the session's network [@claude-code-cloud-environments].
+- **A cloud session** reads the repository's `.mcp.json` and runs those servers from its own VM [@claude-code-cloud-environments], whose network reaches only what the environment's access level allows. Your VPN isn't one of those.
+
+Three ways to reach a private server from the provider's side:
+
+| Option | How it reaches the server | Cost |
+|---|---|---|
+| MCP tunnel | A connector inside your network opens an outbound-only connection, and Anthropic sends MCP traffic back through it [@claude-mcp-tunnels] | Research preview, needs an access request, and you run the tunnel stack |
+| Custom tool on a self-hosted worker | The worker runs inside your network and can serve custom tools of its own [@managed-agents-choosing-environment], so it can make the call the MCP server would have made | Managed agents only, and you run the worker |
+| Public endpoint with OAuth | The connector accepts OAuth bearer tokens for authenticated servers [@claude-mcp-connector] | Gives up the privacy the VPN was there for |
+
+If only you use the server, from your own laptop, none of these is needed. A local client with the VPN on is already the simplest setup that works.
+
 ## Making a slow agent faster
 
 The levers, in the order the arithmetic above suggests:
