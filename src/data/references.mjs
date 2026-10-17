@@ -185,7 +185,6 @@ export const references = {
   'aws-cloudfront-managed-cache-policies': { ...aws('Use managed cache policies', 'Amazon CloudFront Developer Guide', 'https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-cache-policies.html'), accessed: '2026-10-07' },
   'aws-cloudfront-preconfigured': { ...aws('Preconfigured distribution settings reference', 'Amazon CloudFront Developer Guide', 'https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/template-preconfigured-origin-settings.html'), accessed: '2026-10-07' },
   'google-analytics-utm': { authors: 'Google', title: 'URL builders: Collect campaign data with custom URLs', container: 'Google Analytics Help', url: 'https://support.google.com/analytics/answer/10917952', accessed: '2026-10-07' },
-  'curl-manpage': { authors: 'curl project', title: 'curl man page', container: 'curl documentation', url: 'https://curl.se/docs/manpage.html', accessed: '2026-10-07' },
   'httpdev-x-amz-cf-pop': { authors: 'http.dev', title: 'X-Amz-Cf-Pop', container: 'HTTP Headers', url: 'https://http.dev/x-amz-cf-pop', accessed: '2026-10-07' },
   'aws-cloudfront-invalidation-pricing': { ...aws('Pay for file invalidation', 'Amazon CloudFront Developer Guide', 'https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/PayingForInvalidation.html'), accessed: '2026-10-07' },
   'aws-cloudfront-pricing': { ...aws('Amazon CloudFront pay-as-you-go pricing', undefined, 'https://aws.amazon.com/cloudfront/pricing/pay-as-you-go/'), accessed: '2026-10-07' },
