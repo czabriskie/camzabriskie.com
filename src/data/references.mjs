@@ -298,7 +298,7 @@ export const references = {
   'ms-about-parsing': { authors: 'Microsoft', title: 'about_Parsing', container: 'PowerShell 7.5 Documentation', date: 'Jun. 29, 2026', url: 'https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_parsing', accessed: '2026-10-06' },
   'git-for-windows-release-notes': { authors: 'Git for Windows', title: 'Git for Windows Release Notes', container: 'git-for-windows/build-extra', date: 'Oct. 5, 2026', url: 'https://github.com/git-for-windows/build-extra/blob/main/ReleaseNotes.md', accessed: '2026-10-06' },
   'apple-dns-cache': { authors: 'Apple', title: 'Reset the DNS cache in OS X', container: 'Apple Support', url: 'https://support.apple.com/en-us/101481', accessed: '2026-10-06' },
-  'systemd-resolvectl': { authors: 'systemd project', title: 'resolvectl', container: 'systemd manual pages', url: 'https://www.freedesktop.org/software/systemd/man/latest/resolvectl.html', accessed: '2026-10-06' },
+  'systemd-resolvectl': { authors: 'systemd project', title: 'resolvectl', container: 'systemd manual pages', url: 'https://www.freedesktop.org/software/systemd/man/latest/resolvectl.html', accessed: '2026-10-17' },
   'ms-new-selfsignedcertificate': { authors: 'Microsoft', title: 'New-SelfSignedCertificate', container: 'Windows PowerShell PKIClient Module Reference', url: 'https://learn.microsoft.com/en-us/powershell/module/pki/new-selfsignedcertificate', accessed: '2026-10-06' },
 
   // Reaching private resources
@@ -343,7 +343,6 @@ export const references = {
   'ms-hosts-file': { authors: 'Microsoft', title: 'How to reset the Hosts file back to the default', container: 'Microsoft Support', url: 'https://support.microsoft.com/en-us/windows/experience/how-to-reset-the-hosts-file-back-to-the-default', accessed: '2026-10-14' },
   'openssh-ssh-keygen': { authors: 'OpenBSD', title: 'ssh-keygen(1)', container: 'OpenBSD manual pages', url: 'https://man.openbsd.org/ssh-keygen', accessed: '2026-10-14' },
   'man-getent': { authors: 'The Linux man-pages project', title: 'getent(1)', container: 'Linux manual pages', url: 'https://man7.org/linux/man-pages/man1/getent.1.html', accessed: '2026-10-14' },
-  'systemd-resolvectl': { authors: 'The systemd project', title: 'resolvectl(1)', container: 'Linux manual pages', url: 'https://man7.org/linux/man-pages/man1/resolvectl.1.html', accessed: '2026-10-14' },
   'macos-hosts': { authors: 'Apple', title: 'hosts(5)', container: 'macOS manual pages', note: 'online copy of the Xcode man pages', url: 'https://keith.github.io/xcode-man-pages/hosts.5.html', accessed: '2026-10-14' },
   'macos-dscacheutil': { authors: 'Apple', title: 'dscacheutil(1)', container: 'macOS manual pages', note: 'online copy of the Xcode man pages', url: 'https://keith.github.io/xcode-man-pages/dscacheutil.1.html', accessed: '2026-10-14' },
   'ms-openssh-config': { authors: 'Microsoft', title: 'OpenSSH Server configuration for Windows', container: 'Windows Server documentation', url: 'https://learn.microsoft.com/en-us/windows-server/administration/openssh/openssh-server-configuration', accessed: '2026-10-14' },
