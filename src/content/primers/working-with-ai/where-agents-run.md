@@ -5,11 +5,11 @@ order: 4
 updated: 2026-10-17
 ---
 
-[Agent harnesses](/primers/working-with-ai/agent-harnesses/) explains the loop: the model asks for a tool, the harness runs it, the result goes back, and that repeats until the job is done. The model always runs on the provider's servers. The harness and its tools can run on your laptop, on servers you run, or on the provider's side, and the choice decides how long setup takes, how long the agent waits on each turn, what it can reach, and whether it keeps going after you close the lid.
+[Agent harnesses](/primers/working-with-ai/agent-harnesses/) explains the loop: the model asks for a tool, the harness runs it, the result goes back, and that repeats until the job is done. This primer assumes you've read it, and links back to it wherever it leans on an idea from there. The model always runs on the provider's servers. The harness and its tools can run on your laptop, on servers you run, or on the provider's side, and the choice decides how long setup takes, how long the agent waits on each turn, what it can reach, and whether it keeps going after you close the lid.
 
 ## A few terms
 
-- **Harness, tool, turn**: as in the previous primer. The harness runs the loop, a tool is an operation the model can ask for, and a turn is one trip around the loop.
+- **Harness, tool, turn**: as defined in [Agent harnesses](/primers/working-with-ai/agent-harnesses/#a-few-terms). The harness runs the loop, a tool is an operation the model can ask for, and a turn is one trip around the loop.
 - **Latency**: time spent waiting. Here, mostly the time a turn takes from the model's request to the next model call.
 - **Round trip**: a request going out and its answer coming back. Every turn includes at least one, because the model is on the other end of an API [@claude-how-tool-use-works].
 - **Cold start**: the time from asking for a fresh environment to it being ready for the first request [@agent-sdk-hosting]. A container that has to install Node and your dependencies before the agent can run `npm test` has a long one.
@@ -18,13 +18,20 @@ updated: 2026-10-17
 
 ## Five common setups
 
-The running example is the same made-up `bookshelf` app with a failing test in `auth.ts`. The agent will run `npm test`, read some files, edit one, and run the tests again. Five setups cover most of what you'll meet, and each puts the pieces in a different place:
+The running example is the `bookshelf` fix from [Agent harnesses](/primers/working-with-ai/agent-harnesses/#a-running-example). In short: `isExpired` in `src/auth.ts` compares a token's expiry, counted in seconds, with `Date.now()`, counted in milliseconds, so every token looks expired and one test fails. You ask the agent to fix the failing test, and it gets there in [four turns](/primers/working-with-ai/agent-harnesses/#the-loop-one-turn-at-a-time):
 
-1. **Local CLI.** Claude Code (or a similar tool) in a terminal on your laptop. The loop and the tools run on your machine [@claude-code-sandboxing].
+1. Run `npm test`, which names the failing test and the wrong answer.
+2. Read `src/auth.ts` and its test, which shows the seconds and milliseconds mismatch.
+3. Change the comparison to `token.exp * 1000 < Date.now()`, then run `npm test` again. Everything passes.
+4. Report what was wrong. No tool calls, so the loop ends.
+
+Every setup below runs those same four turns, and the model makes the same decisions in each. The setups differ only in which machine runs `npm test`, and in which part of each turn has to cross the internet. Five setups cover most of what you'll meet:
+
+1. **Local CLI.** Claude Code (or a similar tool) in a terminal on your laptop. The loop and the tools run on your machine [@claude-code-sandboxing], so `npm test` runs against your own checkout.
 2. **Agent SDK on your own servers.** Your application starts the harness as a subprocess, in a container you run. Loop and tools are both in your container [@agent-sdk-hosting].
 3. **Cloud session.** Claude Code started from the browser, the phone app, or `claude --cloud`, running in an isolated VM that Anthropic manages [@claude-code-cloud-sessions].
-4. **Managed agent, cloud environment.** Anthropic runs the loop and gives each session a fresh Linux container for the tools [@managed-agents-choosing-environment].
-5. **Managed agent, self-hosted sandbox.** Anthropic still runs the loop, but a **worker** process on your infrastructure claims the session, runs each tool call locally, and posts the result back [@managed-agents-self-hosted].
+4. **Managed agent, cloud environment.** Anthropic runs the loop and gives each session a fresh Linux container for the tools [@managed-agents-choosing-environment]. `npm test` runs in that container, against a copy of `bookshelf` you gave the session.
+5. **Managed agent, self-hosted sandbox.** Anthropic still runs the loop, but a **worker** process on your infrastructure claims the session, runs each tool call locally, and posts the result back [@managed-agents-self-hosted]. `npm test` runs on your worker.
 
 <div class="agw-grid" role="img" aria-label="A grid with five rows, one per setup, and three columns: your machine, your servers, and the provider. A dashed line separates the provider column from the other two. Local CLI: loop and tools on your machine, model at the provider. Agent SDK: loop and tools on your servers, model at the provider. Cloud session: loop, tools and model all at the provider. Managed agent in a cloud environment: all three at the provider. Managed agent with a self-hosted sandbox: tools on your servers, loop and model at the provider.">
 <svg viewBox="0 0 400 228" aria-hidden="true" focusable="false">
@@ -68,22 +75,23 @@ The running example is the same made-up `bookshelf` app with a failing test in `
 
 ## Where the time in a run goes
 
-Each turn costs the model's time to respond, the tool's time to run, and one round trip for whichever of those is on the far side of the line in the diagram. Every tool call is at least one extra round trip, and for small tasks that overhead can exceed the work itself [@claude-how-tool-use-works].
+Each turn costs the model's time to respond, the tool's time to run, and one round trip for whichever of those is on the far side of the dashed line. The [loop diagram in Agent harnesses](/primers/working-with-ai/agent-harnesses/#the-loop-one-turn-at-a-time) shows why: the model is at the other end of an API, so every tool call means at least one extra round trip, and for small tasks that overhead can exceed the work itself [@claude-how-tool-use-works].
 
-A worked example, with made-up numbers you should replace with your own. Say `bookshelf`'s fix takes 20 turns, the model takes 5 seconds to respond each turn, the tools average 1 second, and a round trip between you and the provider is 0.1 seconds:
+Here is the `bookshelf` run with made-up timings you should replace with your own. Say the model takes 5 seconds to respond each turn, `npm test` takes 4 seconds, reading or editing a file takes 0.1 seconds, and a round trip between you and the provider takes 0.1 seconds:
 
-| Part | Per turn | × 20 turns |
-|---|---|---|
-| Model responding | 5 s | 100 s |
-| Tools running | 1 s | 20 s |
-| Round trip across the line | 0.1 s | 2 s |
-| **Total** | | **122 s** |
+| Turn | Model | Tools | Round trip |
+|---|---|---|---|
+| 1 Run the tests | 5 s | 4 s | 0.1 s |
+| 2 Read two files | 5 s | 0.1 s | 0.1 s |
+| 3 Edit, run the tests again | 5 s | 4.1 s | 0.1 s |
+| 4 Report | 5 s | none | 0.1 s |
+| **Total, 28.6 s** | **20 s** | **8.2 s** | **0.4 s** |
 
-Moving the loop so it sits next to the model (row 4) or next to the tools (rows 1 and 2) removes at most those 2 seconds. Three other things move the total much more:
+The round trips are at most 0.4 seconds, in a local CLI or your own containers, where all four model calls cross the line. With a self-hosted worker it's 0.3, because turn 4 calls no tool. Moving the loop next to the model (row 4) or next to the tools (rows 1 and 2) can only win back part of that 0.4. Three other things move the total much more:
 
-- **The number of turns.** Each turn you avoid saves a whole model response. If the model reads three files in one turn instead of three, that's two fewer turns, which with these numbers is 2 × (5 + 0.1) = 10.2 seconds. Claude can ask for several tools in one turn, and independent read-only calls are the usual candidates for running together [@claude-parallel-tool-use].
-- **How slow the tools are.** If `npm test` takes 40 seconds instead of 1, it dominates everything else, and a faster machine for the tools matters more than where the loop is.
-- **The cold start.** If a fresh container spends 3 minutes installing dependencies before the first turn, that 180 seconds is more than the entire run above.
+- **The number of turns.** Each turn you avoid saves a whole model response. In turn 2 the model read both files in one turn. Had it read them one turn at a time, the run would take one more turn, 5 + 0.1 = 5.1 seconds longer. Claude can ask for several tools in one turn, and independent read-only calls like those two reads are the usual candidates [@claude-parallel-tool-use].
+- **How slow the tools are.** If `npm test` took 40 seconds instead of 4, the tools column would be 40 + 0.1 + 40.1 = 80.2 seconds, and a faster machine for the tests would matter far more than where the loop is.
+- **The cold start.** If a fresh container spends 3 minutes installing `bookshelf`'s dependencies before turn 1, that 180 seconds is more than six times the whole run.
 
 To see your own round trip to the API, time one request. The output shows when the TCP connection, the TLS handshake, and the first byte of the reply each finished, counted from the start [@curl-manpage]:
 
@@ -131,7 +139,7 @@ Where the tools run decides which network they're on, and that is often what mak
 - **Cloud session**: whatever the environment's network access level allows. The levels are None, Trusted (package registries, GitHub, cloud SDKs and other allowlisted domains), Full, and Custom [@claude-code-cloud-environments]. Nothing on your private network.
 - **Self-hosted sandbox or your own containers**: your network. The worker runs bash and file tools inside it, so they can reach internal hosts that aren't publicly routable [@managed-agents-choosing-environment].
 
-MCP servers follow their own rule. When Anthropic's side connects to an MCP server, through the API's MCP connector or a managed agent, the server has to be reachable over HTTP from the internet [@claude-mcp-connector]. That's true even with a self-hosted sandbox, because Anthropic, not your worker, connects to the agent's MCP servers [@managed-agents-choosing-environment]. For a server that must stay private, MCP tunnels carry the traffic over an outbound-only connection from your network, so no inbound port has to be opened. They were a research preview when this was written [@claude-mcp-tunnels].
+[MCP servers](/primers/working-with-ai/agent-harnesses/#mcp-servers-a-third-program) follow their own rule. When Anthropic's side connects to an MCP server, through the API's MCP connector or a managed agent, the server has to be reachable over HTTP from the internet [@claude-mcp-connector]. That's true even with a self-hosted sandbox, because Anthropic, not your worker, connects to the agent's MCP servers [@managed-agents-choosing-environment]. For a server that must stay private, MCP tunnels carry the traffic over an outbound-only connection from your network, so no inbound port has to be opened. They were a research preview when this was written [@claude-mcp-tunnels].
 
 <details class="aside">
 <summary>A self-hosted sandbox keeps files, not results</summary>
@@ -143,7 +151,7 @@ With a self-hosted sandbox the files and processes stay on your worker, but the 
 
 Say you've written an MCP server that speaks HTTP and runs at a private address, `http://10.0.8.25:8000/mcp`, on a network you reach through a VPN. With the VPN on, Claude Code on your laptop can use it. The API's MCP connector can't, and neither can a managed agent. Each one opens the connection from a different machine.
 
-The model never connects to an MCP server. It answers with a tool call, and the **MCP client**, which is part of the harness, sends the request. Register the server with Claude Code on your laptop [@claude-code-mcp]:
+The model never connects to an MCP server. As in [the `bookshelf` run](/primers/working-with-ai/agent-harnesses/#the-loop-one-turn-at-a-time), it answers with a tool call, and the harness does the work: here the harness's **MCP client** sends the request. Register the server with Claude Code on your laptop [@claude-code-mcp]:
 
 ```bash
 claude mcp add --transport http notes http://10.0.8.25:8000/mcp
@@ -215,9 +223,9 @@ If only you use the server, from your own laptop, none of these is needed. A loc
 The levers, in the order the arithmetic above suggests:
 
 1. **Cut turns.** Let independent reads run in one turn [@claude-parallel-tool-use], and don't hand the model a tool for something it can answer without one [@claude-how-tool-use-works].
-2. **Cache the prompt.** Prompt caching lets the API reuse a prefix it has already processed (the system prompt, the tool definitions, the conversation so far), which cuts the time to the first token of each response. A pre-warming request can load the cache before the first user arrives [@claude-prompt-caching].
+2. **Cache the prompt.** Each request re-sends the whole conversation, as [Agent harnesses](/primers/working-with-ai/agent-harnesses/#the-loop-one-turn-at-a-time) shows for `bookshelf`'s turn 4. Prompt caching lets the API reuse a prefix it has already processed (the system prompt, the tool definitions, the conversation so far), which cuts the time to the first token of each response. A pre-warming request can load the cache before the first user arrives [@claude-prompt-caching].
 3. **Pay the cold start once.** Keep setup-script work under the cache limit in a cloud session [@claude-code-cloud-environments], or keep SDK containers warm when users arrive in bursts [@agent-sdk-hosting].
-4. **Speed up the slowest tool.** A test suite that runs only the affected tests helps every turn that runs it.
+4. **Speed up the slowest tool.** In `bookshelf`, `npm test` ran twice and was nearly all of the tool time. A test command that runs only the affected tests helps every turn that runs it.
 
 ## Which to pick
 

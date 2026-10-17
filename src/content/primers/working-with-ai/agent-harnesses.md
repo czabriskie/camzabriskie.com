@@ -18,7 +18,19 @@ A language model on its own only writes text. Ask it to fix a failing test and i
 
 ## A running example
 
-The examples use one made-up project, `bookshelf`, a small web app with one failing test. You give the agent one sentence: "Fix the failing test in `auth.ts`." Every section below comes back to that request.
+The examples use one made-up project, `bookshelf`, a small web app where people sign in and keep a list of the books they've read. The sign-in code lives in `src/auth.ts`, and one function there decides whether a sign-in token has run out:
+
+```ts
+export function isExpired(token: { exp: number }): boolean {
+  return token.exp < Date.now();
+}
+```
+
+The bug is a mix-up of units. A token's `exp` counts *seconds* since the start of 1970, which is how the common JWT token format records an expiry time [@rfc7519]. JavaScript's `Date.now()` counts *milliseconds* since the same moment [@mdn-date-now]. A token that expires an hour from now has an `exp` of about 1.8 billion, while `Date.now()` is about 1.8 trillion, so every token looks expired and nobody stays signed in.
+
+You don't know any of that yet. You only know the test suite has gone red, so you give the agent one sentence: "Fix the failing test."
+
+Before its first turn, the model knows that sentence, the list of tools it may ask for, and any instructions the harness adds. It can't see the repository. Every fact it learns about `bookshelf` arrives as the result of a tool call it chose to make, and that is how an agent works out a fix: each result narrows the problem, and the next call goes after whatever is still unknown.
 
 ## The loop, one turn at a time
 
@@ -62,14 +74,45 @@ The model never runs anything itself. It writes a structured request, something 
 
 <p class="bitgrid-caption">Steps 2 to 4 repeat once per turn. The model is on the far side of every arrow on the right, so every turn is at least one round trip to the provider.</p>
 
-For `bookshelf`, a typical run takes four turns. This is the example from the Agent SDK's documentation, which uses the same request [@agent-sdk-agent-loop]:
+For `bookshelf`, the run takes four turns. Each one below gives what the model knows at the start of the turn, what it asks for, and what comes back.
 
-1. The model calls the shell tool to run `npm test`. The harness runs it and returns three failures.
-2. The model calls the read tool on `auth.ts` and `auth.test.ts`. The harness returns both files.
-3. The model calls the edit tool to change `auth.ts`, then the shell tool to run `npm test` again. All three tests pass.
-4. The model answers in plain text, with no tool calls: the bug is fixed and the tests pass. The loop ends.
+**Turn 1: find out what's failing.** The model has a request and no evidence. Running the tests is the cheapest way to get some, so it asks for the shell tool. On the wire that request is a `tool_use` block with an ID, the tool's name, and its input [@claude-handle-tool-calls]:
 
-That's three turns with tool calls and one final text-only answer. A harness also needs a way to stop a run that doesn't end on its own. The Agent SDK lets you cap the number of turns, or the money spent, and suggests setting a budget for anything that runs unattended [@agent-sdk-agent-loop].
+```json
+{ "type": "tool_use", "id": "toolu_01", "name": "bash", "input": { "command": "npm test" } }
+```
+
+The harness runs `npm test` and sends the output back in a `tool_result` block that quotes the same ID, so the model knows which call it answers [@claude-handle-tool-calls]. The output says (made-up, but typical of a test runner):
+
+```text
+FAIL  src/auth.test.ts
+  ✕ accepts a token that expires in an hour
+    expect(isExpired(token)).toBe(false)
+    Received: true
+Tests: 1 failed, 4 passed, 5 total
+```
+
+**Turn 2: read the code that fails.** Now the model knows a lot more. The failure names a test file, a function, and a wrong answer: `isExpired` says a token that should still be good has expired. Four other tests pass, so the problem is narrow. It asks to read `src/auth.ts` and `src/auth.test.ts`, both in the same turn. The results are the function shown above, and the test, which builds its token like this:
+
+```ts
+const token = { exp: Math.floor(Date.now() / 1000) + 3600 };
+```
+
+**Turn 3: fix it, then check.** Side by side, the two files disagree. The test divides `Date.now()` by 1000 to get seconds, and the function compares against `Date.now()` as it is, in milliseconds. The model asks for an edit that converts the token's seconds before comparing:
+
+```ts
+return token.exp * 1000 < Date.now();
+```
+
+and, in the same turn, for `npm test` again. A fix isn't done until the evidence that showed the bug shows it gone, and the result comes back `Tests: 5 passed, 5 total`.
+
+**Turn 4: report.** With the tests green there's nothing left to find out, so the model answers in plain text with no tool calls: `isExpired` compared seconds with milliseconds, and multiplying `exp` by 1000 fixes it. A response without tool calls ends the loop.
+
+Every step of the reasoning happened in the model, and every step of the doing happened in the harness. The harness never understood the bug. It ran a command, read two files, wrote one line, and passed text back and forth. If a tool had failed, say `npm test` couldn't start, the harness would have sent the error back as the result, marked with `is_error` [@claude-handle-tool-calls], and the model would have chosen its next call with that in mind.
+
+One more detail matters later for speed. Each request carries the whole conversation so far: the original messages, the model's tool calls, and every result [@claude-how-tool-use-works]. By turn 4 the model is reading the request, three rounds of tool calls, the test output twice, and both files. Most of that is the same as last turn, which is what prompt caching takes advantage of [@claude-prompt-caching].
+
+Real runs are rarely this tidy. A harder bug can take dozens of tool calls, with the model changing course as results come in [@agent-sdk-agent-loop], and a harness also needs a way to stop a run that doesn't end on its own. The Agent SDK lets you cap the number of turns, or the money spent, and suggests setting a budget for anything that runs unattended [@agent-sdk-agent-loop].
 
 Running the loop is only part of what a production harness does. Claude Code's, for example, also decides which tools may run without asking you first (**permissions**), runs your own code before or after a tool call (**hooks**), saves the conversation so you can resume it (**sessions**), and loads project instructions and skills from the repository [@agent-sdk-overview]. Those are the parts you configure. The loop itself rarely changes.
 
