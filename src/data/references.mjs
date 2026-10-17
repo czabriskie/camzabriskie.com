@@ -557,6 +557,27 @@ export const references = {
   'flux-helmchart': { authors: 'The Flux Project', title: 'Helm Charts', container: 'Flux Documentation', url: 'https://fluxcd.io/flux/components/source/helmcharts/', accessed: '2026-10-14' },
   'flux-helmrelease-api': { authors: 'The Flux Project', title: 'Helm API reference v2', container: 'Flux Documentation', url: 'https://fluxcd.io/flux/components/helm/api/v2/', accessed: '2026-10-14' },
   'flux-repo-structure': { authors: 'The Flux Project', title: 'Ways of structuring your repositories', container: 'Flux Documentation', url: 'https://fluxcd.io/flux/guides/repository-structure/', accessed: '2026-10-14' },
+  // Agent harnesses; Where an agent runs
+  'claude-how-tool-use-works': { authors: 'Anthropic', title: 'How tool use works', container: 'Claude Platform Documentation', url: 'https://platform.claude.com/docs/en/agents-and-tools/tool-use/how-tool-use-works', accessed: '2026-10-17' },
+  'claude-parallel-tool-use': { authors: 'Anthropic', title: 'Parallel tool use', container: 'Claude Platform Documentation', url: 'https://platform.claude.com/docs/en/agents-and-tools/tool-use/parallel-tool-use', accessed: '2026-10-17' },
+  'claude-code-execution-tool': { authors: 'Anthropic', title: 'Code execution tool', container: 'Claude Platform Documentation', url: 'https://platform.claude.com/docs/en/agents-and-tools/tool-use/code-execution-tool', accessed: '2026-10-17' },
+  'claude-mcp-connector': { authors: 'Anthropic', title: 'MCP connector', container: 'Claude Platform Documentation', url: 'https://platform.claude.com/docs/en/agents-and-tools/mcp-connector', accessed: '2026-10-17' },
+  'claude-mcp-tunnels': { authors: 'Anthropic', title: 'MCP tunnels', container: 'Claude Platform Documentation', url: 'https://platform.claude.com/docs/en/agents-and-tools/mcp-tunnels', accessed: '2026-10-17' },
+  'claude-prompt-caching': { authors: 'Anthropic', title: 'Prompt caching', container: 'Claude Platform Documentation', url: 'https://platform.claude.com/docs/en/build-with-claude/prompt-caching', accessed: '2026-10-17' },
+  'managed-agents-overview': { authors: 'Anthropic', title: 'Claude Managed Agents overview', container: 'Claude Platform Documentation', url: 'https://platform.claude.com/docs/en/managed-agents/overview', accessed: '2026-10-17' },
+  'managed-agents-choosing-environment': { authors: 'Anthropic', title: 'Choosing an agent environment', container: 'Claude Platform Documentation', url: 'https://platform.claude.com/docs/en/managed-agents/choosing-an-environment', accessed: '2026-10-17' },
+  'managed-agents-self-hosted': { authors: 'Anthropic', title: 'Self-hosted sandboxes', container: 'Claude Platform Documentation', url: 'https://platform.claude.com/docs/en/managed-agents/self-hosted-sandboxes', accessed: '2026-10-17' },
+  'agent-sdk-overview': { authors: 'Anthropic', title: 'Agent SDK overview', container: 'Claude Code Documentation', url: 'https://code.claude.com/docs/en/agent-sdk/overview', accessed: '2026-10-17' },
+  'agent-sdk-agent-loop': { authors: 'Anthropic', title: 'How the agent loop works', container: 'Claude Code Documentation', url: 'https://code.claude.com/docs/en/agent-sdk/agent-loop', accessed: '2026-10-17' },
+  'agent-sdk-hosting': { authors: 'Anthropic', title: 'Hosting the Agent SDK', container: 'Claude Code Documentation', url: 'https://code.claude.com/docs/en/agent-sdk/hosting', accessed: '2026-10-17' },
+  'claude-code-cloud-sessions': { authors: 'Anthropic', title: 'Use Claude Code in the cloud', container: 'Claude Code Documentation', url: 'https://code.claude.com/docs/en/claude-code-on-the-web', accessed: '2026-10-17' },
+  'claude-code-cloud-environments': { authors: 'Anthropic', title: 'Configure cloud environments', container: 'Claude Code Documentation', url: 'https://code.claude.com/docs/en/cloud-environments', accessed: '2026-10-17' },
+  'claude-code-remote-control': { authors: 'Anthropic', title: 'Continue local sessions from any device with Remote Control', container: 'Claude Code Documentation', url: 'https://code.claude.com/docs/en/remote-control', accessed: '2026-10-17' },
+  'claude-code-sandboxing': { authors: 'Anthropic', title: 'Configure the sandboxed Bash tool', container: 'Claude Code Documentation', url: 'https://code.claude.com/docs/en/sandboxing', accessed: '2026-10-17' },
+  'github-copilot-on-github': { authors: 'GitHub', title: 'GitHub Copilot on GitHub.com', container: 'GitHub Docs', url: 'https://docs.github.com/en/copilot/concepts/copilot-surfaces/copilot-on-github', accessed: '2026-10-17' },
+  'curl-manpage': { authors: 'curl project', title: 'curl man page', container: 'curl documentation', url: 'https://curl.se/docs/manpage.html', accessed: '2026-10-17' },
+  'ms-measure-command': { authors: 'Microsoft', title: 'Measure-Command', container: 'PowerShell 7.5 Documentation', url: 'https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/measure-command', accessed: '2026-10-17' },
+  'ms-invoke-webrequest': { authors: 'Microsoft', title: 'Invoke-WebRequest', container: 'PowerShell 7.5 Documentation', url: 'https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/invoke-webrequest', accessed: '2026-10-17' },
 };
 
 const MONTHS = ['Jan.', 'Feb.', 'Mar.', 'Apr.', 'May', 'Jun.', 'Jul.', 'Aug.', 'Sep.', 'Oct.', 'Nov.', 'Dec.'];
