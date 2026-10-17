@@ -223,7 +223,7 @@ If only you use the server, from your own laptop, none of these is needed. A loc
 The levers, in the order the arithmetic above suggests:
 
 1. **Cut turns.** Let independent reads run in one turn [@claude-parallel-tool-use], and don't hand the model a tool for something it can answer without one [@claude-how-tool-use-works].
-2. **Cache the prompt.** Each request re-sends the whole conversation, as [Agent harnesses](/primers/working-with-ai/agent-harnesses/#the-loop-one-turn-at-a-time) shows for `bookshelf`'s turn 4. Prompt caching lets the API reuse a prefix it has already processed (the system prompt, the tool definitions, the conversation so far), which cuts the time to the first token of each response. A pre-warming request can load the cache before the first user arrives [@claude-prompt-caching].
+2. **Cache the prompt.** Each request re-sends the whole conversation, as [Agent harnesses](/primers/working-with-ai/agent-harnesses/#the-loop-one-turn-at-a-time) shows for `bookshelf`'s turn 4. Prompt caching lets the API reuse a prefix it has already processed (the system prompt, the tool definitions, the conversation so far), which cuts the time to the first token of each response [@claude-prompt-caching]. [Prompt caching](/primers/working-with-ai/prompt-caching/) works through the `bookshelf` numbers, and the mistakes that quietly turn it off.
 3. **Pay the cold start once.** Keep setup-script work under the cache limit in a cloud session [@claude-code-cloud-environments], or keep SDK containers warm when users arrive in bursts [@agent-sdk-hosting].
 4. **Speed up the slowest tool.** In `bookshelf`, `npm test` ran twice and was nearly all of the tool time. A test command that runs only the affected tests helps every turn that runs it.
 

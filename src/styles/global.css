@@ -660,6 +660,12 @@ ul.references .cited-in { display: block; color: var(--muted); margin-top: 0.2re
 .agv-paths .agv-arrowhead { fill: var(--muted); }
 .agv-paths .agv-x { stroke: var(--ink); stroke-width: 2; fill: none; }
 .agv-paths .agv-divider { stroke: var(--line); stroke-width: 1; }
+.pcb-bars { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+.pcb-bars svg { display: block; width: 100%; height: auto; }
+.pcb-bars .pcb-name { font: 600 10px 'Bricolage Grotesque', sans-serif; fill: var(--ink); }
+.pcb-bars .pcb-small, .pcb-bars .pcb-legend { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.pcb-bars .pcb-read { fill: var(--tech); }
+.pcb-bars .pcb-write { fill: var(--surface); stroke: var(--ink); stroke-width: 1; }
 .air-flow { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
 .air-flow svg { display: block; width: 100%; height: auto; }
 .air-flow .air-box { fill: var(--surface); stroke: var(--muted); stroke-width: 1; }
