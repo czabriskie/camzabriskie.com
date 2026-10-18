@@ -112,7 +112,7 @@ Every step of the reasoning happened in the model, and every step of the doing h
 
 Krang, the villain from the 1987 *Teenage Mutant Ninja Turtles* cartoon, is a decent picture of this split. He's a brain from Dimension X who lost his body, so he gets around in small android walkers and on platforms, and Shredder builds him a human-shaped "android body" to ride in [@wikipedia-krang]. The brain does the scheming and the suit does the walking and grabbing. A model is the brain, and a harness is whichever suit it's in.
 
-<div class="krang" role="img" aria-label="Four drawings of the same pink brain with a face and small tentacles, standing on one ground line. First, the brain alone, with a speech bubble saying exp times 1000 should fix it, labeled brain alone, the model. Second, the brain on a hover platform with one small arm, labeled hover platform, a loop you wrote. Third, the brain in a window in the stomach of a tall android body with arms and legs, labeled android body, an agent CLI. Fourth, the brain in a small window of a round fortress on treads, labeled Technodrome, a cloud agent.">
+<div class="krang" role="img" aria-label="Four drawings of the same pink brain with a face and small tentacles, standing on one ground line. First, the brain alone, with a speech bubble saying exp times 1000 should fix it, labeled brain alone, the model. Second, the brain on a hover platform with one small arm, labeled hover platform, a loop you wrote. Third, the brain in a window in the stomach of a tall android body with arms and legs, labeled android body, a harness on your machine. Fourth, the brain in a small window of a round fortress on treads, labeled Technodrome, a harness in the cloud.">
 <svg viewBox="0 30 400 165" aria-hidden="true" focusable="false">
 <line class="kr-ground" x1="6" y1="160" x2="394" y2="160"/>
 <rect class="kr-suit" x="16" y="88" width="80" height="26" rx="6"/><path class="kr-suit" d="M44,114 l4,9 l6,-9"/>
@@ -154,12 +154,12 @@ Krang, the villain from the 1987 *Teenage Mutant Ninja Turtles* cartoon, is a de
 <path class="kr-fold" d="M348.7,107.1 q1.3,0.8 2.5,0"/>
 <text class="kr-name" x="50" y="176">Brain alone</text><text class="kr-small" x="50" y="189">the model</text>
 <text class="kr-name" x="150" y="176">Hover platform</text><text class="kr-small" x="150" y="189">a loop you wrote</text>
-<text class="kr-name" x="250" y="176">Android body</text><text class="kr-small" x="250" y="189">an agent CLI</text>
-<text class="kr-name" x="350" y="176">Technodrome</text><text class="kr-small" x="350" y="189">a cloud agent</text>
+<text class="kr-name" x="250" y="176">Android body</text><text class="kr-small" x="250" y="189">local harness</text>
+<text class="kr-name" x="350" y="176">Technodrome</text><text class="kr-small" x="350" y="189">cloud harness</text>
 </svg>
 </div>
 
-<p class="bitgrid-caption">The brain is the same in every suit. Alone it can only say what the fix is. The suit decides what it can reach: a loop you wrote might give it one or two tools, an agent CLI gives it arms on your own machine, and a cloud agent carries its own world, a container, around with it.</p>
+<p class="bitgrid-caption">The brain is the same in every suit. Alone it can only say what the fix is. The suit decides what it can reach: a loop you wrote might give it one or two tools, a harness on your machine gives it arms there, and a harness in the cloud brings its own world, a container, along with it.</p>
 
 One more detail matters later for speed. Each request carries the whole conversation so far: the original messages, the model's tool calls, and every result [@claude-how-tool-use-works]. By turn 4 the model is reading the request, three rounds of tool calls, the test output twice, and both files. Most of that is the same as last turn, which is what prompt caching takes advantage of [@claude-prompt-caching]. [Prompt caching](/primers/working-with-ai/prompt-caching/) follows this same run token by token.
 
