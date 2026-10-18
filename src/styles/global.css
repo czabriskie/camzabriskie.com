@@ -637,6 +637,25 @@ ul.references .cited-in { display: block; color: var(--muted); margin-top: 0.2re
 .agh-loop .agh-arrow { stroke: var(--muted); stroke-width: 1.2; }
 .agh-loop .agh-dashed { stroke-dasharray: 4 3; }
 .agh-loop .agh-arrowhead { fill: var(--muted); }
+/* Krang (agent-harnesses primer). Pink is the character's colour, scoped to this one
+   diagram on purpose; it is not a third site accent. */
+.krang { --krang: #c8507e; max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+@media (prefers-color-scheme: dark) { .krang { --krang: #ec8db3; } }
+.krang svg { display: block; width: 100%; height: auto; }
+.krang .kr-suit { fill: var(--surface); stroke: var(--muted); stroke-width: 1.2; stroke-linejoin: round; }
+.krang .kr-limb { fill: none; stroke: var(--muted); stroke-width: 1.2; stroke-linejoin: round; stroke-linecap: round; }
+.krang .kr-window { fill: var(--surface); stroke: var(--krang); stroke-width: 1.2; }
+.krang .kr-ground { stroke: var(--line); stroke-width: 1; }
+.krang .kr-brain { fill: color-mix(in srgb, var(--krang) 28%, var(--surface)); stroke: var(--krang); stroke-width: 1.2; }
+.krang .kr-fold { fill: none; stroke: var(--krang); stroke-width: 0.9; stroke-linecap: round; }
+.krang .kr-fold-muted { fill: none; stroke: var(--muted); stroke-width: 0.8; }
+.krang .kr-tent { fill: none; stroke: var(--krang); stroke-width: 1.2; stroke-linecap: round; }
+.krang .kr-eye { fill: var(--ink); }
+.krang .kr-tread { fill: var(--muted); }
+.krang .kr-jet { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 2 2; }
+.krang .kr-name { font: 600 10px 'Bricolage Grotesque', sans-serif; text-anchor: middle; fill: var(--ink); }
+.krang .kr-small { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; text-anchor: middle; fill: var(--muted); }
+.krang .kr-left { text-anchor: start; }
 .agw-grid { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
 .agw-grid svg { display: block; width: 100%; height: auto; }
 .agw-grid .agw-head { font: 600 10px 'Bricolage Grotesque', sans-serif; text-anchor: middle; fill: var(--ink); }
