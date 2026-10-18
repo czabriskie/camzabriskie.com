@@ -585,6 +585,7 @@ export const references = {
   'curl-manpage': { authors: 'curl project', title: 'curl man page', container: 'curl documentation', url: 'https://curl.se/docs/manpage.html', accessed: '2026-10-17' },
   'ms-measure-command': { authors: 'Microsoft', title: 'Measure-Command', container: 'PowerShell 7.5 Documentation', url: 'https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/measure-command', accessed: '2026-10-17' },
   'ms-invoke-webrequest': { authors: 'Microsoft', title: 'Invoke-WebRequest', container: 'PowerShell 7.5 Documentation', url: 'https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/invoke-webrequest', accessed: '2026-10-17' },
+  'wikipedia-krang': { authors: 'Wikipedia contributors', title: 'Krang', container: 'Wikipedia', url: 'https://en.wikipedia.org/wiki/Krang', accessed: '2026-10-18' },
 };
 
 const MONTHS = ['Jan.', 'Feb.', 'Mar.', 'Apr.', 'May', 'Jun.', 'Jul.', 'Aug.', 'Sep.', 'Oct.', 'Nov.', 'Dec.'];

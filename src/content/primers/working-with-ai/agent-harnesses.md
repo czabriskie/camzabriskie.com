@@ -2,7 +2,7 @@
 title: Agent harnesses, the loop around the model
 description: What an agent harness does, how the tool-use loop works one turn at a time, and the three places a tool can run (where the harness is, on the provider's servers, or on an MCP server).
 order: 3
-updated: 2026-10-17
+updated: 2026-10-18
 ---
 
 A language model on its own only writes text. Ask it to fix a failing test and it can describe a fix, but it can't run the tests, open the file, or save the edit. The program that does those things for it, and keeps going back to the model with the results until the job is done, is the **agent harness**. Claude Code has one, GitHub Copilot's cloud agent has one, and so does any chat app that can search the web before it answers.
@@ -109,6 +109,57 @@ and, in the same turn, for `npm test` again. A fix isn't done until the evidence
 **Turn 4: report.** With the tests green there's nothing left to find out, so the model answers in plain text with no tool calls: `isExpired` compared seconds with milliseconds, and multiplying `exp` by 1000 fixes it. A response without tool calls ends the loop.
 
 Every step of the reasoning happened in the model, and every step of the doing happened in the harness. The harness never understood the bug. It ran a command, read two files, wrote one line, and passed text back and forth. If a tool had failed, say `npm test` couldn't start, the harness would have sent the error back as the result, marked with `is_error` [@claude-handle-tool-calls], and the model would have chosen its next call with that in mind.
+
+Krang, the villain from the 1987 *Teenage Mutant Ninja Turtles* cartoon, is a decent picture of this split. He's a brain from Dimension X who lost his body, so he gets around in small android walkers and on platforms, and Shredder builds him a human-shaped "android body" to ride in [@wikipedia-krang]. The brain does the scheming and the suit does the walking and grabbing. A model is the brain, and a harness is whichever suit it's in.
+
+<div class="krang" role="img" aria-label="Four drawings of the same pink brain with a face and small tentacles, standing on one ground line. First, the brain alone, with a speech bubble saying exp times 1000 should fix it, labeled brain alone, the model. Second, the brain on a hover platform with one small arm, labeled hover platform, a loop you wrote. Third, the brain in a window in the stomach of a tall android body with arms and legs, labeled android body, a harness on your machine. Fourth, the brain in a small window of a round fortress on treads, labeled Technodrome, a harness in the cloud.">
+<svg viewBox="0 30 400 165" aria-hidden="true" focusable="false">
+<line class="kr-ground" x1="6" y1="160" x2="394" y2="160"/>
+<rect class="kr-suit" x="16" y="88" width="80" height="26" rx="6"/><path class="kr-suit" d="M44,114 l4,9 l6,-9"/>
+<text class="kr-small kr-left" x="22" y="99">exp * 1000</text><text class="kr-small kr-left" x="22" y="109">should fix it</text>
+<path class="kr-tent" d="M42,154 q-3,6 -8,7 M50,155 q0,6 -3,9 M58,154 q3,6 8,7"/>
+<path class="kr-brain" d="M34,150 C31,140 38,133 45,134 C48,131 54,131 57,134 C64,133 69,140 66,150 C64,156 36,156 34,150 Z"/>
+<path class="kr-fold" d="M40,138 q3,3 0,6 M50,134 q-3,4 0,8 M59,137 q-3,3 0,6"/>
+<circle class="kr-eye" cx="45" cy="147" r="1.6"/><circle class="kr-eye" cx="55" cy="147" r="1.6"/>
+<path class="kr-fold" d="M47,151 q3,2 6,0"/>
+<path class="kr-jet" d="M136,138 v14 M150,140 v16 M164,138 v14"/>
+<ellipse class="kr-suit" cx="150" cy="133" rx="28" ry="6"/>
+<path class="kr-limb" d="M172,130 l12,-14 l6,4"/>
+<path class="kr-tent" d="M142,126 q-3,6 -8,7 M150,127 q0,6 -3,9 M158,126 q3,6 8,7"/>
+<path class="kr-brain" d="M134,122 C131,112 138,105 145,106 C148,103 154,103 157,106 C164,105 169,112 166,122 C164,128 136,128 134,122 Z"/>
+<path class="kr-fold" d="M140,110 q3,3 0,6 M150,106 q-3,4 0,8 M159,109 q-3,3 0,6"/>
+<circle class="kr-eye" cx="145" cy="119" r="1.6"/><circle class="kr-eye" cx="155" cy="119" r="1.6"/>
+<path class="kr-fold" d="M147,123 q3,2 6,0"/>
+<path class="kr-suit" d="M238,124 l-4,34 h10 l4,-30 M262,124 l4,34 h-10 l-4,-30"/>
+<rect class="kr-suit" x="228" y="62" width="44" height="64" rx="8"/>
+<path class="kr-limb" d="M228,70 l-12,26 l4,22 M272,70 l12,26 l-4,22"/>
+<circle class="kr-suit" cx="218" cy="120" r="4"/><circle class="kr-suit" cx="282" cy="120" r="4"/>
+<rect class="kr-suit" x="240" y="38" width="20" height="22" rx="6"/><circle class="kr-eye" cx="246" cy="47" r="1.6"/><circle class="kr-eye" cx="254" cy="47" r="1.6"/>
+<circle class="kr-window" cx="250" cy="94" r="17"/>
+<path class="kr-tent" d="M244,102 q-2.3,4.5 -6,5.3 M250,102.8 q0,4.5 -2.3,6.8 M256,102 q2.3,4.5 6,5.3"/>
+<path class="kr-brain" d="M238,99 C235.8,91.5 241,86.3 246.3,87 C248.5,84.8 253,84.8 255.3,87 C260.5,86.3 264.3,91.5 262,99 C260.5,103.5 239.5,103.5 238,99 Z"/>
+<path class="kr-fold" d="M242.5,90 q2.3,2.3 0,4.5 M250,87 q-2.3,3 0,6 M256.8,89.3 q-2.3,2.3 0,4.5"/>
+<circle class="kr-eye" cx="246.3" cy="96.8" r="1.2"/><circle class="kr-eye" cx="253.8" cy="96.8" r="1.2"/>
+<path class="kr-fold" d="M247.8,99.8 q2.3,1.5 4.5,0"/>
+<rect class="kr-suit" x="312" y="146" width="76" height="12" rx="6"/>
+<circle class="kr-tread" cx="322" cy="152" r="3"/><circle class="kr-tread" cx="338" cy="152" r="3"/><circle class="kr-tread" cx="354" cy="152" r="3"/><circle class="kr-tread" cx="370" cy="152" r="3"/>
+<circle class="kr-suit" cx="350" cy="104" r="40"/>
+<path class="kr-fold-muted" d="M311.8,92 h76.4 M311.8,116 h76.4"/>
+<path class="kr-suit" d="M350,64 l-6,-12 h12 z"/>
+<circle class="kr-window" cx="350" cy="104" r="10"/>
+<path class="kr-tent" d="M346.6,108.4 q-1.3,2.5 -3.4,2.9 M350,108.8 q0,2.5 -1.3,3.8 M353.4,108.4 q1.3,2.5 3.4,2.9"/>
+<path class="kr-brain" d="M343.3,106.7 C342,102.5 345,99.5 347.9,100 C349.2,98.7 351.7,98.7 352.9,100 C355.9,99.5 358,102.5 356.7,106.7 C355.9,109.2 344.1,109.2 343.3,106.7 Z"/>
+<path class="kr-fold" d="M345.8,101.6 q1.3,1.3 0,2.5 M350,100 q-1.3,1.7 0,3.4 M353.8,101.2 q-1.3,1.3 0,2.5"/>
+<circle class="kr-eye" cx="347.9" cy="105.4" r="0.7"/><circle class="kr-eye" cx="352.1" cy="105.4" r="0.7"/>
+<path class="kr-fold" d="M348.7,107.1 q1.3,0.8 2.5,0"/>
+<text class="kr-name" x="50" y="176">Brain alone</text><text class="kr-small" x="50" y="189">the model</text>
+<text class="kr-name" x="150" y="176">Hover platform</text><text class="kr-small" x="150" y="189">a loop you wrote</text>
+<text class="kr-name" x="250" y="176">Android body</text><text class="kr-small" x="250" y="189">local harness</text>
+<text class="kr-name" x="350" y="176">Technodrome</text><text class="kr-small" x="350" y="189">cloud harness</text>
+</svg>
+</div>
+
+<p class="bitgrid-caption">The brain is the same in every suit. Alone it can only say what the fix is. The suit decides what it can reach: a loop you wrote might give it one or two tools, a harness on your machine gives it arms there, and a harness in the cloud brings its own world, a container, along with it.</p>
 
 One more detail matters later for speed. Each request carries the whole conversation so far: the original messages, the model's tool calls, and every result [@claude-how-tool-use-works]. By turn 4 the model is reading the request, three rounds of tool calls, the test output twice, and both files. Most of that is the same as last turn, which is what prompt caching takes advantage of [@claude-prompt-caching]. [Prompt caching](/primers/working-with-ai/prompt-caching/) follows this same run token by token.
 
