@@ -997,3 +997,17 @@ details.aside[open] summary { margin-bottom: 0.4rem; }
 .gitops-flow .go-end { text-anchor: end; }
 .gitops-flow .go-file { fill: var(--ink); }
 .gitops-flow .go-link { fill: none; stroke: var(--muted); stroke-width: 1; stroke-dasharray: 3 2; }
+
+/* Clock skew primer: the five-minute window on a signed request */
+.skew-window { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+.skew-window svg { display: block; width: 100%; height: auto; }
+.skew-window text { text-anchor: middle; }
+.skew-window .sk-ok { fill: color-mix(in srgb, var(--tech) 14%, var(--surface)); stroke: var(--tech); stroke-width: 1; }
+.skew-window .sk-no { fill: color-mix(in srgb, var(--muted) 8%, transparent); stroke: var(--line); stroke-width: 1; }
+.skew-window .sk-axis { stroke: var(--muted); stroke-width: 1; }
+.skew-window .sk-tick { stroke: var(--muted); stroke-width: 1; }
+.skew-window .sk-now { stroke: var(--tech); stroke-width: 1.2; stroke-dasharray: 3 2; }
+.skew-window .sk-dot { fill: var(--ink); }
+.skew-window .sk-name { font: 600 10px 'Bricolage Grotesque', system-ui, sans-serif; fill: var(--ink); }
+.skew-window .sk-small { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.skew-window .sk-hot { fill: var(--tech); }
