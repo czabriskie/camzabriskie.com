@@ -100,7 +100,7 @@ export const sections: Record<string, { title: string; blurb?: string; notes: st
     {
       title: 'AWS networking',
       blurb: "The same ideas inside AWS: VPCs, reaching private resources, and firewalls. Skip this part if you don't use AWS.",
-      notes: ['aws-vpc-subnets', 'reaching-private-resources', 'firewalls'],
+      notes: ['aws-vpc-subnets', 'reaching-private-resources', 'firewalls', 'aws-ram'],
     },
     {
       title: 'Files on the network',

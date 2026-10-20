@@ -997,3 +997,14 @@ details.aside[open] summary { margin-bottom: 0.4rem; }
 .gitops-flow .go-end { text-anchor: end; }
 .gitops-flow .go-file { fill: var(--ink); }
 .gitops-flow .go-link { fill: none; stroke: var(--muted); stroke-width: 1; stroke-dasharray: 3 2; }
+.ram-share { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+.ram-share svg { display: block; width: 100%; height: auto; }
+.ram-share .ram-account { fill: none; stroke: var(--line); stroke-width: 1.2; }
+.ram-share .ram-box { fill: var(--surface); stroke: var(--muted); stroke-width: 1; }
+.ram-share .ram-own { stroke: var(--tech); stroke-width: 1.8; }
+.ram-share .ram-borrowed { stroke: var(--tech); stroke-width: 1.8; stroke-dasharray: 4 3; }
+.ram-share .ram-name { font: 600 10px 'Bricolage Grotesque', sans-serif; text-anchor: middle; fill: var(--ink); }
+.ram-share .ram-label { font: 600 10px 'Bricolage Grotesque', sans-serif; fill: var(--muted); }
+.ram-share .ram-small { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; text-anchor: middle; fill: var(--muted); }
+.ram-share .ram-arrow { stroke: var(--muted); stroke-width: 1.2; }
+.ram-share .ram-arrowhead { fill: var(--muted); }
