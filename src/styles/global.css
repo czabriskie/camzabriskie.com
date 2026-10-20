@@ -388,6 +388,11 @@ nav.note-nav .mono { color: var(--tech); font-weight: 400; }
 .relay-path .rp-msg { stroke: var(--muted); stroke-width: 1.2; }
 .relay-path .rp-msg.rp-enc { stroke: var(--tech); stroke-width: 2; }
 .relay-path .rp-head { fill: var(--muted); }
+.relay-path .rp-title { font: 600 10.5px 'Bricolage Grotesque', sans-serif; text-anchor: start; }
+.relay-path .rp-mid { text-anchor: middle; }
+.relay-path .rp-msg.rp-invite { stroke: var(--life); stroke-dasharray: 4 3; }
+.relay-path .rp-head-warn { fill: var(--life); }
+.relay-path .rp-warn-text { fill: var(--life); }
 .relay-path .rp-head-enc { fill: var(--tech); }
 
 /* Code tabs, copy buttons, and command builders (Decision 0008, src/scripts/code-tabs.ts).
