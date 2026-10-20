@@ -20,32 +20,50 @@ This builds on [AWS VPCs, subnets, and routing](/primers/networking/aws-vpc-subn
 
 Account A (the owner) has a transit gateway, a hub that routes traffic between networks. Accounts B and C each have a VPC and need to connect to it. Without RAM, they can't see A's gateway at all. With RAM, A shares the gateway with B and C, and it shows up in their consoles and API results as if it were their own [@aws-ram-what-is].
 
-<div class="ram-share" role="img" aria-label="An owner account on the left holds a transit gateway and a resource share. The resource share lists the transit gateway, a managed permission that acts as the ceiling on what borrowers can do, and the principals it is shared with. An arrow leads to a consumer account on the right, where the same transit gateway appears with a dashed outline, meaning it is borrowed and still owned by the owner account.">
-<svg viewBox="0 0 400 190" aria-hidden="true" focusable="false">
-<defs><marker id="ram-head" viewBox="0 0 8 8" refX="7" refY="4" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ram-arrowhead" d="M0,0 L8,4 L0,8 z"/></marker></defs>
-<rect class="ram-account" x="10" y="10" width="180" height="170" rx="6"/>
-<text class="ram-label" x="20" y="26">Owner account</text>
-<rect class="ram-box ram-own" x="25" y="38" width="150" height="34" rx="4"/>
-<text class="ram-name" x="100" y="53">Transit gateway</text>
-<text class="ram-small" x="100" y="65">created once</text>
-<rect class="ram-box" x="25" y="92" width="150" height="76" rx="4"/>
-<text class="ram-name" x="100" y="108">Resource share</text>
-<text class="ram-small" x="100" y="122">resource: the gateway</text>
-<text class="ram-small" x="100" y="135">permission: ceiling</text>
-<text class="ram-small" x="100" y="148">principal: account B</text>
-<line class="ram-arrow" x1="100" y1="72" x2="100" y2="90" marker-end="url(#ram-head)"/>
-<line class="ram-arrow" x1="175" y1="130" x2="225" y2="130" marker-end="url(#ram-head)"/>
-<text class="ram-small" x="200" y="122">lends</text>
-<rect class="ram-account" x="210" y="10" width="180" height="170" rx="6"/>
-<text class="ram-label" x="220" y="26">Consumer account B</text>
-<rect class="ram-box ram-borrowed" x="225" y="92" width="150" height="76" rx="4"/>
-<text class="ram-name" x="300" y="115">Transit gateway</text>
-<text class="ram-small" x="300" y="129">visible and usable here</text>
-<text class="ram-small" x="300" y="142">still owned by the owner</text>
-<text class="ram-small" x="300" y="155">limited by the ceiling</text>
+<div class="relay-path" role="img" aria-label="Two cases of lending a transit gateway. Top, same organization with sharing turned on: the owner account holds the transit gateway and shares it, and the consumer account sees the same gateway immediately, with no invitation. Bottom, an account outside the organization: the owner shares the gateway, and the consumer account can use it only after it accepts an invitation. In both cases the owner account still owns the gateway and the managed permission limits what the consumer can do with it.">
+<svg viewBox="0 0 400 250" aria-hidden="true" focusable="false">
+<defs><marker id="ram-head" viewBox="0 0 8 8" refX="7" refY="4" markerUnits="userSpaceOnUse" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="rp-head" d="M0,0 L8,4 L0,8 z"/></marker><marker id="ram-head-enc" viewBox="0 0 8 8" refX="7" refY="4" markerUnits="userSpaceOnUse" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="rp-head-enc" d="M0,0 L8,4 L0,8 z"/></marker><marker id="ram-head-warn" viewBox="0 0 8 8" refX="7" refY="4" markerUnits="userSpaceOnUse" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="rp-head-warn" d="M0,0 L8,4 L0,8 z"/></marker></defs>
+<text class="rp-title" x="2" y="12">Same organization, sharing turned on</text>
+<rect class="rp-zone rp-vpc" x="2" y="22" width="148" height="92" rx="6"/>
+<text class="rp-zone-label" x="8" y="34">owner account (A)</text>
+<rect class="rp-zone" x="250" y="22" width="148" height="92" rx="6"/>
+<text class="rp-zone-label" x="256" y="34">consumer account (B)</text>
+<rect class="rp-node" x="12" y="42" width="128" height="64" rx="5"/>
+<text class="rp-name" x="76" y="60">Transit gateway</text>
+<text class="rp-sub" x="76" y="74">created once</text>
+<text class="rp-sub" x="76" y="86">owned here</text>
+<text class="rp-sub" x="76" y="98">in a resource share</text>
+<rect class="rp-node" x="260" y="42" width="128" height="64" rx="5"/>
+<text class="rp-name" x="324" y="60">Transit gateway</text>
+<text class="rp-sub" x="324" y="74">visible and usable</text>
+<text class="rp-sub" x="324" y="86">still owned by A</text>
+<text class="rp-sub" x="324" y="98">limited by the ceiling</text>
+<line class="rp-msg rp-enc" x1="142" y1="76" x2="258" y2="76" marker-end="url(#ram-head-enc)"/>
+<text class="rp-hop rp-mid" x="200" y="69">resource share</text>
+<text class="rp-hop rp-mid rp-enc-text" x="200" y="92">no invitation</text>
+<text class="rp-title" x="2" y="142">Account outside the organization</text>
+<rect class="rp-zone rp-vpc" x="2" y="152" width="148" height="92" rx="6"/>
+<text class="rp-zone-label" x="8" y="164">owner account (A)</text>
+<rect class="rp-zone" x="250" y="152" width="148" height="92" rx="6"/>
+<text class="rp-zone-label" x="256" y="164">consumer account (B)</text>
+<rect class="rp-node" x="12" y="172" width="128" height="64" rx="5"/>
+<text class="rp-name" x="76" y="190">Transit gateway</text>
+<text class="rp-sub" x="76" y="204">created once</text>
+<text class="rp-sub" x="76" y="216">owned here</text>
+<text class="rp-sub" x="76" y="228">in a resource share</text>
+<rect class="rp-node" x="260" y="172" width="128" height="64" rx="5"/>
+<text class="rp-name" x="324" y="190">Transit gateway</text>
+<text class="rp-sub" x="324" y="204">usable only after</text>
+<text class="rp-sub" x="324" y="216">the invitation is</text>
+<text class="rp-sub" x="324" y="228">accepted</text>
+<line class="rp-msg rp-enc" x1="142" y1="196" x2="258" y2="196" marker-end="url(#ram-head-enc)"/>
+<text class="rp-hop rp-mid" x="200" y="189">resource share</text>
+<line class="rp-msg rp-invite" x1="258" y1="224" x2="142" y2="224" marker-end="url(#ram-head-warn)"/>
+<text class="rp-hop rp-mid rp-warn-text" x="200" y="217">accept invitation</text>
 </svg>
-<p class="bitgrid-caption">The owner creates the resource and the share. The consumer sees the resource without owning it, and can't do more with it than the permission allows.</p>
 </div>
+
+<p class="bitgrid-caption">Teal arrows are the share. Inside an organization with sharing on, access starts at once. An outside account must accept an invitation first. Either way, A keeps ownership and the managed permission caps what B can do.</p>
 
 ## The four pieces
 
