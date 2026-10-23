@@ -19,7 +19,7 @@ This builds on [AWS Resource Access Manager (RAM)](/primers/networking/aws-ram/)
 
 ## Gate 1: the share decides who may ask
 
-The network account lends the gateway to the spoke account through a RAM resource share. After the share exists, the owner of the spoke account can attach their VPCs to the gateway [@aws-tgw-transit-gateways]. Without the share, the spoke account has no way to ask.
+The network account lends the gateway to the spoke account through a RAM resource share. After the share exists, the owner of the spoke account can attach their VPCs to the gateway [@aws-tgw-transit-gateways]. Without the share, the spoke account has no way to ask. The spoke account may first need to accept the share as an invitation in the RAM console before it can see the gateway [@aws-tgw-share-accept]; [Invitations or no invitations](/primers/networking/aws-ram/#invitations-or-no-invitations) in the RAM primer covers when that step is skipped.
 
 The share answers one question: which accounts are allowed to request an attachment. It says nothing about whether the request succeeds.
 
@@ -30,17 +30,37 @@ When the spoke account's owner attaches the VPC, the request lands on the networ
 - **Off:** the attachment waits in a pending acceptance state until the gateway owner accepts or rejects it [@aws-tgw-create, @aws-tgw-accept-shared].
 - **On:** the gateway accepts cross-account attachments automatically [@aws-tgw-create].
 
-The setting covers cross-account attachments only. It sits on the gateway, not on the share and not on any one account, so it applies to every account the share reaches. The gateway has no way to say "auto-accept account X but hold account Y".
+The setting covers cross-account attachments only. It sits on the gateway, not on the share and not on any one account, so it applies to every account the share reaches. The create page offers it as one checkbox with no list of accounts, so it can't auto-accept one account and hold another [@aws-tgw-create].
 
 ### Why to leave it off
 
 If the share names a whole organization or many accounts, an on switch means any of them can attach a VPC with no check by the network account. AWS Security Hub has a control for this, EC2.23, rated High severity, that fails a transit gateway with auto-accept turned on. Its reasoning: the setting accepts any cross-account request "without verifying the request or the account the attachment is originating from", and AWS recommends turning it off so only authorized requests are accepted [@aws-securityhub-ec2-controls].
 
-The cost of leaving it off is a manual step. Someone in the network account has to accept each attachment, in the console or with the CLI [@aws-tgw-accept-shared]. That step is also the moment to check that the requesting account and its VPC range are the ones you expect.
+The cost of leaving it off is a manual step. Someone in the network account has to accept each attachment, in the console or with the CLI [@aws-tgw-accept-shared]. That step is also the moment to check that the requesting account and its VPC range are the ones you expect. The CLI command takes the attachment's ID [@aws-cli-accept-tgw-vpc-attachment]:
+
+```bash
+aws ec2 accept-transit-gateway-vpc-attachment --transit-gateway-attachment-id tgw-attach-0a34fe6b4fEXAMPLE
+```
+
+AWS's example reply, trimmed, looks like this [@aws-cli-accept-tgw-vpc-attachment]:
+
+```json
+{
+    "TransitGatewayVpcAttachment": {
+        "TransitGatewayAttachmentId": "tgw-attach-0a34fe6b4fEXAMPLE",
+        "TransitGatewayId": "tgw-0262a0e521EXAMPLE",
+        "VpcId": "vpc-07e8ffd50fEXAMPLE",
+        "VpcOwnerId": "123456789012",
+        "State": "pending"
+    }
+}
+```
+
+`VpcOwnerId` is the spoke account that asked and `VpcId` is its VPC, the two things to check before accepting. `123456789012` is AWS's placeholder account ID. The `State` in AWS's example still reads `pending` right after the accept, and the page doesn't say what it changes to or when.
 
 ## Gate 3: route tables decide what it can reach
 
-An accepted attachment reaches nothing until it is tied to a route table. Each attachment is associated with exactly one route table, and that table decides the next hop for the attachment's traffic [@aws-tgw-transit-gateways].
+Being accepted doesn't decide where the attachment's traffic can go. Each attachment is associated with a single route table, and that table decides the next hop for the attachment's traffic [@aws-tgw-transit-gateways].
 
 Two more settings on the gateway control what happens by default [@aws-tgw-create]:
 
@@ -76,7 +96,7 @@ A new gateway gets a default route table that serves as both the default associa
 <line class="rp-msg rp-enc" x1="90" y1="93" x2="104" y2="93" marker-end="url(#tgw-head-enc)"/>
 <line class="rp-msg rp-enc" x1="196" y1="93" x2="212" y2="93" marker-end="url(#tgw-head-enc)"/>
 </svg>
-<p class="bitgrid-caption">Legend: boxes are accounts or settings, and the labels name each one. The arrow shows the attachment request moving left to right: it passes the share, then arrives at the gateway. Gates 2 and 3 are settings on the gateway itself, so they apply once the request arrives and to what the attachment reaches afterward. Each gate is a separate setting; passing one says nothing about the next.</p>
+<p class="bitgrid-caption">The arrows follow the attachment request left to right: it passes the share, then arrives at the gateway. Gates 2 and 3 sit inside the network account's box because they are settings on the gateway itself. Passing one gate says nothing about the next.</p>
 </div>
 
 ## Who needs the share?
@@ -102,7 +122,7 @@ The route table gate still applies to a VPN, as it does to every attachment. A s
 
 | Gate | Where it is set | Where to look or what to set | Leave it as |
 |---|---|---|---|
-| RAM share | A resource share, in the network account | Pick the gateway and the accounts to share it with; the default is not verified | Name only the accounts that should be able to ask |
+| RAM share | A resource share, in the network account | Pick the gateway and the accounts to share it with; the spoke may have to accept an invitation [@aws-tgw-share-accept] | Name only the accounts that should be able to ask |
 | Auto accept shared attachments | The transit gateway | An option set when creating the gateway [@aws-tgw-create] | Off, so each attachment waits for the owner [@aws-securityhub-ec2-controls] |
 | Default route table association | The transit gateway | An option set when creating the gateway [@aws-tgw-create] | Your call: on for one flat network, off to place each attachment by hand |
 | Default route table propagation | The transit gateway | An option set when creating the gateway [@aws-tgw-create] | Your call: same trade-off as association |
@@ -116,6 +136,5 @@ The route table gate still applies to a VPN, as it does to every attachment. A s
 
 ## What is not verified
 
-- **Pending state API name:** the AWS pages say "pending acceptance"; the exact state string in the API was not checked.
+- **Pending state API name:** the console page says "pending acceptance"; the exact state string the API shows before anyone accepts was not checked.
 - **Changing auto-accept on an existing gateway:** the Security Hub remediation says to modify a transit gateway, but the Modify page was not read.
-- **RAM share default:** whether a share accepts new accounts automatically or needs a step was not covered by the pages cited here.
