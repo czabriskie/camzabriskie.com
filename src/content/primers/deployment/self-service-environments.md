@@ -132,57 +132,9 @@ The first style is easier to start with and easier to read. The second gives you
 
 ## How separate is each copy?
 
-"A fresh version of the environment" can mean very different amounts of separation. AWS's SaaS guidance names the two ends: in the **silo** model a tenant gets dedicated resources, anything from its own database up to a fully independent stack, and in the **pool** model tenants share the same resources [@aws-saas-lens-models]. The **bridge** model sits between them: some parts of the system siloed, some pooled, chosen per component [@aws-saas-lens-models].
+"A fresh version of the environment" can mean very different amounts of separation. AWS's SaaS guidance names the two ends: in the **silo** model a tenant gets dedicated resources, anything from its own database up to a fully independent stack, and in the **pool** model tenants share the same resources [@aws-saas-lens-models]. The **bridge** model sits between them: some parts of the system siloed, some pooled, chosen per component [@aws-saas-lens-models]. Silos are simpler to isolate and keep a failure inside one tenant; pools cost less and give one place to manage and deploy [@aws-saas-silo-isolation, @aws-saas-pool-isolation].
 
-On the infrastructure side the rungs between "shared" and "dedicated" look like this:
-
-<div class="selfserve-diagram" role="img" aria-label="A scale from shared on the left to dedicated on the right, with five points. Shared rows: the same database, with a tenant ID on each row. Namespace: the same Kubernetes cluster, with a namespace per tenant. Virtual cluster: its own Kubernetes API server, on shared nodes. Own cluster: its own nodes, in the same cloud account. Own account: everything separate, including the cloud bill. The left end is the pool model, cheap and fast to create. The right end is the silo model, isolated but more to run.">
-<svg viewBox="0 0 400 128" aria-hidden="true" focusable="false">
-<defs><marker id="ssp-head2" viewBox="0 0 8 8" refX="7" refY="4" markerUnits="userSpaceOnUse" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ssp-arrowhead" d="M0,0 L8,4 L0,8 z"/></marker></defs>
-<line class="ssp-scale" x1="46" y1="44" x2="354" y2="44"/>
-<circle class="ssp-dot" cx="46" cy="44" r="5"/>
-<circle class="ssp-dot" cx="123" cy="44" r="5"/>
-<circle class="ssp-dot" cx="200" cy="44" r="5"/>
-<circle class="ssp-dot" cx="277" cy="44" r="5"/>
-<circle class="ssp-dot ssp-dot-hot" cx="354" cy="44" r="5"/>
-<text class="ssp-name" x="46" y="28">shared rows</text>
-<text class="ssp-name" x="123" y="28">namespace</text>
-<text class="ssp-name" x="200" y="28">virtual cluster</text>
-<text class="ssp-name" x="277" y="28">own cluster</text>
-<text class="ssp-name" x="354" y="28">own account</text>
-<text class="ssp-small" x="46" y="66">same DB, tenant</text>
-<text class="ssp-small" x="46" y="77">ID on each row</text>
-<text class="ssp-small" x="123" y="66">same cluster,</text>
-<text class="ssp-small" x="123" y="77">own namespace</text>
-<text class="ssp-small" x="200" y="66">own API server,</text>
-<text class="ssp-small" x="200" y="77">shared nodes</text>
-<text class="ssp-small" x="277" y="66">own nodes,</text>
-<text class="ssp-small" x="277" y="77">same account</text>
-<text class="ssp-small" x="354" y="66">own everything,</text>
-<text class="ssp-small" x="354" y="77">own cloud bill</text>
-<line class="ssp-arrow" x1="200" y1="100" x2="12" y2="100" marker-end="url(#ssp-head2)"/>
-<line class="ssp-arrow ssp-hot" x1="200" y1="100" x2="388" y2="100" marker-end="url(#ssp-head2)"/>
-<text class="ssp-small ssp-start" x="12" y="116">pool: cheap, quick to create</text>
-<text class="ssp-small ssp-end ssp-hotlabel" x="388" y="116">silo: isolated, more to run</text>
-</svg>
-</div>
-
-<p class="bitgrid-caption">Moving right buys isolation and costs money and operating work. Acme's request sits at the right end; a developer's preview usually sits in the middle.</p>
-
-The Kubernetes docs describe the middle rungs. A **namespace per tenant** is cheap and well supported, but some Kubernetes objects can't be put in a namespace, like custom resource definitions, so tenants still share those. A **virtual control plane** per tenant (a virtual cluster) gives each tenant its own API server on shared worker nodes, a middle ground "when namespace isolation is insufficient but dedicated clusters are undesirable." A **dedicated cluster** is strongest and has to be weighed against the cost of running many clusters [@k8s-multi-tenancy]. Whichever rung you pick, a **resource quota** caps how much CPU, memory, and how many objects one namespace can use, so one tenant can't starve the rest [@k8s-resource-quotas].
-
-AWS's tenant isolation paper lays out the trade, and it's mostly symmetrical:
-
-| | Silo (dedicated) | Pool (shared) |
-|---|---|---|
-| Isolation | Simpler to enforce: a well-defined boundary around the whole stack [@aws-saas-silo-isolation] | Harder: network and access rules can't separate tenants, so the code has to [@aws-saas-pool-isolation] |
-| Noisy neighbors | None [@aws-saas-silo-isolation] | One busy tenant can slow the rest [@aws-saas-pool-isolation] |
-| Cost per tenant | Easy to measure, but idle capacity in every copy [@aws-saas-silo-isolation] | Scales with real load; low when tenants are idle [@aws-saas-pool-isolation] |
-| Blast radius | A failure usually stays in one tenant [@aws-saas-silo-isolation] | An outage likely reaches every tenant [@aws-saas-pool-isolation] |
-| Operations | Gets heavy as the number of tenants grows [@aws-saas-silo-isolation] | One place to manage, update, and deploy [@aws-saas-pool-isolation] |
-| Good for | Regulated customers, customers who insist on it | Most tenants, most of the time |
-
-A platform that "spins up a fresh environment" is building silos, at least for some tenants, and AWS describes a common mix: basic-tier tenants share a pool, and premium tenants pay for their own stack [@aws-saas-full-stack].
+A platform that "spins up a fresh environment" is building silos, at least for some tenants, and AWS describes a common mix: basic-tier tenants share a pool, and premium tenants pay for their own stack [@aws-saas-full-stack]. The [customer separation primer](/primers/deployment/customer-separation-models/) walks through the options from one end to the other.
 
 ## Three requests, three sets of settings
 
@@ -191,7 +143,7 @@ Ledgerly's three requesters want the same machine with different settings. These
 | | Developer preview | Partner sandbox | Customer (Acme) |
 |---|---|---|---|
 | Lifetime | Until the pull request closes, or a week idle [@gitlab-review-apps] | Weeks to months, with an end date | Until the contract ends |
-| Separation | Namespace in a shared cluster | Namespace or virtual cluster, network-separated from internal tools | Own account or cluster |
+| Separation | Namespace in a shared cluster | Namespace, network-separated from internal tools | Own account or cluster |
 | Data | Seeded fake data | Seeded fake data, reset on request | The customer's own; backed up |
 | App version | The branch being tested | The current release | The current release |
 | Who logs in | Engineers | The partner's people | The customer's people |
@@ -224,7 +176,7 @@ The CNCF paper says a platform should be "the thinnest reasonable layer" over se
 4. **Start with one audience.** Developer previews are the safest first users, because they're short-lived and a broken one costs little. Customers come last.
 5. **Measure it.** The CNCF paper suggests tracking the time from request to a usable environment, among other things [@cncf-platforms]. If it's a few days today, watch it drop.
 
-On AWS with a separate set of accounts per customer, the [account-per-customer primer](/primers/deployment/aws-account-per-customer/) builds this out with Organizations, Control Tower, and EKS.
+The rest of this series goes from here: [separating customers](/primers/deployment/customer-separation-models/) compares the ways to keep customers apart, then [an AWS account set per customer](/primers/deployment/aws-account-per-customer/) builds the most separated one and [the fully pooled version](/primers/deployment/fully-pooled-saas/) builds the least.
 
 <details class="aside">
 <summary>Build or buy?</summary>

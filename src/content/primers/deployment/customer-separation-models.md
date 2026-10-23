@@ -1,13 +1,13 @@
 ---
 title: Separating customers, from own cluster to fully pooled
 description: The ways to keep SaaS customers apart once they stop getting their own accounts, from a namespace per customer in a shared Kubernetes cluster down to one app and one database for everyone, and what each one asks of the app.
-order: 4
+order: 3
 updated: 2026-10-23
 ---
 
-The [account-per-customer primer](/primers/deployment/aws-account-per-customer/) gave every customer their own AWS accounts and clusters. That's the strongest separation and the most expensive, and most SaaS products don't give it to every customer. This primer walks down the rest of the scale from the [self-service environments primer](/primers/deployment/self-service-environments/), one rung at a time, to the least separated version: everyone sharing one app and one database.
+The [self-service environments primer](/primers/deployment/self-service-environments/) named the two ends of customer separation: silo, where each customer gets their own resources, and pool, where they share. This primer walks the rungs between them, from each customer having their own AWS accounts down to everyone sharing one app and one database. The next two primers build the two ends: [an AWS account set per customer](/primers/deployment/aws-account-per-customer/) for the most separated, and [the fully pooled version](/primers/deployment/fully-pooled-saas/) for the least.
 
-The running example is still Ledgerly, the made-up invoicing app on Kubernetes. Acme pays for its own accounts. Three smaller customers, Birch, Cedar, and Dune, have signed a cheaper plan, and Ledgerly has to decide how much of the platform they share.
+The running example is still Ledgerly, the made-up invoicing app on Kubernetes. Acme pays for its own accounts, the top rung. Three smaller customers, Birch, Cedar, and Dune, have signed a cheaper plan, and Ledgerly has to decide how much of the platform they share.
 
 ## A few terms
 
@@ -96,9 +96,9 @@ Through the namespace rung, each copy of Ledgerly serves exactly one customer, s
 
 ## Own cluster in a shared account
 
-This rung is the account-per-customer setup with the account boundary removed: every customer still gets their own EKS cluster and database, but they live in one AWS account. The EKS guide calls a cluster per tenant hard multi-tenancy and says the cluster is "the only construct that provides a strong security boundary" in Kubernetes [@aws-eks-tenant-isolation].
+Every customer still gets their own EKS cluster and database, but they share one AWS account. The EKS guide calls a cluster per tenant hard multi-tenancy and says the cluster is "the only construct that provides a strong security boundary" in Kubernetes [@aws-eks-tenant-isolation].
 
-Removing the account boundary loses the things accounts gave you: a separate bill per customer, separate service quotas, and a hard IAM wall [@aws-multi-account-benefits]. A mistake in one IAM policy in the shared account can now reach several customers' resources. It keeps the cost of the account-per-customer setup too: the EKS guide warns that a cluster per tenant gets expensive with many tenants, since each cluster's control plane is paid for separately and compute can't be shared between clusters, and that it needs tooling to manage many clusters [@aws-eks-tenant-isolation]. So this rung is mostly a stepping stone, or a place for customers who need their own cluster but not their own bill.
+Dropping the separate accounts gives up what they provided: a bill per customer, separate quotas, and a hard IAM wall (the [account-per-customer primer](/primers/deployment/aws-account-per-customer/) lists them). It keeps most of the cost, since each cluster's control plane is paid for separately and compute can't be shared between clusters [@aws-eks-tenant-isolation]. It suits customers who need their own cluster but not their own bill, or a step on the way to separate accounts.
 
 ## Namespace per customer
 
@@ -139,7 +139,7 @@ None of the pieces above stop pods from different tenants landing on the same no
 - **The list of tenants.** Anyone allowed to see one namespace can see all of them, and by default any pod can look up every service in the cluster through DNS [@aws-eks-tenant-isolation]. Ledgerly's customers don't run their own pods, so this matters less than it would for a platform that runs customer code.
 - **Upgrades and outages.** One cluster upgrade touches every customer at once, and a broken control plane takes them all down together.
 
-The guide's mitigations are to pin each tenant's pods to their own nodes with node affinity and taints, which it warns gets complicated and expensive with many tenants, and to run containers in sandboxes or enforce rules with a policy engine such as OPA Gatekeeper or Kyverno [@aws-eks-tenant-isolation, @k8s-runtime-class].
+The guide's mitigations are to pin each tenant's pods to their own nodes with node affinity and taints, which it warns gets complicated and expensive with many tenants, and to run containers in sandboxes or enforce rules with a policy engine such as OPA Gatekeeper or Kyverno [@aws-eks-tenant-isolation, @k8s-runtime-class]. Between a namespace and a cluster each sits a virtual control plane per tenant, its own Kubernetes API server on shared nodes, which the Kubernetes docs suggest "when namespace isolation is insufficient but dedicated clusters are undesirable" [@k8s-multi-tenancy].
 
 ### What it buys
 

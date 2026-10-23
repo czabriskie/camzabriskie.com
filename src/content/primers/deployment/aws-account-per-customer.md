@@ -1,12 +1,12 @@
 ---
 title: An AWS account set per customer
 description: How a self-service platform gives each customer its own AWS accounts and EKS clusters, one for production and one for testing, and what it takes to keep dozens of them alike.
-order: 3
+order: 4
 updated: 2026-10-23
 only: AWS
 ---
 
-The [self-service environments primer](/primers/deployment/self-service-environments/) ended on a scale from "shared rows in one database" to "own account." This primer takes the far end of that scale and builds it out on AWS with Kubernetes on EKS. Each customer gets two AWS accounts: one for production, and one test account where a release is checked against that customer's configuration before it reaches their production.
+The [customer separation primer](/primers/deployment/customer-separation-models/) laid out the options from each customer having their own AWS accounts down to everyone sharing one database. This primer builds the top rung on AWS with Kubernetes on EKS. Each customer gets two AWS accounts: one for production, and one test account where a release is checked against that customer's configuration before it reaches their production.
 
 The running example is the same made-up company. Ledgerly sells an invoicing app, it runs on EKS, and its customers' contracts say their data lives in accounts nobody else uses. Acme has just signed and needs `acme-test` and `acme-prod`. Ledgerly's own engineers develop in internal accounts, so no customer needs a dev account of their own.
 
@@ -214,4 +214,4 @@ Ledgerly picked the middle row because each customer's configuration differs eno
 4. **Wire AFT and the platform account**, then onboard an internal "customer" (yourselves) through the pull request, end to end.
 5. **Automate the upgrade waves** before the tenth customer, not after.
 
-Not every customer needs this much separation. The [customer separation primer](/primers/deployment/customer-separation-models/) covers the cheaper rungs, from a namespace per customer to one shared app and database.
+For the other end of the scale, where customers share one app and one database, see [the fully pooled version](/primers/deployment/fully-pooled-saas/).
