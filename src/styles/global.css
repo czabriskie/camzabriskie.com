@@ -1002,3 +1002,23 @@ details.aside[open] summary { margin-bottom: 0.4rem; }
 .gitops-flow .go-end { text-anchor: end; }
 .gitops-flow .go-file { fill: var(--ink); }
 .gitops-flow .go-link { fill: none; stroke: var(--muted); stroke-width: 1; stroke-dasharray: 3 2; }
+
+/* Self-service environments primer: request flow and isolation scale. */
+.selfserve-diagram { max-width: 32rem; margin: 1.2rem auto 0.5rem; }
+.selfserve-diagram svg { display: block; width: 100%; height: auto; }
+.selfserve-diagram text { text-anchor: middle; }
+.selfserve-diagram .ssp-box { fill: var(--surface); stroke: var(--muted); stroke-width: 1; }
+.selfserve-diagram .ssp-core { fill: color-mix(in srgb, var(--tech) 14%, var(--surface)); stroke: var(--tech); }
+.selfserve-diagram .ssp-env { fill: color-mix(in srgb, var(--muted) 8%, transparent); stroke: var(--line); stroke-width: 1; }
+.selfserve-diagram .ssp-name { font: 600 10px 'Bricolage Grotesque', system-ui, sans-serif; fill: var(--ink); }
+.selfserve-diagram .ssp-small { font: 8.5px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.selfserve-diagram .ssp-start { text-anchor: start; }
+.selfserve-diagram .ssp-end { text-anchor: end; }
+.selfserve-diagram .ssp-arrow { stroke: var(--muted); stroke-width: 1.2; }
+.selfserve-diagram .ssp-hot { stroke: var(--tech); }
+.selfserve-diagram .ssp-hotlabel { fill: var(--tech); }
+.selfserve-diagram .ssp-link { fill: none; stroke: var(--tech); stroke-width: 1.2; stroke-dasharray: 3 2; }
+.selfserve-diagram .ssp-arrowhead { fill: context-stroke; }
+.selfserve-diagram .ssp-scale { stroke: var(--line); stroke-width: 2; }
+.selfserve-diagram .ssp-dot { fill: var(--surface); stroke: var(--muted); stroke-width: 1.5; }
+.selfserve-diagram .ssp-dot-hot { fill: var(--tech); stroke: var(--tech); }
