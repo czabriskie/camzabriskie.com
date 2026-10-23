@@ -1,14 +1,14 @@
 ---
 title: An AWS account set per customer
-description: How a self-service platform gives each customer its own AWS accounts and EKS clusters, one for production and one or more for testing, and what it takes to keep dozens of them alike.
+description: How a self-service platform gives each customer its own AWS accounts and EKS clusters, one for production and one for testing, and what it takes to keep dozens of them alike.
 order: 3
 updated: 2026-10-23
 only: AWS
 ---
 
-The [self-service environments primer](/primers/deployment/self-service-environments/) ended on a scale from "shared rows in one database" to "own account." This primer takes the far end of that scale and builds it out on AWS with Kubernetes on EKS. Each customer gets their own AWS accounts: one for production, plus one or more non-production accounts where their copy gets tested before a release reaches them.
+The [self-service environments primer](/primers/deployment/self-service-environments/) ended on a scale from "shared rows in one database" to "own account." This primer takes the far end of that scale and builds it out on AWS with Kubernetes on EKS. Each customer gets two AWS accounts: one for production, and one test account where a release is checked against that customer's configuration before it reaches their production.
 
-The running example is the same made-up company. Ledgerly sells an invoicing app, it runs on EKS, and its customers' contracts say their data lives in accounts nobody else uses. Acme has just signed and needs `acme-dev`, `acme-test`, and `acme-prod`.
+The running example is the same made-up company. Ledgerly sells an invoicing app, it runs on EKS, and its customers' contracts say their data lives in accounts nobody else uses. Acme has just signed and needs `acme-test` and `acme-prod`. Ledgerly's own engineers develop in internal accounts, so no customer needs a dev account of their own.
 
 ## A few terms
 
@@ -38,7 +38,7 @@ Accounts themselves cost nothing; AWS charges for what runs in them, not for the
 
 AWS's recommended layout groups accounts by what they do, not by who owns them. A **Workloads** OU holds business applications, with production and non-production split into child OUs; a **Security** OU holds the accounts that apply security and compliance controls; an **Infrastructure** OU holds shared networking; and a **Deployments** OU holds the accounts that run CI/CD and deploy into everything else [@aws-multi-account-recommended-ous, @aws-multi-account-workloads-ou]. Ledgerly's customer accounts slot into the Workloads OU like this:
 
-<div class="selfserve-diagram" role="img" aria-label="A tree of the organization. The organization root, owned by the management account, has four OUs. The Security OU holds log and audit accounts. The Infrastructure OU holds a network account. The Deployments OU, highlighted, holds the platform account. The Workloads OU has two child OUs: Prod holds acme-prod and globex-prod, and NonProd holds acme-dev, acme-test, and globex-dev.">
+<div class="selfserve-diagram" role="img" aria-label="A tree of the organization. The organization root, owned by the management account, has four OUs. The Security OU holds log and audit accounts. The Infrastructure OU holds a network account. The Deployments OU, highlighted, holds the platform account. The Workloads OU has two child OUs: Prod holds acme-prod and globex-prod, and NonProd holds acme-test, globex-test, and Ledgerly's internal ledgerly-dev account.">
 <svg viewBox="0 0 400 236" aria-hidden="true" focusable="false">
 <rect class="ssp-box" x="8" y="8" width="162" height="26" rx="3"/>
 <text class="ssp-name ssp-start" x="16" y="20">organization root</text>
@@ -79,11 +79,11 @@ AWS's recommended layout groups accounts by what they do, not by who owns them. 
 <rect class="ssp-box" x="244" y="175" width="70" height="20" rx="2"/>
 <text class="ssp-small" x="279" y="188">globex-prod</text>
 <rect class="ssp-box" x="168" y="207" width="70" height="20" rx="2"/>
-<text class="ssp-small" x="203" y="220">acme-dev</text>
+<text class="ssp-small" x="203" y="220">acme-test</text>
 <rect class="ssp-box" x="244" y="207" width="70" height="20" rx="2"/>
-<text class="ssp-small" x="279" y="220">acme-test</text>
+<text class="ssp-small" x="279" y="220">globex-test</text>
 <rect class="ssp-box" x="320" y="207" width="72" height="20" rx="2"/>
-<text class="ssp-small" x="356" y="220">globex-dev</text>
+<text class="ssp-small" x="356" y="220">ledgerly-dev</text>
 </svg>
 </div>
 
@@ -101,9 +101,6 @@ Sales signs Acme. The platform's front door is a pull request that adds one file
 # customers/acme.yaml
 name: acme
 environments:
-  - name: dev
-    ou: NonProd
-    size: small
   - name: test
     ou: NonProd
     size: small
@@ -120,7 +117,7 @@ Once it merges, the pipeline does the rest:
 2. **Apply the baseline.** AFT runs customizations, Terraform or scripts, on every account, on a group of accounts, or on one [@aws-aft-customizations]. The baseline every Ledgerly account gets: the roles the platform will assume, a VPC with an address range handed out by IPAM (AWS's IP address manager, which can allocate ranges to new VPCs automatically by rules you set [@aws-ipam], so no two customers' VPCs collide if they ever need connecting), and logging.
 3. **Build the environment.** A Terraform module, the same one for every customer, creates the EKS cluster, the database, and storage inside each new account [@terraform-modules].
 4. **Register the cluster.** The new cluster is added to Argo CD in the platform account, with an access entry letting the platform's role deploy into it (next section).
-5. **Deploy.** Argo CD's ApplicationSet sees a new cluster and generates an `Application` for it [@argocd-cluster-generator], and release `2026.10.2` rolls out to `acme-dev` first, then `acme-test`, then `acme-prod`.
+5. **Deploy.** Argo CD's ApplicationSet sees a new cluster and generates an `Application` for it [@argocd-cluster-generator], and release `2026.10.2` has already passed in Ledgerly's internal `ledgerly-dev`, so it rolls out to `acme-test`, then to `acme-prod` once Acme's checks pass.
 
 AWS documents step 1's input as a Terraform file and starts processing with a `git push` [@aws-aft-provision], so the whole chain, from merged pull request to running cluster, needs no person in the middle.
 
@@ -174,40 +171,40 @@ The other way to do step 3 is to install Flux in every cluster and let each one 
 
 ## Limits that show up at this scale
 
-Every customer adds three accounts and three clusters, so Ledgerly with 40 customers has 120 customer accounts, plus the shared ones. A few AWS limits matter well before that:
+Every customer adds two accounts and two clusters, so Ledgerly with 40 customers has 80 customer accounts, plus the shared ones. A few AWS limits matter well before that:
 
 | Limit | Default | Why it matters |
 |---|---|---|
-| Accounts in an organization | 10, adjustable; AWS can grant up to 50,000 depending on the customer [@aws-org-quotas] | The third customer won't fit until you ask for an increase |
+| Accounts in an organization | 10, adjustable; AWS can grant up to 50,000 depending on the customer [@aws-org-quotas] | With six shared accounts (management, log, audit, network, platform, internal dev) and two per customer, the third customer won't fit until you ask for an increase |
 | Accounts being created at once | 5 [@aws-org-quotas] | Onboarding several customers at once queues |
 | Accounts closed in 30 days | 20% of member accounts or 250, whichever is higher, up to 1,000; not adjustable [@aws-org-quotas] | Mass teardown has to be spread out |
-| Closed accounts | Still count toward the organization's limit until permanently closed [@aws-org-quotas], 90 days after closing [@aws-org-close-account] | A churned customer's accounts occupy space for three months |
+| Closed accounts | Still count toward the organization's limit until permanently closed [@aws-org-quotas], 90 days after closing [@aws-org-close-account] | A departed customer's accounts take up quota for three months |
 
 People hit the first row on day one. Ask for the increase before the platform goes live, sized for the customers you expect plus the environments each one gets.
 
 ## Day two across many accounts
 
-Making accounts is the easy half here too. Keeping 120 of them alike is the job.
+Making accounts is the easy half here too. Keeping 80 of them alike is the job.
 
 **Baseline changes.** A new logging rule or role has to land in every account. AFT reruns its customizations on all accounts, a set, or one [@aws-aft-customizations], and CloudFormation StackSets can create, update, or delete the same stack across many accounts and regions in one operation [@aws-stacksets]. Either way the change is written once and fanned out, never clicked into each account.
 
-**Kubernetes upgrades.** Kubernetes ships a new minor version about every four months. EKS gives each one 14 months of standard support, then 12 months of extended support at an extra cost per cluster hour, and after that it upgrades the cluster automatically [@aws-eks-versions]. Clusters move one minor version at a time, and a rollback is possible only within 7 days of upgrading [@aws-eks-update]. With a release every four months, each cluster needs about three upgrades a year. At 120 clusters that's roughly 360 cluster upgrades a year, more than one every working day, so upgrades have to be a pipeline that runs in waves (dev clusters, then test, then production) rather than a task someone does.
+**Kubernetes upgrades.** Kubernetes ships a new minor version about every four months. EKS gives each one 14 months of standard support, then 12 months of extended support at an extra cost per cluster hour, and after that it upgrades the cluster automatically [@aws-eks-versions]. Clusters move one minor version at a time, and a rollback is possible only within 7 days of upgrading [@aws-eks-update]. With a release every four months, each cluster needs about three upgrades a year. At 80 customer clusters that's roughly 240 cluster upgrades a year, about one every working day, so upgrades have to be a pipeline that runs in waves (Ledgerly's internal clusters, then every customer's test cluster, then production) rather than a task someone does.
 
-**App releases.** The same wave pattern carries app releases. A new Ledgerly version goes to every `-dev` account, then every `-test`, then production, and the `release` field in each customer file only ever lags, never forks. AWS's SaaS guidance is clear that dedicated stacks should all run the same version [@aws-saas-full-stack].
+**App releases.** The same wave pattern carries app releases. A new Ledgerly version goes to the internal accounts, then every customer's `-test` account, then production, and the `release` field in each customer file only ever lags, never forks. AWS's SaaS guidance is clear that dedicated stacks should all run the same version [@aws-saas-full-stack].
 
-**Cost.** Each account is visible on the combined bill [@aws-consolidated-billing], which makes idle non-production accounts easy to spot. Every silo carries idle capacity [@aws-saas-silo-isolation], and for non-production that idle capacity is multiplied by the number of test accounts per customer.
+**Cost.** Each account is visible on the combined bill [@aws-consolidated-billing], which makes idle non-production accounts easy to spot. Every silo carries idle capacity [@aws-saas-silo-isolation], and with a test account per customer, half of Ledgerly's customer accounts sit idle between releases. Scaling test clusters down when no release is in flight cuts that cost.
 
 ## How many non-production accounts?
 
-"Maybe multiple nonprod accounts per customer" is the decision with the biggest cost lever. Three common shapes:
+The number of non-production accounts per customer is the decision with the biggest cost lever. Three common shapes, with Ledgerly's choice in the middle:
 
 | Shape | Accounts for 40 customers | Good for |
 |---|---|---|
 | Prod per customer, one shared test account | 40 + 1 | Customers who only care where their production data lives |
-| Prod and one test account per customer | 80 | Testing a release against each customer's configuration before it reaches them |
+| **Prod and one test account per customer** (Ledgerly) | 80 | Testing a release against each customer's configuration before it reaches them |
 | Prod, test, and dev per customer | 120 | Customers who get their own pre-production access, or need to test integrations against it |
 
-The numbers are arithmetic, not advice. A shared test account can still hold one namespace per customer, configured like that customer's production, which tests their configuration without the account. Per-customer non-production accounts earn their cost when the customer logs into them, when their configuration differs in ways a namespace can't reproduce (their own network connection, their own identity provider), or when a contract requires it.
+Ledgerly picked the middle row because each customer's configuration differs enough that a release should be proven against it before it reaches their production, and because development happens in internal accounts anyway. A shared test account can still hold one namespace per customer, configured like that customer's production, which tests their configuration without the account. Per-customer non-production accounts earn their cost when the customer logs into them, when their configuration differs in ways a namespace can't reproduce (their own network connection, their own identity provider), or when a contract requires it.
 
 ## Where to start
 
