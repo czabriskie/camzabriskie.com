@@ -33,6 +33,11 @@ export const topics = [
     blurb: 'The history of ideas, starting with the first people to ask what everything is made of.',
   },
   {
+    slug: 'containers',
+    title: 'Containers',
+    blurb: 'What runs your containers, and how to choose the tooling around them.',
+  },
+  {
     slug: 'theology',
     title: 'Theology',
     blurb: 'The Bible and Christian history, read the way historians and scholars of religion read them.',
