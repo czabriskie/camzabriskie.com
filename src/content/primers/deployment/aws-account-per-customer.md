@@ -213,3 +213,5 @@ Ledgerly picked the middle row because each customer's configuration differs eno
 3. **Build one environment by hand-running the module**, in one account, until a teardown and rebuild produces the same thing.
 4. **Wire AFT and the platform account**, then onboard an internal "customer" (yourselves) through the pull request, end to end.
 5. **Automate the upgrade waves** before the tenth customer, not after.
+
+Not every customer needs this much separation. The [customer separation primer](/primers/deployment/customer-separation-models/) covers the cheaper rungs, from a namespace per customer to one shared app and database.
