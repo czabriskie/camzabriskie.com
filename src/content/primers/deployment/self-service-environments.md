@@ -224,6 +224,8 @@ The CNCF paper says a platform should be "the thinnest reasonable layer" over se
 4. **Start with one audience.** Developer previews are the safest first users, because they're short-lived and a broken one costs little. Customers come last.
 5. **Measure it.** The CNCF paper suggests tracking the time from request to a usable environment, among other things [@cncf-platforms]. If it's a few days today, watch it drop.
 
+On AWS with a separate set of accounts per customer, the [account-per-customer primer](/primers/deployment/aws-account-per-customer/) builds this out with Organizations, Control Tower, and EKS.
+
 <details class="aside">
 <summary>Build or buy?</summary>
 
