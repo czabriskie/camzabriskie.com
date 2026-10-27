@@ -676,6 +676,17 @@ export const references = {
   'aws-sm-rotation-functions': { authors: AWS, title: 'Lambda rotation functions', container: 'AWS Secrets Manager User Guide', url: 'https://docs.aws.amazon.com/secretsmanager/latest/userguide/rotate-secrets_lambda-functions.html', accessed: '2026-10-23' },
   'aws-sfn-callback': { authors: AWS, title: 'Discover service integration patterns in Step Functions', container: 'AWS Step Functions Developer Guide', url: 'https://docs.aws.amazon.com/step-functions/latest/dg/connect-to-resource.html', accessed: '2026-10-23' },
   'aws-sfn-quotas': { authors: AWS, title: 'Step Functions service quotas', container: 'AWS Step Functions Developer Guide', url: 'https://docs.aws.amazon.com/step-functions/latest/dg/service-quotas.html', accessed: '2026-10-23' },
+  // Site-to-site VPN: the other side (customer gateway, routing, troubleshooting)
+  'aws-s2s-vpn-how-it-works': { authors: AWS, title: 'How AWS Site-to-Site VPN works', container: 'AWS Site-to-Site VPN User Guide', url: 'https://docs.aws.amazon.com/vpn/latest/s2svpn/how_it_works.html', accessed: '2026-10-27' },
+  'aws-s2s-vpn-cgw-options': { authors: AWS, title: 'Customer gateway options for your AWS Site-to-Site VPN connection', container: 'AWS Site-to-Site VPN User Guide', url: 'https://docs.aws.amazon.com/vpn/latest/s2svpn/cgw-options.html', accessed: '2026-10-27' },
+  'aws-s2s-vpn-cgw-requirements': { authors: AWS, title: 'Requirements for a customer gateway device for AWS Site-to-Site VPN', container: 'AWS Site-to-Site VPN User Guide', url: 'https://docs.aws.amazon.com/vpn/latest/s2svpn/CGRequirements.html', accessed: '2026-10-27' },
+  'aws-s2s-vpn-routing-options': { authors: AWS, title: 'AWS Site-to-Site VPN routing options', container: 'AWS Site-to-Site VPN User Guide', url: 'https://docs.aws.amazon.com/vpn/latest/s2svpn/VPNRoutingTypes.html', accessed: '2026-10-27' },
+  'aws-s2s-vpn-quotas': { authors: AWS, title: 'AWS Site-to-Site VPN quotas', container: 'AWS Site-to-Site VPN User Guide', url: 'https://docs.aws.amazon.com/vpn/latest/s2svpn/vpn-limits.html', accessed: '2026-10-27' },
+  'aws-s2s-vpn-logs': { authors: AWS, title: 'AWS Site-to-Site VPN logs', container: 'AWS Site-to-Site VPN User Guide', url: 'https://docs.aws.amazon.com/vpn/latest/s2svpn/monitoring-logs.html', accessed: '2026-10-27' },
+  'aws-s2s-vpn-troubleshoot-bgp': { authors: AWS, title: 'Troubleshoot AWS Site-to-Site VPN connectivity when using Border Gateway Protocol', container: 'AWS Site-to-Site VPN User Guide', url: 'https://docs.aws.amazon.com/vpn/latest/s2svpn/Generic_Troubleshooting.html', accessed: '2026-10-27' },
+  'aws-tgw-quotas': { authors: AWS, title: 'Quotas for your transit gateways', container: 'Amazon VPC Transit Gateways', url: 'https://docs.aws.amazon.com/vpc/latest/tgw/transit-gateway-quotas.html', accessed: '2026-10-27' },
+  'aws-tgw-s2s-attachments': { authors: AWS, title: 'AWS Site-to-Site VPN attachments in AWS Transit Gateway', container: 'Amazon VPC Transit Gateways', url: 'https://docs.aws.amazon.com/vpc/latest/tgw/tgw-vpn-attachments.html', accessed: '2026-10-27' },
+  'aws-tgw-request-options': { authors: AWS, title: 'TransitGatewayRequestOptions', container: 'Amazon EC2 API Reference', url: 'https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_TransitGatewayRequestOptions.html', accessed: '2026-10-27' },
 };
 
 const MONTHS = ['Jan.', 'Feb.', 'Mar.', 'Apr.', 'May', 'Jun.', 'Jul.', 'Aug.', 'Sep.', 'Oct.', 'Nov.', 'Dec.'];
