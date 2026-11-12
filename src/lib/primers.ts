@@ -28,6 +28,11 @@ export const topics = [
     blurb: 'How software gets onto servers you do not fully control, and what each approach needs from the network.',
   },
   {
+    slug: 'linux',
+    title: 'Linux servers',
+    blurb: 'The background services a server quietly depends on, and how to check they are doing their job.',
+  },
+  {
     slug: 'philosophy',
     title: 'Philosophy',
     blurb: 'The history of ideas, starting with the first people to ask what everything is made of.',
