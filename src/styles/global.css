@@ -1022,3 +1022,53 @@ details.aside[open] summary { margin-bottom: 0.4rem; }
 .selfserve-diagram .ssp-scale { stroke: var(--line); stroke-width: 2; }
 .selfserve-diagram .ssp-dot { fill: var(--surface); stroke: var(--muted); stroke-width: 1.5; }
 .selfserve-diagram .ssp-dot-hot { fill: var(--tech); stroke: var(--tech); }
+
+/* WoW Forever gold tests (/projects/wow-forever/, Decision 0014). Charts reuse the
+   existing tokens: sales in --tech, purchases in --muted, so no new accent hue. */
+.wow .lede { color: var(--muted); margin-bottom: 0.6rem; }
+.wow-meta { color: var(--muted); margin-bottom: 2rem; }
+.wow-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr)); gap: 0.7rem; margin-bottom: 1rem; }
+.wow-tile { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 0.7rem 0.85rem; display: flex; flex-direction: column; }
+.wow-tile .label { color: var(--muted); font-size: 0.85rem; }
+.wow-tile .value { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 1.6rem; line-height: 1.25; }
+.wow-tile .sub { color: var(--muted); font-size: 0.78rem; line-height: 1.35; }
+.wow .group { margin-bottom: 2.6rem; padding-top: 1.4rem; border-top: 1px solid var(--line); }
+.wow .group h2 { margin-top: 0; }
+.wow .group-note { color: var(--muted); font-size: 0.92rem; }
+.wow-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; flex-wrap: wrap; }
+.wow-legend { color: var(--muted); display: inline-flex; align-items: center; gap: 0.4rem; }
+.wow-legend i { display: inline-block; width: 0.65rem; height: 0.65rem; border-radius: 2px; margin-left: 0.5rem; }
+.wow-legend i.in { background: var(--tech); }
+.wow-legend i.out { background: var(--muted); }
+.wow-chart { margin: 0.4rem 0 0.6rem; }
+.wow-chart svg { display: block; width: 100%; height: auto; }
+.wow-chart text { font: 11px 'IBM Plex Mono', ui-monospace, monospace; fill: var(--muted); }
+.wow-chart text.end { fill: var(--ink); }
+.wow-chart .grid { stroke: var(--line); stroke-width: 1; }
+.wow-chart .base { stroke: var(--muted); stroke-width: 1; opacity: 0.6; }
+.wow-chart path.in { fill: var(--tech); }
+.wow-chart path.out { fill: var(--muted); }
+.wow-chart path.in:hover, .wow-chart path.out:hover { opacity: 0.8; }
+.wow-chart .line { fill: none; stroke: var(--tech); stroke-width: 2; stroke-linejoin: round; }
+.wow-chart .dot { fill: var(--tech); stroke: var(--paper); stroke-width: 2; }
+.wow-details summary { cursor: pointer; color: var(--muted); font-size: 0.9rem; }
+.wow-scroll { overflow-x: auto; }
+.wow-table { border-collapse: collapse; width: 100%; font-size: 0.9rem; line-height: 1.45; }
+.wow-table th, .wow-table td { text-align: left; padding: 0.4rem 0.55rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+.wow-table th { color: var(--muted); font-weight: 600; font-size: 0.82rem; white-space: nowrap; }
+.wow-table .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.wow .up { color: var(--tech); }
+.wow .down { color: var(--life); }
+ol.wow-tests { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 1.6rem; }
+ol.wow-tests p { margin: 0 0 0.35rem; font-size: 0.95rem; }
+.wow-test-head { display: flex; align-items: baseline; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.3rem; }
+.wow-test-head h3 { margin: 0; }
+.wow-test-head .when { color: var(--muted); }
+.wow-test-nums { color: var(--muted); }
+.wow-status { font: 0.75rem 'IBM Plex Mono', ui-monospace, monospace; border: 1px solid var(--line); border-radius: 999px; padding: 0.05rem 0.55rem; display: inline-flex; gap: 0.35rem; align-items: center; }
+.wow-status .icon::before { content: "·"; }
+.wow-status.running .icon::before { content: "…"; color: var(--tech); }
+.wow-status.won .icon::before { content: "✓"; color: var(--tech); }
+.wow-status.lost .icon::before { content: "✗"; color: var(--life); }
+.wow-status.dropped .icon::before { content: "–"; }
+.wow-spark path { fill: none; stroke: var(--tech); stroke-width: 2; }

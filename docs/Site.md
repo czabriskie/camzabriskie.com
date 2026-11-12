@@ -23,6 +23,8 @@
   primers, and a filter; topic pages can group primers into sections (Decision 0009).
 - `/primers/references/` — every source cited by any primer (Decision 0007).
 - `/projects/` — curated public GitHub projects, grouped as tools / experiments / teaching
+- `/projects/wow-forever/` — WoW Forever gold-making tests dashboard, built from
+  `src/data/wow-forever.json`, which a script on Cam's PC commits to `main` daily (Decision 0014)
 - `/resume/` — resume (email + GitHub only; no phone/address)
 
 Project entries live in `src/lib/projects.ts`, hand-written rather than pulled from the
