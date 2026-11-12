@@ -1,0 +1,248 @@
+---
+// WoW Forever gold tests: a dashboard built from a daily data drop (Decision 0014).
+// Everything renders at build time from src/data/wow-forever.json; no client-side script.
+import Base from '../../layouts/Base.astro';
+import data from '../../data/wow-forever.json';
+
+type Day = { day: string; auctionSales: number; vendorSales: number; auctionBuys: number; vendorBuys: number };
+type GoldPoint = { at: string; copper: number };
+type Test = {
+  id: string; name: string; status: string; started: string; ended: string;
+  plan: string; result: string; lesson: string;
+  bought: number; spent: number; sold: number; earned: number; unsold: number; profit: number;
+};
+type PricePoint = { at: string; lowest: number; available: number | null };
+type Watch = { id: string; name: string; group: string; vendorCost: number | null; history: PricePoint[] };
+type Best = { name: string; sold: number; earned: number };
+
+const totals = data.totals;
+const daily = (data.daily as Day[]).slice(-30);
+const gold = data.gold as GoldPoint[];
+const tests = data.tests as Test[];
+const watch = data.watch as Watch[];
+const best = data.best as Best[];
+
+/** Copper to the game's own notation: 1g = 100s = 10000c. */
+function money(c: number | null | undefined, signed = false): string {
+  if (c == null) return '–';
+  const a = Math.abs(c);
+  const s = a >= 10000 ? `${(a / 10000).toFixed(2).replace(/\.00$/, '')}g`
+    : a >= 100 ? `${(a / 100).toFixed(1).replace(/\.0$/, '')}s`
+    : `${Math.round(a)}c`;
+  return c < 0 ? `−${s}` : signed && c > 0 ? `+${s}` : s;
+}
+const tone = (c: number) => (c > 0 ? 'up' : c < 0 ? 'down' : '');
+const shortDay = (d: string) =>
+  new Date(`${d.slice(0, 10)}T12:00:00Z`).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
+function niceMax(v: number): number {
+  if (v <= 0) return 100;
+  const p = 10 ** Math.floor(Math.log10(v));
+  for (const m of [1, 2, 2.5, 5, 10]) if (m * p >= v) return m * p;
+  return 10 * p;
+}
+
+// Money in / out: paired bars per day.
+const W = 720, H = 240, L = 52, R = 8, T = 10, B = 26;
+const ins = daily.map((d) => d.auctionSales + d.vendorSales);
+const outs = daily.map((d) => d.auctionBuys + d.vendorBuys);
+const moneyMax = niceMax(Math.max(0, ...ins, ...outs));
+const y = (v: number, max: number) => T + (H - T - B) * (1 - v / max);
+const band = daily.length ? (W - L - R) / daily.length : 0;
+const bw = Math.max(4, Math.min(26, (band - 16) / 2));
+const ticks = (max: number) => [0, 1, 2, 3, 4].map((i) => (max * i) / 4);
+function barPath(x: number, v: number, max: number): string {
+  const top = y(v, max), base = y(0, max), h = base - top;
+  if (h <= 0) return '';
+  const r = Math.min(3, h, bw / 2);
+  return `M${x},${base} V${top + r} Q${x},${top} ${x + r},${top} H${x + bw - r} Q${x + bw},${top} ${x + bw},${top + r} V${base} Z`;
+}
+
+// Gold over time: a line once there are two snapshots.
+const goldMax = niceMax(Math.max(0, ...gold.map((g) => g.copper)));
+const gx = (i: number) => L + ((W - L - 70) * i) / Math.max(1, gold.length - 1);
+const goldPath = gold.map((g, i) => `${i ? 'L' : 'M'}${gx(i)},${y(g.copper, goldMax)}`).join(' ');
+const goldStep = Math.max(1, Math.ceil(gold.length / 8));
+
+const statusLabel: Record<string, string> = { planned: 'Planned', running: 'Running', won: 'Won', lost: 'Lost', dropped: 'Dropped' };
+const statusOrder: Record<string, number> = { running: 0, planned: 1, won: 2, lost: 3, dropped: 4 };
+const sortedTests = [...tests].sort((a, b) => (statusOrder[a.status] ?? 9) - (statusOrder[b.status] ?? 9));
+const finished = tests.filter((t) => ['won', 'lost', 'dropped'].includes(t.status)).length;
+
+const groupOrder = ['Recipes', 'Pets', 'Disenchant', 'Watch', 'Mats', 'Blocked'];
+const watchRows = [...watch]
+  .sort((a, b) => groupOrder.indexOf(a.group) - groupOrder.indexOf(b.group))
+  .map((w) => {
+    const last = w.history.length ? w.history[w.history.length - 1] : null;
+    const margin = last && w.vendorCost != null ? Math.round(last.lowest * 0.95 - w.vendorCost) : null;
+    let spark = '';
+    if (w.history.length >= 2) {
+      const v = w.history.map((h) => h.lowest), mn = Math.min(...v), mx = Math.max(...v);
+      spark = v.map((p, i) => `${i ? 'L' : 'M'}${(80 * i) / (v.length - 1)},${mx === mn ? 11 : 2 + 18 * (1 - (p - mn) / (mx - mn))}`).join(' ');
+    }
+    return { ...w, last, margin, spark };
+  });
+
+const blurb = 'Small gold-making tests on the WoW Forever auction house, tracked from the addon data on my PC.';
+---
+<Base title="WoW Forever gold tests — Cam Zabriskie" description={blurb}>
+  <div class="wow stream-tech">
+    <p class="crumbs mono"><a href="/projects/">Projects</a> /</p>
+    <div class="stream-head">
+      <span class="tick" aria-hidden="true"></span>
+      <h1>WoW Forever gold tests</h1>
+    </div>
+    <p class="lede">
+      I started a character on the PvP Alliance side of WoW Forever and wanted to see how far small
+      auction house bets go when you have under ten gold, no gathering profession, and a level 30.
+      Each test buys something from a vendor or the auction house and either resells it or disenchants it.
+      The numbers come from the TradeSkillMaster and Auctionator addons, read off my PC once a day.
+    </p>
+    <p class="wow-meta mono">
+      Updated {data.generated} · last game save {data.lastGameSave ?? 'none'} · last full price scan {data.lastScan ?? 'none'}
+    </p>
+
+    <section class="wow-tiles" aria-label="Totals">
+      <div class="wow-tile"><span class="label">Gold on hand</span><span class="value">{money(totals.gold)}</span><span class="sub">at the last game save</span></div>
+      <div class="wow-tile"><span class="label">Auction sales</span><span class="value">{money(totals.auctionSales)}</span><span class="sub">{totals.auctionSalesCount} items, after the cut</span></div>
+      <div class="wow-tile"><span class="label">Auction profit</span><span class="value">{money(totals.auctionSales - totals.auctionBuys, true)}</span><span class="sub">sales minus auction buys</span></div>
+      <div class="wow-tile"><span class="label">Tests</span><span class="value">{tests.length}</span><span class="sub">{tests.filter((t) => t.status === 'running').length} running, {tests.filter((t) => t.status === 'planned').length} planned, {finished} done</span></div>
+    </section>
+
+    <section class="group">
+      <div class="wow-head">
+        <h2>Money in and out</h2>
+        <span class="wow-legend mono"><i class="in"></i>sales <i class="out"></i>purchases</span>
+      </div>
+      {daily.length === 0 ? <p class="group-note">Nothing recorded yet.</p> : (
+        <figure class="wow-chart">
+          <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Money in and out per day; the table below has the values">
+            {ticks(moneyMax).map((v, i) => (
+              <g>
+                <line class={i ? 'grid' : 'base'} x1={L} x2={W - R} y1={y(v, moneyMax)} y2={y(v, moneyMax)} />
+                <text x={L - 6} y={y(v, moneyMax) + 4} text-anchor="end">{money(v)}</text>
+              </g>
+            ))}
+            {daily.map((d, i) => {
+              const cx = L + band * i + band / 2;
+              return (
+                <g>
+                  <path class="in" d={barPath(cx - bw - 1, ins[i], moneyMax)}><title>{`${shortDay(d.day)}: sales ${money(ins[i])} (auction ${money(d.auctionSales)}, vendor ${money(d.vendorSales)})`}</title></path>
+                  <path class="out" d={barPath(cx + 1, outs[i], moneyMax)}><title>{`${shortDay(d.day)}: purchases ${money(outs[i])} (auction ${money(d.auctionBuys)}, vendor ${money(d.vendorBuys)})`}</title></path>
+                  <text x={cx} y={H - 8} text-anchor="middle">{shortDay(d.day)}</text>
+                </g>
+              );
+            })}
+          </svg>
+        </figure>
+      )}
+      <details class="wow-details">
+        <summary>Table</summary>
+        <div class="wow-scroll">
+          <table class="wow-table">
+            <thead><tr><th>Day</th><th class="num">Auction sales</th><th class="num">Vendor sales</th><th class="num">Auction buys</th><th class="num">Vendor buys</th><th class="num">Net</th></tr></thead>
+            <tbody>
+              {daily.map((d, i) => (
+                <tr><td>{shortDay(d.day)}</td><td class="num">{money(d.auctionSales)}</td><td class="num">{money(d.vendorSales)}</td><td class="num">{money(d.auctionBuys)}</td><td class="num">{money(d.vendorBuys)}</td><td class={`num ${tone(ins[i] - outs[i])}`}>{money(ins[i] - outs[i], true)}</td></tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </details>
+      <p class="group-note">Vendor sales include everything the characters sold to merchants while leveling, not only test items.</p>
+    </section>
+
+    <section class="group">
+      <h2>Gold on hand</h2>
+      {gold.length < 2 ? (
+        <p class="group-note">{gold.length ? `${money(gold[0].copper)} at ${gold[0].at}. ` : ''}A line shows up here once there are two daily snapshots.</p>
+      ) : (
+        <figure class="wow-chart">
+          <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`Gold on hand over time, now ${money(gold[gold.length - 1].copper)}`}>
+            {ticks(goldMax).map((v, i) => (
+              <g>
+                <line class={i ? 'grid' : 'base'} x1={L} x2={W - R} y1={y(v, goldMax)} y2={y(v, goldMax)} />
+                <text x={L - 6} y={y(v, goldMax) + 4} text-anchor="end">{money(v)}</text>
+              </g>
+            ))}
+            <path class="line" d={goldPath} />
+            {gold.map((g, i) => (
+              <g>
+                <circle class="dot" cx={gx(i)} cy={y(g.copper, goldMax)} r="4"><title>{`${money(g.copper)} at ${g.at}`}</title></circle>
+                {(i % goldStep === 0 || i === gold.length - 1) && <text x={gx(i)} y={H - 8} text-anchor="middle">{shortDay(g.at)}</text>}
+              </g>
+            ))}
+            <text class="end" x={gx(gold.length - 1) + 8} y={y(gold[gold.length - 1].copper, goldMax) + 4}>{money(gold[gold.length - 1].copper)}</text>
+          </svg>
+        </figure>
+      )}
+    </section>
+
+    <section class="group">
+      <h2>Tests</h2>
+      <p class="group-note">Bought, sold and profit come from the addon's purchase and sale records for that item while the test ran.</p>
+      <ol class="wow-tests">
+        {sortedTests.map((t) => {
+          const hasNumbers = t.bought > 0 || t.sold > 0;
+          return (
+            <li>
+              <div class="wow-test-head">
+                <h3>{t.name}</h3>
+                <span class={`wow-status ${t.status}`}><span class="icon" aria-hidden="true"></span>{statusLabel[t.status] ?? t.status}</span>
+                {t.started && <span class="mono when">{t.ended && t.ended !== t.started ? `${shortDay(t.started)} – ${shortDay(t.ended)}` : shortDay(t.started)}</span>}
+              </div>
+              {t.plan && <p><b>Plan.</b> {t.plan}</p>}
+              {t.result && <p><b>Result.</b> {t.result}</p>}
+              {t.lesson && <p><b>Lesson.</b> {t.lesson}</p>}
+              {hasNumbers && (
+                <p class="mono wow-test-nums">
+                  bought {t.bought} for {money(t.spent)} · sold {t.sold} for {money(t.earned)} · <span class={tone(t.profit)}>{money(t.profit, true)}</span>
+                </p>
+              )}
+            </li>
+          );
+        })}
+      </ol>
+    </section>
+
+    <section class="group">
+      <h2>Watchlist prices</h2>
+      <p class="group-note">
+        Lowest listing at the last full scan{data.lastScan ? ` (${data.lastScan})` : ''}. Margin is that price after the 5% auction
+        house cut, minus what the vendor charges. The trend line needs two or more scans.
+      </p>
+      <div class="wow-scroll">
+        <table class="wow-table">
+          <thead><tr><th>Item</th><th>Group</th><th class="num">Vendor cost</th><th class="num">Lowest</th><th class="num">Listed</th><th class="num">Margin</th><th>Trend</th></tr></thead>
+          <tbody>
+            {watchRows.map((w) => (
+              <tr>
+                <td>{w.name}</td>
+                <td>{w.group === 'Blocked' ? 'Blocked (no disenchant)' : w.group}</td>
+                <td class="num">{money(w.vendorCost)}</td>
+                <td class="num">{w.last ? money(w.last.lowest) : '–'}</td>
+                <td class="num">{w.last?.available != null ? w.last.available.toLocaleString('en-US') : '–'}</td>
+                <td class={`num ${w.margin != null ? tone(w.margin) : ''}`}>{w.margin != null ? money(w.margin, true) : '–'}</td>
+                <td>{w.spark ? <svg class="wow-spark" width="80" height="22" role="img" aria-label="Lowest price trend"><path d={w.spark} /></svg> : ''}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="group">
+      <h2>Best sellers</h2>
+      <p class="group-note">Everything sold on the auction house so far, after the cut.</p>
+      <div class="wow-scroll">
+        <table class="wow-table">
+          <thead><tr><th>Item</th><th class="num">Sold</th><th class="num">Earned</th><th class="num">Each</th></tr></thead>
+          <tbody>
+            {best.map((b) => (
+              <tr><td>{b.name}</td><td class="num">{b.sold}</td><td class="num">{money(b.earned)}</td><td class="num">{money(b.earned / Math.max(1, b.sold))}</td></tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</Base>

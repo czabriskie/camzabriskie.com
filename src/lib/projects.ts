@@ -5,6 +5,8 @@ export type Project = {
   stack: string;
   /** Live, running version, if there is one to click. */
   live?: string;
+  /** Where the name links when there is no public repo for it (Decision 0014). */
+  href?: string;
   blurb: string;
 };
 
@@ -64,6 +66,13 @@ export const built: Project[] = [
     stack: 'Python',
     blurb:
       'A small CLI for talking to an AWS Bedrock agent, with session handling and every conversation logged with timestamps. Partly an excuse to keep the tests, linting, type checking, and CI honest on something small enough to see all of.',
+  },
+  {
+    name: 'WoW Forever gold tests',
+    stack: 'PowerShell · Astro',
+    href: '/projects/wow-forever/',
+    blurb:
+      'A running log of small gold-making experiments on the WoW Forever auction house, started with a level 30 and under ten gold. A PowerShell script reads the TradeSkillMaster and Auctionator addon files off my PC every morning, keeps a ledger of what I bought and sold, and pushes the totals here, so each test shows what it cost and whether it paid off. The ledger itself stays on my machine.',
   },
   {
     name: 'follicle-force-3000',
